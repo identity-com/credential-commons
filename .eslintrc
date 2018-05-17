@@ -1,0 +1,22 @@
+{
+    "extends": "airbnb-base",
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "jest": true
+    },
+    "plugins": [
+        "no-only-tests"
+    ],
+    "rules": {
+        "max-len": ["warn", 200],
+        "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/test/**/*.js"]}],
+        "no-plusplus": "warn",
+        "consistent-return": "warn",
+        "no-template-curly-in-string": "warn",
+        "comma-dangle": "warn",
+        "import/no-unresolved": "warn",
+        "no-only-tests/no-only-tests": 2
+    }
+}

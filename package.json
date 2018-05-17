@@ -1,0 +1,68 @@
+{
+  "name": "civic-credentials-common-js",
+  "version": "0.1.0",
+  "author": "Civic",
+  "license": "UNLICENSED",
+  "description": "Verifiable Credential and Attestation Library",
+  "private": "true",
+  "keywords": [
+    "webpack",
+    "boilerplate",
+    "es6",
+    "babel",
+    "eslint",
+    "jest"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/civicteam/node-module-boilerplate-webpack"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "start": "webpack-dev-server --config conf/webpack.dev.js",
+    "build": "webpack --env=prod --progress --profile --colors",
+    "lint": "eslint ./src/**.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "ci": "npm run test && npm run lint"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.3",
+    "babel-jest": "^22.4.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "clean-webpack-plugin": "0.1.16",
+    "eslint": "^4.3.0",
+    "eslint-config-airbnb-base": "^11.3.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-no-only-tests": "^2.0.0",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "html-webpack-plugin": "^3.2.0",
+    "jest": "^22.4.3",
+    "jest-html-reporter": "^2.3.0",
+    "webpack": "^4.8.3",
+    "webpack-dev-server": "^3.1.4",
+    "webpack-merge": "^4.1.2"
+  },
+  "dependencies": {
+    "lodash": "4.17.10"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**/src/*.{js}",
+      "!**/node_modules/**",
+      "!**/dist/**",
+      "!**/vendor/**"
+    ],
+    "coverageDirectory": "reports/coverage",
+    "collectCoverage": true,
+    "testResultsProcessor": "./node_modules/jest-html-reporter",
+    "verbose": true
+  },
+  "jest-html-reporter": {
+    "pageTitle": "Verifiable Credential and Attestation Library Test Suite",
+    "outputPath": "reports/test-report.html",
+    "includeFailureMsg": true
+  }
+}
