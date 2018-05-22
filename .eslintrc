@@ -14,7 +14,6 @@
         "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/test/**/*.js"]}],
         "no-plusplus": "warn",
         "consistent-return": "warn",
-        "no-template-curly-in-string": "warn",
         "comma-dangle": "warn",
         "import/no-unresolved": "warn",
         "no-only-tests/no-only-tests": 2
