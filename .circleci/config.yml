@@ -1,0 +1,41 @@
+version: 2
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.9
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          command: |
+            npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: npm run ci
+
+      # check for security vulnerabilities
+      # see https://civicteam.atlassian.net/wiki/spaces/CM/pages/334692357/How+to+configure+snyk+a+vulnerability+monitoring+tool+for+npm
+      # (waiting for Finance approval of paid plan in order to uncomment this)
+      # - run: npm run snyk -- test
+      # - run: npm run snyk -- monitor

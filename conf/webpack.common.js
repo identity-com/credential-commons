@@ -44,9 +44,6 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(['dist'], { root: process.cwd() }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-    }),
     new HtmlWebpackPlugin({
       template: 'index.html',
     }),
