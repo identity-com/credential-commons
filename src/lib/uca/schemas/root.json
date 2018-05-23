@@ -1,0 +1,49 @@
+{
+  "$id": "/uca/definitions.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$vesion": "20180523",
+  "definitions": {
+    "identity.name.first": { "$id": "http://civic.com/uca/schemas/identity.name.first.json" },
+     "identity.name.middle": { "$id": "http://civic.com/uca/schemas/identity.name.middle.json" },
+     "identity.name.last": { "$id": "http://civic.com/uca/schemas/identity.name.last.json" },
+     "identity.name" : { "$id": "http://civic.com/uca/schemas/identity.name.json" },
+    "date" : {
+      "$id": "#/definitions/Date",
+      "type": "object",
+      "title": "Date",
+      "description": "Any date",
+      "properties": {
+        "year": { 
+          "$id": "#/properties/year",
+          "type": "integer",
+          "minimum": 1900
+        },
+        "month": { 
+          "$id": "#/properties/month",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        }
+        ,
+        "day": { 
+          "$id": "#/properties/day",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 31
+        }
+      },
+      "required": [
+        "year", "month", "day"
+      ],
+      "toString": "${year}-${month}-${day}",
+      "fromString": ":-)"
+    },
+    "identity.dateOfBirth": {
+      "$id": "/definitions/identity.dateOfBirth",
+      "type": "object",
+      "$ref": "/definitions/Date",
+      "CredentialItem": true
+    }  
+  }
+
+}
