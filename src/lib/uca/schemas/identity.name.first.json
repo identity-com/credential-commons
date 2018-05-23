@@ -10,7 +10,7 @@
       "description": "",
       "minLength": 3,
       "maxLength": 40,
-      "alias": "middle"
+      "alias": "first"
     }
   },
   "required": [

@@ -5,18 +5,18 @@
   "properties": {
     "first": {
       "$id": "#/properties/first",
-      "$ref": "http://civic.com/uca/schemas/identity.name.first.json#/properties/identity.name.first"
+      "$ref": "identity.name.first.json#/properties/identity.name.first"
     },
     "middle": {
       "$id": "#/properties/middle",
-      "$ref": "http://civic.com/uca/schemas/identity.name.middle.json#/properties/identity.name.middle"
+      "$ref": "identity.name.middle.json#/properties/identity.name.middle"
     },
     "last": {
       "$id": "#/properties/last",
-      "$ref": "http://civic.com/uca/schemas/identity.name.middle.json#/properties/identity.name.middle"
+      "$ref": "identity.name.last.json#/properties/identity.name.last"
     }
   },
-  "toString": "${first} ${middle} ${last}", 
+  "toString": "${first} ${middle} ${last}",
   "fromString": "(?:<first>\\S+) (?:<middle>\\S+) (?:<last>\\S+)",
   "CredentialItem": true
 }

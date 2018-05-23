@@ -3,7 +3,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "identity.name.first": {
+    "identity.name.middle": {
       "$id": "#/properties/identity.name.middle",
       "type": "string",
       "title": "",

@@ -48,8 +48,8 @@
     "webpack-merge": "^4.1.2"
   },
   "dependencies": {
+    "ajv": "^6.5.0",
     "bluebird": "^3.5.1",
-    "jsonschema": "^1.2.4",
     "lodash": "4.17.10"
   },
   "jest": {

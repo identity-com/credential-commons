@@ -1,43 +1,47 @@
 import fs from 'fs';
-import { Validator } from 'jsonschema';
+import Ajv from 'ajv';
+
+// ajv ValidateFunction
+let validate;
+// should read the schemas only once
+beforeAll(async () => {
+  // TODO sync code or chain promises
+  const jsonIdentityNameFirst = fs.readFileSync('./src/lib/uca/schemas/identity.name.first.json', 'utf8');
+  // parse the json file
+  const schemaIdentityNameFirst = JSON.parse(jsonIdentityNameFirst);
+  // create a new json schema validator
+  const validator = new Ajv({
+    allErrors: true,
+    schemas: [schemaIdentityNameFirst],
+  });
+  validate = await validator.getSchema('http://civic.com/uca/schemas/identity.name.first.json');
+});
 
 describe('Testing the default entry point index', () => {
-  it('Should load schema identity.name.first then validate against a valid json', () => {
-    // async reading of file
-    fs.readFile('./src/lib/uca/schemas/identity.name.first.json', 'utf8', (err, data) => {
-      if (err) {
-        // cant read the json locally? we have a huge problem
-        throw new Error('I couldn\'t read the uca/schemas/identity.name.first.json');
-      } else {
-        // parse the json file
-        const schema = JSON.parse(data);
-        // create a new json schema validator
-        const validator = new Validator();
-        // sample valid JSON
-        const sampleJson = {
-          'identity.name.first': 'Test',
-        };
-        const jsonValidation = validator.validate(sampleJson, schema);
-        // it has to succeed, or else we have a problem
-        expect(jsonValidation.valid).toBe(true);
-      }
-    });
+  it('Should validate against a valid json', async () => {
+    const sampleJson = {
+      'identity.name.first': '2',
+    };
+    const validation = await validate(sampleJson);
+    // it has to succeed, since the required and the type are valid
+    expect(validation).toBe(false);
   });
 
-  it('Should load schema identity.name.first then validate against a invalid json', () => {
-    fs.readFile('./src/lib/uca/schemas/identity.name.first.json', 'utf8', (err, data) => {
-      if (err) {
-        throw new Error('I couldn\'t read the uca/schemas/identity.name.first.json');
-      } else {
-        const schema = JSON.parse(data);
-        const validator = new Validator();
-        // intetionally mispelled first to frist
-        const sampleJson = {
-          'identity.name.frist': 'Test',
-        };
-        const jsonValidation = validator.validate(sampleJson, schema);
-        expect(jsonValidation.valid).toBe(false);
-      }
-    });
+  it('Should load schema identity.name.first then validate against a invalid json', async () => {
+    // invalid json, since the type of first, should be String
+    const sampleJson = {
+      'identity.name.frst': '2',
+    };
+    const validation = await validate(sampleJson);
+    // since it has an required property, the validation has to be false
+    expect(validation).toBe(false);
+  });
+
+  it('Should validate against a empty json', async () => {
+    const sampleJson = {
+    };
+    const validation = await validate(sampleJson);
+    // since it has an required property, the validation has to be false
+    expect(validation).toBe(false);
   });
 });
