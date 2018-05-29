@@ -1,183 +1,182 @@
 /* eslint-disable no-template-curly-in-string */
 // ######################################### DEFINITIONS ###########################################
-// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
-// TODO jpsantosbh review please, changed from String to ES types
-const builtInTypedefs = [
-  {
-    name: 'String',
-  },
-  {
-    name: 'Number',
-  },
-  {
-    name: 'Boolean',
-  },
-];
 
 
 // That in consideration that this model is inpired by C++ language data definitions
 // Changed: to lower case pattern UCA to Uca
 const definitions = [
   {
-    identifier: 'identity.name.first', // Creating a new identifier is equivalent to a new Typedef
-    type: String,
-    persistent: true, // This indicates the the relation with the user is ephemeral or not
+    identifier: 'civ:Identity:name.first',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
   },
   {
-    identifier: 'identity.name.middle',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Identity:firstName',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:name.first'],
   },
   {
-    identifier: 'identity.name.last',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Identity:givenName',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:name.first'],
   },
   {
-    identifier: 'identity.nickname',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Identity:name.middle',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
   },
   {
-    identifier: 'identity.name.aka',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Identity:name.last',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
   },
   {
-    identifier: 'identity.name.aka',
-    type: String,
-    persistent: true,
-    alsoKnown: ['identity.nickname'], // We can create alias (more precise dataSources)
+    identifier: 'civ:Identity:name.nickname',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
   },
   {
-    identifier: null, // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
-    Typedef: {
-      name: 'ShortToken',
-      extend: 'String',
-      constraint: /^\d{5}$/, // We can specify a constraint to define the type domain
-    },
+    identifier: 'civ:Identity:name.username',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:name.nickname'], // We can create alias (more precise dataSources)
   },
   {
-    identifier: 'identity.contact.phoneNUmber.token',
-    type: 'ShortToken',
-    persistent: false, // An example on UCA that only relates with the user in short term
+    identifier: 'civ:Type:ShortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
+    version: 'v1.0.0',
+    type: 'String',
+    pattern: /^\d{5}$/, // We can specify a constraint to define the type domain
+    credentialItem: false,
   },
   {
-    identifier: 'identity.contact.email.token',
-    type: 'ShortToken',
-    persistent: false,
+    identifier: 'civ:Verify:phoneNumber.Token',
+    version: 'v1.0.0',
+    type: 'civ:Type:ShortToken',
+    credentialItem: false, // An example on UCA that only relates with the user in short term
   },
   {
-    identifier: 'identity.name', // We can define a new identifier and the structure at same definition
-    Typedef: {
-      name: 'IdentityName',
-      components: [{
-        key: 'first', // We need a key for templating and regex
-        ref: 'identity.name.first', // We can define the type using a UCA identifier
-        type: null, // OR a type
-        required: true,
+    identifier: 'civ:Verify:email.Token',
+    version: 'v1.0.0',
+    type: 'civ:Type:ShortToken',
+    credentialItem: false,
+  },
+  {
+    identifier: 'civ:Identity:name', // We can define a new identifier and the structure at same definition
+    version: 'v1.0.0',
+    type: {
+      properties: [{
+        name: 'first', // We need a key for templating and regex
+        type: 'civ:Identity:name.first', // OR a type
       },
       {
-        key: 'middle',
-        ref: 'identity.name.middle',
-        required: false,
+        name: 'middle',
+        type: 'civ:Identity:name.middle',
       },
       {
-        key: 'last',
-        ref: 'identity.name.last',
-        required: true,
+        name: 'last',
+        type: 'civ:Identity:name.last',
       },
       {
-        key: 'aka',
-        ref: 'identity.name.aka',
-        required: false,
+        name: 'nickname',
+        type: 'civ:Identity:name.nickname',
       },
       ],
-      toString: '${first} (${aka}), ${middle} ${last}', // We need to define how we serialize structures
-      fromString: /(?:<first>\S+) \((?:<aka>\S*)\), (?:<middle>\S+) (?:<last>\S+)/, // And how we deserialize too
+      required: ['first'],
     },
+    credentialItem: true,
   },
   {
-    identifier: null,
-    Typedef: {
-      name: 'Day',
-      extend: Number,
-      constraints: ['int()', 'gt(0)', 'lte(31)'], // If needed we can use a constrain set to define the domain
-    },
+    identifier: 'civ:Type:Day',
+    version: 'v1.0.0',
+    type: 'Number',
+    minimum: 0,
+    exclusiveMinimum: true,
+    maximum: 32,
+    exclusiveMaximum: true,
   },
   {
-    identifier: null,
-    Typedef: {
-      name: 'Month',
-      extend: Number,
-      constraints: ['int()', 'gt(0)', 'lte(12)'],
-    },
+    identifier: 'civ:Type:Month',
+    version: 'v1.0.0',
+    type: 'Number',
+    minimum: 0,
+    exclusiveMinimum: true,
+    maximum: 13,
+    exclusiveMaximum: true,
   },
   {
-    identifier: null,
-    Typedef: {
-      name: 'Year',
-      extend: Number,
-      constraints: ['int()', 'gt(0)', 'lte(12)'],
-    },
+    identifier: 'civ:Type:Year',
+    version: 'v1.0.0',
+    type: 'Number',
+    minimum: 0,
+    exclusiveMinimum: true,
   },
   {
-    identifier: null,
-    Typedef: {
-      name: 'Date',
-      components: [{
-        key: 'day',
-        type: 'Day',
-        required: true,
+    identifier: 'civ:Type:Date',
+    version: 'v1.0.0',
+    type: {
+      properties: [{
+        name: 'day',
+        type: 'civ:Type:Day',
       },
       {
-        key: 'month',
-        type: 'Month',
-        required: false,
+        name: 'month',
+        type: 'civ:Type:Month',
       },
       {
-        key: 'year',
-        type: 'Year',
-        required: true,
+        name: 'year',
+        type: 'civ:Type:Year',
       },
       ],
-      toString: '${year}-${month}-${day}',
-      fromString: /\S*/, // this a place holder :-)
+      required: ['day', 'month', 'year'],
     },
   },
   {
-    identifier: 'identity.DateOfBirth',
-    type: 'Date',
-    persistent: true,
+    identifier: 'civ:Identity:DateOfBirth',
+    version: 'v1.0.0',
+    type: 'civ:Type:Date',
+    credentialItem: true,
   },
   {
-    Typedef: {
-      name: 'DocType',
-
+    type: {
+      identifier: 'civ:Type:DocType',
+      name: 'DocType', // TODO ENUM
     },
   },
   {
-    identifier: 'identity.documentId.type',
+    identifier: 'civ:Document:type',
+    version: 'v1.0.0',
     type: 'DocType',
-    persistent: true,
+    credentialItem: true,
   },
   {
-    identifier: 'identity.documentId.number',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Document:number',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
   },
 
   {
-    identifier: 'identity.documentId.DateOfExpiry',
-    type: 'Date',
-    persistent: true,
+    identifier: 'civ:Document:DateOfExpiry',
+    version: 'v1.0.0',
+    type: 'civ:Type:Date',
+    credentialItem: true,
   },
   {
-    identifier: 'identity.documentId.DateOfBirth', // We what to have both avaliable for requestors (for convinience)
-    type: 'Date',
-    persistent: true,
-    alsoKnown: ['identity.DateOfBirth'], // A good use case for aliasing
+    identifier: 'civ:Document:DateOfBirth',
+    version: 'v1.0.0',
+    type: 'civ:Type:Date',
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:DateOfBirth'],
   },
 ];
 
-export { builtInTypedefs, definitions };
+export default definitions;
