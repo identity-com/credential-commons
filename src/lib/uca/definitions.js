@@ -6,168 +6,177 @@
 // Changed: to lower case pattern UCA to Uca
 const definitions = [
   {
-    identifier: 'civic:200180528:name.first',
-    type: String,
+    identifier: 'civ:Identity:name.first',
+    version: 'v1.0.0',
+    type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'civic:200180528:firstName',
-    type: String,
+    identifier: 'civ:Identity:firstName',
+    version: 'v1.0.0',
+    type: 'String',
     credentialItem: true,
-    alsoKnown: ['civic:200180528:name.first'],
+    alsoKnown: ['civ:Identity:name.first'],
   },
   {
-    identifier: 'civic:200180528:givenName',
-    type: String,
+    identifier: 'civ:Identity:givenName',
+    version: 'v1.0.0',
+    type: 'String',
     credentialItem: true,
-    alsoKnown: ['civic:200180528:name.first'],
+    alsoKnown: ['civ:Identity:name.first'],
   },
   {
-    identifier: 'civic:200180528:name.middle',
-    type: String,
-    credentialItem: true,
-  },
-  {
-    identifier: 'civic:200180528:name.last',
-    type: String,
+    identifier: 'civ:Identity:name.middle',
+    version: 'v1.0.0',
+    type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'civic:200180528:name.nickname',
-    type: String,
+    identifier: 'civ:Identity:name.last',
+    version: 'v1.0.0',
+    type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'civic:200180528:name.username',
-    type: String,
+    identifier: 'civ:Identity:name.nickname',
+    version: 'v1.0.0',
+    type: 'String',
     credentialItem: true,
-    alsoKnown: ['civic:200180528:name.nickname'], // We can create alias (more precise dataSources)
   },
   {
-    identifier: 'ShortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
-    type: {
-      extend: 'String',
-      pattern: /^\d{5}$/, // We can specify a constraint to define the type domain
-    },
+    identifier: 'civ:Identity:name.username',
+    version: 'v1.0.0',
+    type: 'String',
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:name.nickname'], // We can create alias (more precise dataSources)
+  },
+  {
+    identifier: 'civ:Type:ShortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
+    version: 'v1.0.0',
+    type: 'String',
+    pattern: /^\d{5}$/, // We can specify a constraint to define the type domain
     credentialItem: false,
   },
   {
-    identifier: 'civic:200180528:verifyPhoneNumberToken',
-    type: 'ShortToken',
+    identifier: 'civ:Verify:phoneNumber.Token',
+    version: 'v1.0.0',
+    type: 'civ:Type:ShortToken',
     credentialItem: false, // An example on UCA that only relates with the user in short term
   },
   {
-    identifier: 'civic:200180528:verifyEmailToken',
-    type: 'ShortToken',
+    identifier: 'civ:Verify:email.Token',
+    version: 'v1.0.0',
+    type: 'civ:Type:ShortToken',
     credentialItem: false,
   },
   {
-    identifier: 'civic:200180528:name', // We can define a new identifier and the structure at same definition
+    identifier: 'civ:Identity:name', // We can define a new identifier and the structure at same definition
+    version: 'v1.0.0',
     type: {
       properties: [{
         name: 'first', // We need a key for templating and regex
-        type: 'civic:200180528:name.first', // OR a type
-        required: true,
+        type: 'civ:Identity:name.first', // OR a type
       },
       {
         name: 'middle',
-        type: 'civic:200180528:name.middle',
-        required: false,
+        type: 'civ:Identity:name.middle',
       },
       {
-        key: 'last',
-        type: 'civic:200180528:name.last',
-        required: false,
+        name: 'last',
+        type: 'civ:Identity:name.last',
       },
       {
-        key: 'nickname',
-        type: 'civic:200180528:name.nickname',
-        required: false,
+        name: 'nickname',
+        type: 'civ:Identity:name.nickname',
       },
       ],
-      toString: '', // We need to define how we serialize structures
-      fromString: /(?:<first>\S+) \((?:<aka>\S*)\), (?:<middle>\S+) (?:<last>\S+)/, // And how we deserialize too
+      required: ['first'],
     },
+    credentialItem: true,
   },
   {
-    identifier: 'Day',
-    type: Number,
+    identifier: 'civ:Type:Day',
+    version: 'v1.0.0',
+    type: 'Number',
     minimum: 0,
     exclusiveMinimum: true,
     maximum: 32,
-    exclusiveMaximum: true
+    exclusiveMaximum: true,
   },
   {
-    identifier: 'Month',
-    type: Number,
+    identifier: 'civ:Type:Month',
+    version: 'v1.0.0',
+    type: 'Number',
     minimum: 0,
     exclusiveMinimum: true,
     maximum: 13,
-    exclusiveMaximum: true
+    exclusiveMaximum: true,
   },
   {
-    identifier: 'Year',
-    type: Number,
+    identifier: 'civ:Type:Year',
+    version: 'v1.0.0',
+    type: 'Number',
     minimum: 0,
     exclusiveMinimum: true,
-    maximum: 13,
-    exclusiveMaximum: true
   },
   {
-    identifier: 'Date',
+    identifier: 'civ:Type:Date',
+    version: 'v1.0.0',
     type: {
       properties: [{
-        key: 'day',
-        type: 'Day',
-        required: true,
+        name: 'day',
+        type: 'civ:Type:Day',
       },
       {
-        key: 'month',
-        type: 'Month',
-        required: false,
+        name: 'month',
+        type: 'civ:Type:Month',
       },
       {
-        key: 'year',
-        type: 'Year',
-        required: true,
+        name: 'year',
+        type: 'civ:Type:Year',
       },
       ],
-      toString: '${year}-${month}-${day}',
-      fromString: /\S*/, // this a place holder :-)
+      required: ['day', 'month', 'year'],
     },
   },
   {
-    identifier: 'civic:200180528:DateOfBirth',
-    type: 'Date',
+    identifier: 'civ:Identity:DateOfBirth',
+    version: 'v1.0.0',
+    type: 'civ:Type:Date',
     credentialItem: true,
   },
   {
     type: {
-      name: 'DocType',
+      identifier: 'civ:Type:DocType',
+      name: 'DocType', // TODO ENUM
     },
   },
   {
-    identifier: 'civic:200180528:documentId.type',
+    identifier: 'civ:Document:type',
+    version: 'v1.0.0',
     type: 'DocType',
     credentialItem: true,
   },
   {
-    identifier: 'civic:200180528:documentId.number',
-    type: String,
+    identifier: 'civ:Document:number',
+    version: 'v1.0.0',
+    type: 'String',
     credentialItem: true,
   },
 
   {
-    identifier: 'civic:200180528:documentId.DateOfExpiry',
-    type: 'Date',
+    identifier: 'civ:Document:DateOfExpiry',
+    version: 'v1.0.0',
+    type: 'civ:Type:Date',
     credentialItem: true,
   },
   {
-    identifier: 'civic:200180528:.DateOfBirth',
-    type: 'Date',
+    identifier: 'civ:Document:DateOfBirth',
+    version: 'v1.0.0',
+    type: 'civ:Type:Date',
     credentialItem: true,
-    alsoKnown: ['civic:200180528:DateOfBirth'],
-  }
+    alsoKnown: ['civ:Identity:DateOfBirth'],
+  },
 ];
 
-export default { definitions };
+export default definitions;
