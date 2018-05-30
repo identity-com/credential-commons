@@ -4,7 +4,7 @@
   "author": "Civic",
   "license": "UNLICENSED",
   "description": "Verifiable Credential and Attestation Library",
-  "private": "true",
+  "private": true,
   "keywords": [
     "webpack",
     "boilerplate",
@@ -51,9 +51,12 @@
     "ajv": "^6.5.0",
     "bluebird": "^3.5.1",
     "civic-log": "github:civicteam/civic-log",
+    "generate-schema": "^2.6.0",
+    "json-format": "^1.0.1",
     "lodash": "4.17.10",
     "merkle-tools": "^1.4.0",
     "sjcl": "github:civicteam/sjcl#v1.0.7-ecc",
+    "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0"
   },
   "jest": {

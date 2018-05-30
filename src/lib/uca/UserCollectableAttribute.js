@@ -1,8 +1,8 @@
+import timestamp from 'unix-timestamp';
+import sjcl from 'sjcl';
 import _ from 'lodash';
 import definitions from './definitions';
 import logger from '../config';
-import timestamp from 'unix-timestamp';
-import sjcl from 'sjcl';
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
