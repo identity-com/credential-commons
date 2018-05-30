@@ -1,7 +1,8 @@
+import _ from 'lodash';
 import timestamp from 'unix-timestamp';
 import sjcl from 'sjcl';
-import _ from 'lodash';
 import definitions from './definitions';
+import SecureRandom from '../SecureRandom';
 import logger from '../config';
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
@@ -28,13 +29,13 @@ function isValid(value, type, definition) {
   switch (type) {
     case 'String':
       return (definition.pattern ? definition.pattern.test(value) : true) &&
-             (definition.minimumLength ? value.length >= definition.minimumLength : true) &&
-             (definition.maximumLength ? value.length <= definition.minimumLength : true);
+        (definition.minimumLength ? value.length >= definition.minimumLength : true) &&
+        (definition.maximumLength ? value.length <= definition.minimumLength : true);
     case 'Number':
       return ((!_.isNil(definition.minimum) &&
-             definition.exclusiveMinimum ? value > definition.minimum : value >= definition.minimum) || _.isNil(definition.minimum)) &&
-             ((!_.isNil(definition.maximum) &&
-              definition.exclusiveMaximum ? value < definition.maximum : value <= definition.maximum) || _.isNil(definition.maximum));
+        definition.exclusiveMinimum ? value > definition.minimum : value >= definition.minimum) || _.isNil(definition.minimum)) &&
+        ((!_.isNil(definition.maximum) &&
+        definition.exclusiveMaximum ? value < definition.maximum : value <= definition.maximum) || _.isNil(definition.maximum));
     case 'Boolean':
       return _.isBoolean(value);
     default:
@@ -55,12 +56,12 @@ function getTypeName(definition) {
 
     return definition.type;
   }
-  return `Object:${definition.identifier}`;
+  return 'Object';
 }
 
 function resolveType(definition) {
   const typeName = getTypeName(definition);
-  if (!_.startsWith(typeName, 'Object:')) {
+  if (!(typeName === 'Object')) {
     return typeName;
   }
 
@@ -99,8 +100,7 @@ function UCABaseConstructor(identifier, value, version) {
       throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
     }
     this.value = value;
-
-    this.salt = '95c675e24109c1f107dc585cb92939f92bf48a394a8c715118f62b8c8df9231f'; // TODO
+    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(SecureRandom.wordWith(64)));
   } else if (_.isEmpty(definition.type.properties)) {
     throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
   } else {
@@ -119,14 +119,45 @@ function UCABaseConstructor(identifier, value, version) {
   this.getAttestableValue = () => {
     switch (this.type) {
       case 'String':
-        return `${this.timestamp}:${this.salt}:${this.value}`;
+        return `s:${this.salt}:${this.value}`;
       case 'Number':
-        return `${this.timestamp}:${this.salt}:${this.value.toString().padStart(8, '0')}`;
+        return `n:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`;
       case 'Boolean':
-        return `${this.timestamp}:${this.salt}:${this.value}`;
+        return `b:${this.salt}:${this.value}`;
       default:
         return _.reduce(_.sortBy(_.keys(this.value)), (s, k) => `${s}${this.value[k].getAttestableValue()}|`, '');
     }
+  };
+
+  this.getClaimRootPropertyName = () => {
+    const identifierComponentes = _.split(this.identifier, ':');
+    return _.lowerCase(identifierComponentes[1]);
+  };
+
+  this.getClaimPropertyName = () => {
+    const identifierComponentes = _.split(this.identifier, ':');
+    return identifierComponentes[2];
+  };
+
+  this.getClaimPath = () => {
+    const identifierComponentes = _.split(this.identifier, ':');
+    const baseName = _.lowerCase(identifierComponentes[1]);
+    return `${baseName}.${identifierComponentes[2]}`;
+  };
+
+  this.getAttestableValues = () => {
+    const values = [];
+    const def = _.find(definitions, { identifier: this.identifier, version: this.version });
+    if (def.credentialItem || def.attestable) {
+      values.push({ identifier: this.identifier, value: this.getAttestableValue() });
+      if (this.type === 'Object') {
+        _.forEach(_.keys(this.value), (k) => {
+          const innerValues = this.value[k].getAttestableValues();
+          _.reduce(innerValues, (res, iv) => res.push(iv), values);
+        });
+      }
+    }
+    return values;
   };
 
   this.getPretyValue = (propName) => {
@@ -186,5 +217,12 @@ _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
   _.mixin(UCA, source);
 });
 
+// UCA.getDefinition = (identifier, version) => {
+//   const def = version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier, version });
+//   if (!def) {
+//     throw new Error(`UCA Definition ${identifier} ${version} not found`);
+//   }
+//   return def;
+// };
 
 export default UCA;

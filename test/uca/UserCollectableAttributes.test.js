@@ -91,7 +91,7 @@ describe('UCA Constructions tests', () => {
     };
     const v = new UCA(identifier, value);
     expect(v).toBeDefined();
-    expect(v.type).toEqual('Object:civ:Identity:name');
+    expect(v.type).toEqual('Object');
   });
 
   test('UCA has correct object value', () => {
@@ -136,5 +136,13 @@ describe('UCA Constructions tests', () => {
     console.log(JSON.stringify(v, null, 2));
     console.log(v.getAttestableValue());
     console.log(v.getPretyValue());
+  });
+
+  test('UCA return Attestatble values', () => {
+    const v = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    expect(v).toBeDefined();
+    const attValues = v.getAttestableValues();
+    console.log(attValues);
+    expect(attValues).toHaveLength(4);
   });
 });
