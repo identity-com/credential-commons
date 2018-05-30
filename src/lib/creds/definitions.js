@@ -6,7 +6,7 @@ const definitions = [
       'civ:Identity:name',
       'civ:Identity:DateOfBirth',
     ],
-    exclude: [
+    excludes: [
       'civ:Identity:name.middle',
     ],
   },

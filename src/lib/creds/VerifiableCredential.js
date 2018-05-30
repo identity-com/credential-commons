@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import timestamp from 'unix-timestamp';
 import Merkletools from 'merkle-tools';
 import sjcl from 'sjcl';
 import definitions from './definitions';
@@ -93,11 +92,22 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
   }
 
   const definition = version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier });
+  if (!definition) {
+    throw new Error(`Credential definition for ${identifier} v${version} not found`);
+  }
   this.version = version || definition.version;
   this.type = ['Credential', identifier];
 
   this.claims = new ClaimModel(ucas);
   this.signature = new CivicMerkleProof(ucas);
+
+  if (!_.isEmpty(definition.excludes)) {
+    const removed = _.remove(this.signature.leaves, el => _.includes(definition.excludes, el.identifier));
+    _.forEach(removed, (r) => {
+      _.unset(this.claims, r.claimPath);
+    });
+  }
+
 
   return this;
 }
