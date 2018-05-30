@@ -1,65 +1,15 @@
-// const definitions = [
-//   {
-//     identifier: 'civ:cred:CivicBasic',
-//     version: 'v1.0.0',
-//     depends: [
-//       'civ:Contact:email',
-//       'civ:Contact:phone.countryCode',
-//       { identifier: 'civ:Contact:phone.number', version: 'v1.0.0' },
-//     ],
-//     expose: [
-//       'civ:Contact:email',
-//       'civ:Contact:email.domain',
-//       'civ:Contact:phone.countryCode',
-//       { identifier: 'civ:Contact:phone.number', version: 'v1.0.0' },
-//     ],
-//   },
-//   {
-//     identifier: 'civ:cred:Address',
-//     version: 'v1.0.0',
-//     expose: [
-//       'civ:Contact:address.street',
-//       'civ:Contact:address.unit',
-//       'civ:Contact:address.street',
-//       'civ:Contact:address.unit',
-//       'civ:Contact:address.city',
-//       'civ:Contact:address.zipCode',
-//       'civ:Contact:address.state',
-//       'civ:Contact:address.county',
-//       'civ:Contact:address.country',
-//     ],
-//   },
-//   {
-//     identifier: 'civ:cred:Document',
-//     version: 'v1.0.0',
-//     expose: [
-//       'civ:Identity:document.type',
-//       'civ:Identity:document.number',
-//       'civ:Identity:document.name',
-//       'civ:Identity:document.given_names',
-//       'civ:Identity:document.surname',
-//       'civ:Identity:document.sex',
-//       'civ:Identity:document.issueLocation',
-//       'civ:Identity:document.issueAuthority',
-//       'civ:Identity:document.dateOfBirth',
-//       'civ:Identity:document.dateOfIssue',
-//       'civ:Identity:document.dateOfExpiry',
-//       'civ:Identity:document.image.file',
-//       'civ:Identity:document.image.md5',
-//       'civ:Identity:document.street',
-//       'civ:Identity:document.unit',
-//       'civ:Identity:document.city',
-//       'civ:Identity:document.state',
-//       'civ:Identity:document.zipCode',
-//       'civ:Identity:document.country',
-//       'civ:Identity:selfie.file',
-//       'civ:Identity:selfie.md5',
-//     ],
-//     expiry: {
-//       in: null,
-//       at: 'civ:Identity:document.dateOfExpiry',
-//     },
-//   },
-// ];
+const definitions = [
+  {
+    identifier: 'civ:cred:Test',
+    version: '1',
+    depends: [
+      'civ:Identity:name',
+      'civ:Identity:DateOfBirth',
+    ],
+    exclude: [
+      'civ:Identity:name.middle',
+    ],
+  },
+];
 
-// export default definitions;
+export default definitions;

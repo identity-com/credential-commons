@@ -6,72 +6,78 @@
 // Changed: to lower case pattern UCA to Uca
 const definitions = [
   {
+    identifier: 'civ:Randon:node',
+    version: '1',
+    type: 'String',
+    attestable: true,
+  },
+  {
     identifier: 'civ:Identity:name.first',
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'civ:Identity:firstName',
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     credentialItem: true,
     alsoKnown: ['civ:Identity:name.first'],
   },
   {
     identifier: 'civ:Identity:givenName',
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     credentialItem: true,
     alsoKnown: ['civ:Identity:name.first'],
   },
   {
     identifier: 'civ:Identity:name.middle',
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'civ:Identity:name.last',
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'civ:Identity:name.nickname',
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'civ:Identity:name.username',
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     credentialItem: true,
     alsoKnown: ['civ:Identity:name.nickname'], // We can create alias (more precise dataSources)
   },
   {
     identifier: 'civ:Type:ShortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     pattern: /^\d{5}$/, // We can specify a constraint to define the type domain
     credentialItem: false,
   },
   {
     identifier: 'civ:Verify:phoneNumber.Token',
-    version: 'v1.0.0',
+    version: '1',
     type: 'civ:Type:ShortToken',
     credentialItem: false, // An example on UCA that only relates with the user in short term
   },
   {
     identifier: 'civ:Verify:email.Token',
-    version: 'v1.0.0',
+    version: '1',
     type: 'civ:Type:ShortToken',
     credentialItem: false,
   },
   {
     identifier: 'civ:Identity:name', // We can define a new identifier and the structure at same definition
-    version: 'v1.0.0',
+    version: '1',
     type: {
       properties: [{
         name: 'first', // We need a key for templating and regex
@@ -96,7 +102,7 @@ const definitions = [
   },
   {
     identifier: 'civ:Type:Day',
-    version: 'v1.0.0',
+    version: '1',
     type: 'Number',
     minimum: 0,
     exclusiveMinimum: true,
@@ -105,7 +111,7 @@ const definitions = [
   },
   {
     identifier: 'civ:Type:Month',
-    version: 'v1.0.0',
+    version: '1',
     type: 'Number',
     minimum: 0,
     exclusiveMinimum: true,
@@ -114,14 +120,14 @@ const definitions = [
   },
   {
     identifier: 'civ:Type:Year',
-    version: 'v1.0.0',
+    version: '1',
     type: 'Number',
     minimum: 0,
     exclusiveMinimum: true,
   },
   {
     identifier: 'civ:Type:Date',
-    version: 'v1.0.0',
+    version: '1',
     type: {
       properties: [{
         name: 'day',
@@ -141,7 +147,7 @@ const definitions = [
   },
   {
     identifier: 'civ:Identity:DateOfBirth',
-    version: 'v1.0.0',
+    version: '1',
     type: 'civ:Type:Date',
     credentialItem: true,
   },
@@ -153,26 +159,26 @@ const definitions = [
   },
   {
     identifier: 'civ:Document:type',
-    version: 'v1.0.0',
+    version: '1',
     type: 'DocType',
     credentialItem: true,
   },
   {
     identifier: 'civ:Document:number',
-    version: 'v1.0.0',
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:DateOfExpiry',
-    version: 'v1.0.0',
+    version: '1',
     type: 'civ:Type:Date',
     credentialItem: true,
   },
   {
     identifier: 'civ:Document:DateOfBirth',
-    version: 'v1.0.0',
+    version: '1',
     type: 'civ:Type:Date',
     credentialItem: true,
     alsoKnown: ['civ:Identity:DateOfBirth'],
