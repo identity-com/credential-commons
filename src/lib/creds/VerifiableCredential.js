@@ -41,16 +41,17 @@ class CivicMerkleProof {
       this.leaves[idx].targetHash = hash;
       this.leaves[idx].proof = merkleTools.getProof(idx);
     });
-    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'civ:Randon:node'));
+    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'civ:Random:node'));
     this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
   }
 
   static padTree(nodes) {
     const currentLength = nodes.length;
-    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
+    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS :
+      _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
-      newNodes.push(new UCA('civ:Randon:node', SecureRandon.wordWith(16)));
+      newNodes.push(new UCA('civ:Random:node', SecureRandon.wordWith(16)));
     }
     return newNodes;
   }
@@ -71,7 +72,6 @@ class CivicMerkleProof {
 class ClaimModel {
   constructor(ucas) {
     _.forEach(ucas, (uca) => {
-      console.log(`uca${JSON.stringify(uca)}`);
       const rootPropertyName = uca.getClaimRootPropertyName();
       if (!this[rootPropertyName]) {
         this[rootPropertyName] = {};
@@ -80,7 +80,6 @@ class ClaimModel {
     });
   }
 }
-
 
 function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) {
   this.id = null;
