@@ -5,10 +5,10 @@ workflows:
   build-and-deploy:
     jobs:
       - build:
-        filters:
-          branches:
-            only:
-              - develop
+          filters:
+            branches:
+              only:
+                - develop
 
 jobs:
   build:
