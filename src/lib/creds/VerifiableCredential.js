@@ -15,7 +15,10 @@ function getClaimPath(identifier) {
   return `${baseName}.${identifierComponentes[2]}`;
 }
 
-const validIdentifiers = _.map(definitions, d => d.identifier);
+function validIdentifiers() {
+  const vi = _.map(definitions, d => d.identifier);
+  return vi;
+}
 
 class CivicMerkleProof {
   static get PADDING_INCREMENTS() {
@@ -86,11 +89,11 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
   this.issuer = issuer;
   this.issued = (new Date()).toISOString();
 
-  if (!_.includes(validIdentifiers, identifier)) {
+  if (!_.includes(validIdentifiers(), identifier)) {
     throw new Error(`${identifier} is not defined`);
   }
 
-  const definition = version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier });
+  const definition = version ? _.find(definitions, { identifier, version: `${version}` }) : _.find(definitions, { identifier });
   if (!definition) {
     throw new Error(`Credential definition for ${identifier} v${version} not found`);
   }
