@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/civicteam/node-module-boilerplate-webpack"
+    "url": "git@github.com:civicteam/civic-credentials-commons-js"
   },
   "main": "src/index.js",
   "scripts": {
@@ -50,12 +50,12 @@
   "dependencies": {
     "ajv": "^6.5.0",
     "bluebird": "^3.5.1",
-    "civic-log": "github:civicteam/civic-log",
+    "civic-log": "civicteam/civic-log#2.0.4",
     "generate-schema": "^2.6.0",
     "json-format": "^1.0.1",
     "lodash": "4.17.10",
     "merkle-tools": "^1.4.0",
-    "sjcl": "github:civicteam/sjcl#v1.0.7-ecc",
+    "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0"
   },
