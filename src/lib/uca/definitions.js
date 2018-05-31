@@ -194,132 +194,112 @@ const definitions = [
     identifier: 'civ:Document:genericId.number',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:genericId.name',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
-    identifier: 'civ:Document:genericId.given_names',
+    identifier: 'civ:Document:genericId.given.names',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:genericId.surname',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:genericId.sex',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:genericId.issueLocation',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:genericId.issueAuthority',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:genericId.image',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
-    identifier: 'civ:Document:genericId.image_md5',
+    identifier: 'civ:Document:genericId.image.md5',
     version: 'v1',
     type: 'String',
-  },
-
-  {
-    identifier: 'civ:Document:genericId.street',
-    version: 'v1',
-    type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:genericId.unit',
     version: 'v1',
     type: 'String',
-  },
-
-  {
-    identifier: 'civ:Document:genericId.city',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Document:genericId.state',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Document:genericId.zipCode',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Document:genericId.country',
-    version: 'v1',
-    type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:idCard.number',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
-    identifier: 'civ:Document:idCard.country',
+    identifier: 'civ:Document:idCard.address',
     version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Document:idCard.state',
-    version: 'v1',
-    type: 'String',
+    type: 'civ:Type:Address',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:idCard.name',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
-    identifier: 'civ:Document:idCard.given_names',
+    identifier: 'civ:Document:idCard.given.names',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:idCard.surname',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:idCard.sex',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
@@ -332,144 +312,92 @@ const definitions = [
     identifier: 'civ:Document:idCard.issueAuthority',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:idCard.image',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
-    identifier: 'civ:Document:idCard.image_md5',
+    identifier: 'civ:Document:idCard.image.md5',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.number',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.name',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
-    identifier: 'civ:Document:driversLicense.given_names',
+    identifier: 'civ:Document:driversLicense.given.names',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.surname',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.type',
     version: 'v1',
     type: 'String',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.country',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.state',
-    version: 'v1',
-    type: 'String',
+    credentialItem: true,
+    values: ['A', 'B', 'C', 'D', 'E'],
   },
 
   {
     identifier: 'civ:Document:driversLicense.issueLocation',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.issueAuthority',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.dateOfIssue',
     version: 'v1',
     type: 'civ:Type:Date',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfIssue.day',
-    version: 'v1',
-    type: 'civ:Type:Day',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfIssue.month',
-    version: 'v1',
-    type: 'civ:Type:Month',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfIssue.year',
-    version: 'v1',
-    type: 'civ:Type:Year',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.dateOfExpiry',
     version: 'v1',
     type: 'civ:Type:Date',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfExpiry.day',
-    version: 'v1',
-    type: 'civ:Type:Day',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfExpiry.month',
-    version: 'v1',
-    type: 'civ:Type:Month',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfExpiry.year',
-    version: 'v1',
-    type: 'civ:Type:Year',
+    credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.dateOfBirth',
     version: 'v1',
     type: 'civ:Type:Date',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfBirth.day',
-    version: 'v1',
-    type: 'civ:Type:Day',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfBirth.month',
-    version: 'v1',
-    type: 'civ:Type:Month',
-  },
-
-  {
-    identifier: 'civ:Document:driversLicense.dateOfBirth.year',
-    version: 'v1',
-    type: 'civ:Type:Year',
+    credentialItem: true,
   },
 
   {
@@ -481,7 +409,7 @@ const definitions = [
   {
     identifier: 'civ:Document:driversLicense.address',
     version: 'v1',
-    type: 'String',
+    type: 'civ:Type:Address',
   },
 
   {
@@ -521,7 +449,7 @@ const definitions = [
   },
 
   {
-    identifier: 'civ:Document:passport.issuing_country',
+    identifier: 'civ:Document:passport.issuing.country',
     version: 'v1',
     type: 'String',
   },
@@ -533,7 +461,7 @@ const definitions = [
   },
 
   {
-    identifier: 'civ:Document:passport.given_names',
+    identifier: 'civ:Document:passport.given.names',
     version: 'v1',
     type: 'String',
   },
@@ -554,24 +482,6 @@ const definitions = [
     identifier: 'civ:Document:passport.dateOfBirth',
     version: 'v1',
     type: 'civ:Type:Date',
-  },
-
-  {
-    identifier: 'civ:Document:passport.dateOfBirth.day',
-    version: 'v1',
-    type: 'civ:Type:Day',
-  },
-
-  {
-    identifier: 'civ:Document:passport.dateOfBirth.month',
-    version: 'v1',
-    type: 'civ:Type:Month',
-  },
-
-  {
-    identifier: 'civ:Document:passport.dateOfBirth.year',
-    version: 'v1',
-    type: 'civ:Type:Year',
   },
 
   {
@@ -605,24 +515,6 @@ const definitions = [
   },
 
   {
-    identifier: 'civ:Document:passport.dateOfIssue.day',
-    version: 'v1',
-    type: 'civ:Type:Day',
-  },
-
-  {
-    identifier: 'civ:Document:passport.dateOfIssue.month',
-    version: 'v1',
-    type: 'civ:Type:Month',
-  },
-
-  {
-    identifier: 'civ:Document:passport.dateOfIssue.year',
-    version: 'v1',
-    type: 'civ:Type:Year',
-  },
-
-  {
     identifier: 'civ:Document:passport.dateOfExpiry.day',
     version: 'v1',
     type: 'civ:Type:Day',
@@ -653,7 +545,7 @@ const definitions = [
   },
 
   {
-    identifier: 'civ:Document:passport.image_md5',
+    identifier: 'civ:Document:passport.image.md5',
     version: 'v1',
     type: 'String',
   },
@@ -675,103 +567,43 @@ const definitions = [
   },
 
   {
-    identifier: 'civ:Contact:personal.email',
+    identifier: 'civ:Contact:personal',
     version: 'v1',
-    type: 'civ:Type:Email', // TODO review jpsantosbh
+    type: 'civ:Type:Address',
   },
 
   {
-    identifier: 'civ:Contact:personal.email.user',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.email.domain',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Identity:identityNumber',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.address.street',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.address.unit',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.address.city',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.address.zipCode',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.address.state',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.address.county',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.address.country',
-    version: 'v1',
-    type: 'String',
-  },
-
-  {
-    identifier: 'civ:Contact:personal.address',
+    identifier: 'civ:Address',
     version: '1',
     type: {
       properties: [
         {
           name: 'street',
-          identifier: 'civ:Contact:personal.address.street',
+          identifier: 'civ:Address.street',
         },
         {
           name: 'unit',
-          identifier: 'civ:Contact:personal.address.unit',
+          identifier: 'civ:Address.unit',
         },
         {
           name: 'city',
-          identifier: 'civ:Contact:personal.address.city',
+          identifier: 'civ:Address.city',
         },
         {
           name: 'zipCode',
-          identifier: 'civ:Contact:personal.address.zipCode',
+          identifier: 'civ:Address.zipCode',
         },
         {
           name: 'state',
-          identifier: 'civ:Contact:personal.address.state',
+          identifier: 'civ:Address.state',
         },
         {
           name: 'county',
-          identifier: 'civ:Contact:personal.address.county',
+          identifier: 'civ:Address.county',
         },
         {
           name: 'country',
-          identifier: 'civ:Contact:personal.address.country',
+          identifier: 'civ:Address.country',
         },
       ],
       required: ['country'],

@@ -1,4 +1,4 @@
-import Type from 'type-of-is';
+const Type = require('type-of-is');
 /* eslint-disable no-use-before-define */
 // Constants
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
