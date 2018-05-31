@@ -47,7 +47,7 @@ function isValid(value, type, definition) {
  * extract the expected Type name for the value when constructin an UCA
  * @param {*} definition
  */
-function getTypeName(definition) {
+const getTypeName = (definition) => {
   if (_.isString(definition.type)) {
     if (_.includes(validIdentifiers, definition.type)) {
       const innerDefinition = _.find(definitions, { identifier: definition.type });
@@ -59,7 +59,7 @@ function getTypeName(definition) {
   return 'Object';
 }
 
-function resolveType(definition) {
+const resolveType = (definition) => {
   const typeName = getTypeName(definition);
   if (!(typeName === 'Object')) {
     return typeName;
@@ -225,4 +225,4 @@ _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
 //   return def;
 // };
 
-export default UCA;
+export { UCA, getTypeName, resolveType };

@@ -1,4 +1,4 @@
-import UCA from '../../src/lib/uca/UserCollectableAttribute';
+import { UCA } from '../../src/lib/uca/UserCollectableAttribute';
 
 describe('UCA Constructions tests', () => {
   test('UCA construction should fails', () => {

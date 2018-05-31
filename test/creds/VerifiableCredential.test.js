@@ -1,5 +1,5 @@
 import VC from '../../src/lib/creds/VerifiableCredential';
-import UCA from '../../src/lib/uca/UserCollectableAttribute';
+import { UCA } from '../../src/lib/uca/UserCollectableAttribute';
 
 VC.__Rewire__('definitions', [
   {

@@ -147,7 +147,12 @@ const definitions = [
   {
     identifier: 'civ:Identity:DateOfBirth',
     version: '1',
-    type: 'civ:Type:Date',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
     credentialItem: true,
   },
   {
@@ -173,13 +178,23 @@ const definitions = [
   {
     identifier: 'civ:Document:DateOfExpiry',
     version: '1',
-    type: 'civ:Type:Date',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
     credentialItem: true,
   },
   {
     identifier: 'civ:Document:DateOfBirth',
     version: '1',
-    type: 'civ:Type:Date',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
     credentialItem: true,
     alsoKnown: ['civ:Identity:DateOfBirth'],
   },
@@ -382,21 +397,36 @@ const definitions = [
   {
     identifier: 'civ:Document:driversLicense.dateOfIssue',
     version: 'v1',
-    type: 'civ:Type:Date',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
     credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.dateOfExpiry',
     version: 'v1',
-    type: 'civ:Type:Date',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
     credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.dateOfBirth',
     version: 'v1',
-    type: 'civ:Type:Date',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
     credentialItem: true,
   },
 
@@ -481,7 +511,12 @@ const definitions = [
   {
     identifier: 'civ:Document:passport.dateOfBirth',
     version: 'v1',
-    type: 'civ:Type:Date',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
   },
 
   {
@@ -511,7 +546,12 @@ const definitions = [
   {
     identifier: 'civ:Document:passport.dateOfIssue',
     version: 'v1',
-    type: 'civ:Type:Date',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
   },
 
   {

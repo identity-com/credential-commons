@@ -57,6 +57,7 @@
     "json-format": "^1.0.1",
     "lodash": "4.17.10",
     "merkle-tools": "^1.4.0",
+    "randomstring": "^1.1.5",
     "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0"

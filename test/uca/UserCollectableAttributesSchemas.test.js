@@ -1,12 +1,19 @@
-import SchemaGenerator from '../../src/lib/uca/schemas/generator/schemaGenerator';
+import SchemaGenerator from '../../src/lib/uca/schemas/generator/SchemaGenerator';
 import definitions from '../../src/lib/uca/definitions';
+
+beforeAll(() => {
+  definitions.forEach((definition) => {
+    if (definition.identifier === 'civ:Identity:name') {
+      console.log(definition.identifier);
+      const schemaGenerator = new SchemaGenerator(definition);
+      const json = schemaGenerator.buildSampleJson();
+      console.log(json);
+    }
+  });
+});
 
 describe('UCA Constructions tests', () => {
   test('UCA construction should fails', async (done) => {
-    definitions.forEach((definition) => {
-      const schema = SchemaGenerator.process(definition.identifier, definition);
-      console.log(JSON.stringify(schema));
-    });
     done();
   });
 });

@@ -2,8 +2,8 @@ import _ from 'lodash';
 import Merkletools from 'merkle-tools';
 import sjcl from 'sjcl';
 import definitions from './definitions';
-import UCA from '../uca/UserCollectableAttribute';
-import SecureRandon from '../SecureRandom';
+import { UCA } from '../uca/UserCollectableAttribute';
+import SecureRandom from '../SecureRandom';
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
@@ -54,7 +54,7 @@ class CivicMerkleProof {
       _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
-      newNodes.push(new UCA('civ:Random:node', SecureRandon.wordWith(16)));
+      newNodes.push(new UCA('civ:Random:node', SecureRandom.wordWith(16)));
     }
     return newNodes;
   }
