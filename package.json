@@ -4,7 +4,7 @@
   "author": "Civic",
   "license": "UNLICENSED",
   "description": "Verifiable Credential and Attestation Library",
-  "private": "true",
+  "private": true,
   "keywords": [
     "webpack",
     "boilerplate",
@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/civicteam/node-module-boilerplate-webpack"
+    "url": "git@github.com:civicteam/civic-credentials-commons-js"
   },
   "main": "src/index.js",
   "scripts": {
@@ -31,6 +31,7 @@
     "babel-eslint": "^8.2.3",
     "babel-jest": "^22.4.3",
     "babel-loader": "^7.1.4",
+    "babel-plugin-rewire": "^1.1.0",
     "babel-preset-env": "^1.7.0",
     "clean-webpack-plugin": "0.1.16",
     "eslint": "^4.3.0",
@@ -42,6 +43,7 @@
     "html-webpack-plugin": "^3.2.0",
     "jest": "^22.4.3",
     "jest-html-reporter": "^2.3.0",
+    "rewire": "^4.0.1",
     "webpack": "^4.8.3",
     "webpack-cli": "^2.1.3",
     "webpack-dev-server": "^3.1.4",
@@ -50,11 +52,19 @@
   "dependencies": {
     "ajv": "^6.5.0",
     "bluebird": "^3.5.1",
-    "lodash": "4.17.10"
+    "civic-log": "civicteam/civic-log#2.0.4",
+    "generate-schema": "^2.6.0",
+    "json-format": "^1.0.1",
+    "lodash": "4.17.10",
+    "merkle-tools": "^1.4.0",
+    "randomstring": "^1.1.5",
+    "sjcl": "civicteam/sjcl#v1.0.7-ecc",
+    "type-of-is": "^3.5.1",
+    "unix-timestamp": "^0.2.0"
   },
   "jest": {
     "collectCoverageFrom": [
-      "**/src/*.{js}",
+      "**/src/**/*.{js}",
       "!**/node_modules/**",
       "!**/dist/**",
       "!**/vendor/**"

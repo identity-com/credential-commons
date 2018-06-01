@@ -1,183 +1,664 @@
 /* eslint-disable no-template-curly-in-string */
 // ######################################### DEFINITIONS ###########################################
-// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
-// TODO jpsantosbh review please, changed from String to ES types
-const builtInTypedefs = [
-  {
-    name: 'String',
-  },
-  {
-    name: 'Number',
-  },
-  {
-    name: 'Boolean',
-  },
-];
 
 
 // That in consideration that this model is inpired by C++ language data definitions
 // Changed: to lower case pattern UCA to Uca
 const definitions = [
   {
-    identifier: 'identity.name.first', // Creating a new identifier is equivalent to a new Typedef
-    type: String,
-    persistent: true, // This indicates the the relation with the user is ephemeral or not
+    identifier: 'civ:Random:node',
+    version: '1',
+    type: 'String',
+    attestable: true,
   },
   {
-    identifier: 'identity.name.middle',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Identity:name.first',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
   },
   {
-    identifier: 'identity.name.last',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Identity:firstName',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:name.first'],
   },
   {
-    identifier: 'identity.nickname',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Identity:givenName',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:name.first'],
   },
   {
-    identifier: 'identity.name.aka',
-    type: String,
-    persistent: true,
+    identifier: 'civ:Identity:name.middle',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
   },
   {
-    identifier: 'identity.name.aka',
-    type: String,
-    persistent: true,
-    alsoKnown: ['identity.nickname'], // We can create alias (more precise dataSources)
+    identifier: 'civ:Identity:name.last',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
   },
   {
-    identifier: null, // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
-    Typedef: {
-      name: 'ShortToken',
-      extend: 'String',
-      constraint: /^\d{5}$/, // We can specify a constraint to define the type domain
-    },
+    identifier: 'civ:Identity:name.nickname',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
   },
   {
-    identifier: 'identity.contact.phoneNUmber.token',
-    type: 'ShortToken',
-    persistent: false, // An example on UCA that only relates with the user in short term
+    identifier: 'civ:Identity:name.username',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:name.nickname'], // We can create alias (more precise dataSources)
   },
   {
-    identifier: 'identity.contact.email.token',
-    type: 'ShortToken',
-    persistent: false,
+    identifier: 'civ:Type:ShortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
+    version: '1',
+    type: 'String',
+    pattern: /^\d{5}$/, // We can specify a constraint to define the type domain
+    credentialItem: false,
   },
   {
-    identifier: 'identity.name', // We can define a new identifier and the structure at same definition
-    Typedef: {
-      name: 'IdentityName',
-      components: [{
-        key: 'first', // We need a key for templating and regex
-        ref: 'identity.name.first', // We can define the type using a UCA identifier
-        type: null, // OR a type
-        required: true,
+    identifier: 'civ:Verify:phoneNumber.Token',
+    version: '1',
+    type: 'civ:Type:ShortToken',
+    credentialItem: false, // An example on UCA that only relates with the user in short term
+  },
+  {
+    identifier: 'civ:Verify:email.Token',
+    version: '1',
+    type: 'civ:Type:ShortToken',
+    credentialItem: false,
+  },
+  {
+    identifier: 'civ:Identity:name', // We can define a new identifier and the structure at same definition
+    version: '1',
+    type: {
+      properties: [{
+        name: 'first', // We need a key for templating and regex
+        type: 'civ:Identity:name.first', // OR a type
       },
       {
-        key: 'middle',
-        ref: 'identity.name.middle',
-        required: false,
+        name: 'middle',
+        type: 'civ:Identity:name.middle',
       },
       {
-        key: 'last',
-        ref: 'identity.name.last',
-        required: true,
+        name: 'last',
+        type: 'civ:Identity:name.last',
       },
       {
-        key: 'aka',
-        ref: 'identity.name.aka',
-        required: false,
+        name: 'nickname',
+        type: 'civ:Identity:name.nickname',
       },
       ],
-      toString: '${first} (${aka}), ${middle} ${last}', // We need to define how we serialize structures
-      fromString: /(?:<first>\S+) \((?:<aka>\S*)\), (?:<middle>\S+) (?:<last>\S+)/, // And how we deserialize too
+      required: ['first'],
     },
+    credentialItem: true,
   },
   {
-    identifier: null,
-    Typedef: {
-      name: 'Day',
-      extend: Number,
-      constraints: ['int()', 'gt(0)', 'lte(31)'], // If needed we can use a constrain set to define the domain
-    },
+    identifier: 'civ:Type:Day',
+    version: '1',
+    type: 'Number',
+    minimum: 0,
+    exclusiveMinimum: true,
+    maximum: 32,
+    exclusiveMaximum: true,
   },
   {
-    identifier: null,
-    Typedef: {
-      name: 'Month',
-      extend: Number,
-      constraints: ['int()', 'gt(0)', 'lte(12)'],
-    },
+    identifier: 'civ:Type:Month',
+    version: '1',
+    type: 'Number',
+    minimum: 0,
+    exclusiveMinimum: true,
+    maximum: 13,
+    exclusiveMaximum: true,
   },
   {
-    identifier: null,
-    Typedef: {
-      name: 'Year',
-      extend: Number,
-      constraints: ['int()', 'gt(0)', 'lte(12)'],
-    },
+    identifier: 'civ:Type:Year',
+    version: '1',
+    type: 'Number',
+    minimum: 0,
+    exclusiveMinimum: true,
   },
   {
-    identifier: null,
-    Typedef: {
-      name: 'Date',
-      components: [{
-        key: 'day',
-        type: 'Day',
-        required: true,
+    identifier: 'civ:Type:Date',
+    version: '1',
+    type: {
+      properties: [{
+        name: 'day',
+        type: 'civ:Type:Day',
       },
       {
-        key: 'month',
-        type: 'Month',
-        required: false,
+        name: 'month',
+        type: 'civ:Type:Month',
       },
       {
-        key: 'year',
-        type: 'Year',
-        required: true,
-      },
+        name: 'year',
+        type: 'civ:Type:Year',
+      }],
+      required: ['day', 'month', 'year'],
+    },
+  },
+  {
+    identifier: 'civ:Identity:DateOfBirth',
+    version: '1',
+    type: 'civ:Type:Date',
+    credentialItem: true,
+  },
+  {
+    identifier: 'civ:Document:number',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:DateOfExpiry',
+    version: '1',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
+    credentialItem: true,
+  },
+  {
+    identifier: 'civ:Document:DateOfBirth',
+    version: '1',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
+    credentialItem: true,
+    alsoKnown: ['civ:Identity:DateOfBirth'],
+  },
+
+  {
+    identifier: 'civ:Document:genericId.type',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:genericId.number',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.name',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.given.names',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.surname',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.sex',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.issueLocation',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.issueAuthority',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.image',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.image.md5',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:genericId.unit',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:idCard.number',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Type:Address.street',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.unit',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.city',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.zipCode',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.state',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.county',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.country',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address',
+    version: '1',
+    type: {
+      properties: [
+        {
+          name: 'street',
+          type: 'civ:Type:Address.street',
+        },
+        {
+          name: 'unit',
+          type: 'civ:Type:Address.unit',
+        },
+        {
+          name: 'city',
+          type: 'civ:Type:Address.city',
+        },
+        {
+          name: 'zipCode',
+          type: 'civ:Type:Address.zipCode',
+        },
+        {
+          name: 'state',
+          type: 'civ:Type:Address.state',
+        },
+        {
+          name: 'county',
+          type: 'civ:Type:Address.county',
+        },
+        {
+          name: 'country',
+          type: 'civ:Type:Address.country',
+        },
       ],
-      toString: '${year}-${month}-${day}',
-      fromString: /\S*/, // this a place holder :-)
+      required: ['country'],
     },
-  },
-  {
-    identifier: 'identity.DateOfBirth',
-    type: 'Date',
-    persistent: true,
-  },
-  {
-    Typedef: {
-      name: 'DocType',
-
-    },
-  },
-  {
-    identifier: 'identity.documentId.type',
-    type: 'DocType',
-    persistent: true,
-  },
-  {
-    identifier: 'identity.documentId.number',
-    type: String,
-    persistent: true,
+    credentialItem: true,
   },
 
   {
-    identifier: 'identity.documentId.DateOfExpiry',
-    type: 'Date',
-    persistent: true,
+    identifier: 'civ:Document:idCard.address',
+    version: 'v1',
+    type: 'civ:Type:Address',
+    credentialItem: true,
   },
+
   {
-    identifier: 'identity.documentId.DateOfBirth', // We what to have both avaliable for requestors (for convinience)
-    type: 'Date',
-    persistent: true,
-    alsoKnown: ['identity.DateOfBirth'], // A good use case for aliasing
+    identifier: 'civ:Document:idCard.name',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:idCard.given.names',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:idCard.surname',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:idCard.sex',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:idCard.issueLocation',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:idCard.issueAuthority',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:idCard.image',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:idCard.image.md5',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.number',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.name',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.given.names',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.surname',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.type',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+    values: ['A', 'B', 'C', 'D', 'E'],
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.issueLocation',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.issueAuthority',
+    version: 'v1',
+    type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.dateOfIssue',
+    version: 'v1',
+    type: 'civ:Type:Date',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.dateOfExpiry',
+    version: 'v1',
+    type: 'civ:Type:Date',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.dateOfBirth',
+    version: 'v1',
+    type: 'civ:Type:Date',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.comments',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.address',
+    version: 'v1',
+    type: 'civ:Type:Address',
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.image.front',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.image.front_md5',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.image.back',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:driversLicense.image.back_md5',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.number',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.type',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.issuing.country',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.name',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.given.names',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.surname',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.nationality',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.dateOfBirth',
+    version: 'v1',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
+  },
+
+  {
+    identifier: 'civ:Document:passport.sex',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.placeOfBirth',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.filiation.mother',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.filiation.father',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.dateOfIssue',
+    version: 'v1',
+    type: {
+      properties: [{
+        name: 'date',
+        type: 'civ:Type:Date',
+      }],
+    },
+  },
+
+  {
+    identifier: 'civ:Document:passport.dateOfExpiry.day',
+    version: 'v1',
+    type: 'civ:Type:Day',
+  },
+
+  {
+    identifier: 'civ:Document:passport.dateOfExpiry.month',
+    version: 'v1',
+    type: 'civ:Type:Month',
+  },
+
+  {
+    identifier: 'civ:Document:passport.dateOfExpiry.year',
+    version: 'v1',
+    type: 'civ:Type:Year',
+  },
+
+  {
+    identifier: 'civ:Document:passport.authority',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.image',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Document:passport.image.md5',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Email',
+    version: '1',
+    type: {
+      properties: [{
+        name: 'user',
+        type: 'String',
+      },
+      {
+        name: 'domain',
+        type: 'String',
+      }],
+      required: ['user', 'domain'],
+    },
+  },
+
+  {
+    identifier: 'civ:Contact:personal',
+    version: 'v1',
+    type: 'civ:Type:Address',
   },
 ];
 
-export { builtInTypedefs, definitions };
+export default definitions;
