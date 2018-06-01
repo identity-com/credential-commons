@@ -233,47 +233,47 @@ function SchemaGenerator(definition) {
 
   /**
    * Build a sample json from an definition identifier
+   * Recursively make the UCA from nested properties and UCA references
+   *
+   * TODO minimum: 0,
+   * TODO exclusiveMinimum: true,
+   * TODO maximum: 32,
+   * TODO exclusiveMaximum: true,
+   * TODO array -> values
+   * TODO DocType
+   *
    * @param definition receive an UCA and build an sample json from it's properties
    * @returns {{$schema: string}}
    */
   this.buildSampleJson = () => {
     let output = {};
-    // check if the identifier has a basic type or an reference
-    const typeName = getTypeName(this.definition);
-    const typeValue = typeName === 'Object' ? this.definition.type : null;
-    // if the type is a composite it already give us an Object
-    const value = this.generateRandomValueForType(typeName, typeValue);
-    // if the root type it's a simple object, the previous call will return a value
-    // just add to a new Object
-    if (!Type.is(value, Object)) {
-      output[definition.identifier] = value;
-    } else {
-      output = value;
-    }
-    // complete generated value
-    // const uca = new UCA(this.definition.identifier, value);
-    // Output
+    output = this.makeJsonRecursion(this.definition);
     return output;
   };
 
-  this.buildCompositeProperties = (properties, root) => {
-    const object = root;
-    properties.forEach((property) => {
-      object[property.name] = this.generateRandomValueForType(property.type);
-    });
-    return object;
-  };
+  this.makeJsonRecursion = (ucaDefinition) => {
+    const output = {};
+    const typeName = getTypeName(ucaDefinition);
+    if (typeof ucaDefinition.type === 'object' && ucaDefinition.type.properties !== undefined) { // array of properties
+      ucaDefinition.type.properties.forEach((property) => {
+        output[property.name] = this.generateRandomValueForType(property.type);
+      });
+    } else if (typeName === 'Object') {
+      output[ucaDefinition.identifier] = this.generateRandomValueForType(ucaDefinition.type);
+    } else { // a direct reference to a composite type
+      output[ucaDefinition.identifier] = this.generateRandomValueForType(typeName);
+    }
+    return output;
+  }
 
-  this.generateRandomValueForType = (typeName, typeValue) => {
-    let resolvedType = null;
-    if (typeName.includes(':')) {
-      resolvedType = definitions.find(def => def.identifier === typeName).type;
-    } else {
-      resolvedType = typeName;
+  this.generateRandomValueForType = (typeName) => {
+    let refDefinition = null;
+    if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
+      refDefinition = definitions.find(def => def.identifier === typeName);
     }
     // generate sample data
     // that's why the magic numbers are here
-    switch (resolvedType) {
+    switch (typeName) {
       case 'String':
         return randomString.generate(10);
       case 'Number':
@@ -281,7 +281,7 @@ function SchemaGenerator(definition) {
       case 'Boolean':
         return (Math.round(Math.random()) === 1);
       default:
-        return this.buildCompositeProperties(typeValue.properties, {});
+        return this.makeJsonRecursion(refDefinition);
     }
   };
 }

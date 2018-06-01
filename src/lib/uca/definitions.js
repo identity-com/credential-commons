@@ -156,19 +156,6 @@ const definitions = [
     credentialItem: true,
   },
   {
-    type: {
-      identifier: 'civ:Type:DocType',
-      name: 'DocType', // TODO ENUM
-      values: ['genericId', 'passport', 'idCard', 'driversLicense'],
-    },
-  },
-  {
-    identifier: 'civ:Document:type',
-    version: '1',
-    type: 'DocType',
-    credentialItem: true,
-  },
-  {
     identifier: 'civ:Document:number',
     version: '1',
     type: 'String',
@@ -202,7 +189,7 @@ const definitions = [
   {
     identifier: 'civ:Document:genericId.type',
     version: 'v1',
-    type: 'String', // TODO DocType?
+    type: 'String',
   },
 
   {
@@ -279,6 +266,87 @@ const definitions = [
     identifier: 'civ:Document:idCard.number',
     version: 'v1',
     type: 'String',
+    credentialItem: true,
+  },
+
+  {
+    identifier: 'civ:Type:Address.street',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.unit',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.city',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.zipCode',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.state',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.county',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address.country',
+    version: 'v1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Address',
+    version: '1',
+    type: {
+      properties: [
+        {
+          name: 'street',
+          type: 'civ:Type:Address.street',
+        },
+        {
+          name: 'unit',
+          type: 'civ:Type:Address.unit',
+        },
+        {
+          name: 'city',
+          type: 'civ:Type:Address.city',
+        },
+        {
+          name: 'zipCode',
+          type: 'civ:Type:Address.zipCode',
+        },
+        {
+          name: 'state',
+          type: 'civ:Type:Address.state',
+        },
+        {
+          name: 'county',
+          type: 'civ:Type:Address.county',
+        },
+        {
+          name: 'country',
+          type: 'civ:Type:Address.country',
+        },
+      ],
+      required: ['country'],
+    },
     credentialItem: true,
   },
 
@@ -397,36 +465,21 @@ const definitions = [
   {
     identifier: 'civ:Document:driversLicense.dateOfIssue',
     version: 'v1',
-    type: {
-      properties: [{
-        name: 'date',
-        type: 'civ:Type:Date',
-      }],
-    },
+    type: 'civ:Type:Date',
     credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.dateOfExpiry',
     version: 'v1',
-    type: {
-      properties: [{
-        name: 'date',
-        type: 'civ:Type:Date',
-      }],
-    },
+    type: 'civ:Type:Date',
     credentialItem: true,
   },
 
   {
     identifier: 'civ:Document:driversLicense.dateOfBirth',
     version: 'v1',
-    type: {
-      properties: [{
-        name: 'date',
-        type: 'civ:Type:Date',
-      }],
-    },
+    type: 'civ:Type:Date',
     credentialItem: true,
   },
 
@@ -610,45 +663,6 @@ const definitions = [
     identifier: 'civ:Contact:personal',
     version: 'v1',
     type: 'civ:Type:Address',
-  },
-
-  {
-    identifier: 'civ:Address',
-    version: '1',
-    type: {
-      properties: [
-        {
-          name: 'street',
-          identifier: 'civ:Address.street',
-        },
-        {
-          name: 'unit',
-          identifier: 'civ:Address.unit',
-        },
-        {
-          name: 'city',
-          identifier: 'civ:Address.city',
-        },
-        {
-          name: 'zipCode',
-          identifier: 'civ:Address.zipCode',
-        },
-        {
-          name: 'state',
-          identifier: 'civ:Address.state',
-        },
-        {
-          name: 'county',
-          identifier: 'civ:Address.county',
-        },
-        {
-          name: 'country',
-          identifier: 'civ:Address.country',
-        },
-      ],
-      required: ['country'],
-    },
-    credentialItem: true,
   },
 ];
 
