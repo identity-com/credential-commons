@@ -110,6 +110,7 @@ function UCABaseConstructor(identifier, value, version) {
     }
     const ucaValue = _.mapValues(_.keyBy(_.map(value, (v, k) => {
       const propertyDef = _.find(definition.type.properties, { name: k });
+      console.log(propertyDef);
       const uca = new UCABaseConstructor(propertyDef.type, v, propertyDef.version);
       return { key: k, value: uca };
     }), 'key'), 'value');

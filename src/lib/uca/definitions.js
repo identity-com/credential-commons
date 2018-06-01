@@ -147,12 +147,7 @@ const definitions = [
   {
     identifier: 'civ:Identity:DateOfBirth',
     version: '1',
-    type: {
-      properties: [{
-        name: 'date',
-        type: 'civ:Type:Date',
-      }],
-    },
+    type: 'civ:Type:Date',
     credentialItem: true,
   },
   {
