@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import timestamp from 'unix-timestamp';
 import sjcl from 'sjcl';
-import definitions from './definitions';
 import SecureRandom from '../SecureRandom';
-import logger from '../config';
+
+const definitions = require('./definitions');
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
 

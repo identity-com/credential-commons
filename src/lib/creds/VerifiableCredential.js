@@ -1,9 +1,10 @@
-import _ from 'lodash';
-import Merkletools from 'merkle-tools';
-import sjcl from 'sjcl';
-import definitions from './definitions';
-import { UCA } from '../uca/UserCollectableAttribute';
 import SecureRandom from '../SecureRandom';
+
+const _ = require('lodash');
+const Merkletools = require('merkle-tools');
+const sjcl = require('sjcl');
+const definitions = require('./definitions');
+const { UCA } = require('../uca/UserCollectableAttribute');
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));

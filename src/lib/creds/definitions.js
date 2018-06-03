@@ -15,7 +15,7 @@
  */
 const definitions = [
   {
-    identifier: 'civ:cred:Test',
+    identifier: 'civ:Cred:Document',
     version: '1',
     depends: [
       'civ:Identity:name',

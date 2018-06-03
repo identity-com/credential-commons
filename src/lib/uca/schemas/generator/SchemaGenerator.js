@@ -1,16 +1,15 @@
-import randomString from 'randomstring';
-import { UCA, getTypeName, resolveType } from '../../UserCollectableAttribute';
-import definitions from '../../definitions';
-
+const randomString = require('randomstring');
+const UCA = require('../../UserCollectableAttribute');
+const ucaDefinitions = require('../../definitions');
 const Type = require('type-of-is');
 
-function SchemaGenerator(definition) {
-  /* eslint-disable no-use-before-define */
-  // Constants
-  this.DRAFT = 'http://json-schema.org/draft-07/schema#';
-  this.definition = definition;
+class SchemaGenerator {
+  constructor(definition) {
+    this.definition = definition;
+    this.DRAFT = 'http://json-schema.org/draft-07/schema#';
+  }
 
-  function getPropertyFormat(value) {
+  static getPropertyFormat(value) {
     const type = Type.string(value).toLowerCase();
 
     if (type === 'date') return 'date-time';
@@ -18,7 +17,7 @@ function SchemaGenerator(definition) {
     return null;
   }
 
-  function getPropertyType(value) {
+  static getPropertyType(value) {
     const type = Type.string(value).toLowerCase();
 
     if (type === 'date') return 'string';
@@ -28,7 +27,7 @@ function SchemaGenerator(definition) {
     return type;
   }
 
-  function getUniqueKeys(a, b, c) {
+  static getUniqueKeys(a, b, c) {
     const aKeys = Object.keys(a);
     const bKeys = Object.keys(b);
     const required = c || [];
@@ -56,7 +55,7 @@ function SchemaGenerator(definition) {
   }
 
 
-  function processObject(object, outputParam, nested) {
+  processObject(object, outputParam, nested) {
     let output = outputParam;
     if (nested && output) {
       output = {
@@ -64,7 +63,7 @@ function SchemaGenerator(definition) {
       };
     } else {
       output = output || {};
-      output.type = getPropertyType(object);
+      output.type = this.getPropertyType(object);
       output.properties = output.properties || {};
     }
     const keys = Object.entries(object);
@@ -72,15 +71,15 @@ function SchemaGenerator(definition) {
     // https://github.com/airbnb/javascript/issues/1122
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of keys) {
-      let type = getPropertyType(value);
-      const format = getPropertyFormat(value);
+      let type = this.getPropertyType(value);
+      const format = this.getPropertyFormat(value);
       type = type === 'undefined' ? 'null' : type;
       if (type === 'object') {
-        output.properties[key] = processObject(value, output.properties[key]);
+        output.properties[key] = this.processObject(value, output.properties[key]);
       } else if (type === 'array') {
         // recursion
         // eslint-disable-next-line
-        output.properties[key] = processArray(value, output.properties[key]);
+        output.properties[key] = this.processArray(value, output.properties[key]);
       } else if (output.properties[key]) {
         const entry = output.properties[key];
         const hasTypeArray = Array.isArray(entry.type);
@@ -107,7 +106,7 @@ function SchemaGenerator(definition) {
     return nested ? output.properties : output;
   }
 
-  function processArray(array, outputParam, nested) {
+  processArray(array, outputParam, nested) {
     let format;
     let oneOf;
     let type;
@@ -117,15 +116,15 @@ function SchemaGenerator(definition) {
       output = { items: output };
     } else {
       output = output || {};
-      output.type = getPropertyType(array);
+      output.type = this.getPropertyType(array);
       output.items = output.items || {};
       type = output.items.type || null;
     }
 
     // Determine whether each item is different
     for (let arrIndex = 0, arrLength = array.length; arrIndex < arrLength; arrIndex += 1) {
-      const elementType = getPropertyType(array[arrIndex]);
-      const elementFormat = getPropertyFormat(array[arrIndex]);
+      const elementType = this.getPropertyType(array[arrIndex]);
+      const elementFormat = this.getPropertyFormat(array[arrIndex]);
 
       if (type && elementType !== type) {
         output.items.oneOf = [];
@@ -156,16 +155,16 @@ function SchemaGenerator(definition) {
     if (typeof output.items.oneOf !== 'undefined' || type === 'object') {
       for (let itemIndex = 0, itemLength = array.length; itemIndex < itemLength; itemIndex += 1) {
         const value = array[itemIndex];
-        const itemType = getPropertyType(value);
-        const itemFormat = getPropertyFormat(value);
+        const itemType = this.getPropertyType(value);
+        const itemFormat = this.getPropertyFormat(value);
         let arrayItem;
         if (itemType === 'object') {
           if (output.items.properties) {
-            output.items.required = getUniqueKeys(output.items.properties, value, output.items.required);
+            output.items.required = this.getUniqueKeys(output.items.properties, value, output.items.required);
           }
-          arrayItem = processObject(value, oneOf ? {} : output.items.properties, true);
+          arrayItem = this.processObject(value, oneOf ? {} : output.items.properties, true);
         } else if (itemType === 'array') {
-          arrayItem = processArray(value, oneOf ? {} : output.items.properties, true);
+          arrayItem = this.processArray(value, oneOf ? {} : output.items.properties, true);
         } else {
           arrayItem = {};
           arrayItem.type = itemType;
@@ -190,7 +189,7 @@ function SchemaGenerator(definition) {
     return nested ? output.items : output;
   }
 
-  this.process = (titleParam, objectParam) => {
+  process(titleParam, objectParam) {
     let object = objectParam;
     let title = titleParam;
     let processOutput;
@@ -211,13 +210,13 @@ function SchemaGenerator(definition) {
 
     // Process object
     if (output.type === 'object') {
-      processOutput = processObject(object);
+      processOutput = this.processObject(object);
       output.type = processOutput.type;
       output.properties = processOutput.properties;
     }
 
     if (output.type === 'array') {
-      processOutput = processArray(object);
+      processOutput = this.processArray(object);
       output.type = processOutput.type;
       output.items = processOutput.items;
 
@@ -229,7 +228,7 @@ function SchemaGenerator(definition) {
 
     // Output
     return output;
-  };
+  }
 
   /**
    * Build a sample json from an definition identifier
@@ -245,15 +244,15 @@ function SchemaGenerator(definition) {
    * @param definition receive an UCA and build an sample json from it's properties
    * @returns {{$schema: string}}
    */
-  this.buildSampleJson = () => {
+  buildSampleJson() {
     let output = {};
     output = this.makeJsonRecursion(this.definition);
     return output;
-  };
+  }
 
-  this.makeJsonRecursion = (ucaDefinition) => {
+  makeJsonRecursion(ucaDefinition) {
     const output = {};
-    const typeName = getTypeName(ucaDefinition);
+    const typeName = UCA.getTypeName(ucaDefinition);
     if (typeof ucaDefinition.type === 'object' && ucaDefinition.type.properties !== undefined) { // array of properties
       ucaDefinition.type.properties.forEach((property) => {
         output[property.name] = this.generateRandomValueForType(property.type);
@@ -266,10 +265,10 @@ function SchemaGenerator(definition) {
     return output;
   }
 
-  this.generateRandomValueForType = (typeName) => {
+  generateRandomValueForType(typeName) {
     let refDefinition = null;
     if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
-      refDefinition = definitions.find(def => def.identifier === typeName);
+      refDefinition = ucaDefinitions.find(def => def.identifier === typeName);
     }
     // generate sample data
     // that's why the magic numbers are here
@@ -283,7 +282,7 @@ function SchemaGenerator(definition) {
       default:
         return this.makeJsonRecursion(refDefinition);
     }
-  };
+  }
 }
 
-export default SchemaGenerator;
+module.exports = SchemaGenerator;
