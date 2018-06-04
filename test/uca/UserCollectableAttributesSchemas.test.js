@@ -10,4 +10,14 @@ describe('UCA Json Sample Date Construction tests', () => {
     });
     done();
   });
+
+  test('Generate Sample Data from all UCA and then create the json schema', async (done) => {
+    definitions.forEach((definition) => {
+      const schemaGenerator = new SchemaGenerator(definition);
+      const json = schemaGenerator.buildSampleJson();
+      const jsonSchema = schemaGenerator.process(definition.identifier, json);
+      expect(jsonSchema.title).toEqual(definition.identifier);
+    });
+    done();
+  });
 });

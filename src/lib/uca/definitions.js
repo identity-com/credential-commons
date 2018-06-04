@@ -153,7 +153,7 @@ const definitions = [
   {
     identifier: 'civ:Identity:DateOfBirth',
     version: '1',
-    type: 'civ:Type:Date',
+    type: 'civ:Type:Date', // TODO the sample json still generates with a compound object, instead of direct properties
     credentialItem: true,
   },
   {

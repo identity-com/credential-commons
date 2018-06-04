@@ -23,6 +23,7 @@
     "lint": "eslint ./src/**.js",
     "test": "jest",
     "test:watch": "jest --watch",
+    "generate-schema": "",
     "ci": "npm run test && npm run lint"
   },
   "devDependencies": {

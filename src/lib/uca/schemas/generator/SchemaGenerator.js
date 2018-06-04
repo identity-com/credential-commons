@@ -3,6 +3,9 @@ const UCA = require('../../UserCollectableAttribute');
 const ucaDefinitions = require('../../definitions');
 const Type = require('type-of-is');
 
+/**
+ * Generate json schemas from JSON sample data generated from UCA/Credentials identifiers
+ */
 class SchemaGenerator {
   constructor(definition) {
     this.definition = definition;
@@ -63,7 +66,7 @@ class SchemaGenerator {
       };
     } else {
       output = output || {};
-      output.type = this.getPropertyType(object);
+      output.type = SchemaGenerator.getPropertyType(object);
       output.properties = output.properties || {};
     }
     const keys = Object.entries(object);
@@ -71,8 +74,8 @@ class SchemaGenerator {
     // https://github.com/airbnb/javascript/issues/1122
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of keys) {
-      let type = this.getPropertyType(value);
-      const format = this.getPropertyFormat(value);
+      let type = SchemaGenerator.getPropertyType(value);
+      const format = SchemaGenerator.getPropertyFormat(value);
       type = type === 'undefined' ? 'null' : type;
       if (type === 'object') {
         output.properties[key] = this.processObject(value, output.properties[key]);
@@ -116,15 +119,15 @@ class SchemaGenerator {
       output = { items: output };
     } else {
       output = output || {};
-      output.type = this.getPropertyType(array);
+      output.type = SchemaGenerator.getPropertyType(array);
       output.items = output.items || {};
       type = output.items.type || null;
     }
 
     // Determine whether each item is different
     for (let arrIndex = 0, arrLength = array.length; arrIndex < arrLength; arrIndex += 1) {
-      const elementType = this.getPropertyType(array[arrIndex]);
-      const elementFormat = this.getPropertyFormat(array[arrIndex]);
+      const elementType = SchemaGenerator.getPropertyType(array[arrIndex]);
+      const elementFormat = SchemaGenerator.getPropertyFormat(array[arrIndex]);
 
       if (type && elementType !== type) {
         output.items.oneOf = [];
@@ -155,12 +158,12 @@ class SchemaGenerator {
     if (typeof output.items.oneOf !== 'undefined' || type === 'object') {
       for (let itemIndex = 0, itemLength = array.length; itemIndex < itemLength; itemIndex += 1) {
         const value = array[itemIndex];
-        const itemType = this.getPropertyType(value);
-        const itemFormat = this.getPropertyFormat(value);
+        const itemType = SchemaGenerator.getPropertyType(value);
+        const itemFormat = SchemaGenerator.getPropertyFormat(value);
         let arrayItem;
         if (itemType === 'object') {
           if (output.items.properties) {
-            output.items.required = this.getUniqueKeys(output.items.properties, value, output.items.required);
+            output.items.required = SchemaGenerator.getUniqueKeys(output.items.properties, value, output.items.required);
           }
           arrayItem = this.processObject(value, oneOf ? {} : output.items.properties, true);
         } else if (itemType === 'array') {
@@ -267,12 +270,16 @@ class SchemaGenerator {
 
   generateRandomValueForType(typeName) {
     let refDefinition = null;
+    let resolvedTypeName = typeName;
     if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
       refDefinition = ucaDefinitions.find(def => def.identifier === typeName);
+      if (refDefinition !== null) {
+        resolvedTypeName = refDefinition.type;
+      }
     }
     // generate sample data
     // that's why the magic numbers are here
-    switch (typeName) {
+    switch (resolvedTypeName) {
       case 'String':
         return randomString.generate(10);
       case 'Number':
