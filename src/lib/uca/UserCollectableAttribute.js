@@ -2,8 +2,7 @@ import _ from 'lodash';
 import timestamp from 'unix-timestamp';
 import sjcl from 'sjcl';
 import SecureRandom from '../SecureRandom';
-
-const definitions = require('./definitions');
+import definitions from './definitions';
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
