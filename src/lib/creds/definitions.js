@@ -15,11 +15,10 @@
  */
 const definitions = [
   {
-    identifier: 'civ:cred:Test',
+    identifier: 'civ:Credential:Identity',
     version: '1',
     depends: [
       'civ:Identity:name',
-      'civ:Identity:DateOfBirth',
     ],
     excludes: [
       'civ:Identity:name.middle',

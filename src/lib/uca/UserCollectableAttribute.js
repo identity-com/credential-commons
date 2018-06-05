@@ -1,9 +1,8 @@
 import _ from 'lodash';
 import timestamp from 'unix-timestamp';
 import sjcl from 'sjcl';
-import definitions from './definitions';
 import SecureRandom from '../SecureRandom';
-import logger from '../config';
+import definitions from './definitions';
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
@@ -110,7 +109,6 @@ function UCABaseConstructor(identifier, value, version) {
     }
     const ucaValue = _.mapValues(_.keyBy(_.map(value, (v, k) => {
       const propertyDef = _.find(definition.type.properties, { name: k });
-      console.log(propertyDef);
       const uca = new UCABaseConstructor(propertyDef.type, v, propertyDef.version);
       return { key: k, value: uca };
     }), 'key'), 'value');
