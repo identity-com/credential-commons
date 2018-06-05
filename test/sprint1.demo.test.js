@@ -1,16 +1,7 @@
 import VC from '../src/lib/creds/VerifiableCredential';
 import { UCA } from '../src/lib/uca/UserCollectableAttribute';
 
-VC.__Rewire__('definitions', [
-  {
-    identifier: 'civ:Credential:SimpleIdentity',
-    version: '1',
-    depends: [
-      'civ:Identity:name',
-      'civ:Identity:DateOfBirth',
-    ],
-  },
-]);
+jest.mock('../src/lib/creds/definitions');
 
 describe('interactions with UCA', () => {
   test('Demo', () => {
