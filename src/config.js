@@ -1,4 +1,4 @@
-import civicLog from 'civic-log';
+const civicLog = require('civic-log');
 
 const logger = civicLog(
   {
@@ -14,4 +14,4 @@ const logger = civicLog(
   },
 );
 
-export default logger;
+module.exports = logger;

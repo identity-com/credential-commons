@@ -1,7 +1,9 @@
-import VC from '../src/lib/creds/VerifiableCredential';
-import { UCA } from '../src/lib/uca/UserCollectableAttribute';
+/* eslint-disable no-console */
+// Don't want to make Logger a dependencie 
+const VC = require('../src/creds/VerifiableCredential');
+const UCA = require('../src/uca/UserCollectableAttribute');
 
-jest.mock('../src/lib/creds/definitions');
+jest.mock('../src/creds/definitions');
 
 describe('interactions with UCA', () => {
   test('Demo', () => {

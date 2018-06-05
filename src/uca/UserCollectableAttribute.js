@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import timestamp from 'unix-timestamp';
-import sjcl from 'sjcl';
-import SecureRandom from '../SecureRandom';
-import definitions from './definitions';
+const _ = require('lodash');
+const timestamp = require('unix-timestamp');
+const sjcl = require('sjcl');
+const SecureRandom = require('../SecureRandom');
+const definitions = require('./definitions');
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
@@ -216,12 +216,7 @@ _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
   _.mixin(UCA, source);
 });
 
-// UCA.getDefinition = (identifier, version) => {
-//   const def = version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier, version });
-//   if (!def) {
-//     throw new Error(`UCA Definition ${identifier} ${version} not found`);
-//   }
-//   return def;
-// };
+UCA.getTypeName = getTypeName;
+UCA.resolveType = resolveType;
 
-export { UCA, getTypeName, resolveType };
+module.exports = UCA;

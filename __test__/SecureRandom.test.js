@@ -1,4 +1,4 @@
-import SecureRandon from '../src/lib/SecureRandom';
+const SecureRandon = require('../src/SecureRandom');
 
 describe('Secure Randon Tests', () => {
   test('word', () => {

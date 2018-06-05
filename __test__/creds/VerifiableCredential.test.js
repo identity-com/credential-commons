@@ -1,17 +1,12 @@
-import { UCA } from '../../src/lib/uca/UserCollectableAttribute';
-import VC from '../../src/lib/creds/VerifiableCredential';
+const UCA = require('../../src/uca/UserCollectableAttribute');
+const VC = require('../../src/creds/VerifiableCredential');
 
-jest.mock('../../src/lib/creds/definitions');
+jest.mock('../../src/creds/definitions');
 
 describe('VerifiableCredential', () => {
   test('Dont construct undefined Credentials', () => {
     function createCredential() {
       const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-      console.log(JSON.stringify(name, null, 2));
-      console.log(JSON.stringify(name.getPlainValue(), null, 2));
-      const fname = new UCA('civ:Identity:name.first', 'Joao');
-      console.log(JSON.stringify(fname, null, 2));
-      console.log(JSON.stringify(fname.getPlainValue(), null, 2));
       const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
       return new VC('civ:cred:Test', 'jest:test', [name, dob], '1');
     }
@@ -50,6 +45,5 @@ describe('VerifiableCredential', () => {
     expect(cred.claims.identity.DateOfBirth.month).toBe(3);
     expect(cred.claims.identity.DateOfBirth.year).toBe(1978);
     expect(cred.signature.leaves).toHaveLength(4);
-    console.log(JSON.stringify(cred, null, 2));
   });
 });

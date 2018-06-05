@@ -35,7 +35,6 @@ const getPropertyType = (value) => {
 
 const getUniqueKey = (property, requiredArray) => {
   const required = requiredArray || [];
-  console.log(property);
   return required;
 };
 
