@@ -79,7 +79,7 @@ class ClaimModel {
       if (!this[rootPropertyName]) {
         this[rootPropertyName] = {};
       }
-      this[rootPropertyName][uca.getClaimPropertyName()] = uca.getPretyValue();
+      this[rootPropertyName][uca.getClaimPropertyName()] = uca.getPlainValue();
     });
   }
 }
@@ -111,6 +111,18 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
     });
   }
 
+  this.filter = (requestedClaims) => {
+    const filtered = _.cloneDeep(this);
+    _.remove(filtered.signature.leaves, el => !_.includes(requestedClaims, el.identifier));
+    console.log('Before', JSON.stringify(filtered, null, 2));
+
+    filtered.claims = {};
+    _.forEach(filtered.signature.leaves, (el) => {
+      _.set(filtered.claims, el.claimPath, _.get(this.claims, el.claimPath));
+    });
+
+    return filtered;
+  };
 
   return this;
 }

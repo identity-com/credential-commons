@@ -7,6 +7,11 @@ describe('VerifiableCredential', () => {
   test('Dont construct undefined Credentials', () => {
     function createCredential() {
       const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+      console.log(JSON.stringify(name, null, 2));
+      console.log(JSON.stringify(name.getPlainValue(), null, 2));
+      const fname = new UCA('civ:Identity:name.first', 'Joao');
+      console.log(JSON.stringify(fname, null, 2));
+      console.log(JSON.stringify(fname.getPlainValue(), null, 2));
       const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
       return new VC('civ:cred:Test', 'jest:test', [name, dob], '1');
     }

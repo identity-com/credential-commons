@@ -56,7 +56,7 @@ const getTypeName = (definition) => {
     return definition.type;
   }
   return 'Object';
-}
+};
 
 const resolveType = (definition) => {
   const typeName = getTypeName(definition);
@@ -70,7 +70,7 @@ const resolveType = (definition) => {
 
   const refDefinition = _.find(definitions, { identifier: definition.type });
   return resolveType(refDefinition);
-}
+};
 
 
 /**
@@ -159,7 +159,7 @@ function UCABaseConstructor(identifier, value, version) {
     return values;
   };
 
-  this.getPretyValue = (propName) => {
+  this.getPlainValue = (propName) => {
     const newParent = {};
     const result = [];
     switch (this.type) {
@@ -178,7 +178,7 @@ function UCABaseConstructor(identifier, value, version) {
       default:
 
         _.forEach(_.sortBy(_.keys(this.value)), (k) => {
-          result.push(this.value[k].getPretyValue(k));
+          result.push(this.value[k].getPlainValue(k));
         });
         _.forEach(result, (properties) => {
           _.assign(newParent, properties);
