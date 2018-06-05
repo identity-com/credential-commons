@@ -1,27 +1,7 @@
-import VC from '../../src/lib/creds/VerifiableCredential';
 import { UCA } from '../../src/lib/uca/UserCollectableAttribute';
+import VC from '../../src/lib/creds/VerifiableCredential';
 
-VC.__Rewire__('definitions', [
-  {
-    identifier: 'civ:Credential:SimpleTest',
-    version: '1',
-    depends: [
-      'civ:Identity:name',
-      'civ:Identity:DateOfBirth',
-    ],
-  },
-  {
-    identifier: 'civ:Credential:TestWithExcludes',
-    version: '1',
-    depends: [
-      'civ:Identity:name',
-      'civ:Identity:DateOfBirth',
-    ],
-    excludes: [
-      'civ:Identity:name.middle',
-    ],
-  },
-]);
+jest.mock('../../src/lib/creds/definitions');
 
 describe('VerifiableCredential', () => {
   test('Dont construct undefined Credentials', () => {

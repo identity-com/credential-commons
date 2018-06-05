@@ -88,6 +88,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
   this.id = null;
   this.issuer = issuer;
   this.issued = (new Date()).toISOString();
+  this.identifier = identifier;
 
   if (!_.includes(validIdentifiers(), identifier)) {
     throw new Error(`${identifier} is not defined`);
