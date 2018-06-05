@@ -1,4 +1,4 @@
-import { UCA } from '../../src/lib/uca/UserCollectableAttribute';
+const UCA = require('../../src/uca/UserCollectableAttribute');
 
 describe('UCA Constructions tests', () => {
   test('UCA construction should fails', () => {

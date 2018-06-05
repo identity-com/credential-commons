@@ -1,14 +1,17 @@
-import sjcl from 'sjcl';
-import logger from './config';
+const sjcl = require('sjcl');
+const logger = require('./config');
 
 class SecureRandomizer {
   constructor() {
     logger.debug('Init Secure Randon');
+    // eslint-disable-next-line 
     this.sjclRandom = new sjcl.prng(10);
 
     try {
       logger.debug('Trying crypto');
+      /* eslint-disable global-require */
       const hexString = require('crypto').randomBytes(1024).toString('hex');
+      /* eslint-enable global-require */
       const seed = sjcl.codec.hex.toBits(hexString);
       this.sjclRandom.addEntropy(seed, undefined, 'csprng');
       this.isSeeded = true;
@@ -28,4 +31,4 @@ class SecureRandomizer {
   }
 }
 
-export default new SecureRandomizer();
+module.exports = new SecureRandomizer();

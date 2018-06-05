@@ -1,9 +1,9 @@
-import _ from 'lodash';
-import Merkletools from 'merkle-tools';
-import sjcl from 'sjcl';
-import definitions from './definitions';
-import { UCA } from '../uca/UserCollectableAttribute';
-import SecureRandom from '../SecureRandom';
+const _ = require('lodash');
+const Merkletools = require('merkle-tools');
+const sjcl = require('sjcl');
+const definitions = require('./definitions');
+const UCA = require('../uca/UserCollectableAttribute');
+const SecureRandom = require('../SecureRandom');
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
@@ -114,7 +114,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
   this.filter = (requestedClaims) => {
     const filtered = _.cloneDeep(this);
     _.remove(filtered.signature.leaves, el => !_.includes(requestedClaims, el.identifier));
-    console.log('Before', JSON.stringify(filtered, null, 2));
 
     filtered.claims = {};
     _.forEach(filtered.signature.leaves, (el) => {
@@ -127,4 +126,4 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
   return this;
 }
 
-export default VerifiableCredentialBaseConstructor;
+module.exports = VerifiableCredentialBaseConstructor;

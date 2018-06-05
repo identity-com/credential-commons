@@ -28,4 +28,4 @@ const definitions = [
   },
 ];
 
-export default definitions;
+module.exports = definitions;

@@ -1,5 +1,5 @@
-const SchemaGenerator = require('../../src/lib/schemas/generator/SchemaGenerator');
-const definitions = require('../../src/lib/uca/definitions');
+const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
+const definitions = require('../../src/uca/definitions');
 const Ajv = require('ajv');
 
 describe('UCA Json Sample Date Construction tests', () => {

@@ -1,8 +1,8 @@
-import { UCA } from '../../src/lib/uca/UserCollectableAttribute';
-import VC from '../../src/lib/creds/VerifiableCredential';
-import SchemaGenerator from '../../src/lib/schemas/generator/SchemaGenerator';
-import credentialDefinitions from '../../src/lib/creds/definitions';
-import ucaDefinitions from '../../src/lib/uca/definitions';
+const UCA = require('../../src/uca/UserCollectableAttribute');
+const VC = require('../../src/creds/VerifiableCredential');
+const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
+const credentialDefinitions = require('../../src/creds/definitions');
+const ucaDefinitions = require('../../src/uca/definitions');
 
 const Ajv = require('ajv');
 
