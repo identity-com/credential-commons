@@ -1,36 +1,35 @@
-const SchemaGenerator = require('../../src/lib/uca/schemas/generator/SchemaGenerator');
+const SchemaGenerator = require('../../src/lib/schemas/generator/SchemaGenerator');
 const definitions = require('../../src/lib/uca/definitions');
-const fs = require('fs');
-
-beforeAll(() => {
-  definitions.forEach((definition) => {
-    const schemaGenerator = new SchemaGenerator(definition);
-    const json = schemaGenerator.buildSampleJson();
-    const jsonSchema = schemaGenerator.process(definition.identifier, json);
-    const schemaName = jsonSchema.title.replace(/:/g, '.');
-    const filePath = `src/lib/uca/schemas/${schemaName}.json`;
-    fs.writeFile(filePath, JSON.stringify(jsonSchema, null, 2), (err) => {
-      if (err) throw err;
-    });
-  });
-});
+const Ajv = require('ajv');
 
 describe('UCA Json Sample Date Construction tests', () => {
-  test('UCA JSON Sample Data from all coded identifiers has to succeed', async (done) => {
+  it('Should generate UCA JSON Sample Data from all coded identifiers and succeed', async (done) => {
     definitions.forEach((definition) => {
-      const schemaGenerator = new SchemaGenerator(definition);
-      const json = schemaGenerator.buildSampleJson();
+      const json = SchemaGenerator.buildSampleJson(definition);
       expect(typeof json).toEqual('object');
     });
     done();
   });
 
-  test('Generate Sample Data from all UCA and then create the json schema', async (done) => {
+  it('Should generate Sample Data from all UCA and then create the json schema', async (done) => {
     definitions.forEach((definition) => {
-      const schemaGenerator = new SchemaGenerator(definition);
-      const json = schemaGenerator.buildSampleJson();
-      const jsonSchema = schemaGenerator.process(definition.identifier, json);
+      const json = SchemaGenerator.buildSampleJson(definition);
+      const jsonSchema = SchemaGenerator.process(definition, json);
       expect(jsonSchema.title).toEqual(definition.identifier);
+    });
+    done();
+  });
+
+  it('Should generate Sample Data from all UCA, create the json schema and use AJV to validate both the data and the json schema against each other', async (done) => {
+    definitions.forEach((definition) => {
+      const json = SchemaGenerator.buildSampleJson(definition);
+      const jsonSchema = SchemaGenerator.process(definition, json);
+      expect(jsonSchema.title).toEqual(definition.identifier);
+      const ajv = new Ajv();
+      console.log(jsonSchema);
+      const validate = ajv.compile(jsonSchema);
+      const isValid = validate(json);
+      expect(isValid).toBeTruthy();
     });
     done();
   });

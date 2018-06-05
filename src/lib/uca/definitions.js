@@ -16,6 +16,7 @@ const definitions = [
     version: '1',
     type: 'String',
     credentialItem: true,
+    required: true,
   },
   {
     identifier: 'civ:Identity:firstName',
