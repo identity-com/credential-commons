@@ -22,7 +22,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     done();
   });
 
-  it('Should validate the generated VC against it\'s generated schema', async (done)=> {
+  it('Should validate the generated VC against it\'s generated schema', async (done) => {
     credentialDefinitions.forEach((credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
@@ -36,6 +36,8 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
       const ajv = new Ajv();
+      console.log(JSON.stringify(jsonSchema, null, 2));
+      console.log(JSON.stringify(generatedJson, null, 2));
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
       expect(isValid).toBeTruthy();

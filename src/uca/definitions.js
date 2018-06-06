@@ -61,7 +61,7 @@ const definitions = [
     identifier: 'civ:Type:ShortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
     version: '1',
     type: 'String',
-    pattern: /^\d{5}$/, // We can specify a constraint to define the type domain
+    pattern: '/^\\d{5}$/', // We can specify a constraint to define the type domain
     credentialItem: false,
   },
   {

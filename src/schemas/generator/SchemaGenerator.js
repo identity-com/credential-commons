@@ -3,6 +3,7 @@ const randomString = require('randomstring');
 const UCA = require('../../uca/UserCollectableAttribute');
 const ucaDefinitions = require('../../uca/definitions');
 const Type = require('type-of-is');
+const RandExp = require('randexp');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
@@ -56,7 +57,7 @@ const processObject = (object, outputParam, nested) => {
   for (const [key, value] of keys) {
     let type = getPropertyType(value);
     const format = getPropertyFormat(value);
-    type = type === 'undefined' ? 'null' : type;
+    type = type === 'undefined' ? 'string' : type;
     if (type === 'object') {
       output.properties[key] = processObject(value, output.properties[key]);
     } else if (type === 'array') {
@@ -80,7 +81,7 @@ const processObject = (object, outputParam, nested) => {
       }
     } else {
       output.properties[key] = {};
-      output.properties[key].type = type;
+      output.properties[key].type = type === 'null' ? ['null', 'string'] : type;
       if (format) {
         output.properties[key].format = format;
       }
@@ -230,6 +231,7 @@ const process = (definition, json) => {
         output.maximum = definition.maximum;
       }
     }
+
   }
   // never allow additionalProperties
   output.additionalProperties = false;
@@ -266,7 +268,11 @@ const makeJsonRecursion = (ucaDefinition) => {
     });
   } else if (typeName !== 'Object') { // not a reference
     const propertyName = getPropertyNameFromDefinition(ucaDefinition);
-    output[propertyName] = generateRandomValueForType(ucaDefinition.type);
+    if (typeof ucaDefinition.pattern !== 'undefined' && ucaDefinition.pattern !== null) {
+      output[propertyName] = new RandExp(ucaDefinition.pattern).gen();
+    } else {
+      output[propertyName] = generateRandomValueForType(ucaDefinition.type);
+    }
   } else { // a direct reference to a composite type
     output = generateRandomValueForType(ucaDefinition.type);
   }

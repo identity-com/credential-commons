@@ -21,7 +21,7 @@
     "lint": "eslint ./src/**.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "generate-schema": "npm src/generator.js",
+    "generate-schema": "cross-env NODE_ENV=test node cli/generator.js",
     "ci": "npm run test && npm run lint"
   },
   "devDependencies": {
@@ -36,11 +36,17 @@
   "dependencies": {
     "ajv": "^6.5.0",
     "bluebird": "^3.5.1",
+    "chalk": "^2.4.1",
     "civic-log": "civicteam/civic-log#2.0.4",
+    "clear": "^0.1.0",
+    "cross-env": "^5.1.6",
+    "figlet": "^1.2.0",
     "generate-schema": "^2.6.0",
+    "inquirer": "^6.0.0",
     "json-format": "^1.0.1",
     "lodash": "4.17.10",
     "merkle-tools": "^1.4.0",
+    "randexp": "^0.4.9",
     "randomstring": "^1.1.5",
     "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",

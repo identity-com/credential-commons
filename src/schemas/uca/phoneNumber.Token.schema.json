@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "civ:Verify:phoneNumber.Token",
+  "type": "object",
+  "properties": {
+    "Token": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

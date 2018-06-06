@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "civ:Type:Address.zipCode",
+  "type": "object",
+  "properties": {
+    "zipCode": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
