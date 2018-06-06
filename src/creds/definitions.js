@@ -1,27 +1,37 @@
 /**
- * TODO Talk to Martin understand the difference between Creds vs Uca
- * TODO Talk to Martin about the creds names
- * name: 'attUtilityBill',
  * name: 'attgenericId',
- * name: 'attIdCard',
- * name: 'attDriveLicense',
- * name: 'attPassport',
- * name: 'attDevice',
- * name: 'attVLevel',
  * name: 'attBaseIdentity',
- * name: 'attIdentityDocs',
  * name: 'attAddress',
  * @type {*[]}
  */
 const definitions = [
   {
-    identifier: 'civ:Credential:Identity',
+    identifier: 'civ:Credential:CivicBasic',
     version: '1',
     depends: [
-      'civ:Identity:name',
+      'civ:Type:Phone',
+      'civ:Type:Email',
     ],
-    excludes: [
-      'civ:Identity:name.middle',
+  },
+  {
+    identifier: 'civ:Credential:GenericId',
+    version: '1',
+    depends: [
+      'civ:Type:Address',
+      'civ:Type:DocumentType',
+      'civ:Type:Image',
+      'civ:Identity:DateOfBirth',
+      'civ:Identity:name',
+      'civ:Identity:givenName',
+      'civ:Identity:DateOfIssue',
+      'civ:Identity:DateOfExpiry',
+    ],
+  },
+  {
+    identifier: 'civ:Credential:Address',
+    version: '1',
+    depends: [
+      'civ:Type:Address',
     ],
   },
 ];

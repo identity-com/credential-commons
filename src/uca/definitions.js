@@ -154,7 +154,19 @@ const definitions = [
   {
     identifier: 'civ:Identity:DateOfBirth',
     version: '1',
-    type: 'civ:Type:Date', // TODO the sample json still generates with a compound object, instead of direct properties
+    type: 'civ:Type:Date',
+    credentialItem: true,
+  },
+  {
+    identifier: 'civ:Identity:DateOfIssue',
+    version: '1',
+    type: 'civ:Type:Date',
+    credentialItem: true,
+  },
+  {
+    identifier: 'civ:Identity:DateOfExpiry',
+    version: '1',
+    type: 'civ:Type:Date',
     credentialItem: true,
   },
   {
@@ -237,26 +249,90 @@ const definitions = [
     },
     credentialItem: true,
   },
+
+  {
+    identifier: 'civ:Type:Email.user',
+    version: '1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Email.domain',
+    version: '1',
+    type: 'String',
+  },
+
   {
     identifier: 'civ:Type:Email',
     version: '1',
     type: {
       properties: [{
         name: 'user',
-        type: 'String',
+        type: 'civ:Type:Email.user',
       },
       {
         name: 'domain',
-        type: 'String',
+        type: 'civ:Type:Email.domain',
       }],
       required: ['user', 'domain'],
     },
   },
 
   {
-    identifier: 'civ:Contact:personal',
+    identifier: 'civ:Type:Phone.number',
+    version: '1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Phone.countryCode',
+    version: '1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Phone',
     version: 'v1',
-    type: 'civ:Type:Address',
+    type: {
+      properties: [{
+        name: 'number',
+        type: 'civ:Type:Phone.number',
+        pattern: '/\\d*/',
+      },
+      {
+        name: 'countryCode',
+        type: 'civ:Type:Phone.countryCode',
+      }],
+      required: ['countryCode', 'number'],
+    },
+  },
+
+  {
+    identifier: 'civ:Type:Image.image',
+    version: '1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Image.md5',
+    version: '1',
+    type: 'String',
+  },
+
+  {
+    identifier: 'civ:Type:Image',
+    version: 'v1',
+    type: {
+      properties: [{
+        name: 'image',
+        type: 'civ:Type:Image.image',
+      },
+      {
+        name: 'md5',
+        type: 'civ:Type:Image.md5',
+      }],
+      required: ['image', 'md5'],
+    },
   },
 ];
 
