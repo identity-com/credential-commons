@@ -30,7 +30,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
         const dependentUca = new UCA(ucaDefinition.identifier, ucaJson, ucaDefinition.version);
         ucaArray.push(dependentUca);
-    });
+      });
       const credential = new VC(credentialDefinition.identifier, 'jest:test', ucaArray, 1);
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
