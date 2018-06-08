@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "civ:Type:Date",
+  "type": "object",
+  "properties": {
+    "day": {
+      "type": "number"
+    },
+    "month": {
+      "type": "number"
+    },
+    "year": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": false
+}

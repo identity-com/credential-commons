@@ -1,8 +1,8 @@
-const SecureRandon = require('../src/SecureRandom');
+const SecureRandom = require('../src/SecureRandom');
 
-describe('Secure Randon Tests', () => {
+describe('Secure Random Tests', () => {
   test('word', () => {
-    const random = SecureRandon.wordWith(16);
+    const random = SecureRandom.wordWith(16);
     expect(random).toBeDefined();
     expect(random).toHaveLength(16);
   });

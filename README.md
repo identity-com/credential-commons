@@ -1,11 +1,32 @@
 # Verifiable Credential and Attestation Library
 
-
-
 [![tests][tests]][tests-url]
 [![coverage][cover]][cover-url]
 
 Verifiable Credential and Attestation Library - CCS-38
+
+## Contents
+
+- [Verifiable Credential and Attestation Library](#verifiable-credential-and-attestation-library)
+  * [Contents](#contents)
+  * [Prerequisites](#prerequisites)
+  * [Features](#features)
+    + [User Collectable Attributes](#user-collectable-attributes)
+      - [Defining new UCA](#defining-new-uca)
+      - [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services)
+      - [Using a UCA in javascript (with this library)](#using-a-uca-in-javascript--with-this-library-)
+        * [creating UCA instances with the constructor](#creating-uca-instances-with-the-constructor)
+    + [Credentials](#credentials)
+      - [Defining new UCA](#defining-new-uca-1)
+      - [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services-1)
+      - [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
+        * [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
+          + [Verifiable Credential Sample](#verifiable-credential-sample)
+  * [Schema Generator](#schema-generator)
+  * [Conventions:](#conventions-)
+  * [Commands](#commands)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 ## Prerequisites
 
@@ -260,22 +281,74 @@ const cred = new VC('civ:cred:Test', 'jest:test', [name, dob]);
     }
 ```
 
-## Start Dev Server
+## Schema Generator
 
-1. `git clone https://github.com/civicteam/civic-credentials-commons-js
-2. Run `npm install`
-3. Start the dev server using `npm start`
-3. Open [http://localhost:9000](http://localhost:9000)
+The json schema generator will get an previous definition and build a sample JSON (with random values).
 
+On top of the sample data and combining the identifier properties it will infer an JSON Schema for validating the data.
+
+A identifier like this:
+
+Example
+```javascript
+const name = new UCA('civ:Identity:name', {
+	first: 'Joao', 
+    middle: 'Barbosa', 
+    last: 'Santos'
+}, '1')
+```
+
+Will generate a JSON like this:
+
+
+```
+{
+	first: 'Joao', 
+    middle: 'Barbosa', 
+    last: 'Santos'
+}
+```
+
+The schema generator will generate an json schema like this:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "civ:Identity:name.first",
+  "type": "object",
+  "properties": {
+    "first": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "first"
+  ],
+  "additionalProperties": false
+}
+```
+
+## Conventions:
+
+-We use draft 7 for json schema generation
+
+-Values that can have null, must have `type : ['null','string']` or else they fail validation if you only send null or if you send an value
+
+-All simple objects String, Number are required as default
+
+-Accepted json schema keywords on identifiers: pattern, maximum, minimum, exclusiveMinimum, exclusiveMaximum, required
+
+-If an identifier has a pattern it must be an Javascript Regex, the generated value will generate the random value using this
+
+-Additional properties are not enabled by default
 
 ## Commands
 
-- `npm start` - start the dev server
-- `npm run build` - create build in `dist` folder
 - `npm run lint` - run an ESLint check
 - `npm run coverage` - run code coverage and generate report in the `coverage` folder
 - `npm test` - run all tests
 - `npm run test:watch` - run all tests in watch mode
+- `npm run generate-schema` - run the CLI command and generate all schemas
 
 
 [npm]: https://img.shields.io/badge/npm-5.3.0-blue.svg
@@ -289,3 +362,4 @@ const cred = new VC('civ:cred:Test', 'jest:test', [name, dob]);
 
 [cover]: https://codecov.io/gh/jluccisano/webpack-es6-boilerplate/branch/master/graph/badge.svg
 [cover-url]: https://codecov.io/gh/jluccisano/webpack-es6-boilerplate
+
