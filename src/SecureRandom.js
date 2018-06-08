@@ -1,5 +1,5 @@
 const sjcl = require('sjcl');
-const logger = require('./config');
+const logger = require('./logger');
 
 class SecureRandomizer {
   constructor() {
