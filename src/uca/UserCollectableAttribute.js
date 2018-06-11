@@ -72,6 +72,22 @@ const resolveType = (definition) => {
   return resolveType(refDefinition);
 };
 
+const isAttestableValue = value => (
+  value && value.attestableValue
+);
+
+const parseAttestationValue = (value) => {
+  const values = [];
+  const splt = _.split(value.attestableValue, ':');
+  // console.log(splt);
+  const v = {
+    typeS: splt[0],
+    salt: splt[1],
+    value: splt[2],
+  };
+  values.push(v);
+  return values;
+};
 
 /**
  * Creates new UCA instances
@@ -79,7 +95,7 @@ const resolveType = (definition) => {
  * @param {*} value
  */
 function UCABaseConstructor(identifier, value, version) {
-  this.timestamp = timestamp.now();
+  this.timestamp = null;
   this.id = null;
 
   if (!_.includes(validIdentifiers, identifier)) {
@@ -92,9 +108,19 @@ function UCABaseConstructor(identifier, value, version) {
   this.version = version || definition.version;
 
   this.type = getTypeName(definition);
+  console.log(`this.type=${this.type}`);
 
   definition.type = resolveType(definition);
-  if (isValueOfType(value, this.type)) {
+  console.log(`definition.type=${JSON.stringify(definition.type)}`);
+  if (isAttestableValue(value)) {
+    // Trying to construct UCA with a existing attestableValue
+    const parsedAttestationValue = parseAttestationValue(value);
+    this.timestamp = null;
+    this.salt = parsedAttestationValue[0].salt;
+    this.value = parsedAttestationValue[0].value;
+  } else if (isValueOfType(value, this.type)) {
+    // Trying to construct UCA with a normal value
+    this.timestamp = timestamp.now();
     if (!isValid(value, this.type, definition)) {
       throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
     }

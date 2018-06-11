@@ -140,10 +140,56 @@ describe('UCA Constructions tests', () => {
     expect(v).toBeDefined();
   });
 
-  test('UCA return Attestatble values', () => {
+  test('UCA return simple Attestatble Value', () => {
+    const v = new UCA.IdentityNameFirst('Joao');
+    expect(v).toBeDefined();
+    const attValues = v.getAttestableValues();
+    // console.log(attValues);
+    expect(attValues).toHaveLength(1);
+    expect(attValues[0].identifier).toBe('civ:Identity:name.first');
+    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain(':Joao');
+  });
+
+  test('UCA should Construct with a simple Attestatble Value', () => {
+    const anAttestationValue = 's:873b59b3c4faa0c63e6ec788041291f36b915357cffaaf6c39661b2a94783d19:Joao';
+    const v = new UCA.IdentityNameFirst({ attestableValue: anAttestationValue });
+    expect(v).toBeDefined();
+    // console.log(v);
+    const attValues = v.getAttestableValues();
+    // console.log(attValues);
+    expect(attValues).toHaveLength(1);
+    expect(attValues[0].identifier).toBe('civ:Identity:name.first');
+    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain(':Joao');
+  });
+
+  test('UCA return complex/multiple Attestatble Values', () => {
     const v = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     expect(v).toBeDefined();
     const attValues = v.getAttestableValues();
+    // console.log(attValues);
     expect(attValues).toHaveLength(4);
+    expect(attValues[0].identifier).toBe('civ:Identity:name');
+    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain(':Joao');
+    expect(attValues[0].value).toContain(':Barbosa');
+    expect(attValues[0].value).toContain(':Santos');
+  });
+
+  test('UCA should Construct with a complex Attestatble Value', () => {
+    const vt = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    expect(vt).toBeDefined();
+    // console.log(vt);
+    // const attValue = vt.getAttestableValue();
+    // console.log(attValue);
+
+    // const v = new UCA.IdentityNameFirst({attestableValue: 's:ef4b3ba93b29295831d1d3e9fc350d59f9bf4f93b70d0e0f43fb458353ba0120'});
+    // expect(v).toBeDefined();
+    // console.log(v);
+    // expect(attValues).toHaveLength(1);
+    // expect(attValues[0].identifier).toBe('civ:Identity:name.first');
+    // expect(attValues[0].value).toContain('s:');
+    // expect(attValues[0].value).toContain(':Joao');
   });
 });
