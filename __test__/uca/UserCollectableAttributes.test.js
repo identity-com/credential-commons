@@ -152,8 +152,8 @@ describe('UCA Constructions tests', () => {
   });
 
   test('UCA should Construct with a simple Attestatble Value', () => {
-    const anAttestationValue = 's:873b59b3c4faa0c63e6ec788041291f36b915357cffaaf6c39661b2a94783d19:Joao';
-    const v = new UCA.IdentityNameFirst({ attestableValue: anAttestationValue });
+    const aSingleAttestationValue = 's:873b59b3c4faa0c63e6ec788041291f36b915357cffaaf6c39661b2a94783d19:Joao';
+    const v = new UCA.IdentityNameFirst({ attestableValue: aSingleAttestationValue });
     expect(v).toBeDefined();
     // console.log(v);
     const attValues = v.getAttestableValues();
@@ -177,19 +177,20 @@ describe('UCA Constructions tests', () => {
     expect(attValues[0].value).toContain(':Santos');
   });
 
-  test('UCA should Construct with a complex Attestatble Value', () => {
-    const vt = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-    expect(vt).toBeDefined();
-    // console.log(vt);
-    // const attValue = vt.getAttestableValue();
-    // console.log(attValue);
+  test.only('UCA should Construct with a complex Attestatble Value', () => {
+    // eslint-disable-next-line max-len
+    const aComplexAttestationValue = 's:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|s:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|s:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
 
-    // const v = new UCA.IdentityNameFirst({attestableValue: 's:ef4b3ba93b29295831d1d3e9fc350d59f9bf4f93b70d0e0f43fb458353ba0120'});
-    // expect(v).toBeDefined();
+    const v = new UCA.IdentityName({ attestableValue: aComplexAttestationValue });
+    expect(v).toBeDefined();
     // console.log(v);
-    // expect(attValues).toHaveLength(1);
-    // expect(attValues[0].identifier).toBe('civ:Identity:name.first');
-    // expect(attValues[0].value).toContain('s:');
-    // expect(attValues[0].value).toContain(':Joao');
+    const attValues = v.getAttestableValues();
+    // console.log(attValues);
+    expect(attValues).toHaveLength(4);
+    expect(attValues[0].identifier).toBe('civ:Identity:name');
+    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain(':Joao');
+    expect(attValues[0].value).toContain(':Barbosa');
+    expect(attValues[0].value).toContain(':Santos');
   });
 });

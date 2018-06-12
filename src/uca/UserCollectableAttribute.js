@@ -76,16 +76,26 @@ const isAttestableValue = value => (
   value && value.attestableValue
 );
 
-const parseAttestationValue = (value) => {
+const parseAttestableValue = (value) => {
   const values = [];
-  const splt = _.split(value.attestableValue, ':');
-  // console.log(splt);
-  const v = {
-    typeS: splt[0],
-    salt: splt[1],
-    value: splt[2],
-  };
-  values.push(v);
+  const spltPipes = _.split(value.attestableValue, '|');
+  // console.log(spltPipes);
+  _.each(spltPipes, (stringValue) => {
+    const spltP = _.split(stringValue, ':');
+    // console.log(spltP);
+    if (spltP && spltP.length === 3) {
+      const v = {
+        typeS: spltP[0],
+        salt: spltP[1],
+        value: spltP[2],
+        stringValue,
+      };
+      values.push(v);
+    }
+  });
+  if (spltPipes.length !== values.length && spltPipes.length !== values.length + 1) {
+    throw new Error('Invalid attestableValue');
+  }
   return values;
 };
 
@@ -108,16 +118,32 @@ function UCABaseConstructor(identifier, value, version) {
   this.version = version || definition.version;
 
   this.type = getTypeName(definition);
-  console.log(`this.type=${this.type}`);
+  // console.log(`this.type=${this.type}`);
 
   definition.type = resolveType(definition);
-  console.log(`definition.type=${JSON.stringify(definition.type)}`);
+  // console.log(`definition.type=${JSON.stringify(definition.type)}`);
   if (isAttestableValue(value)) {
     // Trying to construct UCA with a existing attestableValue
-    const parsedAttestationValue = parseAttestationValue(value);
-    this.timestamp = null;
-    this.salt = parsedAttestationValue[0].salt;
-    this.value = parsedAttestationValue[0].value;
+    // console.log('isAttestableValue');
+    const parsedAttestableValue = parseAttestableValue(value);
+    if (parsedAttestableValue.length === 1) {
+      // This is a simple attestableValue
+      // console.log('simple attestationValue');
+      this.timestamp = null;
+      this.salt = parsedAttestableValue[0].salt;
+      this.value = parsedAttestableValue[0].value;
+    } else {
+      const sortedDefinitions = _.sortBy(definition.type.properties, ['name']);
+      const ucaValue = {};
+      // TODO: Review the marshaller and unmarsheller: if some no required attribute is missing, unmarshelling may be unpredictable
+      for (let i = 0; i < parsedAttestableValue.length; i += 1) {
+        // console.log(sortedDefinitions[i].type);
+        // console.log(parsedAttestableValue[i].stringValue);
+        ucaValue[sortedDefinitions[i].name] = new UCABaseConstructor(sortedDefinitions[i].type, { attestableValue: parsedAttestableValue[i].stringValue });
+      }
+      // console.log(ucaValue);
+      this.value = ucaValue;
+    }
   } else if (isValueOfType(value, this.type)) {
     // Trying to construct UCA with a normal value
     this.timestamp = timestamp.now();
@@ -138,6 +164,7 @@ function UCABaseConstructor(identifier, value, version) {
       const uca = new UCABaseConstructor(propertyDef.type, v, propertyDef.version);
       return { key: k, value: uca };
     }), 'key'), 'value');
+    // console.log(ucaValue);
     this.value = ucaValue;
   }
 
@@ -150,6 +177,7 @@ function UCABaseConstructor(identifier, value, version) {
       case 'Boolean':
         return `b:${this.salt}:${this.value}`;
       default:
+        // TODO: Review the marshaller and unmarsheller: if some no required attribute is missing, unmarshelling may be unpredictable
         return _.reduce(_.sortBy(_.keys(this.value)), (s, k) => `${s}${this.value[k].getAttestableValue()}|`, '');
     }
   };
