@@ -4,6 +4,9 @@ const sjcl = require('sjcl');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const SecureRandom = require('../SecureRandom');
+const { services } = require('../services');
+
+const anchorService = services.container.AnchorService;
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
@@ -121,6 +124,18 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
     });
 
     return filtered;
+  };
+
+  this.requestAnchor = async (options) => {
+    const anchor = await anchorService.anchor(this.identifier, this.signature.merkleRoot, options);
+    this.signature.anchor = anchor;
+    return this;
+  };
+
+  this.updateAnchor = async () => {
+    const anchor = await anchorService.update(this);
+    this.signature.anchor = anchor;
+    return this;
   };
 
   return this;

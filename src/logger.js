@@ -1,5 +1,6 @@
 const civicLog = require('civic-log');
 
+
 const logger = civicLog(
   {
     loggly: {
