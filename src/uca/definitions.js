@@ -80,7 +80,7 @@ const definitions = [
     identifier: 'civ:Type:DocumentType',
     version: '1',
     type: 'String', // change to Array and change the constructor and SchemaGenerator
-    credentialItem: false,
+    credentialItem: true,
   },
   {
     identifier: 'civ:Identity:name', // We can define a new identifier and the structure at same definition
@@ -129,7 +129,7 @@ const definitions = [
     identifier: 'civ:Type:Year',
     version: '1',
     type: 'Number',
-    minimum: 0,
+    minimum: 1900,
     exclusiveMinimum: true,
   },
   {

@@ -1,6 +1,6 @@
-const UCA = require('./uca/UserCollectableAttribute');
-const VC = require('./creds/VerifiableCredential');
-const { initServices } = require('./services/index');
+const UCA = require('./src/uca/UserCollectableAttribute');
+const VC = require('./src/creds/VerifiableCredential');
+const { initServices } = require('./src/services/index');
 
 function CredentialCommons(config, http) {
   if (config) {

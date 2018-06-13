@@ -279,6 +279,29 @@ const makeJsonRecursion = (ucaDefinition) => {
   return output;
 };
 
+const generateRandomNumberValueWithRange = (definition) => {
+  if (definition !== null) {
+    if (typeof definition.minimum !== 'undefined' && definition.minimum !== null
+      && typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
+      if (Number.isInteger(definition.minimum)) {
+        return Math.floor(definition.minimum + (Math.random() * definition.maximum));
+      }
+      return definition.minimum + (Math.random() * definition.maximum);
+    } else if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
+      if (Number.isInteger(definition.minimum)) {
+        return Math.floor(definition.minimum + (Math.random() * 100));
+      }
+      return definition.minimum + (Math.random() * 100);
+    } else if (typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
+      if (Number.isInteger(definition.maximum)) {
+        return Math.floor((Math.random() * definition.maximum));
+      }
+      return (Math.random() * definition.maximum);
+    }
+  }
+  return Math.random() * 100;
+};
+
 const generateRandomValueForType = (typeName) => {
   let refDefinition = null;
   let resolvedTypeName = typeName;
@@ -294,7 +317,7 @@ const generateRandomValueForType = (typeName) => {
     case 'String':
       return randomString.generate(10);
     case 'Number':
-      return Math.random() * 100;
+      return generateRandomNumberValueWithRange(refDefinition);
     case 'Boolean':
       return (Math.round(Math.random()) === 1);
     default:

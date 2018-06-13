@@ -10,7 +10,7 @@ const figlet = require('figlet');
 const inquirer = require('inquirer');
 const fs = require('fs');
 
-const GENERATION_FOLDER = 'src/schemas/';
+const GENERATION_FOLDER = './dist/schemas/';
 // https://stackoverflow.com/questions/9391370/json-schema-file-extension
 const SCHEMA_FILE_EXTENSION = '.schema.json';
 
@@ -57,7 +57,11 @@ const generateCredentialSchemas = async () => {
     definition.depends.forEach((ucaDefinitionIdentifier) => {
       const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
       const ucaJson = schemaGenerator.buildSampleJson(ucaDefinition);
-      const dependentUca = new UCA(ucaDefinition.identifier, ucaJson, ucaDefinition.version);
+      let value = ucaJson;
+      if (Object.keys(ucaJson).length === 1) {
+        value = Object.values(ucaJson)[0];
+      }
+      const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
     const credential = new VC(definition.identifier, 'jest:test', ucaArray, 1);
