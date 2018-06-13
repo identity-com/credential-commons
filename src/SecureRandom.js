@@ -4,7 +4,7 @@ const logger = require('./logger');
 class SecureRandomizer {
   constructor() {
     logger.debug('Init Secure Randon');
-    // eslint-disable-next-line 
+    // eslint-disable-next-line
     this.sjclRandom = new sjcl.prng(10);
 
     try {

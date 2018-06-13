@@ -24,11 +24,16 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
   it('Should validate the generated VC against it\'s generated schema', async (done) => {
     credentialDefinitions.forEach((credentialDefinition) => {
+      console.log(credentialDefinition);
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
         const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
-        const dependentUca = new UCA(ucaDefinition.identifier, ucaJson, ucaDefinition.version);
+        let value = ucaJson;
+        if (Object.keys(ucaJson).length === 1) {
+          value = Object.values(ucaJson)[0];
+        }
+        const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
         ucaArray.push(dependentUca);
       });
       const credential = new VC(credentialDefinition.identifier, 'jest:test', ucaArray, 1);
@@ -41,7 +46,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
       expect(isValid).toBeTruthy();
-      done();
     });
+    done();
   });
 });
