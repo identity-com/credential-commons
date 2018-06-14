@@ -40,7 +40,7 @@ describe('Civic Anchor Module Tests', () => {
       expect(result).toBeDefined();
       expect(result).toHaveProperty('type');
       return result;
-    }).then(attestaion => civicAnchor.update(attestaion)).then((updated) => {
+    }).then(attestation => civicAnchor.update(attestation)).then((updated) => {
       expect(updated).toBeDefined();
       expect(updated).toHaveProperty('type');
     });
