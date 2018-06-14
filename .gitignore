@@ -1,6 +1,7 @@
 reports/*
 node_modules/
 .idea/
+.vscode/
 *.iml
 npm-debug.log
 build
