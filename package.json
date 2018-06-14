@@ -38,15 +38,20 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-no-only-tests": "^2.0.0",
     "jest": "^22.4.3",
-    "jest-html-reporter": "^2.3.0"
+    "jest-html-reporter": "^2.3.0",
+    "request-debug": "^0.2.0"
   },
   "dependencies": {
     "ajv": "^6.5.0",
     "bluebird": "^3.5.1",
+    "bottlejs": "^1.7.1",
+    "chainauth": "civicteam/multisig-attest.git#v1.0.1",
     "chalk": "^2.4.1",
+    "civic-auth-utils": "github:civicteam/civic-auth-utils",
     "civic-log": "civicteam/civic-log#2.0.4",
     "clear": "^0.1.0",
     "cross-env": "^5.1.6",
+    "dotenv": "^6.0.0",
     "figlet": "^1.2.0",
     "generate-schema": "^2.6.0",
     "inquirer": "^6.0.0",
@@ -55,9 +60,12 @@
     "merkle-tools": "^1.4.0",
     "randexp": "^0.4.9",
     "randomstring": "^1.1.5",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5",
     "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",
-    "unix-timestamp": "^0.2.0"
+    "unix-timestamp": "^0.2.0",
+    "uuid": "^3.2.1"
   },
   "jest": {
     "collectCoverageFrom": [
