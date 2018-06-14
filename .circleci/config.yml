@@ -2,13 +2,14 @@ version: 2
 
 workflows:
   version: 2
-  build-and-deploy:
+  build-deploy:
     jobs:
       - build:
-        branches:
-          only:
-          - master
-          - develop
+          filters:
+            branches:
+              only:
+                - master
+                - develop
 
 jobs:
   build:
