@@ -35,6 +35,44 @@ Verifiable Credential and Attestation Library - CCS-38
       
 - [Node.js](http://es6-features.org)
 
+## Configuration
+
+This library depends on some configuration seting to work properly.
+The configuration is made the 3 diferent ways that override each other: etc config file, user config file, enviroments variables, incode
+and consists of the following settings:
+
+* CIVIC_SEC_URL - Base endpoint address to the Civic Security Service, where you can register this lib as a client
+* CIVIC_ATTN_URL - Base endpoint address to the Civic Attestation Service
+* CIVIC_CLIENT_ID - The ID of this lib instalation
+* CIVIC_CLIENT_XPUB - The public key used by this instalation
+* CIVIC_CLIENT_XPRIV - The public key used by this instalation
+* CIVIC_PASSPHASE - Civic User Wallet Passphrase. prefer setting this in code
+* CIVIC_KEYCHAIN - Civic User Wallet KEYCHAIN. prefer setting this in code
+ 
+
+### Etc Config File /etc/civic/config
+### User Config File ~/.civic/config
+
+### incode
+```
+const CCC = require('civic-credentials-commons');
+const ccc = new CCC({
+  sipSecurityService: "",
+  attestationService: "",
+  clientConfig: {
+    id: "",
+    signingKeys: {
+      hexpub: "",
+      hexsec: "",
+    },
+  },
+  passphrase: "",
+  keychain: { prv: "" },
+})
+ 
+```
+
+
 ## Features
 
 ### User Collectable Attributes
@@ -130,7 +168,7 @@ JSON String
 
 ### Credentials
 
-[see Entity Credential Model](https://www.w3.org/TR/verifiable-claims-data-model/#verifiable-claims-model) 
+A Credential with an associated Proof. Every consumer of a verifiable Credentials must be able to verify those independently. Holders of Credentials (aka Mobile Phones) are creating "Verifiable Credentials" for Inspectors (aka Requesters).
 
 #### Defining new UCA
 
@@ -155,7 +193,29 @@ const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
 const cred = new VC('civ:cred:Test', 'jest:test', [name, dob]);
 ```
 
-###### Verifiable Credential Sample
+##### anchoring VerifiableCredential instances with the constructor
+To construct a new VC you need first to get instances of all UCA dependencies
+```
+const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+const cred = new VC('civ:cred:Test', 'jest:test', [name, dob]);
+cred.requestAnchor().then(() => {
+  //The original instance is updated
+})
+```
+
+##### refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor
+To construct a new VC you need first to get instances of all UCA dependencies
+```
+const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+const cred = new VC('civ:cred:Test', 'jest:test', [name, dob]);
+cred.updateAnchor().then(() => {
+  //The original instance is updated
+})
+```
+
+##### Verifiable Credential Sample
 ```
     {
       "id": null,

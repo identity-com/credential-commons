@@ -23,6 +23,9 @@ function validIdentifiers() {
   return vi;
 }
 
+/**
+ * Transforms a list of UCAs into the signature property of the verifiable cliams
+ */
 class CivicMerkleProof {
   static get PADDING_INCREMENTS() {
     return 16;
@@ -74,7 +77,9 @@ class CivicMerkleProof {
     return values;
   }
 }
-
+/**
+ * Transforms a list of UCAs into the claim property of the verifiable cliams
+ */
 class ClaimModel {
   constructor(ucas) {
     _.forEach(ucas, (uca) => {
@@ -86,7 +91,13 @@ class ClaimModel {
     });
   }
 }
-
+/**
+ * Creates a new Verifiable Credential based on an well-known identifier and it's claims dependencies
+ * @param {*} identifier 
+ * @param {*} issuer 
+ * @param {*} ucas 
+ * @param {*} version 
+ */
 function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) {
   this.id = null;
   this.issuer = issuer;
@@ -114,6 +125,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
     });
   }
 
+  /**
+   * Creates a filtered credential exposing only the requested claims
+   * @param {*} requestedClaims 
+   */
   this.filter = (requestedClaims) => {
     const filtered = _.cloneDeep(this);
     _.remove(filtered.signature.leaves, el => !_.includes(requestedClaims, el.identifier));
@@ -126,14 +141,23 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
     return filtered;
   };
 
+  /**
+   * Request that this credential MerkleRoot is anchored on the Blochain.
+   * This will return a _temporary_ anchor meaning that the blockchain entry is still not confirmed.
+   * @param {*} options 
+   */
   this.requestAnchor = async (options) => {
     const anchor = await anchorService.anchor(this.identifier, this.signature.merkleRoot, options);
     this.signature.anchor = anchor;
     return this;
   };
 
+  /**
+   * Trys to renew the current anchor. replecinf the _temporary_ anchor for a _permanent_ one,
+   * already confirmed on the blockchain.
+   */
   this.updateAnchor = async () => {
-    const anchor = await anchorService.update(this);
+    const anchor = await anchorService.update(this.signature.anchor);
     this.signature.anchor = anchor;
     return this;
   };

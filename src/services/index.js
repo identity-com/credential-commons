@@ -1,3 +1,6 @@
+/**
+ * Services IoC modules
+ */
 const Bottle = require('bottlejs');
 const { CurrentCivicAnchor } = require('./CurrentCivicAnchorServiceImpl');
 const AnchorService = require('./anchorService');
@@ -7,6 +10,11 @@ const config = require('./config');
 
 const services = new Bottle();
 
+/**
+ * Init services with new values to config and http services
+ * @param {*} conf 
+ * @param {*} http 
+ */
 const initServices = (conf, http) => {
   if (http) {
     services.resetProviders(['Http']);

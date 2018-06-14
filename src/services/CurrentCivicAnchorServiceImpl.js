@@ -1,3 +1,7 @@
+/**
+ * Current Civic Anchor/Attester service
+ * 
+ */
 const _ = require('lodash');
 const chainauth = require('chainauth');
 const { keyUtils, jwtUtils, uniqueUtils, requestUtils } = require('civic-auth-utils');
@@ -14,12 +18,19 @@ function getAuthHeaderExtension(http, requestBody, config) {
   return '';
 }
 
+/**
+ * Request an JWT for the Authorization header
+ * 
+ * @param {*} http 
+ * @param {*} requestBody 
+ * @param {*} config 
+ */
 async function getAuthHeader(http, requestBody, config) {
   const path = '/jwt';
-  const endpoint = `${config.SipSecurityService}${path}`;
+  const endpoint = `${config.sipSecurityService}${path}`;
   const clientConfig = config.clientConfig;
   logger.debug('clientConfig:', JSON.stringify(clientConfig, null, 2));
-  const jwt = jwtUtils.createToken(clientConfig.id, config.SipSecurityService, clientConfig.id, JWT_EXPIRATION, {
+  const jwt = jwtUtils.createToken(clientConfig.id, config.sipSecurityService, clientConfig.id, JWT_EXPIRATION, {
     method: 'GET',
     path,
   }, clientConfig.signingKeys.hexsec);
@@ -50,6 +61,12 @@ async function getAuthHeader(http, requestBody, config) {
   }
 }
 
+/**
+ * Register a new lib/client
+ * 
+ * @param {*} http 
+ * @param {*} config 
+ */
 async function registerClient(http, config) {
   const signingKeys = keyUtils.createKeys();
   const encryptionKeys = keyUtils.createTempECDHKeys();
@@ -60,9 +77,9 @@ async function registerClient(http, config) {
     encryptionKeys: keyUtils.serializeKeys(encryptionKeys),
   };
   const path = '/registry';
-  const endpoint = `${config.SipSecurityService}${path}`;
+  const endpoint = `${config.sipSecurityService}${path}`;
   logger.debug('clientConfig:', JSON.stringify(clientConfig, null, 2));
-  const jwt = jwtUtils.createToken(clientConfig.id, config.SipSecurityService, clientConfig.id, JWT_EXPIRATION, {
+  const jwt = jwtUtils.createToken(clientConfig.id, config.sipSecurityService, clientConfig.id, JWT_EXPIRATION, {
     method: 'POST',
     path,
   }, clientConfig.signingKeys.hexsec);
@@ -91,6 +108,12 @@ async function registerClient(http, config) {
   }
 }
 
+/**
+ * Civic Anchor/Attester implementation
+ * 
+ * @param {*} config 
+ * @param {*} http 
+ */
 function CurrentCivicAnchor(config, http) {
   this.config = config;
   this.http = http;

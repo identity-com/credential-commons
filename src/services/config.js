@@ -4,7 +4,7 @@ const fs = require('fs');
 
 if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
 
-const CONFIG_FILE = '.config';
+const CONFIG_FILE = 'config';
 
 const CONFIG_PATH = {
   BOX: '/etc/civic',
@@ -21,7 +21,7 @@ if (fs.existsSync(userConfigFile)) { require('dotenv').config({ path: configFile
 /* eslint-ebable global-require */
 
 const config = {
-  SipSecurityService: process.env.CIVIC_SEC_URL,
+  sipSecurityService: process.env.CIVIC_SEC_URL,
   attestationService: process.env.CIVIC_ATTN_URL,
   clientConfig: {
     id: process.env.CIVIC_CLIENT_ID,
