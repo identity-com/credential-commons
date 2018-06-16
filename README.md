@@ -37,15 +37,19 @@ Verifiable Credential and Attestation Library - CCS-38
 
 ## Configuration
 
-This library depends on some configuration seting to work properly.
-The configuration is made the 3 diferent ways that override each other: etc config file, user config file, enviroments variables, incode
+This library depends on some configuration settings to work properly.
+The configuration is made in three different ways that override each other: 
+* etc config file
+* user config file
+* environment's variables, in code (not recommended as you can push that to your repo)
+
 and consists of the following settings:
 
 * CIVIC_SEC_URL - Base endpoint address to the Civic Security Service, where you can register this lib as a client
 * CIVIC_ATTN_URL - Base endpoint address to the Civic Attestation Service
-* CIVIC_CLIENT_ID - The ID of this lib instalation
-* CIVIC_CLIENT_XPUB - The public key used by this instalation
-* CIVIC_CLIENT_XPRIV - The public key used by this instalation
+* CIVIC_CLIENT_ID - The ID of this lib installation
+* CIVIC_CLIENT_XPUB - The public key used by this installation
+* CIVIC_CLIENT_XPRIV - The public key used by this installation
 * CIVIC_PASSPHASE - Civic User Wallet Passphrase. prefer setting this in code
 * CIVIC_KEYCHAIN - Civic User Wallet KEYCHAIN. prefer setting this in code
  

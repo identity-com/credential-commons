@@ -27,6 +27,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "generate-schema": "cross-env NODE_ENV=test node cli/generator.js",
+    "generate-civic-config": "cross-env NODE_ENV=test node cli/configuration.js",
     "ci": "npm run test && npm run lint",
     "preversion": "npm test",
     "postversion": "git push && git push --tags"
@@ -53,7 +54,6 @@
     "cross-env": "^5.1.6",
     "dotenv": "^6.0.0",
     "figlet": "^1.2.0",
-    "generate-schema": "^2.6.0",
     "inquirer": "^6.0.0",
     "json-format": "^1.0.1",
     "lodash": "4.17.10",
@@ -62,6 +62,7 @@
     "randomstring": "^1.1.5",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
+    "shelljs": "^0.8.2",
     "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
