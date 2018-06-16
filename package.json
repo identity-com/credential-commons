@@ -6,11 +6,9 @@
   "description": "Verifiable Credential and Attestation Library",
   "private": true,
   "keywords": [
-    "webpack",
-    "boilerplate",
-    "es6",
-    "eslint",
-    "jest"
+    "credentials",
+    "anchor",
+    "attestation"
   ],
   "repository": {
     "type": "git",
@@ -29,7 +27,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "generate-schema": "cross-env NODE_ENV=test node cli/generator.js",
-    "ci": "npm run test && npm run lint"
+    "ci": "npm run test && npm run lint",
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "eslint": "^4.3.0",
