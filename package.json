@@ -14,14 +14,7 @@
     "type": "git",
     "url": "git@github.com:civicteam/civic-credentials-commons-js"
   },
-  "main": "index.js",
-  "files": [
-    "index.js",
-    "src/*"
-  ],
-  "directories": {
-    "lib": "./src"
-  },
+  "main": "build/index.js",
   "scripts": {
     "lint": "eslint ./src/**.js",
     "test": "cross-env NODE_ENV=test jest",
