@@ -75,7 +75,7 @@
     "collectCoverageFrom": [
       "**/src/**/*.{js}",
       "!**/node_modules/**",
-      "!**/dist/**",
+      "!**/build/**",
       "!**/vendor/**"
     ],
     "coverageDirectory": "reports/coverage",
