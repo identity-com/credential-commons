@@ -12,9 +12,9 @@ function CredentialCommons(config, http) {
     initServices(http);
   }
   this.UCA = UCA;
-  this.UCA = VC;
+  this.VC = VC;
 
   return this;
 }
 
-module.exports = CredentialCommons;
+module.exports = new CredentialCommons();
