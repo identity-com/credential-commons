@@ -8,7 +8,7 @@ const Ajv = require('ajv');
 
 // TODO add more tests to validate the integrity of the json schemas
 describe('VerifiableCredentials SchemaGenerator validation', () => {
-  it('Should validate the VC Schema generation against a single well known definition', async (done) => {
+  it('Should validate the VC Schema generation against a single well known definition', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:CivicBasic', 'jest:test', [name, dob], 1);
@@ -19,12 +19,10 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     expect(jsonSchema.properties.version.type).toBe('number');
     expect(jsonSchema.properties.claims.type).toBe('object');
     expect(jsonSchema.properties.signature.type).toBe('object');
-    done();
   });
 
-  it('Should validate the generated VC against it\'s generated schema', async (done) => {
+  it('Should validate the generated VC against it\'s generated schema', () => {
     credentialDefinitions.forEach((credentialDefinition) => {
-      console.log(credentialDefinition);
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
         const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
@@ -41,12 +39,9 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
       const ajv = new Ajv();
-      console.log(JSON.stringify(jsonSchema, null, 2));
-      console.log(JSON.stringify(generatedJson, null, 2));
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
       expect(isValid).toBeTruthy();
     });
-    done();
   });
 });

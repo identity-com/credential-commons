@@ -5,7 +5,7 @@ const { registerClient } = require('../../src/services/CurrentCivicAnchorService
 const civicAnchor = services.container.CivicAnchor;
 jest.setTimeout(100000);
 
-describe('Civic Anchor Module Tests', () => {
+describe.skip('Civic Anchor Module Tests', () => {
   // We don't want to run register a new client on every test 
   test.skip('Register as a valid client', () => {
     expect.assertions(4);

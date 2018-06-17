@@ -26,8 +26,6 @@ describe('UCA Json Sample Date Construction tests', () => {
       const jsonSchema = SchemaGenerator.process(definition, json);
       expect(jsonSchema.title).toEqual(definition.identifier);
       const ajv = new Ajv();
-      console.log(json);
-      console.log(jsonSchema);
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(json);
       expect(isValid).toBeTruthy();
