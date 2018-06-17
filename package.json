@@ -14,7 +14,7 @@
     "type": "git",
     "url": "git@github.com:civicteam/civic-credentials-commons-js"
   },
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "lint": "eslint ./src/**.js",
     "test": "cross-env NODE_ENV=test jest",
@@ -22,8 +22,12 @@
     "generate-schema": "cross-env NODE_ENV=test node cli/generator.js",
     "generate-civic-config": "cross-env NODE_ENV=test node cli/configuration.js",
     "ci": "npm run test && npm run lint",
-    "build": "babel src -d build",
-    "version": "npm run build",
+    "build-es5": "BABEL_ENV=node6 babel src -d build/es5",
+    "build-es6": "babel src -d build/es6 --no-babelrc",
+    "build-browser-before": "BABEL_ENV=browser babel src -d build/browser",
+    "build-browser-after": "minify build/browser -d build/minified",
+    "build-browser": "npm run build-browser-before && npm run build-browser-after",
+    "build": "npm run build-browser && npm run build-es5 && npm run build-es6",
     "preversion": "npm test",
     "postversion": "git push && git push --tags"
   },
@@ -31,6 +35,7 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.24.1",
     "babel-jest": "^22.4.3",
+    "babel-minify": "^0.4.3",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.0.16",
     "babel-preset-env": "^1.6.1",

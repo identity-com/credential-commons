@@ -415,6 +415,133 @@ The schema generator will generate an json schema like this:
 - `npm run generate-schema` - run the CLI command and generate all schemas
 
 
+## Integration with CCS Libraries 
+CCS Libraries can be integrated with projects by pointing out on package.json to the latest repo.
+
+For now all libraries are released only on GitHub tags.
+
+For Civic Developers on Node 8 or superior add this dependency to package.json
+
+"civic-credentials-common-js": "github:civicteam/civic-credentials-commons-js"
+
+This will install the latest version of the default branch on github (currently that branch is develop, but as soon as we release to production it should change to master).
+
+You can also add via npm install with the command:
+
+```bash npm install civicteam/civic-credentials-commons-js```
+
+When the project is released to NPM Release the command will be only:
+
+```bash npm install civic-credentials-commons-js```
+
+The following question may arise, why the civic name on the project?
+
+Modules are lower case and usually dash-separated. If your module is a pure utility, you should generally favor clear and "boring" names for better discoverability and code clarity.
+
+This library is not pure utility and has a lot of Civic only patterns, so using the civic-* pattern becomes useful as it won't have any name clash with other packages and also makes it clear, that it's not a pure utility for other projects to use.
+
+For future projects that we release on public, if it's a pure utility, the prefix civic-* should not be used.
+
+Using specific tags on projects configuration
+On the project that is going to use the library, configure on the package.json as the following example:
+
+```json
+
+"civic-credentials-commons-js": "civicteam/civic-credentials-commons-js.git#vX.Y.Z",
+
+```
+
+This will get the specific version tagged on github.
+
+All versions here follow SemVer (https://semver.org/)
+Don't forget to add the version on your package.json, or else it will always get the latest from GitHub default branch.
+
+## ES5 and ES6 definitions
+
+The project structure is made like this:
+
+|_src
+|_build
+
+The library code is written in pure ES6 code (and some parts are using lodash).
+
+The composition of the tagged packaged becomes:
+
+
+
+The released library is not minified. We should not minify the distribution before the distribution.
+
+Most debates around this on the community points out that the target project should minify it's files and dependencies.
+
+But if we need to minify, we can add to the build transformer:
+
+First install:
+
+```bash
+npm install babel-preset-minify --save-dev
+```
+
+Then on .babelrc add the following:
+```json
+  "env": {
+    "production": {
+      "presets": ["minify"]
+    }
+  }
+```
+
+The resulting file should be:
+```json
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "6.10"
+      },
+      "production": {
+        "presets": ["minify"]
+      }
+    }]
+  ]
+}
+```
+We are targetting the library o node 6 (this is the way for sip-hosted-api to work without configuring anything in the project).
+
+The caveat is using Babel transform on build files.
+
+But as pointed out before, if the target project is ES6 compliant, we can build a new version without "babelifying" the source code.
+
+As long as there is a project in Civic targetting an older Node, the easiest path of integration is using Babel on build and release.
+
+We can follow lodash example, build an CLI and having releases with the following patterns:
+
+*-es[version]
+
+5,6,7 and then the integrator can point out on package.json directly to the release.
+
+He can also download the source code and build it himself.
+
+## Releases
+
+For now the default branch is "develop" as this is an WIP library.
+
+Releases will only be triggered from successfully tested "master" branches once we go live.
+
+The pattern should be to add to the circleci workflow:
+
+
+Demonstration branches:
+
+credential-common-js
+
+A browser-based project (e.g. portal)
+
+A node based ES5 project without webpack/babel (SIP-Hosted)
+
+A node based ES6 project without webpack/babel (mobile-lambdas)
+
+A node based project with webpack/babel (marketplace-lambdas)
+
 [npm]: https://img.shields.io/badge/npm-5.3.0-blue.svg
 [npm-url]: https://npmjs.com/
 
