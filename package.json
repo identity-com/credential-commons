@@ -1,6 +1,6 @@
 {
   "name": "civic-credentials-common-js",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "Civic",
   "license": "UNLICENSED",
   "description": "Verifiable Credential and Attestation Library",
