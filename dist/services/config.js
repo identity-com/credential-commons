@@ -1,20 +1,22 @@
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
+'use strict';
 
-if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
+var path = require('path');
+var os = require('os');
+var fs = require('fs');
 
-const CONFIG_FILE = 'config';
+if (process.platform === 'win32') throw new Error('Unsupported platform: ' + process.platform);
 
-const CONFIG_PATH = {
+var CONFIG_FILE = 'config';
+
+var CONFIG_PATH = {
   BOX: '/etc/civic',
-  USER: path.join(`${os.homedir()}`, '.civic')
+  USER: path.join('' + os.homedir(), '.civic')
 };
 
-const userConfigFile = path.join(CONFIG_PATH.USER, CONFIG_FILE);
-const boxConfigFile = path.join(CONFIG_PATH.BOX, CONFIG_FILE);
+var userConfigFile = path.join(CONFIG_PATH.USER, CONFIG_FILE);
+var boxConfigFile = path.join(CONFIG_PATH.BOX, CONFIG_FILE);
 
-const configFile = fs.existsSync(userConfigFile) ? userConfigFile : boxConfigFile;
+var configFile = fs.existsSync(userConfigFile) ? userConfigFile : boxConfigFile;
 
 /* eslint-disable global-require */
 if (fs.existsSync(userConfigFile)) {
@@ -22,7 +24,7 @@ if (fs.existsSync(userConfigFile)) {
 }
 /* eslint-ebable global-require */
 
-const config = {
+var config = {
   sipSecurityService: process.env.CIVIC_SEC_URL,
   attestationService: process.env.CIVIC_ATTN_URL,
   clientConfig: {

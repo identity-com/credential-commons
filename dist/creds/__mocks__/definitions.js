@@ -1,4 +1,6 @@
-const definitions = [{
+'use strict';
+
+var definitions = [{
   identifier: 'civ:Credential:SimpleIdentity',
   version: '1',
   depends: ['civ:Identity:name', 'civ:Identity:DateOfBirth']

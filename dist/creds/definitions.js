@@ -1,10 +1,12 @@
+'use strict';
+
 /**
  * name: 'attgenericId',
  * name: 'attBaseIdentity',
  * name: 'attAddress',
  * @type {*[]}
  */
-const definitions = [{
+var definitions = [{
   identifier: 'civ:Credential:CivicBasic',
   version: '1',
   depends: ['civ:Type:Phone', 'civ:Type:Email']

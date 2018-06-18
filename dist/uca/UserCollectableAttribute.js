@@ -1,10 +1,14 @@
-const _ = require('lodash');
-const timestamp = require('unix-timestamp');
-const sjcl = require('sjcl');
-const SecureRandom = require('../SecureRandom');
-const definitions = require('./definitions');
+'use strict';
 
-const validIdentifiers = _.map(definitions, d => d.identifier);
+var _ = require('lodash');
+var timestamp = require('unix-timestamp');
+var sjcl = require('sjcl');
+var SecureRandom = require('../SecureRandom');
+var definitions = require('./definitions');
+
+var validIdentifiers = _.map(definitions, function (d) {
+  return d.identifier;
+});
 
 /**
  * validate the value type
@@ -41,10 +45,10 @@ function isValid(value, type, definition) {
  * extract the expected Type name for the value when constructin an UCA
  * @param {*} definition
  */
-const getTypeName = definition => {
+var getTypeName = function getTypeName(definition) {
   if (_.isString(definition.type)) {
     if (_.includes(validIdentifiers, definition.type)) {
-      const innerDefinition = _.find(definitions, { identifier: definition.type });
+      var innerDefinition = _.find(definitions, { identifier: definition.type });
       return getTypeName(innerDefinition);
     }
 
@@ -53,8 +57,8 @@ const getTypeName = definition => {
   return 'Object';
 };
 
-const resolveType = definition => {
-  const typeName = getTypeName(definition);
+var resolveType = function resolveType(definition) {
+  var typeName = getTypeName(definition);
   if (!(typeName === 'Object')) {
     return typeName;
   }
@@ -63,7 +67,7 @@ const resolveType = definition => {
     return definition.type;
   }
 
-  const refDefinition = _.find(definitions, { identifier: definition.type });
+  var refDefinition = _.find(definitions, { identifier: definition.type });
   return resolveType(refDefinition);
 };
 
@@ -73,15 +77,17 @@ const resolveType = definition => {
  * @param {*} value
  */
 function UCABaseConstructor(identifier, value, version) {
+  var _this = this;
+
   this.timestamp = timestamp.now();
   this.id = null;
 
   if (!_.includes(validIdentifiers, identifier)) {
-    throw new Error(`${identifier} is not defined`);
+    throw new Error(identifier + ' is not defined');
   }
 
   this.identifier = identifier;
-  const definition = version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier });
+  var definition = version ? _.find(definitions, { identifier: identifier, version: version }) : _.find(definitions, { identifier: identifier });
   this.version = version || definition.version;
 
   this.type = getTypeName(definition);
@@ -89,120 +95,128 @@ function UCABaseConstructor(identifier, value, version) {
   definition.type = resolveType(definition);
   if (isValueOfType(value, this.type)) {
     if (!isValid(value, this.type, definition)) {
-      throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
+      throw new Error(JSON.stringify(value) + ' is not valid for ' + identifier);
     }
     this.value = value;
     this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(SecureRandom.wordWith(64)));
   } else if (_.isEmpty(definition.type.properties)) {
-    throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
+    throw new Error(JSON.stringify(value) + ' is not valid for ' + identifier);
   } else {
-    const hasRequireds = _.reduce(definition.type.required, (has, required) => value[required] && has, true);
+    var hasRequireds = _.reduce(definition.type.required, function (has, required) {
+      return value[required] && has;
+    }, true);
     if (!hasRequireds) {
-      throw new Error(`Missing required fields to ${identifier}`);
+      throw new Error('Missing required fields to ' + identifier);
     }
-    const ucaValue = _.mapValues(_.keyBy(_.map(value, (v, k) => {
-      const propertyDef = _.find(definition.type.properties, { name: k });
-      const uca = new UCABaseConstructor(propertyDef.type, v, propertyDef.version);
+    var ucaValue = _.mapValues(_.keyBy(_.map(value, function (v, k) {
+      var propertyDef = _.find(definition.type.properties, { name: k });
+      var uca = new UCABaseConstructor(propertyDef.type, v, propertyDef.version);
       return { key: k, value: uca };
     }), 'key'), 'value');
     this.value = ucaValue;
   }
 
-  this.getAttestableValue = () => {
-    switch (this.type) {
+  this.getAttestableValue = function () {
+    switch (_this.type) {
       case 'String':
-        return `s:${this.salt}:${this.value}`;
+        return 's:' + _this.salt + ':' + _this.value;
       case 'Number':
-        return `n:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`;
+        return 'n:' + _this.salt + ':' + _.padStart(_this.value.toString(), 8, '0');
       case 'Boolean':
-        return `b:${this.salt}:${this.value}`;
+        return 'b:' + _this.salt + ':' + _this.value;
       default:
-        return _.reduce(_.sortBy(_.keys(this.value)), (s, k) => `${s}${this.value[k].getAttestableValue()}|`, '');
+        return _.reduce(_.sortBy(_.keys(_this.value)), function (s, k) {
+          return '' + s + _this.value[k].getAttestableValue() + '|';
+        }, '');
     }
   };
 
-  this.getClaimRootPropertyName = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
+  this.getClaimRootPropertyName = function () {
+    var identifierComponentes = _.split(_this.identifier, ':');
     return _.lowerCase(identifierComponentes[1]);
   };
 
-  this.getClaimPropertyName = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
+  this.getClaimPropertyName = function () {
+    var identifierComponentes = _.split(_this.identifier, ':');
     return identifierComponentes[2];
   };
 
-  this.getClaimPath = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
-    const baseName = _.lowerCase(identifierComponentes[1]);
-    return `${baseName}.${identifierComponentes[2]}`;
+  this.getClaimPath = function () {
+    var identifierComponentes = _.split(_this.identifier, ':');
+    var baseName = _.lowerCase(identifierComponentes[1]);
+    return baseName + '.' + identifierComponentes[2];
   };
 
-  this.getAttestableValues = () => {
-    const values = [];
-    const def = _.find(definitions, { identifier: this.identifier, version: this.version });
+  this.getAttestableValues = function () {
+    var values = [];
+    var def = _.find(definitions, { identifier: _this.identifier, version: _this.version });
     if (def.credentialItem || def.attestable) {
-      values.push({ identifier: this.identifier, value: this.getAttestableValue() });
-      if (this.type === 'Object') {
-        _.forEach(_.keys(this.value), k => {
-          const innerValues = this.value[k].getAttestableValues();
-          _.reduce(innerValues, (res, iv) => res.push(iv), values);
+      values.push({ identifier: _this.identifier, value: _this.getAttestableValue() });
+      if (_this.type === 'Object') {
+        _.forEach(_.keys(_this.value), function (k) {
+          var innerValues = _this.value[k].getAttestableValues();
+          _.reduce(innerValues, function (res, iv) {
+            return res.push(iv);
+          }, values);
         });
       }
     }
     return values;
   };
 
-  this.getPlainValue = propName => {
-    const newParent = {};
-    const result = [];
-    switch (this.type) {
+  this.getPlainValue = function (propName) {
+    var newParent = {};
+    var result = [];
+    switch (_this.type) {
       case 'String':
       case 'Number':
       case 'Boolean':
         if (propName) {
-          newParent[propName] = this.value;
+          newParent[propName] = _this.value;
         } else {
-          if (!this.credentialItem) {
-            return this.value;
+          if (!_this.credentialItem) {
+            return _this.value;
           }
-          newParent[this.identifier] = this.value;
+          newParent[_this.identifier] = _this.value;
         }
         return newParent;
       default:
 
-        _.forEach(_.sortBy(_.keys(this.value)), k => {
-          result.push(this.value[k].getPlainValue(k));
+        _.forEach(_.sortBy(_.keys(_this.value)), function (k) {
+          result.push(_this.value[k].getPlainValue(k));
         });
-        _.forEach(result, properties => {
+        _.forEach(result, function (properties) {
           _.assign(newParent, properties);
         });
         return newParent;
     }
   };
 
-  const hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(this.getAttestableValue()));
-  this.id = `${this.version}:${this.identifier}:${hash}`;
+  var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(this.getAttestableValue()));
+  this.id = this.version + ':' + this.identifier + ':' + hash;
 
   return this;
 }
 
-const UCA = UCABaseConstructor;
+var UCA = UCABaseConstructor;
 
 function convertIdentifierToClassName(identifier) {
-  const identifierComponentes = _.split(identifier, ':');
-  const baseName = identifierComponentes[1];
-  const detailName = _.upperFirst(_.camelCase(identifierComponentes[2]));
-  return `${baseName}${detailName}`;
+  var identifierComponentes = _.split(identifier, ':');
+  var baseName = identifierComponentes[1];
+  var detailName = _.upperFirst(_.camelCase(identifierComponentes[2]));
+  return '' + baseName + detailName;
 }
 
 // Extend UCA Semantic
-_.forEach(_.filter(definitions, d => d.credentialItem), def => {
-  const name = convertIdentifierToClassName(def.identifier);
-  const source = {};
-  const identifier = def.identifier;
+_.forEach(_.filter(definitions, function (d) {
+  return d.credentialItem;
+}), function (def) {
+  var name = convertIdentifierToClassName(def.identifier);
+  var source = {};
+  var identifier = def.identifier;
 
   function UCAConstructor(value, version) {
-    const self = new UCABaseConstructor(identifier, value, version);
+    var self = new UCABaseConstructor(identifier, value, version);
     return self;
   }
   source[name] = UCAConstructor;

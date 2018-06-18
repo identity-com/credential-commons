@@ -1,6 +1,8 @@
-const civicLog = require('civic-log');
+'use strict';
 
-const logger = civicLog({
+var civicLog = require('civic-log');
+
+var logger = civicLog({
   loggly: {
     level: 'debug',
     subdomain: 'civicteam',
