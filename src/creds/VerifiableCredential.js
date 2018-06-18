@@ -92,6 +92,14 @@ class ClaimModel {
     });
   }
 }
+
+const VERIFY_LEVELS = {
+  UNVERIFIED: -1,
+  PROOFS: 0,
+  ANCHOR: 1,
+  BLOCKCHAIN: 2,
+};
+
 /**
  * Creates a new Verifiable Credential based on an well-known identifier and it's claims dependencies
  * @param {*} identifier 
@@ -174,7 +182,44 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     return this;
   };
 
+  this.verifyProofs = () => {
+    const claims = _.clone(this.claims);
+    const signature = _.clone(this.signature);
+    let valid = false;
+
+    // 1. verify valid targetHashs
+    const invalidValues = [];
+    const invalidHashs = [];
+    _.forEach(_.get(signature, 'leaves'), (leave) => {
+      // 1.1 "leave.value" should be equal claim values
+      const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
+      if (ucaValue.type !== 'Object') {
+        // console.log(`${ucaValue.value} / ${_.get(claims, leave.claimPath)}`);
+        if (ucaValue.value !== _.get(claims, leave.claimPath)) invalidValues.push(leave.value);
+      }
+      // TODO: ucaValue.type === 'Object'
+
+      // 1.2 hash(leave.value) should be equal leave.targetHash
+      const hash = sha256(leave.value);
+      if (hash !== leave.targetHash) invalidHashs.push(invalidHashs);
+    });
+    if (_.isEmpty(invalidValues) && _.isEmpty(invalidHashs)) valid = true;
+    return valid;
+  };
+
+  /**
+   * Verify the Credencial and return a verification level.
+   * @return Any of VC.VERIFY_LEVELS
+   */
+  this.verify = () => {
+    let level = VERIFY_LEVELS.UNVERIFIED;
+    if (this.verifyProofs()) level = VERIFY_LEVELS.PROOFS;
+    return level;
+  };
+
   return this;
 }
+
+VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;
 
 module.exports = VerifiableCredentialBaseConstructor;
