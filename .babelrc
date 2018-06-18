@@ -1,11 +1,12 @@
 {
   "env": {
-    "node6": {
+    "cjs": {
       "presets": [
         ["env", {
           "targets": {
             "node": "6.10"
-          }
+          },
+          "modules": "commonjs"
         }]
       ]
     },
@@ -16,7 +17,7 @@
             "browsers": ["last 2 versions", "safari >= 7"]
           }
         }]
-      ],
+      ]
     }
   }
 }

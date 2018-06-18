@@ -14,8 +14,9 @@
     "type": "git",
     "url": "git@github.com:civicteam/civic-credentials-commons-js"
   },
-  "main": "dist/es5/index.js",
-  "module": "dist/es6/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "browser": "dist/browser/index.js",
   "scripts": {
     "lint": "eslint ./src/**.js",
     "test": "cross-env NODE_ENV=test jest",
@@ -23,12 +24,13 @@
     "generate-schema": "cross-env NODE_ENV=test node cli/generator.js",
     "generate-civic-config": "cross-env NODE_ENV=test node cli/configuration.js",
     "ci": "npm run test && npm run lint",
-    "build-es5": "BABEL_ENV=node6 babel src -d dist/es5",
-    "build-es6": "babel src -d dist/es6 --no-babelrc",
-    "build-browser-before": "BABEL_ENV=browser babel src -d dist/browser",
-    "build-browser-after": "minify dist/browser -d dist/minified",
-    "build-browser": "npm run build-browser-before && npm run build-browser-after",
-    "build": "npm run build-browser && npm run build-es5 && npm run build-es6",
+    "build:cjs": "BABEL_ENV=cjs babel src -d dist/cjs",
+    "build:es": "babel src -d dist/es --no-babelrc",
+    "build:browser:before": "BABEL_ENV=browser babel src -d dist/prebrowser",
+    "build:browser:after": "minify dist/prebrowser -d dist/browser",
+    "build:browser:clean": "rimraf dist/prebrowser",
+    "build:browser": "npm run build:browser:before && npm run build:browser:after && npm run build:browser:clean",
+    "build": "npm run build:browser && npm run build:cjs && npm run build:es",
     "preversion": "npm test",
     "postversion": "git push && git push --tags"
   },
@@ -46,7 +48,8 @@
     "eslint-plugin-no-only-tests": "^2.0.0",
     "jest": "^22.4.3",
     "jest-html-reporter": "^2.3.0",
-    "request-debug": "^0.2.0"
+    "request-debug": "^0.2.0",
+    "rimraf": "^2.6.2"
   },
   "dependencies": {
     "ajv": "^6.5.0",
