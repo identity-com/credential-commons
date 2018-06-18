@@ -1,10 +1,6 @@
-'use strict';
-
-var UCA = require('./uca/UserCollectableAttribute');
-var VC = require('./creds/VerifiableCredential');
-
-var _require = require('./services/index'),
-    initServices = _require.initServices;
+const UCA = require('./uca/UserCollectableAttribute');
+const VC = require('./creds/VerifiableCredential');
+const { initServices } = require('./services/index');
 
 function CredentialCommons(config, http) {
   if (config) {
