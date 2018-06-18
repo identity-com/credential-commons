@@ -187,23 +187,44 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     const signature = _.clone(this.signature);
     let valid = false;
 
+    const merkleTools = new Merkletools();
+
     // 1. verify valid targetHashs
     const invalidValues = [];
     const invalidHashs = [];
+    const invalidProofs = [];
     _.forEach(_.get(signature, 'leaves'), (leave) => {
       // 1.1 "leave.value" should be equal claim values
       const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
-      if (ucaValue.type !== 'Object') {
+      if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
         // console.log(`${ucaValue.value} / ${_.get(claims, leave.claimPath)}`);
         if (ucaValue.value !== _.get(claims, leave.claimPath)) invalidValues.push(leave.value);
+      } else if (ucaValue.type === 'Object') {
+        const ucaValueValue = ucaValue.value;
+        const claimValue = _.get(claims, leave.claimPath);
+        // console.log(`${JSON.stringify(ucaValueValue)} / ${JSON.stringify(claimValue)}`);
+        const ucaValueKeys = _.keys(ucaValue.value);
+        _.each(ucaValueKeys, (k) => {
+          // console.log(`${ucaValueValue[k].value} / ${claimValue[k]}`);
+          if (_.get(ucaValueValue[k], 'value') !== claimValue[k]) invalidValues.push(claimValue[k]);
+        });
+      } else {
+        // Invalid ucaValue.type
+        invalidValues.push(leave.value);
       }
-      // TODO: ucaValue.type === 'Object'
 
       // 1.2 hash(leave.value) should be equal leave.targetHash
       const hash = sha256(leave.value);
       if (hash !== leave.targetHash) invalidHashs.push(invalidHashs);
+
+      // 2. Validate targetHashs + proofs with merkleRoot
+      const isValidProof = merkleTools.validateProof(leave.proof, leave.targetHash, signature.merkleRoot);
+      // console.log(`leave.proof / ${leave.targetHash} / ${signature.merkleRoot}: ${isValidProof}`);
+      if (!isValidProof) invalidProofs.push(leave.targetHash);
     });
-    if (_.isEmpty(invalidValues) && _.isEmpty(invalidHashs)) valid = true;
+
+    if (_.isEmpty(invalidValues) && _.isEmpty(invalidHashs) && _.isEmpty(invalidProofs)) valid = true;
+
     return valid;
   };
 
