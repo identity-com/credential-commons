@@ -6,7 +6,7 @@
 
 // That in consideration that this model is inpired by C++ language data definitions
 // Changed: to lower case pattern UCA to Uca
-var definitions = [{
+const definitions = [{
   identifier: 'civ:Random:node',
   version: '1',
   type: 'String',

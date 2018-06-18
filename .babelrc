@@ -1,5 +1,4 @@
 {
-  "presets": ["env"],
   "env": {
     "node6": {
       "presets": [
