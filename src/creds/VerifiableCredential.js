@@ -130,8 +130,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.version = version || definition.version;
   this.type = ['Credential', identifier];
 
-  this.claims = new ClaimModel(ucas);
-  this.signature = new CivicMerkleProof(proofUCAs);
+  if (!_.isEmpty(ucas)) {
+    this.claims = new ClaimModel(ucas);
+    this.signature = new CivicMerkleProof(proofUCAs);
+  }
 
   if (!_.isEmpty(definition.excludes)) {
     const removed = _.remove(this.signature.leaves, el => _.includes(definition.excludes, el.identifier));
@@ -240,6 +242,23 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
   return this;
 }
+
+/**
+ * Factory function that creates a new Verifiable Credential based on a JSON object
+ * @param {*} verifiableCredentialJSON
+ */
+VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
+  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier);
+  newObj.id = _.clone(verifiableCredentialJSON.id);
+  newObj.issuer = _.clone(verifiableCredentialJSON.issuer);
+  newObj.issued = _.clone(verifiableCredentialJSON.issued);
+  newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
+  newObj.version = _.clone(verifiableCredentialJSON.version);
+  newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
+  newObj.claims = _.cloneDeep(verifiableCredentialJSON.claims);
+  newObj.signature = _.cloneDeep(verifiableCredentialJSON.signature);
+  return newObj;
+};
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;
 

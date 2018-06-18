@@ -146,10 +146,21 @@ describe('VerifiableCredential', () => {
     const credT = new VC('civ:Credential:SimpleTest', 'jest:test', [nameT, dobT], 1);
     console.log(JSON.stringify(credT, null, 2));
     expect(credT.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
-
-    const credJSon = require('./fixtures/SimpleTest1.json'); // eslint-disable-line
-    // const cred = VC.fromJSON(credJSon);
+  });
+  test('Verify Levels: VERIFY_LEVELS.PROOFS should be VALID', () => {
+    const credJSon = require('./fixtures/SimpleValidTest1.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
     // console.log(JSON.stringify(cred, null, 2));
-    // expect(cred.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
+    expect(cred).toBeDefined();
+    expect(cred.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
+  });
+  test('Verify Levels: VERIFY_LEVELS.PROOFS should be INVALID', () => {
+    const credJSon = require('./fixtures/SimpleValidTest1.json'); // eslint-disable-line
+    // messing with some targetHash:
+    credJSon.signature.leaves[0].targetHash = credJSon.signature.leaves[0].targetHash.replace('a', 'b');
+    const cred = VC.fromJSON(credJSon);
+    // console.log(JSON.stringify(cred, null, 2));
+    expect(cred).toBeDefined();
+    expect(cred.verify()).toEqual(VC.VERIFY_LEVELS.UNVERIFIED);
   });
 });

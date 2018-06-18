@@ -1,0 +1,147 @@
+{
+    "id": null,
+    "issuer": "jest:test",
+    "issued": "2018-06-18T11:51:44.507Z",
+    "identifier": "civ:Credential:SimpleTest",
+    "version": 1,
+    "type": [
+      "Credential",
+      "civ:Credential:SimpleTest"
+    ],
+    "claims": {
+      "identity": {
+        "name": {
+          "first": "Joao",
+          "last": "Santos",
+          "middle": "Barbosa"
+        },
+        "DateOfBirth": {
+          "day": "00000020",
+          "month": "00000003",
+          "year": "00001978"
+        }
+      }
+    },
+    "signature": {
+      "type": "CivicMerkleProof2018",
+      "merkleRoot": "e85114c9cce406a814ef5634e7df7f739d737410cb42c40ad8e5363a0f02ba43",
+      "anchor": "TBD (Civic Blockchain Attestation)",
+      "leaves": [
+        {
+          "identifier": "civ:Identity:name",
+          "value": "s:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|s:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|s:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|",
+          "claimPath": "identity.name",
+          "targetHash": "7acafc741362e52c8ceafaa363a4da8d4ba15070edcac07d8eef422b85591bfd",
+          "proof": [
+            {
+              "right": "dfda6187f974653dad282ab317077b7f440ff24d38df1550ba09aaa3009c8a01"
+            },
+            {
+              "right": "0b89cf99af5bd225df854a0ac99d3a413fb9074f4126ded5b6da520bc2d5b153"
+            },
+            {
+              "right": "e1e58fc61f0407f1f8abadd28216a279d7e44c7bcc0dece74126c75d46101397"
+            },
+            {
+              "right": "1d5e6d18f35c9ef04dc731b4cb5f533e0a908551683a6d40d7842b194705151b"
+            },
+            {
+              "right": "093f6177a0f48ea1575d8f603c0bfaffe2b10c57d7e0ae63743644883a4d4340"
+            }
+          ]
+        },
+        {
+          "identifier": "civ:Identity:name.first",
+          "value": "s:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao",
+          "claimPath": "identity.name.first",
+          "targetHash": "dfda6187f974653dad282ab317077b7f440ff24d38df1550ba09aaa3009c8a01",
+          "proof": [
+            {
+              "left": "7acafc741362e52c8ceafaa363a4da8d4ba15070edcac07d8eef422b85591bfd"
+            },
+            {
+              "right": "0b89cf99af5bd225df854a0ac99d3a413fb9074f4126ded5b6da520bc2d5b153"
+            },
+            {
+              "right": "e1e58fc61f0407f1f8abadd28216a279d7e44c7bcc0dece74126c75d46101397"
+            },
+            {
+              "right": "1d5e6d18f35c9ef04dc731b4cb5f533e0a908551683a6d40d7842b194705151b"
+            },
+            {
+              "right": "093f6177a0f48ea1575d8f603c0bfaffe2b10c57d7e0ae63743644883a4d4340"
+            }
+          ]
+        },
+        {
+          "identifier": "civ:Identity:name.last",
+          "value": "s:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos",
+          "claimPath": "identity.name.last",
+          "targetHash": "b81d926462aed88d921b50efb322ad68b11487c2648805db8610341d68b4fd8d",
+          "proof": [
+            {
+              "right": "ad541e87b8b7f27c840c95496610088e87b3316357eaa9a38badb1f65bb3115f"
+            },
+            {
+              "left": "a55308326023f83dc1b4db9331606a92eb4b437987a949554e47a08fbb97bf0d"
+            },
+            {
+              "right": "e1e58fc61f0407f1f8abadd28216a279d7e44c7bcc0dece74126c75d46101397"
+            },
+            {
+              "right": "1d5e6d18f35c9ef04dc731b4cb5f533e0a908551683a6d40d7842b194705151b"
+            },
+            {
+              "right": "093f6177a0f48ea1575d8f603c0bfaffe2b10c57d7e0ae63743644883a4d4340"
+            }
+          ]
+        },
+        {
+          "identifier": "civ:Identity:name.middle",
+          "value": "s:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa",
+          "claimPath": "identity.name.middle",
+          "targetHash": "ad541e87b8b7f27c840c95496610088e87b3316357eaa9a38badb1f65bb3115f",
+          "proof": [
+            {
+              "left": "b81d926462aed88d921b50efb322ad68b11487c2648805db8610341d68b4fd8d"
+            },
+            {
+              "left": "a55308326023f83dc1b4db9331606a92eb4b437987a949554e47a08fbb97bf0d"
+            },
+            {
+              "right": "e1e58fc61f0407f1f8abadd28216a279d7e44c7bcc0dece74126c75d46101397"
+            },
+            {
+              "right": "1d5e6d18f35c9ef04dc731b4cb5f533e0a908551683a6d40d7842b194705151b"
+            },
+            {
+              "right": "093f6177a0f48ea1575d8f603c0bfaffe2b10c57d7e0ae63743644883a4d4340"
+            }
+          ]
+        },
+        {
+          "identifier": "civ:Identity:DateOfBirth",
+          "value": "n:bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49:00000020|n:0ff6a4dc3b4e7a0b2cfb3a9f0479dc89d9757736d7e46e31ddb3dc53a9179b56:00000003|n:ec4fcd9bad1839c052d0a23a9fba92eaf35d457e83ae50ea902bf3b5c3b490ad:00001978|",
+          "claimPath": "identity.DateOfBirth",
+          "targetHash": "bb0f2525dd226c9df7634ac2f5a31c55d8a5f691cfcf4afe92b30217e0ec1416",
+          "proof": [
+            {
+              "right": "51ba7e86a36d8e264f36341e913989249fe41c5fded354b52ec34ff2663a4cd1"
+            },
+            {
+              "right": "d8c344b04f6cc7d42428dda430272eccc67b4be75cd5783188a988aef6404be0"
+            },
+            {
+              "left": "1aee137682bf18907f84dd008bb24ba2db37b9d2deabeed75de1fd9029f65b06"
+            },
+            {
+              "right": "1d5e6d18f35c9ef04dc731b4cb5f533e0a908551683a6d40d7842b194705151b"
+            },
+            {
+              "right": "093f6177a0f48ea1575d8f603c0bfaffe2b10c57d7e0ae63743644883a4d4340"
+            }
+          ]
+        }
+      ]
+    }
+  }
