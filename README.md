@@ -460,66 +460,33 @@ Don't forget to add the version on your package.json, or else it will always get
 
 The project structure is made like this:
 
-|_src
-|_build
+|_ __tests__
+|_ __integration__
+|_ src
+|_ dist
+|__ cjs
+|__ es
+|__ browser
+|_ reports
+|__ coverage
 
-The library code is written in pure ES6 code (and some parts are using lodash).
+* Tests and Integration folder contains jest tests
+* src contains all ES6 non-transpiled source
+* dist contains all transpiled code in CJS, ES, BROWSER presets of Babel
+* also the package.json has the three fields main, module, browser, that allow packers to change the file of the entry point
+* reports and coverage are all related to JEST tests
 
-The composition of the tagged packaged becomes:
+The released browser version is minified.
 
+The main entry point targets CJS, all legacy code should work with this.
 
+Sip-hosted-api is tested with this and it works right out of the box, without any other configuration.
 
-The released library is not minified. We should not minify the distribution before the distribution.
+Browser projects should bundle the dependencies, so we are not bundling it here.
 
-Most debates around this on the community points out that the target project should minify it's files and dependencies.
+The browser transpiled version only guarantees the profile we want to target and not leave this task to the user, since any other different transpilation, could result in bugs.
 
-But if we need to minify, we can add to the build transformer:
-
-First install:
-
-```bash
-npm install babel-preset-minify --save-dev
-```
-
-Then on .babelrc add the following:
-```json
-  "env": {
-    "production": {
-      "presets": ["minify"]
-    }
-  }
-```
-
-The resulting file should be:
-```json
-{
-  "presets": [
-    ["env", {
-      "targets": {
-        "node": "6.10"
-      },
-      "production": {
-        "presets": ["minify"]
-      }
-    }]
-  ]
-}
-```
-We are targetting the library o node 6 (this is the way for sip-hosted-api to work without configuring anything in the project).
-
-The caveat is using Babel transform on build files.
-
-But as pointed out before, if the target project is ES6 compliant, we can build a new version without "babelifying" the source code.
-
-As long as there is a project in Civic targetting an older Node, the easiest path of integration is using Babel on build and release.
-
-We can follow lodash example, build an CLI and having releases with the following patterns:
-
-*-es[version]
-
-5,6,7 and then the integrator can point out on package.json directly to the release.
-
-He can also download the source code and build it himself.
+But as pointed out before, if the target project is ES6 compliant, the pkg.module will point out to the ES version.
 
 ## Releases
 
@@ -527,20 +494,9 @@ For now the default branch is "develop" as this is an WIP library.
 
 Releases will only be triggered from successfully tested "master" branches once we go live.
 
-The pattern should be to add to the circleci workflow:
+The pattern should be to add to the circleci workflow.
 
-
-Demonstration branches:
-
-credential-common-js
-
-A browser-based project (e.g. portal)
-
-A node based ES5 project without webpack/babel (SIP-Hosted)
-
-A node based ES6 project without webpack/babel (mobile-lambdas)
-
-A node based project with webpack/babel (marketplace-lambdas)
+All releases are tagged on github and won't follow lodash pattern, that release a tag and source for each transpilation.
 
 [npm]: https://img.shields.io/badge/npm-5.3.0-blue.svg
 [npm-url]: https://npmjs.com/
