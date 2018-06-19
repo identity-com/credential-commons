@@ -81,6 +81,14 @@ describe('VerifiableCredential', () => {
     expect(cred.claims.identity.DateOfBirth.year).toBe(1978);
     expect(cred.signature.leaves).toHaveLength(6);
   });
+  test('New Defined Credentials return the correct global Credential Identifier', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', [name, dob], 1);
+    expect(cred.getGlobalCredentialItemIdentifier()).toBe('credential-civ:Credential:TestWithExcludes-1');
+  });
+
+  // TODO Reenable when BitGo Issue is resolved
   test.skip('Request anchor for Credential', () => {
     expect.assertions(2);
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });

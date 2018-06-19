@@ -9,6 +9,7 @@ initServices(null, http);
 const civicAnchor = services.container.CivicAnchor;
 jest.setTimeout(100000);
 
+// Reenable when BitGo Interface continues working.
 describe('Civic Anchor Module Tests', () => {
   // We don't want to run register a new client on every test 
   test('Register as a valid client', () => {
@@ -21,7 +22,7 @@ describe('Civic Anchor Module Tests', () => {
     });
   });
 
-  test('Anchor new credential', () => {
+  test.skip('Anchor new credential', () => {
     expect.assertions(3);
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();
@@ -34,7 +35,7 @@ describe('Civic Anchor Module Tests', () => {
     });
   });
 
-  test('Update credential anchor', () => {
+  test.skip('Update credential anchor', () => {
     expect.assertions(4);
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();

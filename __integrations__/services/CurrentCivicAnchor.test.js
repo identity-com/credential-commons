@@ -5,7 +5,7 @@ const { registerClient } = require('../../src/services/CurrentCivicAnchorService
 const civicAnchor = services.container.CivicAnchor;
 jest.setTimeout(100000);
 
-describe('Civic Anchor Module Tests', () => {
+describe.skip('Civic Anchor Module Tests', () => {
   // We don't want to run register a new client on every test 
   test.skip('Register as a valid client', () => {
     expect.assertions(4);
@@ -17,7 +17,7 @@ describe('Civic Anchor Module Tests', () => {
     });
   });
 
-  test('Anchor new credential', () => {
+  test.skip('Anchor new credential', () => {
     expect.assertions(3);
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();
@@ -30,7 +30,7 @@ describe('Civic Anchor Module Tests', () => {
     });
   });
 
-  test('Update credential anchor', () => {
+  test.skip('Update credential anchor', () => {
     expect.assertions(4);
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();
@@ -43,7 +43,7 @@ describe('Civic Anchor Module Tests', () => {
   });
 
 
-  test('Poll update until a permanent anchor', () => {
+  test.skip('Poll update until a permanent anchor', () => {
     expect.assertions(5);
 
     async function pollUpdate(attestation) {

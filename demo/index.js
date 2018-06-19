@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 // No Logger is required to run this simple DEMO.
 
-const { UCA, VC } = require('../index');
+const { UCA, VC } = require('../src/index');
 
 const civIdentityName = {
   first: 'Joao',

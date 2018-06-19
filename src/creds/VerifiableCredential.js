@@ -133,6 +133,11 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   }
 
   /**
+   * Returns the global CredentialItemIdentifier of the Credential
+   */
+  this.getGlobalCredentialItemIdentifier = () => (`credential-${this.identifier}-${this.version}`);
+
+  /**
    * Creates a filtered credential exposing only the requested claims
    * @param {*} requestedClaims 
    */
