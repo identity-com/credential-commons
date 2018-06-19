@@ -24,6 +24,7 @@ describe('UCA Constructions tests', () => {
     const v = new UCA(identifier, 'joao');
     expect(v).toBeDefined();
     expect(v.identifier).toEqual(identifier);
+    expect(v.version).toBeDefined();
   });
 
   test('UCA dont construct incomplete objects', () => {
