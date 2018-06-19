@@ -80,14 +80,15 @@ const parseAttestableValue = (value) => {
   const values = [];
   const splitPipes = _.split(value.attestableValue, '|');
   // console.log(splitPipes);
+  const attestableValueRegex = /^(\w):(\w*):([\w|\W]*)/;
   _.each(splitPipes, (stringValue) => {
-    const spltP = _.split(stringValue, ':');
-    // console.log(spltP);
-    if (spltP && spltP.length === 3) {
+    const match = attestableValueRegex.exec(stringValue);
+    // console.log(match);
+    if (match && match.length === 4) {
       const v = {
-        typeS: spltP[0],
-        salt: spltP[1],
-        value: spltP[2],
+        typeS: match[1],
+        salt: match[2],
+        value: match[3],
         stringValue,
       };
       values.push(v);

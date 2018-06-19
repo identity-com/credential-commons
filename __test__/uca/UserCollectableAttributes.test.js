@@ -233,4 +233,32 @@ describe('UCA Constructions tests', () => {
     expect(attValues[0].value).toContain(':00000003');
     expect(attValues[0].value).toContain(':00001978');
   });
+
+  test('Construct a civ:Meta:expiry', () => {
+    const identifier = 'civ:Meta:expiry';
+    const isoDate = '2018-06-20T13:51:18.640Z';
+    const v = new UCA(identifier, isoDate);
+    expect(v).toBeDefined();
+    // console.log(v);
+    const attValues = v.getAttestableValues();
+    // console.log(attValues);
+    expect(attValues).toHaveLength(1);
+    expect(attValues[0].identifier).toBe(identifier);
+    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain(`:${isoDate}`);
+  });
+
+  test('Construct a civ:Meta:expiry as a Attestatble Value', () => {
+    const identifier = 'civ:Meta:expiry';
+    const anAttestationValue = 's:9dabdd37eca1bc98bcc725d66c77f10707fa9f3292752a31ad9dd94d17557e81:2018-06-20T13:51:18.640Z';
+    const v = new UCA(identifier, { attestableValue: anAttestationValue });
+    expect(v).toBeDefined();
+    // console.log(v);
+    const attValues = v.getAttestableValues();
+    // console.log(attValues);
+    expect(attValues).toHaveLength(1);
+    expect(attValues[0].identifier).toBe(identifier);
+    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain(':2018-06-20T13:51:18.640Z');
+  });
 });

@@ -54,8 +54,8 @@ describe('VerifiableCredential', () => {
   test('New Expirable Credentials', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', '1d', [name, dob], 1);
-    // console.log(JSON.stringify(cred, null, 2));
+    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', '-1d', [name, dob], 1);
+    console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
     expect(cred.claims.identity.name.first).toBe('Joao');
     expect(cred.claims.identity.name.middle).toBeUndefined();
@@ -136,6 +136,8 @@ describe('VerifiableCredential', () => {
     expect(filtered.claims.identity.name.last).not.toBeDefined();
     expect(filtered.claims.identity.name.middle).not.toBeDefined();
   });
+
+
   test('cred.verifyProofs(): with a valid cred without expiry, should return TRUE', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
@@ -143,6 +145,8 @@ describe('VerifiableCredential', () => {
     expect(cred).toBeDefined();
     expect(cred.verifyProofs()).toBeTruthy();
   });
+
+
   test('cred.verify(): with a valid cred without expiry, should return at least VERIFY_LEVELS.PROOFS level', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
@@ -150,6 +154,8 @@ describe('VerifiableCredential', () => {
     expect(cred).toBeDefined();
     expect(cred.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
   });
+
+
   test('cred.verify(): VERIFY_LEVELS.PROOFS without expiry INVALID', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     // messing up with the targetHash:
@@ -159,11 +165,20 @@ describe('VerifiableCredential', () => {
     expect(cred).toBeDefined();
     expect(cred.verify()).toEqual(VC.VERIFY_LEVELS.INVALID);
   });
+
   test('cred.verifyProofs(): with a valid cred with expiry, should return TRUE', () => {
-    const credJSon = require('./fixtures/CredWithExpiry1.json'); // eslint-disable-line
+    const credJSon = require('./fixtures/CredWithFutureExpiry.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     // console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
     expect(cred.verifyProofs()).toBeTruthy();
+  });
+
+  test('cred.verifyProofs(): with a valid cred but expired, should return FALSE', () => {
+    const credJSon = require('./fixtures/CredExpired.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    // console.log(JSON.stringify(cred, null, 2));
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).not.toBeTruthy();
   });
 });

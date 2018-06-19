@@ -13,7 +13,8 @@
     "identity": {
       "name": {
         "first": "Joao",
-        "last": "Santos"
+        "last": "Santos",
+        "middle": "Barbosa"
       },
       "DateOfBirth": {
         "day": "00000020",
