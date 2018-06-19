@@ -37,15 +37,19 @@ Verifiable Credential and Attestation Library - CCS-38
 
 ## Configuration
 
-This library depends on some configuration seting to work properly.
-The configuration is made the 3 diferent ways that override each other: etc config file, user config file, enviroments variables, incode
+This library depends on some configuration settings to work properly.
+The configuration is made in three different ways that override each other: 
+* etc config file
+* user config file
+* environment's variables, in code (not recommended as you can push that to your repo)
+
 and consists of the following settings:
 
 * CIVIC_SEC_URL - Base endpoint address to the Civic Security Service, where you can register this lib as a client
 * CIVIC_ATTN_URL - Base endpoint address to the Civic Attestation Service
-* CIVIC_CLIENT_ID - The ID of this lib instalation
-* CIVIC_CLIENT_XPUB - The public key used by this instalation
-* CIVIC_CLIENT_XPRIV - The public key used by this instalation
+* CIVIC_CLIENT_ID - The ID of this lib installation
+* CIVIC_CLIENT_XPUB - The public key used by this installation
+* CIVIC_CLIENT_XPRIV - The public key used by this installation
 * CIVIC_PASSPHASE - Civic User Wallet Passphrase. prefer setting this in code
 * CIVIC_KEYCHAIN - Civic User Wallet KEYCHAIN. prefer setting this in code
  
@@ -410,6 +414,89 @@ The schema generator will generate an json schema like this:
 - `npm run test:watch` - run all tests in watch mode
 - `npm run generate-schema` - run the CLI command and generate all schemas
 
+
+## Integration with CCS Libraries 
+CCS Libraries can be integrated with projects by pointing out on package.json to the latest repo.
+
+For now all libraries are released only on GitHub tags.
+
+For Civic Developers on Node 8 or superior add this dependency to package.json
+
+"civic-credentials-common-js": "github:civicteam/civic-credentials-commons-js"
+
+This will install the latest version of the default branch on github (currently that branch is develop, but as soon as we release to production it should change to master).
+
+You can also add via npm install with the command:
+
+```bash npm install civicteam/civic-credentials-commons-js```
+
+When the project is released to NPM Release the command will be only:
+
+```bash npm install civic-credentials-commons-js```
+
+The following question may arise, why the civic name on the project?
+
+Modules are lower case and usually dash-separated. If your module is a pure utility, you should generally favor clear and "boring" names for better discoverability and code clarity.
+
+This library is not pure utility and has a lot of Civic only patterns, so using the civic-* pattern becomes useful as it won't have any name clash with other packages and also makes it clear, that it's not a pure utility for other projects to use.
+
+For future projects that we release on public, if it's a pure utility, the prefix civic-* should not be used.
+
+Using specific tags on projects configuration
+On the project that is going to use the library, configure on the package.json as the following example:
+
+```json
+
+"civic-credentials-commons-js": "civicteam/civic-credentials-commons-js.git#vX.Y.Z",
+
+```
+
+This will get the specific version tagged on github.
+
+All versions here follow SemVer (https://semver.org/)
+Don't forget to add the version on your package.json, or else it will always get the latest from GitHub default branch.
+
+## ES5 and ES6 definitions
+
+The project structure is made like this:
+
+|_ __tests__
+|_ __integration__
+|_ src
+|_ dist
+|__ cjs
+|__ es
+|__ browser
+|_ reports
+|__ coverage
+
+* Tests and Integration folder contains jest tests
+* src contains all ES6 non-transpiled source
+* dist contains all transpiled code in CJS, ES, BROWSER presets of Babel
+* also the package.json has the three fields main, module, browser, that allow packers to change the file of the entry point
+* reports and coverage are all related to JEST tests
+
+The released browser version is minified.
+
+The main entry point targets CJS, all legacy code should work with this.
+
+Sip-hosted-api is tested with this and it works right out of the box, without any other configuration.
+
+Browser projects should bundle the dependencies, so we are not bundling it here.
+
+The browser transpiled version only guarantees the profile we want to target and not leave this task to the user, since any other different transpilation, could result in bugs.
+
+But as pointed out before, if the target project is ES6 compliant, the pkg.module will point out to the ES version.
+
+## Releases
+
+For now the default branch is "develop" as this is an WIP library.
+
+Releases will only be triggered from successfully tested "master" branches once we go live.
+
+The pattern should be to add to the circleci workflow.
+
+All releases are tagged on github and won't follow lodash pattern, that release a tag and source for each transpilation.
 
 [npm]: https://img.shields.io/badge/npm-5.3.0-blue.svg
 [npm-url]: https://npmjs.com/

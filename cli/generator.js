@@ -10,6 +10,7 @@ const figlet = require('figlet');
 const inquirer = require('inquirer');
 const fs = require('fs');
 
+// static variables only for the CLI, not used in any other place
 const GENERATION_FOLDER = './dist/schemas/';
 // https://stackoverflow.com/questions/9391370/json-schema-file-extension
 const SCHEMA_FILE_EXTENSION = '.schema.json';

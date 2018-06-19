@@ -1,0 +1,23 @@
+{
+  "env": {
+    "cjs": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "node": "6.10"
+          },
+          "modules": "commonjs"
+        }]
+      ]
+    },
+    "browser": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "browsers": ["last 2 versions", "safari >= 7"]
+          }
+        }]
+      ]
+    }
+  }
+}

@@ -1,37 +1,46 @@
 {
   "name": "civic-credentials-common-js",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "author": "Civic",
   "license": "UNLICENSED",
   "description": "Verifiable Credential and Attestation Library",
   "private": true,
   "keywords": [
-    "webpack",
-    "boilerplate",
-    "es6",
-    "eslint",
-    "jest"
+    "credentials",
+    "anchor",
+    "attestation"
   ],
   "repository": {
     "type": "git",
     "url": "git@github.com:civicteam/civic-credentials-commons-js"
   },
-  "main": "index.js",
-  "files": [
-    "index.js",
-    "src/*"
-  ],
-  "directories": {
-    "lib": "./src"
-  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "browser": "dist/browser/index.js",
   "scripts": {
     "lint": "eslint ./src/**.js",
-    "test": "jest",
+    "test": "cross-env NODE_ENV=test jest",
     "test:watch": "jest --watch",
     "generate-schema": "cross-env NODE_ENV=test node cli/generator.js",
-    "ci": "npm run test && npm run lint"
+    "generate-civic-config": "cross-env NODE_ENV=test node cli/configuration.js",
+    "ci": "npm run test && npm run lint",
+    "build:cjs": "BABEL_ENV=cjs babel src -d dist/cjs",
+    "build:es": "babel src -d dist/es --no-babelrc",
+    "build:browser:before": "BABEL_ENV=browser babel src -d dist/prebrowser",
+    "build:browser:after": "minify dist/prebrowser -d dist/browser",
+    "build:browser:clean": "rimraf dist/prebrowser",
+    "build:browser": "npm run build:browser:before && npm run build:browser:after && npm run build:browser:clean",
+    "build": "npm run build:browser && npm run build:cjs && npm run build:es",
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.24.1",
+    "babel-jest": "^22.4.3",
+    "babel-minify": "^0.4.3",
+    "babel-polyfill": "^6.0.16",
+    "babel-preset-env": "^1.6.1",
     "eslint": "^4.3.0",
     "eslint-config-airbnb-base": "^11.3.1",
     "eslint-loader": "^2.0.0",
@@ -39,7 +48,8 @@
     "eslint-plugin-no-only-tests": "^2.0.0",
     "jest": "^22.4.3",
     "jest-html-reporter": "^2.3.0",
-    "request-debug": "^0.2.0"
+    "request-debug": "^0.2.0",
+    "rimraf": "^2.6.2"
   },
   "dependencies": {
     "ajv": "^6.5.0",
@@ -53,15 +63,17 @@
     "cross-env": "^5.1.6",
     "dotenv": "^6.0.0",
     "figlet": "^1.2.0",
-    "generate-schema": "^2.6.0",
     "inquirer": "^6.0.0",
+    "install": "^0.11.0",
     "json-format": "^1.0.1",
     "lodash": "4.17.10",
     "merkle-tools": "^1.4.0",
+    "npm": "^6.1.0",
     "randexp": "^0.4.9",
     "randomstring": "^1.1.5",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
+    "shelljs": "^0.8.2",
     "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
@@ -71,7 +83,7 @@
     "collectCoverageFrom": [
       "**/src/**/*.{js}",
       "!**/node_modules/**",
-      "!**/dist/**",
+      "!**/build/**",
       "!**/vendor/**"
     ],
     "coverageDirectory": "reports/coverage",

@@ -7,16 +7,15 @@ const RandExp = require('randexp');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
-const getPropertyNameFromDefinition = (definition) => {
-  const substrIndex = definition.identifier.lastIndexOf('.') > -1 ? definition.identifier.lastIndexOf('.') + 1 :
-    definition.identifier.lastIndexOf(':') + 1;
+const getPropertyNameFromDefinition = definition => {
+  const substrIndex = definition.identifier.lastIndexOf('.') > -1 ? definition.identifier.lastIndexOf('.') + 1 : definition.identifier.lastIndexOf(':') + 1;
   return definition.identifier.substring(substrIndex);
 };
 
 /**
  * Generate json schemas from JSON sample data generated from UCA/Credentials identifiers
  */
-const getPropertyFormat = (value) => {
+const getPropertyFormat = value => {
   const type = Type.string(value).toLowerCase();
 
   if (type === 'date') return 'date-time';
@@ -24,7 +23,7 @@ const getPropertyFormat = (value) => {
   return null;
 };
 
-const getPropertyType = (value) => {
+const getPropertyType = value => {
   const type = Type.string(value).toLowerCase();
 
   if (type === 'date') return 'string';
@@ -43,7 +42,7 @@ const processObject = (object, outputParam, nested) => {
   let output = outputParam;
   if (nested && output) {
     output = {
-      properties: output,
+      properties: output
     };
   } else {
     output = output || {};
@@ -129,9 +128,9 @@ const processArray = (array, outputParam, nested) => {
   } else if (oneOf && type !== 'object') {
     output.items = {
       oneOf: [{
-        type,
+        type
       }],
-      required: output.items.required,
+      required: output.items.required
     };
   }
 
@@ -178,7 +177,7 @@ const process = (definition, json) => {
   let title = definition.identifier;
   let processOutput;
   const output = {
-    $schema: DRAFT,
+    $schema: DRAFT
   };
 
   // Determine title exists
@@ -252,33 +251,36 @@ const process = (definition, json) => {
  * @param definition receive an UCA and build an sample json from it's properties
  * @returns {{$schema: string}}
  */
-const buildSampleJson = (definition) => {
+const buildSampleJson = definition => {
   let output = {};
   output = makeJsonRecursion(definition);
   return output;
 };
 
-const makeJsonRecursion = (ucaDefinition) => {
+const makeJsonRecursion = ucaDefinition => {
   let output = {};
   const typeName = UCA.getTypeName(ucaDefinition);
-  if (typeof ucaDefinition.type === 'object' && ucaDefinition.type.properties !== undefined) { // array of properties
-    ucaDefinition.type.properties.forEach((property) => {
+  if (typeof ucaDefinition.type === 'object' && ucaDefinition.type.properties !== undefined) {
+    // array of properties
+    ucaDefinition.type.properties.forEach(property => {
       output[property.name] = generateRandomValueForType(property.type);
     });
-  } else if (typeName !== 'Object') { // not a reference
+  } else if (typeName !== 'Object') {
+    // not a reference
     const propertyName = getPropertyNameFromDefinition(ucaDefinition);
     if (typeof ucaDefinition.pattern !== 'undefined' && ucaDefinition.pattern !== null) {
       output[propertyName] = new RandExp(ucaDefinition.pattern).gen();
     } else {
       output[propertyName] = generateRandomValueForType(ucaDefinition.type);
     }
-  } else { // a direct reference to a composite type
+  } else {
+    // a direct reference to a composite type
     output = generateRandomValueForType(ucaDefinition.type);
   }
   return output;
 };
 
-const generateRandomNumberValueWithRange = (definition) => {
+const generateRandomNumberValueWithRange = definition => {
   let genRandomNumber = Math.random() * 100;
   if (definition !== null) {
     /*
@@ -293,32 +295,31 @@ const generateRandomNumberValueWithRange = (definition) => {
      * If the instance is a number, then the instance is valid only if it has a value strictly less than (not equal to) "exclusiveMaximum".
      */
     const exclusiveMaxVariance = definition.exclusiveMaximum ? -1 : 0;
-    if (typeof definition.minimum !== 'undefined' && definition.minimum !== null
-      && typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
+    if (typeof definition.minimum !== 'undefined' && definition.minimum !== null && typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
       if (Number.isInteger(definition.minimum)) {
-        genRandomNumber = Math.floor(definition.minimum + exclusiveMinVariance + (Math.random() *
-          (definition.maximum + exclusiveMaxVariance)));
+        genRandomNumber = Math.floor(definition.minimum + exclusiveMinVariance + Math.random() * (definition.maximum + exclusiveMaxVariance));
       }
-      genRandomNumber = definition.minimum + (Math.random() * definition.maximum);
+      genRandomNumber = definition.minimum + Math.random() * definition.maximum;
     } else if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
       if (Number.isInteger(definition.minimum)) {
-        genRandomNumber = Math.floor(definition.minimum + exclusiveMinVariance + (Math.random() * 100));
+        genRandomNumber = Math.floor(definition.minimum + exclusiveMinVariance + Math.random() * 100);
       }
-      genRandomNumber = definition.minimum + (Math.random() * 100);
+      genRandomNumber = definition.minimum + Math.random() * 100;
     } else if (typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
       if (Number.isInteger(definition.maximum)) {
-        genRandomNumber = Math.floor((Math.random() * (definition.maximum + exclusiveMaxVariance)));
+        genRandomNumber = Math.floor(Math.random() * (definition.maximum + exclusiveMaxVariance));
       }
-      genRandomNumber = (Math.random() * definition.maximum);
+      genRandomNumber = Math.random() * definition.maximum;
     }
   }
   return genRandomNumber;
 };
 
-const generateRandomValueForType = (typeName) => {
+const generateRandomValueForType = typeName => {
   let refDefinition = null;
   let resolvedTypeName = typeName;
-  if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
+  if (typeName.includes(':')) {
+    // simple composite, one depth level civ:Identity.name for example
     refDefinition = ucaDefinitions.find(def => def.identifier === typeName);
     if (refDefinition !== null) {
       resolvedTypeName = refDefinition.type;
@@ -332,7 +333,7 @@ const generateRandomValueForType = (typeName) => {
     case 'Number':
       return generateRandomNumberValueWithRange(refDefinition);
     case 'Boolean':
-      return (Math.round(Math.random()) === 1);
+      return Math.round(Math.random()) === 1;
     default:
       return makeJsonRecursion(refDefinition);
   }
