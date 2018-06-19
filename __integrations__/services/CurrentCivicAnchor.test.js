@@ -17,7 +17,7 @@ describe.skip('Civic Anchor Module Tests', () => {
     });
   });
 
-  test('Anchor new credential', () => {
+  test.skip('Anchor new credential', () => {
     expect.assertions(3);
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();
@@ -30,7 +30,7 @@ describe.skip('Civic Anchor Module Tests', () => {
     });
   });
 
-  test('Update credential anchor', () => {
+  test.skip('Update credential anchor', () => {
     expect.assertions(4);
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();
@@ -43,7 +43,7 @@ describe.skip('Civic Anchor Module Tests', () => {
   });
 
 
-  test('Poll update until a permanent anchor', () => {
+  test.skip('Poll update until a permanent anchor', () => {
     expect.assertions(5);
 
     async function pollUpdate(attestation) {
