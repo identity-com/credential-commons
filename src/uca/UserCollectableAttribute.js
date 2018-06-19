@@ -78,9 +78,9 @@ const isAttestableValue = value => (
 
 const parseAttestableValue = (value) => {
   const values = [];
-  const spltPipes = _.split(value.attestableValue, '|');
-  // console.log(spltPipes);
-  _.each(spltPipes, (stringValue) => {
+  const splitPipes = _.split(value.attestableValue, '|');
+  // console.log(splitPipes);
+  _.each(splitPipes, (stringValue) => {
     const spltP = _.split(stringValue, ':');
     // console.log(spltP);
     if (spltP && spltP.length === 3) {
@@ -93,7 +93,7 @@ const parseAttestableValue = (value) => {
       values.push(v);
     }
   });
-  if (spltPipes.length !== values.length && spltPipes.length !== values.length + 1) {
+  if (splitPipes.length !== values.length && splitPipes.length !== values.length + 1) {
     throw new Error('Invalid attestableValue');
   }
   return values;
