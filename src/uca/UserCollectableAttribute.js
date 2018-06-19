@@ -128,6 +128,11 @@ function UCABaseConstructor(identifier, value, version) {
     }
   };
 
+  /**
+   * Returns the global CredentialItemIdentifier of the Credential
+   */
+  this.getGlobalCredentialItemIdentifier = () => (`uca-${this.identifier}-${this.version}`);
+
   this.getClaimRootPropertyName = () => {
     const identifierComponentes = _.split(this.identifier, ':');
     return _.lowerCase(identifierComponentes[1]);

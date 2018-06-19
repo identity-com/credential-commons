@@ -7,7 +7,7 @@ jest.setTimeout(100000);
 
 describe.skip('Civic Anchor Module Tests', () => {
   // We don't want to run register a new client on every test 
-  test.skip('Register as a valid client', () => {
+  test('Register as a valid client', () => {
     expect.assertions(4);
     return registerClient(services.container.Http).then((result) => {
       expect(result).toHaveProperty('id');

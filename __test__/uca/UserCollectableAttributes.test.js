@@ -14,11 +14,17 @@ describe('UCA Constructions tests', () => {
     expect(v).toBeDefined();
   });
 
+  test('UCA return the correct global Credential Identifier', () => {
+    const v = new UCA('civ:Identity:name.first', 'joao', '1');
+    expect(v.getGlobalCredentialItemIdentifier()).toBe('uca-civ:Identity:name.first-1');
+  });
+
   test('UCA should have identifier', () => {
     const identifier = 'civ:Identity:name.first';
     const v = new UCA(identifier, 'joao');
     expect(v).toBeDefined();
     expect(v.identifier).toEqual(identifier);
+    expect(v.version).toBeDefined();
   });
 
   test('UCA dont construct incomplete objects', () => {
