@@ -15,8 +15,8 @@ describe('UCA Constructions tests', () => {
   });
 
   test('UCA return the correct global Credential Identifier', () => {
-    const v = new UCA('civ:Identity:name.first', 'joao', 'v1.0');
-    expect(v.getGlobalCredentialItemIdentifier()).toBe('uca-civ:Identity:name.first-v1.0');
+    const v = new UCA('civ:Identity:name.first', 'joao', '1');
+    expect(v.getGlobalCredentialItemIdentifier()).toBe('uca-civ:Identity:name.first-1');
   });
 
   test('UCA should have identifier', () => {
