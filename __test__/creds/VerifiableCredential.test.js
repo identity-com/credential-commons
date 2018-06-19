@@ -136,12 +136,19 @@ describe('VerifiableCredential', () => {
     expect(filtered.claims.identity.name.last).not.toBeDefined();
     expect(filtered.claims.identity.name.middle).not.toBeDefined();
   });
-  test('cred.verify(): VERIFY_LEVELS.PROOFS without expiry VALID', () => {
+  test('cred.verifyProofs(): with a valid cred without expiry, should return TRUE', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     // console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
-    expect(cred.verify(VC.VERIFY_LEVELS.PROOFS)).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
+    expect(cred.verifyProofs()).toBeTruthy();
+  });
+  test('cred.verify(): with a valid cred without expiry, should return at least VERIFY_LEVELS.PROOFS level', () => {
+    const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    // console.log(JSON.stringify(cred, null, 2));
+    expect(cred).toBeDefined();
+    expect(cred.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
   });
   test('cred.verify(): VERIFY_LEVELS.PROOFS without expiry INVALID', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
@@ -151,5 +158,12 @@ describe('VerifiableCredential', () => {
     // console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
     expect(cred.verify()).toEqual(VC.VERIFY_LEVELS.INVALID);
+  });
+  test('cred.verifyProofs(): with a valid cred with expiry, should return TRUE', () => {
+    const credJSon = require('./fixtures/CredWithExpiry1.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    // console.log(JSON.stringify(cred, null, 2));
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeTruthy();
   });
 });

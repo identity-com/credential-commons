@@ -13,12 +13,13 @@
       "identity": {
         "name": {
           "first": "Joao",
-          "last": "Santos"
+          "last": "Santos",
+          "middle": "Barbosa"
         },
         "DateOfBirth": {
-          "day": 20,
-          "month": 3,
-          "year": 1978
+          "day": "00000020",
+          "month": "00000003",
+          "year": "00001978"
         }
       }
     },

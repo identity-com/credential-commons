@@ -130,16 +130,16 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.version = version || definition.version;
   this.type = ['Credential', identifier];
 
+  // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
     this.claims = new ClaimModel(ucas);
     this.signature = new CivicMerkleProof(proofUCAs);
-  }
-
-  if (!_.isEmpty(definition.excludes)) {
-    const removed = _.remove(this.signature.leaves, el => _.includes(definition.excludes, el.identifier));
-    _.forEach(removed, (r) => {
-      _.unset(this.claims, r.claimPath);
-    });
+    if (!_.isEmpty(definition.excludes)) {
+      const removed = _.remove(this.signature.leaves, el => _.includes(definition.excludes, el.identifier));
+      _.forEach(removed, (r) => {
+        _.unset(this.claims, r.claimPath);
+      });
+    }
   }
 
   /**
@@ -185,6 +185,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   };
 
   this.verifyProofs = () => {
+    const expiry = _.clone(this.expiry);
     const claims = _.clone(this.claims);
     const signature = _.clone(this.signature);
     let valid = false;
@@ -192,40 +193,55 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     const merkleTools = new Merkletools();
 
     // 1. verify valid targetHashs
+    const invalidExpiry = [];
     const invalidValues = [];
     const invalidHashs = [];
     const invalidProofs = [];
-    _.forEach(_.get(signature, 'leaves'), (leave) => {
-      // 1.1 "leave.value" should be equal claim values
-      const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
-      if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
-        // console.log(`${ucaValue.value} / ${_.get(claims, leave.claimPath)}`);
-        if (ucaValue.value !== _.get(claims, leave.claimPath)) invalidValues.push(leave.value);
-      } else if (ucaValue.type === 'Object') {
-        const ucaValueValue = ucaValue.value;
-        const claimValue = _.get(claims, leave.claimPath);
-        // console.log(`${JSON.stringify(ucaValueValue)} / ${JSON.stringify(claimValue)}`);
-        const ucaValueKeys = _.keys(ucaValue.value);
-        _.each(ucaValueKeys, (k) => {
-          // console.log(`${ucaValueValue[k].value} / ${claimValue[k]}`);
-          if (_.get(ucaValueValue[k], 'value') !== claimValue[k]) invalidValues.push(claimValue[k]);
-        });
-      } else {
-        // Invalid ucaValue.type
-        invalidValues.push(leave.value);
+    const signLeaves = _.get(signature, 'leaves');
+    _.forEach(signLeaves, (leave) => {
+      // ignore civ:Meta: proofs here
+      if (!leave.identifier.startsWith('civ:Meta:')) {
+        // 1.1 "leave.value" should be equal claim values
+        const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
+        if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
+          // console.log(`${ucaValue.value} / ${_.get(claims, leave.claimPath)}`);
+          if (ucaValue.value !== _.get(claims, leave.claimPath)) invalidValues.push(leave.value);
+        } else if (ucaValue.type === 'Object') {
+          const ucaValueValue = ucaValue.value;
+          const claimValue = _.get(claims, leave.claimPath);
+          // console.log(`${JSON.stringify(ucaValueValue)} / ${JSON.stringify(claimValue)}`);
+          const ucaValueKeys = _.keys(ucaValue.value);
+          _.each(ucaValueKeys, (k) => {
+            // console.log(`${ucaValueValue[k].value} / ${claimValue[k]}`);
+            if (_.get(ucaValueValue[k], 'value') !== claimValue[k]) invalidValues.push(claimValue[k]);
+          });
+        } else {
+          // Invalid ucaValue.type
+          invalidValues.push(leave.value);
+        }
+
+        // 1.2 hash(leave.value) should be equal leave.targetHash
+        const hash = sha256(leave.value);
+        if (hash !== leave.targetHash) invalidHashs.push(invalidHashs);
+
+        // 2. Validate targetHashs + proofs with merkleRoot
+        const isValidProof = merkleTools.validateProof(leave.proof, leave.targetHash, signature.merkleRoot);
+        // console.log(`leave.proof / ${leave.targetHash} / ${signature.merkleRoot}: ${isValidProof}`);
+        if (!isValidProof) invalidProofs.push(leave.targetHash);
       }
-
-      // 1.2 hash(leave.value) should be equal leave.targetHash
-      const hash = sha256(leave.value);
-      if (hash !== leave.targetHash) invalidHashs.push(invalidHashs);
-
-      // 2. Validate targetHashs + proofs with merkleRoot
-      const isValidProof = merkleTools.validateProof(leave.proof, leave.targetHash, signature.merkleRoot);
-      // console.log(`leave.proof / ${leave.targetHash} / ${signature.merkleRoot}: ${isValidProof}`);
-      if (!isValidProof) invalidProofs.push(leave.targetHash);
     });
 
-    if (_.isEmpty(invalidValues) && _.isEmpty(invalidHashs) && _.isEmpty(invalidProofs)) valid = true;
+    // 3. If present, check Credential is not expired.
+    if (!_.isEmpty(expiry)) {
+      const now = new Date();
+      const expiryDate = new Date(expiry);
+      if (now.getTime() > expiryDate.getTime()) {
+        invalidExpiry.push(expiry);
+      }
+    }
+
+    // console.log(`${invalidValues}, ${invalidHashs}, ${invalidProofs}, ${invalidExpiry}`);
+    if (_.isEmpty(invalidValues) && _.isEmpty(invalidHashs) && _.isEmpty(invalidProofs) && _.isEmpty(invalidExpiry)) valid = true;
 
     return valid;
   };
@@ -248,9 +264,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
  * @param {*} verifiableCredentialJSON
  */
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
-  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer, verifiableCredentialJSON.expiry);
+  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issued = _.clone(verifiableCredentialJSON.issued);
+  newObj.expiry = _.clone(verifiableCredentialJSON.expiry);
   newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
   newObj.version = _.clone(verifiableCredentialJSON.version);
   newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
