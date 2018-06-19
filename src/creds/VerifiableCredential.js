@@ -94,8 +94,8 @@ class ClaimModel {
 }
 
 const VERIFY_LEVELS = {
-  UNVERIFIED: -1,
-  PROOFS: 0,
+  INVALID: -1,
+  PROOFS: 0, // Includes expiry if its there
   ANCHOR: 1,
   BLOCKCHAIN: 2,
 };
@@ -235,7 +235,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @return Any of VC.VERIFY_LEVELS
    */
   this.verify = () => {
-    let level = VERIFY_LEVELS.UNVERIFIED;
+    let level = VERIFY_LEVELS.INVALID;
     if (this.verifyProofs()) level = VERIFY_LEVELS.PROOFS;
     return level;
   };

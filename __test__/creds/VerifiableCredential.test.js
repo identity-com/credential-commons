@@ -152,7 +152,7 @@ describe('VerifiableCredential', () => {
     const cred = VC.fromJSON(credJSon);
     // console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
-    expect(cred.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
+    expect(cred.verify(VC.VERIFY_LEVELS.PROOFS)).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
   });
   test('Verify Levels: VERIFY_LEVELS.PROOFS should be INVALID', () => {
     const credJSon = require('./fixtures/SimpleValidTest1.json'); // eslint-disable-line
@@ -161,6 +161,6 @@ describe('VerifiableCredential', () => {
     const cred = VC.fromJSON(credJSon);
     // console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
-    expect(cred.verify()).toEqual(VC.VERIFY_LEVELS.UNVERIFIED);
+    expect(cred.verify()).toEqual(VC.VERIFY_LEVELS.INVALID);
   });
 });
