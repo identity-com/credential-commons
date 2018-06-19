@@ -248,9 +248,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
  * @param {*} verifiableCredentialJSON
  */
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
-  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier);
+  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer, verifiableCredentialJSON.expiry);
   newObj.id = _.clone(verifiableCredentialJSON.id);
-  newObj.issuer = _.clone(verifiableCredentialJSON.issuer);
   newObj.issued = _.clone(verifiableCredentialJSON.issued);
   newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
   newObj.version = _.clone(verifiableCredentialJSON.version);

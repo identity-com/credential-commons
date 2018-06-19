@@ -55,6 +55,7 @@ describe('VerifiableCredential', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', '1d', [name, dob], 1);
+    // console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
     expect(cred.claims.identity.name.first).toBe('Joao');
     expect(cred.claims.identity.name.middle).toBeUndefined();
@@ -135,28 +136,16 @@ describe('VerifiableCredential', () => {
     expect(filtered.claims.identity.name.last).not.toBeDefined();
     expect(filtered.claims.identity.name.middle).not.toBeDefined();
   });
-  test('Verify Levels / PROOFS', () => {
-    // eslint-disable-next-line max-len
-    const attestableNameValue = 's:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|s:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|s:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
-    // eslint-disable-next-line max-len
-    const attestableDoBValue = 'n:bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49:00000020|n:0ff6a4dc3b4e7a0b2cfb3a9f0479dc89d9757736d7e46e31ddb3dc53a9179b56:00000003|n:ec4fcd9bad1839c052d0a23a9fba92eaf35d457e83ae50ea902bf3b5c3b490ad:00001978|';
-
-    const nameT = new UCA('civ:Identity:name', { attestableValue: attestableNameValue });
-    const dobT = new UCA('civ:Identity:DateOfBirth', { attestableValue: attestableDoBValue });
-    const credT = new VC('civ:Credential:SimpleTest', 'jest:test', [nameT, dobT], 1);
-    console.log(JSON.stringify(credT, null, 2));
-    expect(credT.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
-  });
-  test('Verify Levels: VERIFY_LEVELS.PROOFS should be VALID', () => {
-    const credJSon = require('./fixtures/SimpleValidTest1.json'); // eslint-disable-line
+  test('cred.verify(): VERIFY_LEVELS.PROOFS without expiry VALID', () => {
+    const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     // console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
     expect(cred.verify(VC.VERIFY_LEVELS.PROOFS)).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
   });
-  test('Verify Levels: VERIFY_LEVELS.PROOFS should be INVALID', () => {
-    const credJSon = require('./fixtures/SimpleValidTest1.json'); // eslint-disable-line
-    // messing with some targetHash:
+  test('cred.verify(): VERIFY_LEVELS.PROOFS without expiry INVALID', () => {
+    const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
+    // messing up with the targetHash:
     credJSon.signature.leaves[0].targetHash = credJSon.signature.leaves[0].targetHash.replace('a', 'b');
     const cred = VC.fromJSON(credJSon);
     // console.log(JSON.stringify(cred, null, 2));
