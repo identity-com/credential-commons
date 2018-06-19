@@ -11,7 +11,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
   it('Should validate the VC Schema generation against a single well known definition', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 1, year: 1978 });
-    const cred = new VC('civ:Credential:CivicBasic', 'jest:test', [name, dob], 1);
+    const cred = new VC('civ:Credential:CivicBasic', 'jest:test', null, [name, dob], 1);
     const jsonString = JSON.stringify(cred, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(cred, generatedJson);
@@ -34,7 +34,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
         ucaArray.push(dependentUca);
       });
-      const credential = new VC(credentialDefinition.identifier, 'jest:test', ucaArray, 1);
+      const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
