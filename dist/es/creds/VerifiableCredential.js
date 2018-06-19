@@ -5,6 +5,7 @@ const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
+const timestamp = require('unix-timestamp');
 
 const anchorService = services.container.AnchorService;
 
@@ -97,11 +98,17 @@ class ClaimModel {
  * @param {*} ucas 
  * @param {*} version 
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
   this.id = null;
   this.issuer = issuer;
+  const issuerUCA = new UCA('civ:Meta:issuer', this.issuer);
   this.issued = new Date().toISOString();
+  const issuedUCA = new UCA('civ:Meta:issued', this.issued);
   this.identifier = identifier;
+  this.expiry = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
+  const expiryUCA = this.expiry ? new UCA('civ:Meta:expiry', this.expiry) : undefined;
+
+  const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuedUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuedUCA);
 
   if (!_.includes(validIdentifiers(), identifier)) {
     throw new Error(`${identifier} is not defined`);
@@ -115,7 +122,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
   this.type = ['Credential', identifier];
 
   this.claims = new ClaimModel(ucas);
-  this.signature = new CivicMerkleProof(ucas);
+  this.signature = new CivicMerkleProof(proofUCAs);
 
   if (!_.isEmpty(definition.excludes)) {
     const removed = _.remove(this.signature.leaves, el => _.includes(definition.excludes, el.identifier));
@@ -123,6 +130,11 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, ucas, version) 
       _.unset(this.claims, r.claimPath);
     });
   }
+
+  /**
+   * Returns the global CredentialItemIdentifier of the Credential
+   */
+  this.getGlobalCredentialItemIdentifier = () => `credential-${this.identifier}-${this.version}`;
 
   /**
    * Creates a filtered credential exposing only the requested claims
