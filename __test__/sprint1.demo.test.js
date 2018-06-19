@@ -52,7 +52,7 @@ describe('interactions with UCA', () => {
 
     // After verifying user data IdV uses the UCA objects to create 'civ:Credential:SimpleIdentity' credentials structure
 
-    const simpleIdentity = new VC('civ:Credential:SimpleIdentity', 'Civic-Identity-Verifier', [nameUca, dobUca], '1');
+    const simpleIdentity = new VC('civ:Credential:SimpleIdentity', 'Civic-Identity-Verifier', null, [nameUca, dobUca], '1');
     console.log('A NOT Anchored civ:Credential:SimpleIdentity instance');
     console.log(JSON.stringify(simpleIdentity, null, 2));
 
