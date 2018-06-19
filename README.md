@@ -22,7 +22,7 @@ Verifiable Credential and Attestation Library - CCS-38
       - [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
         * [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
           + [Verifiable Credential Sample](#verifiable-credential-sample)
-        * [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-JSON)
+        * [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-json)
         * [Verifying a Verifiable Credential](#verifying-a-verifiable-credential)
   * [Schema Generator](#schema-generator)
   * [Conventions:](#conventions-)
