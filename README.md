@@ -22,6 +22,8 @@ Verifiable Credential and Attestation Library - CCS-38
       - [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
         * [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
           + [Verifiable Credential Sample](#verifiable-credential-sample)
+        * [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-JSON)
+        * [Verifying a Verifiable Credential](#verifying-a-verifiable-credential)
   * [Schema Generator](#schema-generator)
   * [Conventions:](#conventions-)
   * [Commands](#commands)
@@ -343,6 +345,31 @@ cred.updateAnchor().then(() => {
         ]
       }
     }
+```
+
+##### Construting a VerifiableCredential from a JSON
+To construct a new VC given a JSON, just use the `.fromJSON` method:
+```
+const credJSon = require('./ACred.json');
+const cred = VC.fromJSON(credJSon);
+```
+Now you can access any method of a `cred` instance, like `.updateAnchor()` or `.verify()`
+
+##### Verifying a Verifiable Credential
+To verify a credential JSON, you can construct a VC using `.fromJSON` and call `.verify()` method:
+```
+const credJSon = require('./ACred.json');
+const cred = VC.fromJSON(credJSon);
+const verifiedLevel = cred.verify();
+```
+The `.verify()` method return the hiest level verified, follow the `VC.VERIFY_LEVELS` constant:
+```
+VERIFY_LEVELS = {
+  INVALID: -1, // Credential structure and/or signature proofs is not valid, or credential is expired
+  PROOFS: 0, // Credential structure and/or signature proofs are valid, including the expiry
+  ANCHOR: 1, // Anchor struture is valid
+  BLOCKCHAIN: 2, // Attestation was validated on blockchain
+};
 ```
 
 ## Schema Generator
