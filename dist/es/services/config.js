@@ -4,23 +4,30 @@ const fs = require('fs');
 
 if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
 
-const CONFIG_FILE = 'config';
+// filesync will have to be avoided or bypassed so we can deploy to all enviroments including the browser
+const isNode = typeof global !== 'undefined' && {}.toString.call(global) === '[object global]';
 
-const CONFIG_PATH = {
-  BOX: '/etc/civic',
-  USER: path.join(`${os.homedir()}`, '.civic')
-};
+if (isNode) {
+  const CONFIG_FILE = 'config';
 
-const userConfigFile = path.join(CONFIG_PATH.USER, CONFIG_FILE);
-const boxConfigFile = path.join(CONFIG_PATH.BOX, CONFIG_FILE);
+  const CONFIG_PATH = {
+    BOX: '/etc/civic',
+    USER: path.join(`${os.homedir()}`, '.civic')
+  };
 
-const configFile = fs.existsSync(userConfigFile) ? userConfigFile : boxConfigFile;
+  const userConfigFile = path.join(CONFIG_PATH.USER, CONFIG_FILE);
+  const boxConfigFile = path.join(CONFIG_PATH.BOX, CONFIG_FILE);
 
-/* eslint-disable global-require */
-if (fs.existsSync(userConfigFile)) {
-  require('dotenv').config({ path: configFile });
+  const configFile = fs.existsSync(userConfigFile) ? userConfigFile : boxConfigFile;
+
+  /* eslint-disable global-require */
+  if (fs.existsSync(userConfigFile)) {
+    require('dotenv').config({
+      path: configFile
+    });
+  }
+  /* eslint-ebable global-require */
 }
-/* eslint-ebable global-require */
 
 const config = {
   sipSecurityService: process.env.CIVIC_SEC_URL,

@@ -7,6 +7,21 @@
 // That in consideration that this model is inpired by C++ language data definitions
 // Changed: to lower case pattern UCA to Uca
 const definitions = [{
+  identifier: 'civ:Meta:issuer',
+  version: '1',
+  type: 'String',
+  attestable: true
+}, {
+  identifier: 'civ:Meta:issued',
+  version: '1',
+  type: 'String',
+  attestable: true
+}, {
+  identifier: 'civ:Meta:expiry',
+  version: '1',
+  type: 'String',
+  attestable: true
+}, {
   identifier: 'civ:Random:node',
   version: '1',
   type: 'String',
