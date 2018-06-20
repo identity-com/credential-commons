@@ -19,7 +19,7 @@
   "browser": "dist/browser/index.js",
   "scripts": {
     "lint": "eslint ./src/**.js",
-    "test": "cross-env NODE_ENV=test jest",
+    "test": "cross-env NODE_ENV=false jest",
     "test:watch": "jest --watch",
     "generate-schema": "cross-env NODE_ENV=test node cli/generator.js",
     "generate-civic-config": "cross-env NODE_ENV=test node cli/configuration.js",
