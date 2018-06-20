@@ -16,7 +16,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:8.11
-      environment:
+        environment:
           CIVIC_SEC_URL: https://api.civic.com/sip-sec-dev/DEV
           CIVIC_ATTN_URL: https://dev.api.civic.com/request-attestation-tbch
           CIVIC_CLIENT_ID: c8a64a8185de33d19de8021fbe228d2a5a77c1117db7542ed148354cbf7d4ef1
