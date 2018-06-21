@@ -1,0 +1,7 @@
+.circleci
+reports
+node_modules
+demo
+build
+__integrations__
+__test__

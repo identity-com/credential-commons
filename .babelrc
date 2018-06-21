@@ -1,3 +1,28 @@
 {
-  "presets": ["env"] //automatically determine the Babel plugins and polyfills you need based on your supported environments.
+  "env": {
+    "cjs": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "node": "6.10"
+          },
+          "modules": "commonjs"
+        }]
+      ]
+    },
+    "browser": {
+      "presets": [
+        [
+          "env",
+          {
+            "targets": {
+              "browsers": ["last 2 versions"]
+            },
+            "shippedProposals": true
+          }
+        ]
+      ],
+      "plugins": ["transform-runtime"]
+    }
+  }
 }

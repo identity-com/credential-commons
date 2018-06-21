@@ -1,3 +1,5 @@
+'use strict';
+
 const UCA = require('./uca/UserCollectableAttribute');
 const VC = require('./creds/VerifiableCredential');
 const { initServices } = require('./services/index');

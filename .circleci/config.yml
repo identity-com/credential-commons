@@ -2,14 +2,28 @@ version: 2
 
 workflows:
   version: 2
-  build-and-deploy:
+  build:
     jobs:
       - build
-
+      - release:
+          requires:
+                - build
+          filters:
+            branches:
+              only:
+                - master
 jobs:
   build:
     docker:
-      - image: circleci/node:8.9
+      - image: circleci/node:8.11
+        environment:
+          CIVIC_SEC_URL: https://api.civic.com/sip-sec-dev/DEV
+          CIVIC_ATTN_URL: https://dev.api.civic.com/request-attestation-tbch
+          CIVIC_CLIENT_ID: c8a64a8185de33d19de8021fbe228d2a5a77c1117db7542ed148354cbf7d4ef1
+          CIVIC_CLIENT_XPUB: 045d1e078c67458c0d6cdc843a12d7fa233ee8a754558884b8b69fe1faf99c5931f1ac081cf352d8eed425964a9671526493c1a89d5754b5ecfb05d0da3dced846
+          CIVIC_CLIENT_XPRV: d0f9e1bfe871c0e9d2c041e55cabc3280e4cc0641f7db148cf0e805cc055b1b4
+          CIVIC_PASSPHRASE: segredo
+          CIVIC_KEYCHAIN: xprv9s21ZrQH143K2tSxD6DdWfmu9h9BSGDr8UgDuEuxBWFjsKiBUPhWy55TeZbPuifLqGgXvgurEZeP5PbNpZyfinMkdSsVn1YiRSiXDX3VeFG
 
     working_directory: ~/repo
 
@@ -19,23 +33,56 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
 
-      - run:
-          command: |
-            npm install
+      - run: sudo npm install -g npm
+      - run: npm ci
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
 
-      - run: npm run ci
+      - run:
+          name: run tests incl coverage
+          command: npm run test
+      - run: npm run lint
 
-      # check for security vulnerabilities
-      # see https://civicteam.atlassian.net/wiki/spaces/CM/pages/334692357/How+to+configure+snyk+a+vulnerability+monitoring+tool+for+npm
-      # (waiting for Finance approval of paid plan in order to uncomment this)
-      # - run: npm run snyk -- test
-      # - run: npm run snyk -- monitor
+  release:
+    docker:
+      - image: circleci/node:8.11
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # # Download and cache dependencies
+      # - restore_cache:
+      #     keys:
+      #     - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm ci
+
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run:
+          name: git config
+          command: |
+            git config credential.helper 'cache --timeout=120'
+            git config user.email "danielmelos@gmail.com"
+            git config user.name "ci deployer"
+            git config --global push.default simple
+            git branch --set-upstream-to origin/$CIRCLE_BRANCH
+
+      - run:
+          name: version
+          command: npm version patch --git-tag-version false
+
+      - run:
+          name: tag
+          command: npm run tag
