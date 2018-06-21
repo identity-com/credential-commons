@@ -71,18 +71,18 @@ jobs:
       #     key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
 
       - run:
-         name: git config
-         command: |
-           git config credential.helper 'cache --timeout=120'
-           git config user.email "no-reply@civic.com"
-           git config user.name "ci deployer"
-           git config --global push.default simple
-           git branch --set-upstream-to origin/$CIRCLE_BRANCH
+          name: git config
+          command: |
+            git config credential.helper 'cache --timeout=120'
+            git config user.email "no-reply@civic.com"
+            git config user.name "ci deployer"
+            git config --global push.default simple
+            git branch --set-upstream-to origin/$CIRCLE_BRANCH
 
-     - run:
-         name: version
-         command: npm version patch --git-tag-version false
+      - run:
+          name: version
+          command: npm version patch --git-tag-version false
 
-     - run:
-         name: tag
-         command: npm run tag
+      - run:
+          name: tag
+          command: npm run tag
