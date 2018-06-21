@@ -74,7 +74,7 @@ jobs:
           name: git config
           command: |
             git config credential.helper 'cache --timeout=120'
-            git config user.email "daniel.santos@civic.com"
+            git config user.email "no-reply@civic.com"
             git config user.name "ci deployer"
             git config --global push.default simple
             git branch --set-upstream-to origin/$CIRCLE_BRANCH
