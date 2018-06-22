@@ -44,7 +44,6 @@ describe('UCA Json Sample Date Construction tests', () => {
       const ajv = new Ajv();
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(json);
-      console.log(jsonSchema);
       expect(isValid).toBeTruthy();
     });
     done();

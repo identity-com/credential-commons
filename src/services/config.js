@@ -5,8 +5,6 @@ const fs = require('fs');
 if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
 
 if (process.env.APP_ENV !== 'browser') {
-  console.log(process.env.NODE_ENV);
-  console.log(process.env.platform);
   const CONFIG_FILE = 'config';
 
   const CONFIG_PATH = {
