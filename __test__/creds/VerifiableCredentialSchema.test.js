@@ -21,7 +21,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     expect(jsonSchema.properties.signature.type).toBe('object');
   });
 
-  it('Should validate the generated VC against it\'s generated schema', () => {
+  it('Should validate the generated VC against it\'s generated schema looping the definitions', () => {
     credentialDefinitions.forEach((credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
@@ -43,5 +43,55 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const isValid = validate(generatedJson);
       expect(isValid).toBeTruthy();
     });
+  });
+
+  it('Should change the VC Json data and fail against AJV', () => {
+    const identifier = 'civ:Credential:CivicBasic';
+    const credentialDefinition = credentialDefinitions.find(credsDef => credsDef.identifier === identifier);
+    const ucaArray = [];
+    credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
+      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
+      let value = ucaJson;
+      if (Object.keys(ucaJson).length === 1) {
+        value = Object.values(ucaJson)[0];
+      }
+      const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
+      ucaArray.push(dependentUca);
+    });
+    const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+    const jsonString = JSON.stringify(credential, null, 2);
+    const generatedJson = JSON.parse(jsonString);
+    const jsonSchema = SchemaGenerator.process(credential, generatedJson);
+    generatedJson.claims.type.Phone.countryCode = 123456;
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate(generatedJson);
+    expect(isValid).toBeFalsy();
+  });
+
+  it('Should add an property to the root of the json and fail against AJV additionalProperties', () => {
+    const identifier = 'civ:Credential:CivicBasic';
+    const credentialDefinition = credentialDefinitions.find(credsDef => credsDef.identifier === identifier);
+    const ucaArray = [];
+    credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
+      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
+      let value = ucaJson;
+      if (Object.keys(ucaJson).length === 1) {
+        value = Object.values(ucaJson)[0];
+      }
+      const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
+      ucaArray.push(dependentUca);
+    });
+    const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+    const jsonString = JSON.stringify(credential, null, 2);
+    const generatedJson = JSON.parse(jsonString);
+    const jsonSchema = SchemaGenerator.process(credential, generatedJson);
+    generatedJson.anAdditionalPropertyToFail = 'test';
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate(generatedJson);
+    expect(isValid).toBeFalsy();
   });
 });

@@ -1,6 +1,7 @@
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const definitions = require('../../src/uca/definitions');
 const ucaMockDefinitions = require('../../src/uca/__mocks__/definitions');
+const UCA = require('../../src/uca/UserCollectableAttribute');
 const Ajv = require('ajv');
 
 describe('UCA Json Sample Date Construction tests', () => {
@@ -34,7 +35,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     done();
   });
 
-  it('Should generate Sample Data from all mock UCAs and cover future cases that are not yet present on current definitions', async (done) => {
+  it('Should generate Sample Data from all mock UCAs and validate with AJV', async (done) => {
     jest.mock('../../src/uca/definitions');
 
     ucaMockDefinitions.forEach((definition) => {
@@ -46,6 +47,68 @@ describe('UCA Json Sample Date Construction tests', () => {
       const isValid = validate(json);
       expect(isValid).toBeTruthy();
     });
+    done();
+  });
+
+  it('Should change the type of String to Boolean and fail AJV validation', async (done) => {
+    const identifier = 'civ:Identity:name';
+    const value = {
+      first: 'Joao',
+      middle: 'Paulo',
+      last: 'Santos',
+    };
+    const uca = new UCA(identifier, value);
+    const jsonString = JSON.stringify(uca, null, 2);
+    const generatedJson = JSON.parse(jsonString);
+    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
+    expect(jsonSchema.title).toEqual(identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    // tamper the json from the uca and expect AJV to fail the schema validation
+    generatedJson.value.first.value = true;
+    const isValid = validate(generatedJson);
+    expect(isValid).toBeFalsy();
+    done();
+  });
+
+  it('Should change the type of String to Number and fail AJV validation', async (done) => {
+    const identifier = 'civ:Identity:name';
+    const value = {
+      first: 'Joao',
+      middle: 'Paulo',
+      last: 'Santos',
+    };
+    const uca = new UCA(identifier, value);
+    const jsonString = JSON.stringify(uca, null, 2);
+    const generatedJson = JSON.parse(jsonString);
+    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
+    expect(jsonSchema.title).toEqual(identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    // tamper the json from the uca and expect AJV to fail the schema validation
+    generatedJson.value.first.value = 12.3535;
+    const isValid = validate(generatedJson);
+    expect(isValid).toBeFalsy();
+    done();
+  });
+
+  it('Should change the type of Number to Boolean and fail AJV validation', async (done) => {
+    const identifier = 'civ:Type:Day';
+    const uca = new UCA(identifier, 1);
+    const jsonString = JSON.stringify(uca, null, 2);
+    const generatedJson = JSON.parse(jsonString);
+    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
+    expect(jsonSchema.title).toEqual(identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    // tamper the json from the uca and expect AJV to fail the schema validation
+    generatedJson.value = '1';
+    console.log(generatedJson);
+    const isValid = validate(generatedJson);
+    expect(isValid).toBeFalsy();
     done();
   });
 });
