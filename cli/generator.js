@@ -11,7 +11,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 
 // static variables only for the CLI, not used in any other place
-const GENERATION_FOLDER = './dist/schemas/';
+const GENERATION_FOLDER = 'dist/schemas/';
 // https://stackoverflow.com/questions/9391370/json-schema-file-extension
 const SCHEMA_FILE_EXTENSION = '.schema.json';
 
@@ -65,12 +65,13 @@ const generateCredentialSchemas = async () => {
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(definition.identifier, 'jest:test', ucaArray, 1);
+    const credential = new VC(definition.identifier, 'jest:test', null, ucaArray, 1);
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = schemaGenerator.process(credential, generatedJson);
     const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
     const filePath = `${GENERATION_FOLDER}/credentials/${fileName}${SCHEMA_FILE_EXTENSION}`;
+    console.log(filePath);
     fs.writeFile(filePath, JSON.stringify(jsonSchema, null, 2), (err) => {
       if (err) throw err;
       console.log(`Json Schema generated on:${GENERATION_FOLDER}${fileName}${SCHEMA_FILE_EXTENSION}`);

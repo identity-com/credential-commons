@@ -41,6 +41,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const ajv = new Ajv();
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
+      console.log(jsonSchema);
       expect(isValid).toBeTruthy();
     });
   });

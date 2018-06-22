@@ -1,5 +1,6 @@
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const definitions = require('../../src/uca/definitions');
+const ucaMockDefinitions = require('../../src/uca/__mocks__/definitions');
 const Ajv = require('ajv');
 
 describe('UCA Json Sample Date Construction tests', () => {
@@ -28,6 +29,22 @@ describe('UCA Json Sample Date Construction tests', () => {
       const ajv = new Ajv();
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(json);
+      expect(isValid).toBeTruthy();
+    });
+    done();
+  });
+
+  it('Should generate Sample Data from all mock UCAs and cover future cases that are not yet present on current definitions', async (done) => {
+    jest.mock('../../src/uca/definitions');
+
+    ucaMockDefinitions.forEach((definition) => {
+      const json = SchemaGenerator.buildSampleJson(definition);
+      const jsonSchema = SchemaGenerator.process(definition, json);
+      expect(jsonSchema.title).toEqual(definition.identifier);
+      const ajv = new Ajv();
+      const validate = ajv.compile(jsonSchema);
+      const isValid = validate(json);
+      console.log(jsonSchema);
       expect(isValid).toBeTruthy();
     });
     done();
