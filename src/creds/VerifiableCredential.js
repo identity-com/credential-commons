@@ -47,19 +47,24 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
   if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
     // console.log(`1: ${ucaValue.value} / ${_.get(claims, leave.claimPath)}`);
-    if (ucaValue.value !== _.get(claims, leave.claimPath)) invalidValues.push(leave.value);
+    if (ucaValue.value !== _.get(claims, leave.claimPath)) {
+      invalidValues.push(leave.value);
+    }
   } else if (ucaValue.type === 'Object') {
     const ucaValueValue = ucaValue.value;
     const claimValue = _.get(claims, leave.claimPath);
     // console.log(`${JSON.stringify(ucaValueValue)} / ${JSON.stringify(claimValue)}`);
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
-      // console.log(`2: ${ucaValueValue[k].value} / ${claimValue[k]}`);
-      if (_.get(ucaValueValue[k], 'value') !== claimValue[k]) invalidValues.push(claimValue[k]);
+      const ucaType = _.get(ucaValueValue[k], 'type')
+      // number values are padded on the attestation value
+      const expectedClaimValue = ucaType === 'Number' ? _.padStart(claimValue[k], 8, '0') : claimValue[k];
+      if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
+        invalidValues.push(claimValue[k]);
+      }
     });
   } else {
     // Invalid ucaValue.type
-    // console.log(`3: ${ucaValue.type}`);
     invalidValues.push(leave.value);
   }
 
@@ -241,12 +246,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     let valid = false;
 
     const merkleTools = new Merkletools();
-
     const claimsWithFlatKeys = getClaimsWithFlatKeys(claims);
     const leavesClaimPaths = getLeavesClaimPaths(signLeaves);
-    // console.log(claimsWithFlatKeys);
-    // console.log(leavesClaimPaths);
-
     const invalidClaim = [];
     const invalidExpiry = [];
     const invalidValues = [];
@@ -269,7 +270,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         invalidClaim.push(claimKey);
       } else {
         const leave = signLeaves[leaveIdx];
-        // console.log(`${claimKey}, ${leaveIdx}`);
         verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs);
       }
     });

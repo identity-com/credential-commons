@@ -4,10 +4,7 @@ const fs = require('fs');
 
 if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
 
-// filesync will have to be avoided or bypassed so we can deploy to all enviroments including the browser
-const isNode = typeof global !== 'undefined' && {}.toString.call(global) === '[object global]';
-
-if (isNode) {
+if (process.env.APP_ENV !== 'browser') {
   const CONFIG_FILE = 'config';
 
   const CONFIG_PATH = {

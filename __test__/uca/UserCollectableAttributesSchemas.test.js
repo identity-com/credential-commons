@@ -95,7 +95,7 @@ describe('UCA Json Sample Date Construction tests', () => {
   });
 
   it('Should change the type of Number to Boolean and fail AJV validation', async (done) => {
-    const identifier = 'civ:Type:Day';
+    const identifier = 'civ:Type:day';
     const uca = new UCA(identifier, 1);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
@@ -106,7 +106,6 @@ describe('UCA Json Sample Date Construction tests', () => {
     const validate = ajv.compile(jsonSchema);
     // tamper the json from the uca and expect AJV to fail the schema validation
     generatedJson.value = '1';
-    console.log(generatedJson);
     const isValid = validate(generatedJson);
     expect(isValid).toBeFalsy();
     done();

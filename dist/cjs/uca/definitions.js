@@ -66,23 +66,23 @@ const definitions = [{
   credentialItem: true,
   alsoKnown: ['civ:Identity:name.nickname'] // We can create alias (more precise dataSources)
 }, {
-  identifier: 'civ:Type:ShortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
+  identifier: 'civ:Type:shortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
   version: '1',
   type: 'String',
   pattern: '/^\\d{5}$/', // We can specify a constraint to define the type domain
   credentialItem: false
 }, {
-  identifier: 'civ:Verify:phoneNumber.Token',
+  identifier: 'civ:Verify:phoneNumber.token',
   version: '1',
-  type: 'civ:Type:ShortToken',
+  type: 'civ:Type:shortToken',
   credentialItem: false // An example on UCA that only relates with the user in short term
 }, {
-  identifier: 'civ:Verify:email.Token',
+  identifier: 'civ:Verify:email.token',
   version: '1',
-  type: 'civ:Type:ShortToken',
+  type: 'civ:Type:shortToken',
   credentialItem: false
 }, {
-  identifier: 'civ:Type:DocumentType',
+  identifier: 'civ:Type:documentType',
   version: '1',
   type: 'String', // change to Array and change the constructor and SchemaGenerator
   credentialItem: true
@@ -107,7 +107,7 @@ const definitions = [{
   },
   credentialItem: true
 }, {
-  identifier: 'civ:Type:Day',
+  identifier: 'civ:Type:day',
   version: '1',
   type: 'Number',
   minimum: 0,
@@ -115,7 +115,7 @@ const definitions = [{
   maximum: 32,
   exclusiveMaximum: true
 }, {
-  identifier: 'civ:Type:Month',
+  identifier: 'civ:Type:month',
   version: '1',
   type: 'Number',
   minimum: 0,
@@ -123,160 +123,160 @@ const definitions = [{
   maximum: 13,
   exclusiveMaximum: true
 }, {
-  identifier: 'civ:Type:Year',
+  identifier: 'civ:Type:year',
   version: '1',
   type: 'Number',
   minimum: 1900,
   exclusiveMinimum: true
 }, {
-  identifier: 'civ:Type:Date',
+  identifier: 'civ:Type:date',
   version: '1',
   type: {
     properties: [{
       name: 'day',
-      type: 'civ:Type:Day'
+      type: 'civ:Type:day'
     }, {
       name: 'month',
-      type: 'civ:Type:Month'
+      type: 'civ:Type:month'
     }, {
       name: 'year',
-      type: 'civ:Type:Year'
+      type: 'civ:Type:year'
     }],
     required: ['day', 'month', 'year']
   }
 }, {
-  identifier: 'civ:Identity:DateOfBirth',
+  identifier: 'civ:Identity:dateOfBirth',
   version: '1',
-  type: 'civ:Type:Date',
+  type: 'civ:Type:date',
   credentialItem: true
 }, {
-  identifier: 'civ:Identity:DateOfIssue',
+  identifier: 'civ:Identity:dateOfIssue',
   version: '1',
-  type: 'civ:Type:Date',
+  type: 'civ:Type:date',
   credentialItem: true
 }, {
-  identifier: 'civ:Identity:DateOfExpiry',
+  identifier: 'civ:Identity:dateOfExpiry',
   version: '1',
-  type: 'civ:Type:Date',
+  type: 'civ:Type:date',
   credentialItem: true
 }, {
-  identifier: 'civ:Type:Address.street',
+  identifier: 'civ:Type:address.street',
   version: 'v1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Address.unit',
+  identifier: 'civ:Type:address.unit',
   version: 'v1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Address.city',
+  identifier: 'civ:Type:address.city',
   version: 'v1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Address.zipCode',
+  identifier: 'civ:Type:address.zipCode',
   version: 'v1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Address.state',
+  identifier: 'civ:Type:address.state',
   version: 'v1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Address.county',
+  identifier: 'civ:Type:address.county',
   version: 'v1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Address.country',
+  identifier: 'civ:Type:address.country',
   version: 'v1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Address',
+  identifier: 'civ:Type:address',
   version: '1',
   type: {
     properties: [{
       name: 'street',
-      type: 'civ:Type:Address.street'
+      type: 'civ:Type:address.street'
     }, {
       name: 'unit',
-      type: 'civ:Type:Address.unit'
+      type: 'civ:Type:address.unit'
     }, {
       name: 'city',
-      type: 'civ:Type:Address.city'
+      type: 'civ:Type:address.city'
     }, {
       name: 'zipCode',
-      type: 'civ:Type:Address.zipCode'
+      type: 'civ:Type:address.zipCode'
     }, {
       name: 'state',
-      type: 'civ:Type:Address.state'
+      type: 'civ:Type:address.state'
     }, {
       name: 'county',
-      type: 'civ:Type:Address.county'
+      type: 'civ:Type:address.county'
     }, {
       name: 'country',
-      type: 'civ:Type:Address.country'
+      type: 'civ:Type:address.country'
     }],
     required: ['country']
   },
   credentialItem: true
 }, {
-  identifier: 'civ:Type:Email.user',
+  identifier: 'civ:Type:email.user',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Email.domain',
+  identifier: 'civ:Type:email.domain',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Email',
+  identifier: 'civ:Type:email',
   version: '1',
   type: {
     properties: [{
       name: 'user',
-      type: 'civ:Type:Email.user'
+      type: 'civ:Type:email.user'
     }, {
       name: 'domain',
-      type: 'civ:Type:Email.domain'
+      type: 'civ:Type:email.domain'
     }],
     required: ['user', 'domain']
   }
 }, {
-  identifier: 'civ:Type:Phone.number',
+  identifier: 'civ:Type:phone.number',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Phone.countryCode',
+  identifier: 'civ:Type:phone.countryCode',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Phone',
+  identifier: 'civ:Type:phone',
   version: 'v1',
   type: {
     properties: [{
       name: 'number',
-      type: 'civ:Type:Phone.number',
+      type: 'civ:Type:phone.number',
       pattern: '/\\d*/'
     }, {
       name: 'countryCode',
-      type: 'civ:Type:Phone.countryCode'
+      type: 'civ:Type:phone.countryCode'
     }],
     required: ['countryCode', 'number']
   }
 }, {
-  identifier: 'civ:Type:Image.image',
+  identifier: 'civ:Type:image.image',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Image.md5',
+  identifier: 'civ:Type:image.md5',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:Image',
+  identifier: 'civ:Type:image',
   version: 'v1',
   type: {
     properties: [{
       name: 'image',
-      type: 'civ:Type:Image.image'
+      type: 'civ:Type:image.image'
     }, {
       name: 'md5',
-      type: 'civ:Type:Image.md5'
+      type: 'civ:Type:image.md5'
     }],
     required: ['image', 'md5']
   }
