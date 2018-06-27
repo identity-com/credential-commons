@@ -82,12 +82,25 @@
     "uuid": "^3.2.1"
   },
   "jest": {
+    "modulePathIgnorePatterns": [
+      "<rootDir>/dist/"
+    ],
     "collectCoverageFrom": [
       "**/src/**/*.{js}",
       "!**/node_modules/**",
       "!**/build/**",
-      "!**/vendor/**"
+      "!**/vendor/**",
+      "!src/services/CurrentCivicAnchorServiceImpl.js",
+      "!src/services/anchorService.js"
     ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 85,
+        "functions": 85,
+        "lines": 85,
+        "statements": 85
+      }
+    },
     "coverageDirectory": "reports/coverage",
     "collectCoverage": true,
     "testResultsProcessor": "./node_modules/jest-html-reporter",

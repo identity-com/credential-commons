@@ -55,7 +55,6 @@ describe('VerifiableCredential', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', '-1d', [name, dob], 1);
-    console.log(JSON.stringify(cred, null, 2));
     expect(cred).toBeDefined();
     expect(cred.claims.identity.name.first).toBe('Joao');
     expect(cred.claims.identity.name.middle).toBeUndefined();
@@ -106,7 +105,6 @@ describe('VerifiableCredential', () => {
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
     return cred.requestAnchor().then((updated) => {
-      console.log(`#####${JSON.stringify(updated, null, 2)}`);
       expect(updated.signature.anchor).toBeDefined();
       return updated.updateAnchor().then((newUpdated) => {
         expect(newUpdated.signature.anchor).toBeDefined();

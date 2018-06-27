@@ -515,6 +515,55 @@ The browser transpiled version only guarantees the profile we want to target and
 
 But as pointed out before, if the target project is ES6 compliant, the pkg.module will point out to the ES version.
 
+## Node vs React usage of this library
+
+Put this in your webpack config under plugins if you are running an Webpack Node App
+```js
+new webpack.DefinePlugin({
+    'process.env': {
+        NODE_ENV: 'production',
+        APP_ENV: false
+    }
+})
+```
+
+If you are on a React app add this:
+
+```js
+new webpack.DefinePlugin({
+    'process.env': {
+        NODE_ENV: false,
+        APP_ENV: 'browser'
+    }
+})
+```
+
+With that you can check if you're running in a browser or not this way:
+
+```js
+
+if (process.env.APP_ENV === 'browser') {
+    const doSomething = require('./browser-only-js');
+    doSomething();
+} else {
+    const somethingServer = require('./server-only-js');
+    somethingServer();
+}
+
+if (process.env.APP_ENV !== 'browser') {
+    const somethingServer = require('./server-only-js');
+    somethingServer();
+}
+```
+
+Because these environment variables get replaced during the build, Webpack will not include resources that are server-only. You should always do these kinds of things in an easy way, with a simple, direct compare. Uglify will remove all dead code.
+
+Since you used a function before and the function is not evaluated during build, Webpack wasn't able to know what requires it could skip.
+
+(The NODE_ENV-variable should always be set to production in production mode, since many libraries including React use it for optimisations.)
+
+This is used on this library on src/services/config.js
+
 ## Releases
 
 For now the default branch is "develop" as this is an WIP library.
