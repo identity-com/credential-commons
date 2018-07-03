@@ -4,6 +4,7 @@ const _ = require('lodash');
 const fs = require('fs');
 
 jest.mock('../../src/creds/definitions');
+
 jest.setTimeout(100000);
 
 describe('VerifiableCredential', () => {
@@ -94,8 +95,12 @@ describe('VerifiableCredential', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
+    cred.requestAnchor = jest.fn().mockImplementation(async () => {
+      // mock the function or otherwise it would call the server
+      const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+      return VC.fromJSON(JSON.parse(credentialContents));
+    });
     return cred.requestAnchor().then((updated) => {
-      console.log(JSON.stringify(updated, null, 2));
       expect(updated.signature.anchor).toBeDefined();
       expect(updated.signature.anchor.schema).toBe('tbch-20180201');
     });
@@ -105,10 +110,17 @@ describe('VerifiableCredential', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
+    // mock the function or otherwise it would call the server
+    cred.requestAnchor = jest.fn().mockImplementation(async () => {
+      // mock the function or otherwise it would call the server
+      const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+      const mockedVc = VC.fromJSON(JSON.parse(credentialContents));
+      mockedVc.updateAnchor = jest.fn().mockImplementation(async () => mockedVc);
+      return mockedVc;
+    });
     return cred.requestAnchor().then((updated) => {
       expect(updated.signature.anchor).toBeDefined();
       return updated.updateAnchor().then((newUpdated) => {
-        console.log(JSON.stringify(newUpdated, null, 2));
         expect(newUpdated.signature.anchor).toBeDefined();
       });
     });

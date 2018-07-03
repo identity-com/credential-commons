@@ -209,12 +209,9 @@ describe('UCA Constructions tests', () => {
     const aComplexAttestableValue = 'urn:day:bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49:00000020|urn:month:0ff6a4dc3b4e7a0b2cfb3a9f0479dc89d9757736d7e46e31ddb3dc53a9179b56:00000003|urn:year:ec4fcd9bad1839c052d0a23a9fba92eaf35d457e83ae50ea902bf3b5c3b490ad:00001978|';
 
     const v = new UCA(identifier, { attestableValue: aComplexAttestableValue });
-    // console.log(v);
     const attestableValue = v.getAttestableValue();
-    // console.log(attestableValue);
     expect(attestableValue).toBe(aComplexAttestableValue);
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(1);
     expect(attValues[0].identifier).toBe(identifier);
     expect(attValues[0].value).toContain('urn:');
