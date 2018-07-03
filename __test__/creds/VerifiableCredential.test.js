@@ -1,6 +1,7 @@
 const UCA = require('../../src/uca/UserCollectableAttribute');
 const VC = require('../../src/creds/VerifiableCredential');
 const _ = require('lodash');
+const fs = require('fs');
 
 jest.mock('../../src/creds/definitions');
 jest.setTimeout(100000);
@@ -88,18 +89,18 @@ describe('VerifiableCredential', () => {
     expect(cred.getGlobalCredentialItemIdentifier()).toBe('credential-civ:Credential:TestWithExcludes-1');
   });
 
-  // TODO Reenable when BitGo Issue is resolved
-  test.skip('Request anchor for Credential', () => {
+  test('Request anchor for Credential', () => {
     expect.assertions(2);
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
     return cred.requestAnchor().then((updated) => {
+      console.log(JSON.stringify(updated, null, 2));
       expect(updated.signature.anchor).toBeDefined();
       expect(updated.signature.anchor.schema).toBe('tbch-20180201');
     });
   });
-  test.skip('Refresh anchor for Credential', () => {
+  test('Refresh anchor for Credential', () => {
     expect.assertions(2);
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
@@ -107,6 +108,7 @@ describe('VerifiableCredential', () => {
     return cred.requestAnchor().then((updated) => {
       expect(updated.signature.anchor).toBeDefined();
       return updated.updateAnchor().then((newUpdated) => {
+        console.log(JSON.stringify(newUpdated, null, 2));
         expect(newUpdated.signature.anchor).toBeDefined();
       });
     });
@@ -173,5 +175,25 @@ describe('VerifiableCredential', () => {
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
     expect(cred.verifyProofs()).not.toBeTruthy();
+  });
+
+  it('should check that signature matches for the root of the Merkle Tree', () => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+    expect(cred).toBeDefined();
+    expect(cred.signature.anchor).toBeDefined();
+    expect(cred.verifySignature()).toBeTruthy();
+  });
+
+  it('should tamper the root of Merkle and the signature should not match', () => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+    // tamper merkle root
+    cred.signature.merkleRoot = 'gfdagfagfda';
+    expect(cred).toBeDefined();
+    expect(cred.signature.anchor).toBeDefined();
+    expect(cred.verifySignature()).toBeFalsy();
   });
 });

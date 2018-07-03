@@ -22,7 +22,7 @@ describe('Civic Anchor Module Tests', () => {
     });
   });
 
-  test.skip('Anchor new credential', () => {
+  test('Anchor new credential', () => {
     expect.assertions(3);
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();
@@ -35,7 +35,7 @@ describe('Civic Anchor Module Tests', () => {
     });
   });
 
-  test.skip('Update credential anchor', () => {
+  test('Update credential anchor', () => {
     expect.assertions(4);
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();

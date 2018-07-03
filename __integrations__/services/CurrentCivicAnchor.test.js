@@ -3,17 +3,18 @@ const { services } = require('../../src/services/index');
 const { registerClient } = require('../../src/services/CurrentCivicAnchorServiceImpl');
 
 const civicAnchor = services.container.CivicAnchor;
-jest.setTimeout(100000);
+jest.setTimeout(200000);
 
-describe.skip('Civic Anchor Module Tests', () => {
+describe('Civic Anchor Module Tests', () => {
   // We don't want to run register a new client on every test 
-  test('Register as a valid client', () => {
+  test('Register as a valid client', async (done) => {
     expect.assertions(4);
     return registerClient(services.container.Http).then((result) => {
       expect(result).toHaveProperty('id');
       expect(result).toHaveProperty('signingKeys.hexpub');
       expect(result).toHaveProperty('signingKeys.hexsec');
       expect(result).not.toHaveProperty('encryptionKeys');
+      done();
     });
   });
 

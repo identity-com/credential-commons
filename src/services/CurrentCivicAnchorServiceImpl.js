@@ -19,7 +19,6 @@ function getAuthHeaderExtension(http, requestBody, config) {
 }
 
 /**
- * TODO ADD THIS TEST ON COVERAGE ONCE ALL THE SKIPS OF INTEGRATION TESTS ARE REMOVED
  *
  * Request an JWT for the Authorization header
  * 
@@ -69,7 +68,7 @@ async function getAuthHeader(http, requestBody, config) {
  * @param {*} http 
  * @param {*} config 
  */
-async function registerClient(http, config) {
+async function registerClient(http) {
   const signingKeys = keyUtils.createKeys();
   const encryptionKeys = keyUtils.createTempECDHKeys();
 
@@ -79,9 +78,9 @@ async function registerClient(http, config) {
     encryptionKeys: keyUtils.serializeKeys(encryptionKeys),
   };
   const path = '/registry';
-  const endpoint = `${config.sipSecurityService}${path}`;
+  const endpoint = `${process.env.CIVIC_SEC_URL}${path}`;
   logger.debug('clientConfig:', JSON.stringify(clientConfig, null, 2));
-  const jwt = jwtUtils.createToken(clientConfig.id, config.sipSecurityService, clientConfig.id, JWT_EXPIRATION, {
+  const jwt = jwtUtils.createToken(clientConfig.id, process.env.CIVIC_SEC_URL, clientConfig.id, JWT_EXPIRATION, {
     method: 'POST',
     path,
   }, clientConfig.signingKeys.hexsec);

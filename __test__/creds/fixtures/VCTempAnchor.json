@@ -1,0 +1,209 @@
+{
+  "id": null,
+  "issuer": "jest:test",
+  "issued": "2018-07-02T23:49:31.182Z",
+  "identifier": "civ:Credential:SimpleTest",
+  "expiry": null,
+  "version": 1,
+  "type": [
+    "Credential",
+    "civ:Credential:SimpleTest"
+  ],
+  "claims": {
+    "identity": {
+      "name": {
+        "first": "Joao",
+        "last": "Santos",
+        "middle": "Barbosa"
+      },
+      "dateOfBirth": {
+        "day": 20,
+        "month": 3,
+        "year": 1978
+      }
+    }
+  },
+  "signature": {
+    "type": "CivicMerkleProof2018",
+    "merkleRoot": "8255e2a67230a6d3b6965b6807ee46c2dca4429f5fa3d4ecad20f5619e440869",
+    "anchor": {
+      "schema": "tbch-20180201",
+      "tx": "010000000198535730156452646db8ceedf57b4301771ab1d1b97035c72fd659de64beae8300000000fdfe0000483045022100e0f515047e3b319f916f652c75b3b1d3269a9997ea203c2bc2870b3557257f730220437a33c164ebe004b11172911954f97c41273afc282f615d807619dcac0cd19601483045022100da6d2d36cc5d502647722a9045f2e57b57ab4e97d8e6ff308426e57d4138eb2a022047edf75006529c3a5b268e70ec8481c9502704181b26b0c4763e41ef223ace5f014c695221028f9205846d9b23dd9a17588ae13603aa3eda3599582750904716c827d02269db2102dec3d75110d660435eaf23841197c7b8c27f8f302b47239ae2c4d2a9532e3a6a2103e2c322221a2c9618d4de0a9a0863496eb6baf6aa1c1b97d082a99eec89f72e6553aeffffffff01551500000000000017a9147fee50806f02d237e730a04b99dda958048441218700000000",
+      "subject": {
+        "label": "civ:Credential:SimpleTest",
+        "pub": "xpub661MyMwAqRbcFNXRK7kdsoidhiyfqiwhVhbphdKZjqnik83L1w1mWsPwVrsvbRrPa7sysiJRRBxr6jyrCbPScdXkhSjyYtQtFfwxGBwrBzn",
+        "data": "8255e2a67230a6d3b6965b6807ee46c2dca4429f5fa3d4ecad20f5619e440869",
+        "signature": "3044022051612859c8da75d54f34245a1404cf84920dd5268b923ad8bf67b0d8729a52db02207c76cc309b240ab4585b6f25a5752d7ac72438e9e3ab0113150770cf23bb90b6"
+      },
+      "authority": {
+        "pub": "xpub661MyMwAqRbcGYsJt9oHuATcFJT277ajoJdwFsM23mxumR6xU4dvDRyNFE35Mshe1poDBwsiKAAuG2ayGq7rwUuzz1JS5at56MAzfVyBtud",
+        "path": "/1/0/0/0"
+      },
+      "cosigners": [{
+        "pub": "xpub661MyMwAqRbcGYsJt9oHuATcFJT277ajoJdwFsM23mxumR6xU4dvDRyNFE35Mshe1poDBwsiKAAuG2ayGq7rwUuzz1JS5at56MAzfVyBtud"
+      },
+        {
+          "pub": "xpub661MyMwAqRbcFpjipTeS9ePmyiYASWZJEocn36Njo17HxFR4c2ARAvA3WPrEtkFAnk7gFsGrqTQiPHaWLqmYc96n57YdrqKXYzeqdpn1YDi"
+        }
+      ],
+      "type": "temporary",
+      "network": "testnet",
+      "statusUrl": "https://dev.api.civic.com/request-attestation-tbch/status/985efc60-7e52-11e8-a6da-c1096ef5d15d"
+    },
+    "leaves": [{
+      "identifier": "civ:Identity:name",
+      "value": "urn:first:36c71aa342178c88f692fe6df827c71cc08f1ae65874024a2eb3805a969528e0:Joao|urn:last:144a8d05ea7c58e82f96845637a0a07b2efe601624daeaa95071d06dc2437b69:Santos|urn:middle:b5f12ff1f98793f61b89cfb02837ce08276f465a87f6b86b96996c93aeb69e6d:Barbosa|",
+      "claimPath": "identity.name",
+      "targetHash": "c5c542c47671322d8e6c80d380fe8dd01cd6cbf2a3134ba7cf5db53c9dbc1fa0",
+      "proof": [{
+        "right": "a48407c904094e3ca52a43f66553f74730fc6fc27e00966154c97907ad312da2"
+      },
+        {
+          "right": "9d8ac4b4f10bd39731b551dfabe142991de1f8c915d32dd8353abcfdd66ff746"
+        },
+        {
+          "right": "78823dfa5067cbcb7f578f0afbabbb9389993da0f11436a8b08c5d671447a686"
+        },
+        {
+          "right": "639fee662f799852b5e35537d033c80e46bdcf5224d9593009b5e68cbe166f76"
+        },
+        {
+          "right": "7931d7f2b94b0845b776ec6d92da7b76b7a6f23859d80a15f8650c46f8d6b415"
+        }
+      ]
+    },
+      {
+        "identifier": "civ:Identity:name.first",
+        "value": "urn:first:36c71aa342178c88f692fe6df827c71cc08f1ae65874024a2eb3805a969528e0:Joao",
+        "claimPath": "identity.name.first",
+        "targetHash": "a48407c904094e3ca52a43f66553f74730fc6fc27e00966154c97907ad312da2",
+        "proof": [{
+          "left": "c5c542c47671322d8e6c80d380fe8dd01cd6cbf2a3134ba7cf5db53c9dbc1fa0"
+        },
+          {
+            "right": "9d8ac4b4f10bd39731b551dfabe142991de1f8c915d32dd8353abcfdd66ff746"
+          },
+          {
+            "right": "78823dfa5067cbcb7f578f0afbabbb9389993da0f11436a8b08c5d671447a686"
+          },
+          {
+            "right": "639fee662f799852b5e35537d033c80e46bdcf5224d9593009b5e68cbe166f76"
+          },
+          {
+            "right": "7931d7f2b94b0845b776ec6d92da7b76b7a6f23859d80a15f8650c46f8d6b415"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:name.middle",
+        "value": "urn:middle:b5f12ff1f98793f61b89cfb02837ce08276f465a87f6b86b96996c93aeb69e6d:Barbosa",
+        "claimPath": "identity.name.middle",
+        "targetHash": "d8fe45352b1217b06ab004d62052fcf77929ca40cc36ba8896f6df5614b764f7",
+        "proof": [{
+          "right": "bf89d2ca3fd74b96859e6af82973ef5fad676ad8fd6035d049bd5888b9c39ec3"
+        },
+          {
+            "left": "bd2c1c5560ef461fad14bbc455939b0c756bee63228df6c2391ea4307b7493ca"
+          },
+          {
+            "right": "78823dfa5067cbcb7f578f0afbabbb9389993da0f11436a8b08c5d671447a686"
+          },
+          {
+            "right": "639fee662f799852b5e35537d033c80e46bdcf5224d9593009b5e68cbe166f76"
+          },
+          {
+            "right": "7931d7f2b94b0845b776ec6d92da7b76b7a6f23859d80a15f8650c46f8d6b415"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:name.last",
+        "value": "urn:last:144a8d05ea7c58e82f96845637a0a07b2efe601624daeaa95071d06dc2437b69:Santos",
+        "claimPath": "identity.name.last",
+        "targetHash": "bf89d2ca3fd74b96859e6af82973ef5fad676ad8fd6035d049bd5888b9c39ec3",
+        "proof": [{
+          "left": "d8fe45352b1217b06ab004d62052fcf77929ca40cc36ba8896f6df5614b764f7"
+        },
+          {
+            "left": "bd2c1c5560ef461fad14bbc455939b0c756bee63228df6c2391ea4307b7493ca"
+          },
+          {
+            "right": "78823dfa5067cbcb7f578f0afbabbb9389993da0f11436a8b08c5d671447a686"
+          },
+          {
+            "right": "639fee662f799852b5e35537d033c80e46bdcf5224d9593009b5e68cbe166f76"
+          },
+          {
+            "right": "7931d7f2b94b0845b776ec6d92da7b76b7a6f23859d80a15f8650c46f8d6b415"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:dateOfBirth",
+        "value": "urn:day:21b431a5d5430b312f065ea634bd32616a19d017fa8bedea7b89b77d47d27fdf:00000020|urn:month:cd4a66b450deef9c1022b0882e0891de4e721018dc039538f9d466699696a583:00000003|urn:year:493e2d3a8044d30430de6eb961fb9105ccf4f0f30297f1ef54e6a1a9bd3aee0f:00001978|",
+        "claimPath": "identity.dateOfBirth",
+        "targetHash": "1488396304d6cb3ed6b0f091c66b5d540a9ddf1507e910af528a9a38079e3e6e",
+        "proof": [{
+          "right": "7dea72a2b2f39f2b792cd950cab6de2f5c7870560419d7231166979bb2a78342"
+        },
+          {
+            "right": "682cba2278591a4c8306d5b92dc6a51c596b2f6b7a09c4700b4196b3e4dc6174"
+          },
+          {
+            "left": "2da9b9faee33ebb6abfecef71576f706ef5a616508a49163b772d52131580879"
+          },
+          {
+            "right": "639fee662f799852b5e35537d033c80e46bdcf5224d9593009b5e68cbe166f76"
+          },
+          {
+            "right": "7931d7f2b94b0845b776ec6d92da7b76b7a6f23859d80a15f8650c46f8d6b415"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:issuer",
+        "value": "urn:issuer:aaec07b09ee3406d59fbd065202e6172c316b529db5e15a5701ee38580c0e168:jest:test",
+        "claimPath": "meta.issuer",
+        "targetHash": "7dea72a2b2f39f2b792cd950cab6de2f5c7870560419d7231166979bb2a78342",
+        "proof": [{
+          "left": "1488396304d6cb3ed6b0f091c66b5d540a9ddf1507e910af528a9a38079e3e6e"
+        },
+          {
+            "right": "682cba2278591a4c8306d5b92dc6a51c596b2f6b7a09c4700b4196b3e4dc6174"
+          },
+          {
+            "left": "2da9b9faee33ebb6abfecef71576f706ef5a616508a49163b772d52131580879"
+          },
+          {
+            "right": "639fee662f799852b5e35537d033c80e46bdcf5224d9593009b5e68cbe166f76"
+          },
+          {
+            "right": "7931d7f2b94b0845b776ec6d92da7b76b7a6f23859d80a15f8650c46f8d6b415"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:issued",
+        "value": "urn:issued:82ad8350c9352b6d1e3556e0a3190c1ab3ec77c13b98d979f3bae3199410b2ac:2018-07-02T23:49:31.182Z",
+        "claimPath": "meta.issued",
+        "targetHash": "cd513b3ce7d8a6c6a97d498cd6cce442fb6f7ee137422dc10821bf965e0bf0b2",
+        "proof": [{
+          "right": "f4c91aa2bc7cbc6bfeb53b400e70da46decda2386d58d01247576aee4d711157"
+        },
+          {
+            "left": "4c236169fd5e02d5154457f3fc8d2b4b43e19a89a7f0988e404d1dc3212b0819"
+          },
+          {
+            "left": "2da9b9faee33ebb6abfecef71576f706ef5a616508a49163b772d52131580879"
+          },
+          {
+            "right": "639fee662f799852b5e35537d033c80e46bdcf5224d9593009b5e68cbe166f76"
+          },
+          {
+            "right": "7931d7f2b94b0845b776ec6d92da7b76b7a6f23859d80a15f8650c46f8d6b415"
+          }
+        ]
+      }
+    ]
+  }
+}

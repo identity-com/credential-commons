@@ -122,11 +122,13 @@ const name = new UCA.IdentityName({
 
 **values** can be:
 *  Plain JavaScript Objects:
-`{
-	first: 'Joao', 
-    middle: 'Barbosa', 
-    last: 'Santos'
-}`
+```json
+{
+	"first": 'Joao', 
+    "middle": 'Barbosa', 
+    "last": 'Santos'
+}
+```
 * Attestable Values: 
 ```json
 {

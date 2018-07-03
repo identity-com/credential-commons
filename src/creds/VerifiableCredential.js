@@ -1,5 +1,6 @@
 const _ = require('lodash');
-const Merkletools = require('merkle-tools');
+const chainauth = require('chainauth');
+const MerkleTools = require('merkle-tools');
 const sjcl = require('sjcl');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
@@ -7,6 +8,12 @@ const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
+
+const {
+  bitcoin: {
+    crypto, ECSignature, HDNode,
+  },
+} = chainauth.bitgo;
 
 const anchorService = services.container.AnchorService;
 
@@ -56,7 +63,7 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
     // console.log(`${JSON.stringify(ucaValueValue)} / ${JSON.stringify(claimValue)}`);
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
-      const ucaType = _.get(ucaValueValue[k], 'type')
+      const ucaType = _.get(ucaValueValue[k], 'type');
       // number values are padded on the attestation value
       const expectedClaimValue = ucaType === 'Number' ? _.padStart(claimValue[k], 8, '0') : claimValue[k];
       if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
@@ -96,7 +103,7 @@ class CivicMerkleProof {
   }
 
   buildMerkleTree() {
-    const merkleTools = new Merkletools();
+    const merkleTools = new MerkleTools();
     const hashes = _.map(this.leaves, n => sha256(n.value));
     merkleTools.addLeaves(hashes);
     merkleTools.makeTree();
@@ -218,7 +225,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   };
 
   /**
-   * Request that this credential MerkleRoot is anchored on the Blochain.
+   * Request that this credential MerkleRoot is anchored on the Blockchain.
    * This will return a _temporary_ anchor meaning that the blockchain entry is still not confirmed.
    * @param {*} options 
    */
@@ -238,6 +245,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     return this;
   };
 
+  /**
+   * Iterate over all leaves and see if their proofs are valid
+   * @returns {boolean}
+   */
   this.verifyProofs = () => {
     const expiry = _.clone(this.expiry);
     const claims = _.clone(this.claims);
@@ -245,7 +256,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     const signLeaves = _.get(signature, 'leaves');
     let valid = false;
 
-    const merkleTools = new Merkletools();
+    const merkleTools = new MerkleTools();
     const claimsWithFlatKeys = getClaimsWithFlatKeys(claims);
     const leavesClaimPaths = getLeavesClaimPaths(signLeaves);
     const invalidClaim = [];
@@ -266,7 +277,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
           return;
         }
         // if no, include on invalidClaim array
-        // console.log(parentClaimKey);
         invalidClaim.push(claimKey);
       } else {
         const leave = signLeaves[leaveIdx];
@@ -286,7 +296,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
       verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
       const totalLengthAfter = invalidValues.length + invalidHashs.length + invalidProofs.length;
-      // console.log(`${totalLengthBefore} / ${totalLengthAfter}`);
       if (totalLengthAfter === totalLengthBefore) {
         const now = new Date();
         const expiryDate = new Date(expiry);
@@ -296,8 +305,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         }
       }
     }
-
-    // console.log(`${JSON.stringify(invalidClaim)}, ${JSON.stringify(invalidValues)}, ${JSON.stringify(invalidHashs)}, ${JSON.stringify(invalidProofs)}, ${JSON.stringify(invalidExpiry)}`);
     if (_.isEmpty(invalidClaim)
         && _.isEmpty(invalidValues)
         && _.isEmpty(invalidHashs)
@@ -317,6 +324,27 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     let verifiedlevel = VERIFY_LEVELS.INVALID;
     if (hVerifyLevel >= VERIFY_LEVELS.PROOFS && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
     return verifiedlevel;
+  };
+
+  /**
+   * This method checks if the signature matches for the root of the Merkle Tree
+   * @return true or false for the validation
+   */
+  this.verifySignature = () => {
+    // avoid anchor tampering
+    const subject = this.signature.anchor.subject;
+    const anchorSubjectValidation = this.verifySubjectSignature(subject);
+    // double check if the subject data equals the anchor merkle root
+    const subjectMerkleRoot = _.cloneDeep(subject);
+    subjectMerkleRoot.data = this.signature.merkleRoot;
+    const merkleRootSignatureValidation = this.verifySubjectSignature(subjectMerkleRoot);
+    return anchorSubjectValidation && merkleRootSignatureValidation;
+  };
+
+  this.verifySubjectSignature = (subject) => {
+    const hash = crypto.sha256(chainauth.tbsAttestationSubject(subject));
+    const subjectSignature = ECSignature.fromDER(Buffer.from(subject.signature, 'hex'));
+    return HDNode.fromBase58(subject.pub).keyPair.verify(hash, subjectSignature);
   };
 
   return this;
