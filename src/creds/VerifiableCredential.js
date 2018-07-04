@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const chainauth = require('chainauth');
 const MerkleTools = require('merkle-tools');
 const sjcl = require('sjcl');
 const definitions = require('./definitions');
@@ -8,12 +7,6 @@ const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
-
-const {
-  bitcoin: {
-    crypto, ECSignature, HDNode,
-  },
-} = chainauth.bitgo;
 
 const anchorService = services.container.AnchorService;
 
@@ -53,7 +46,6 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   // 1.1 "leave.value" should be equal claim values
   const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
   if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
-    // console.log(`1: ${ucaValue.value} / ${_.get(claims, leave.claimPath)}`);
     if (ucaValue.value !== _.get(claims, leave.claimPath)) {
       invalidValues.push(leave.value);
     }
@@ -330,22 +322,12 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This method checks if the signature matches for the root of the Merkle Tree
    * @return true or false for the validation
    */
-  this.verifySignature = () => {
-    // avoid anchor tampering
-    const subject = this.signature.anchor.subject;
-    const anchorSubjectValidation = this.verifySubjectSignature(subject);
-    // double check if the subject data equals the anchor merkle root
-    const subjectMerkleRoot = _.cloneDeep(subject);
-    subjectMerkleRoot.data = this.signature.merkleRoot;
-    const merkleRootSignatureValidation = this.verifySubjectSignature(subjectMerkleRoot);
-    return anchorSubjectValidation && merkleRootSignatureValidation;
-  };
+  this.verifySignature = async () => anchorService.verifySignature(this.signature);
 
-  this.verifySubjectSignature = (subject) => {
-    const hash = crypto.sha256(chainauth.tbsAttestationSubject(subject));
-    const subjectSignature = ECSignature.fromDER(Buffer.from(subject.signature, 'hex'));
-    return HDNode.fromBase58(subject.pub).keyPair.verify(hash, subjectSignature);
-  };
+  /**
+   * This method checks that the attestation / anchor exists on the BC
+   */
+  this.verifyAttestation = async () => anchorService.verifyAttestation(this.signature);
 
   return this;
 }

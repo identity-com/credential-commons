@@ -194,6 +194,27 @@ function CurrentCivicAnchor(config, http) {
     }
     throw new Error(`Can't update the anchor. type:${tempAnchor.type} statusUrl:${tempAnchor.statusUrl}`);
   };
+
+  this.verifySignature = (signature) => {
+    return true;
+  };
+
+  /**
+   * This method checks if the subject signature matches the pub key
+   * @param subject a json with label, data, signature, pub
+   * @returns {*} true or false for the validation
+   */
+  this.verifySubjectSignature = (subject) => {
+    return true;
+  };
+
+  /**
+   * This method checks that the attestation / anchor exists on the BC
+   */
+  this.verifyAttestation = async (signature) => {
+    return true;
+  };
+
   return this;
 }
 

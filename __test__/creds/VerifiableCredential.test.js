@@ -90,23 +90,24 @@ describe('VerifiableCredential', () => {
     expect(cred.getGlobalCredentialItemIdentifier()).toBe('credential-civ:Credential:TestWithExcludes-1');
   });
 
-  test('Request anchor for Credential', () => {
-    expect.assertions(2);
+  it('should request an anchor for Credential and return an temporary attestation', async (done) => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
     cred.requestAnchor = jest.fn().mockImplementation(async () => {
       // mock the function or otherwise it would call the server
-      const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+      const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCTempAnchor.json', 'utf8');
       return VC.fromJSON(JSON.parse(credentialContents));
     });
     return cred.requestAnchor().then((updated) => {
+      expect(updated.signature.anchor.type).toBe('temporary');
+      expect(updated.signature.anchor.value).not.toBeDefined();
       expect(updated.signature.anchor).toBeDefined();
       expect(updated.signature.anchor.schema).toBe('tbch-20180201');
+      done();
     });
   });
-  test('Refresh anchor for Credential', () => {
-    expect.assertions(2);
+  it('should refresh an temporary anchoring with an permanent one', async (done) => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
@@ -121,7 +122,10 @@ describe('VerifiableCredential', () => {
     return cred.requestAnchor().then((updated) => {
       expect(updated.signature.anchor).toBeDefined();
       return updated.updateAnchor().then((newUpdated) => {
+        expect(newUpdated.signature.anchor.type).toBe('permanent');
         expect(newUpdated.signature.anchor).toBeDefined();
+        expect(newUpdated.signature.anchor.value).toBeDefined();
+        done();
       });
     });
   });
@@ -189,16 +193,17 @@ describe('VerifiableCredential', () => {
     expect(cred.verifyProofs()).not.toBeTruthy();
   });
 
-  it('should check that signature matches for the root of the Merkle Tree', () => {
+  it('should check that signature matches for the root of the Merkle Tree', async (done) => {
     const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
     const credentialJson = JSON.parse(credentialContents);
     const cred = VC.fromJSON(credentialJson);
     expect(cred).toBeDefined();
     expect(cred.signature.anchor).toBeDefined();
-    expect(cred.verifySignature()).toBeTruthy();
+    expect(await cred.verifySignature()).toBeTruthy();
+    done();
   });
 
-  it('should tamper the root of Merkle and the signature should not match', () => {
+  it('should tamper the root of Merkle and the signature should not match', async (done) => {
     const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
     const credentialJson = JSON.parse(credentialContents);
     const cred = VC.fromJSON(credentialJson);
@@ -206,6 +211,44 @@ describe('VerifiableCredential', () => {
     cred.signature.merkleRoot = 'gfdagfagfda';
     expect(cred).toBeDefined();
     expect(cred.signature.anchor).toBeDefined();
-    expect(cred.verifySignature()).toBeFalsy();
+    expect(await cred.verifySignature()).toBeFalsy();
+    done();
+  });
+
+  it('should check that the anchor exists on the chain', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+    expect(cred).toBeDefined();
+    expect(cred.signature.anchor).toBeDefined();
+    const validation = await cred.verifyAttestation();
+    expect(validation).toBeTruthy();
+    done();
+  });
+
+  it('should fail the check that the anchor exists on the chain', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCTempAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+    expect(cred).toBeDefined();
+    expect(cred.signature.anchor).toBeDefined();
+    const validation = await cred.verifyAttestation();
+    expect(validation).toBeFalsy();
+    done();
+  });
+
+  it('should fail the check with temporary attestations faked as permanent', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/CredentialAttestationFaked.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+    expect(cred).toBeDefined();
+    expect(cred.signature.anchor).toBeDefined();
+    try {
+      await cred.verifyAttestation();
+    } catch (err) {
+      // TODO jests does not work with assert from node
+      expect(err.message).toBe('Could not verify authority signature');
+    }
+    done();
   });
 });

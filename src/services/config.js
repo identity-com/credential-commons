@@ -38,6 +38,9 @@ const config = {
   },
   passphrase: process.env.CIVIC_PASSPHRASE,
   keychain: { prv: process.env.CIVIC_KEYCHAIN },
+  accessToken: process.env.CLIENT_ACCESS_TOKEN,
+  walletId: process.env.CLIENT_WALLET_ID,
+  walletPassphrase: process.env.CLIENT_WALLET_PASSPHRASE,
 };
 
 module.exports = config;
