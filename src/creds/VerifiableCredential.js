@@ -329,6 +329,17 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.verifyAttestation = async () => anchorService.verifyAttestation(this.signature);
 
+  /**
+   * This method will revoke the attestation on the chain
+   * @returns {Promise<Promise<*>|void>}
+   */
+  this.revokeAttestation = async () => anchorService.revokeAttestation(this.signature);
+
+  /**
+   * This method will check on the chain the balance of the transaction and if it's still unspent, than it's not revoked
+   * @returns {Promise<Promise<*>|void>}
+   */
+  this.isRevoked = async () => anchorService.isRevoked(this.signature);
   return this;
 }
 
