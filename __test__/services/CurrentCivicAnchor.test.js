@@ -2,6 +2,7 @@ const http = require('../../src/services/__mocks__/httpService');
 const config = require('../../src/services/config');
 const { initServices, services } = require('../../src/services/index');
 const { registerClient } = require('../../src/services/CurrentCivicAnchorServiceImpl');
+const fs = require('fs');
 
 initServices(null, http);
 
@@ -22,28 +23,43 @@ describe('Civic Anchor Module Tests', () => {
     });
   });
 
-  test.skip('Anchor new credential', () => {
+  test('Anchor new credential', () => {
     expect.assertions(3);
+    civicAnchor.anchor = jest.fn().mockImplementation(async () => {
+      // mock the function or otherwise it would call the server
+      return JSON.parse(fs.readFileSync('__test__/creds/fixtures/TempAnchor.json', 'utf8'));
+    });
     return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
       expect(result).toBeDefined();
       expect(result).toHaveProperty('type');
       if (result.type === 'temporary') {
-        expect(result).toHaveProperty('statusUrl');
+        expect(result).not.toHaveProperty('value');
       } else {
-        expect(result).not.toHaveProperty('statusUrl');
+        expect(result).toHaveProperty('value');
       }
     });
   });
 
-  test.skip('Update credential anchor', () => {
-    expect.assertions(4);
-    return civicAnchor.anchor('teste', 'testesdsd').then((result) => {
+  test('Update credential anchor', async (done) => {
+    const timestamp = new Date().getTime();
+    expect.assertions(5);
+    civicAnchor.anchor = jest.fn().mockImplementation(async () => {
+      // mock the function or otherwise it would call the server
+      return JSON.parse(fs.readFileSync('__test__/creds/fixtures/TempAnchor.json', 'utf8'));
+    });
+    civicAnchor.update = jest.fn().mockImplementation(async () => {
+      // mock the function or otherwise it would call the server
+      return JSON.parse(fs.readFileSync('__test__/creds/fixtures/PermanentAnchor.json', 'utf8'));
+    });
+    return civicAnchor.anchor(`test${timestamp}`, `test${timestamp}`).then((result) => {
       expect(result).toBeDefined();
       expect(result).toHaveProperty('type');
       return result;
     }).then(attestation => civicAnchor.update(attestation)).then((updated) => {
       expect(updated).toBeDefined();
       expect(updated).toHaveProperty('type');
+      expect(updated).toHaveProperty('value');
+      done();
     });
   });
 });

@@ -6,6 +6,7 @@ const UCA = require('../uca/UserCollectableAttribute');
 const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
 const timestamp = require('unix-timestamp');
+const flatten = require('flat');
 
 const anchorService = services.container.AnchorService;
 
@@ -22,6 +23,55 @@ function getClaimPath(identifier) {
 function validIdentifiers() {
   const vi = _.map(definitions, d => d.identifier);
   return vi;
+}
+
+function getClaimsWithFlatKeys(claims) {
+  const flattenDepth3 = flatten(claims, { maxDepth: 3 });
+  const flattenDepth2 = flatten(claims, { maxDepth: 2 });
+  const flattenClaim = _.merge({}, flattenDepth3, flattenDepth2);
+  const flattenSortedKeysClaim = _(flattenClaim).toPairs().sortBy(0).fromPairs().value();
+  return flattenSortedKeysClaim;
+}
+
+function getLeavesClaimPaths(signLeaves) {
+  return _.map(signLeaves, 'claimPath');
+}
+
+function verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs) {
+  // 1. verify valid targetHashs
+  // 1.1 "leave.value" should be equal claim values
+  const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
+  if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
+    // console.log(`1: ${ucaValue.value} / ${_.get(claims, leave.claimPath)}`);
+    if (ucaValue.value !== _.get(claims, leave.claimPath)) {
+      invalidValues.push(leave.value);
+    }
+  } else if (ucaValue.type === 'Object') {
+    const ucaValueValue = ucaValue.value;
+    const claimValue = _.get(claims, leave.claimPath);
+    // console.log(`${JSON.stringify(ucaValueValue)} / ${JSON.stringify(claimValue)}`);
+    const ucaValueKeys = _.keys(ucaValue.value);
+    _.each(ucaValueKeys, k => {
+      const ucaType = _.get(ucaValueValue[k], 'type');
+      // number values are padded on the attestation value
+      const expectedClaimValue = ucaType === 'Number' ? _.padStart(claimValue[k], 8, '0') : claimValue[k];
+      if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
+        invalidValues.push(claimValue[k]);
+      }
+    });
+  } else {
+    // Invalid ucaValue.type
+    invalidValues.push(leave.value);
+  }
+
+  // 1.2 hash(leave.value) should be equal leave.targetHash
+  const hash = sha256(leave.value);
+  if (hash !== leave.targetHash) invalidHashs.push(leave.targetHash);
+
+  // 2. Validate targetHashs + proofs with merkleRoot
+  const isValidProof = merkleTools.validateProof(leave.proof, leave.targetHash, signature.merkleRoot);
+  // console.log(`leave.proof / ${leave.targetHash} / ${signature.merkleRoot}: ${isValidProof}`);
+  if (!isValidProof) invalidProofs.push(leave.targetHash);
 }
 
 /**
@@ -91,6 +141,14 @@ class ClaimModel {
     });
   }
 }
+
+const VERIFY_LEVELS = {
+  INVALID: -1,
+  PROOFS: 0, // Includes expiry if its there
+  ANCHOR: 1,
+  BLOCKCHAIN: 2
+};
+
 /**
  * Creates a new Verifiable Credential based on an well-known identifier and it's claims dependencies
  * @param {*} identifier 
@@ -121,14 +179,16 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.version = version || definition.version;
   this.type = ['Credential', identifier];
 
-  this.claims = new ClaimModel(ucas);
-  this.signature = new CivicMerkleProof(proofUCAs);
-
-  if (!_.isEmpty(definition.excludes)) {
-    const removed = _.remove(this.signature.leaves, el => _.includes(definition.excludes, el.identifier));
-    _.forEach(removed, r => {
-      _.unset(this.claims, r.claimPath);
-    });
+  // ucas can be empty here if it is been constructed from JSON
+  if (!_.isEmpty(ucas)) {
+    this.claims = new ClaimModel(ucas);
+    this.signature = new CivicMerkleProof(proofUCAs);
+    if (!_.isEmpty(definition.excludes)) {
+      const removed = _.remove(this.signature.leaves, el => _.includes(definition.excludes, el.identifier));
+      _.forEach(removed, r => {
+        _.unset(this.claims, r.claimPath);
+      });
+    }
   }
 
   /**
@@ -173,7 +233,103 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     return this;
   };
 
+  this.verifyProofs = () => {
+    const expiry = _.clone(this.expiry);
+    const claims = _.clone(this.claims);
+    const signature = _.clone(this.signature);
+    const signLeaves = _.get(signature, 'leaves');
+    let valid = false;
+
+    const merkleTools = new Merkletools();
+    const claimsWithFlatKeys = getClaimsWithFlatKeys(claims);
+    const leavesClaimPaths = getLeavesClaimPaths(signLeaves);
+    const invalidClaim = [];
+    const invalidExpiry = [];
+    const invalidValues = [];
+    const invalidHashs = [];
+    const invalidProofs = [];
+    _.forEach(_.keys(claimsWithFlatKeys), claimKey => {
+      // check if `claimKey` has a `claimPath` proof
+      const leaveIdx = _.indexOf(leavesClaimPaths, claimKey);
+      // if not found
+      if (leaveIdx === -1) {
+        // .. still test if parent key node may have a `claimPath` proof
+        _.findLastIndex(claimKey, '.');
+        const parentClaimKey = claimKey.substring(0, _.lastIndexOf(claimKey, '.'));
+        if (_.indexOf(leavesClaimPaths, parentClaimKey) > -1) {
+          // if yes, no problem, go to next loop
+          return;
+        }
+        // if no, include on invalidClaim array
+        // console.log(parentClaimKey);
+        invalidClaim.push(claimKey);
+      } else {
+        const leave = signLeaves[leaveIdx];
+        verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs);
+      }
+    });
+
+    // 3. If present, check Credential expiry
+    const expiryIdx = _.indexOf(leavesClaimPaths, 'meta.expiry');
+    if (expiryIdx >= 0) {
+      const expiryLeave = signLeaves[expiryIdx];
+      const metaClaim = {
+        meta: {
+          expiry
+        }
+      };
+      const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
+      verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
+      const totalLengthAfter = invalidValues.length + invalidHashs.length + invalidProofs.length;
+      // console.log(`${totalLengthBefore} / ${totalLengthAfter}`);
+      if (totalLengthAfter === totalLengthBefore) {
+        const now = new Date();
+        const expiryDate = new Date(expiry);
+        if (now.getTime() > expiryDate.getTime()) {
+          // console.log(JSON.stringify(expiry));
+          invalidExpiry.push(expiry);
+        }
+      }
+    }
+
+    // console.log(`${JSON.stringify(invalidClaim)}, ${JSON.stringify(invalidValues)}, ${JSON.stringify(invalidHashs)}, ${JSON.stringify(invalidProofs)}, ${JSON.stringify(invalidExpiry)}`);
+    if (_.isEmpty(invalidClaim) && _.isEmpty(invalidValues) && _.isEmpty(invalidHashs) && _.isEmpty(invalidProofs) && _.isEmpty(invalidExpiry)) {
+      valid = true;
+    }
+    return valid;
+  };
+
+  /**
+   * Verify the Credencial and return a verification level.
+   * @return Any of VC.VERIFY_LEVELS
+   */
+  this.verify = higherVerifyLevel => {
+    const hVerifyLevel = higherVerifyLevel || VERIFY_LEVELS.PROOFS;
+    let verifiedlevel = VERIFY_LEVELS.INVALID;
+    if (hVerifyLevel >= VERIFY_LEVELS.PROOFS && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
+    return verifiedlevel;
+  };
+
   return this;
 }
+
+/**
+ * Factory function that creates a new Verifiable Credential based on a JSON object
+ * @param {*} verifiableCredentialJSON
+ */
+VerifiableCredentialBaseConstructor.fromJSON = verifiableCredentialJSON => {
+  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer);
+  newObj.id = _.clone(verifiableCredentialJSON.id);
+  newObj.issued = _.clone(verifiableCredentialJSON.issued);
+  newObj.expiry = _.clone(verifiableCredentialJSON.expiry);
+  newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
+  newObj.version = _.clone(verifiableCredentialJSON.version);
+  newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
+  newObj.claims = _.cloneDeep(verifiableCredentialJSON.claims);
+  newObj.signature = _.cloneDeep(verifiableCredentialJSON.signature);
+  return newObj;
+};
+
+VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;
 
 module.exports = VerifiableCredentialBaseConstructor;

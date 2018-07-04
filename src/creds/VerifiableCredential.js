@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Merkletools = require('merkle-tools');
+const MerkleTools = require('merkle-tools');
 const sjcl = require('sjcl');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
@@ -46,20 +46,24 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   // 1.1 "leave.value" should be equal claim values
   const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
   if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
-    // console.log(`1: ${ucaValue.value} / ${_.get(claims, leave.claimPath)}`);
-    if (ucaValue.value !== _.get(claims, leave.claimPath)) invalidValues.push(leave.value);
+    if (ucaValue.value !== _.get(claims, leave.claimPath)) {
+      invalidValues.push(leave.value);
+    }
   } else if (ucaValue.type === 'Object') {
     const ucaValueValue = ucaValue.value;
     const claimValue = _.get(claims, leave.claimPath);
     // console.log(`${JSON.stringify(ucaValueValue)} / ${JSON.stringify(claimValue)}`);
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
-      // console.log(`2: ${ucaValueValue[k].value} / ${claimValue[k]}`);
-      if (_.get(ucaValueValue[k], 'value') !== claimValue[k]) invalidValues.push(claimValue[k]);
+      const ucaType = _.get(ucaValueValue[k], 'type');
+      // number values are padded on the attestation value
+      const expectedClaimValue = ucaType === 'Number' ? _.padStart(claimValue[k], 8, '0') : claimValue[k];
+      if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
+        invalidValues.push(claimValue[k]);
+      }
     });
   } else {
     // Invalid ucaValue.type
-    // console.log(`3: ${ucaValue.type}`);
     invalidValues.push(leave.value);
   }
 
@@ -91,7 +95,7 @@ class CivicMerkleProof {
   }
 
   buildMerkleTree() {
-    const merkleTools = new Merkletools();
+    const merkleTools = new MerkleTools();
     const hashes = _.map(this.leaves, n => sha256(n.value));
     merkleTools.addLeaves(hashes);
     merkleTools.makeTree();
@@ -213,7 +217,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   };
 
   /**
-   * Request that this credential MerkleRoot is anchored on the Blochain.
+   * Request that this credential MerkleRoot is anchored on the Blockchain.
    * This will return a _temporary_ anchor meaning that the blockchain entry is still not confirmed.
    * @param {*} options 
    */
@@ -233,6 +237,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     return this;
   };
 
+  /**
+   * Iterate over all leaves and see if their proofs are valid
+   * @returns {boolean}
+   */
   this.verifyProofs = () => {
     const expiry = _.clone(this.expiry);
     const claims = _.clone(this.claims);
@@ -240,13 +248,9 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     const signLeaves = _.get(signature, 'leaves');
     let valid = false;
 
-    const merkleTools = new Merkletools();
-
+    const merkleTools = new MerkleTools();
     const claimsWithFlatKeys = getClaimsWithFlatKeys(claims);
     const leavesClaimPaths = getLeavesClaimPaths(signLeaves);
-    // console.log(claimsWithFlatKeys);
-    // console.log(leavesClaimPaths);
-
     const invalidClaim = [];
     const invalidExpiry = [];
     const invalidValues = [];
@@ -265,11 +269,9 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
           return;
         }
         // if no, include on invalidClaim array
-        // console.log(parentClaimKey);
         invalidClaim.push(claimKey);
       } else {
         const leave = signLeaves[leaveIdx];
-        // console.log(`${claimKey}, ${leaveIdx}`);
         verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs);
       }
     });
@@ -286,7 +288,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
       verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
       const totalLengthAfter = invalidValues.length + invalidHashs.length + invalidProofs.length;
-      // console.log(`${totalLengthBefore} / ${totalLengthAfter}`);
       if (totalLengthAfter === totalLengthBefore) {
         const now = new Date();
         const expiryDate = new Date(expiry);
@@ -296,8 +297,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         }
       }
     }
-
-    // console.log(`${JSON.stringify(invalidClaim)}, ${JSON.stringify(invalidValues)}, ${JSON.stringify(invalidHashs)}, ${JSON.stringify(invalidProofs)}, ${JSON.stringify(invalidExpiry)}`);
     if (_.isEmpty(invalidClaim)
         && _.isEmpty(invalidValues)
         && _.isEmpty(invalidHashs)
@@ -318,6 +317,17 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     if (hVerifyLevel >= VERIFY_LEVELS.PROOFS && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
     return verifiedlevel;
   };
+
+  /**
+   * This method checks if the signature matches for the root of the Merkle Tree
+   * @return true or false for the validation
+   */
+  this.verifySignature = async () => anchorService.verifySignature(this.signature);
+
+  /**
+   * This method checks that the attestation / anchor exists on the BC
+   */
+  this.verifyAttestation = async () => anchorService.verifyAttestation(this.signature);
 
   return this;
 }

@@ -122,54 +122,218 @@ const name = new UCA.IdentityName({
 
 **values** can be:
 *  Plain JavaScript Objects:
-`{
-	first: 'Joao', 
-    middle: 'Barbosa', 
-    last: 'Santos'
-}`
-* Attestable Values: `{attestableValue: 's:0902b1abf8b30dbf03c79d144d24f44055637eefa84f2ca024d1d2d9a39f30c5:Joao|s:ee9c6b4e76224bc3f56ed3f4bd2f9037f3665b546abdc49e0a59fcb25b771c14:Santos|s:c1dfa74b335f81a19914c3b8aa98ce25a30371836d740579edc69ceec5f597c6:Barbosa|'}`
+```json
+{
+	"first": 'Joao', 
+    "middle": 'Barbosa', 
+    "last": 'Santos'
+}
+```
+* Attestable Values: 
+```json
+{
+  "attestableValue": "urn:first:0902b1abf8b30dbf03c79d144d24f44055637eefa84f2ca024d1d2d9a39f30c5:Joao|s:ee9c6b4e76224bc3f56ed3f4bd2f9037f3665b546abdc49e0a59fcb25b771c14:Santos|urn:middle:c1dfa74b335f81a19914c3b8aa98ce25a30371836d740579edc69ceec5f597c6:Barbosa|"
+}
+```
 
 JSON String
  
-```
-{JSON: "
+```json
+
 {
-      "timestamp": 1527706184.575,
-      "id": "1:civ:Identity:name:817c71d0eb9db9a583143c1d92becf765945d62982f26998e9249850e8ad41bf",
-      "identifier": "civ:Identity:name",
-      "version": "1",
-      "type": "Object",
-      "value": {
-        "first": {
-          "timestamp": 1527706184.575,
-          "id": "1:civ:Identity:name.first:c88b3d4d5b937b8c72908b7537b0bc42826d1d296392e90e58ac0b55c71dab31",
-          "identifier": "civ:Identity:name.first",
-          "version": "1",
-          "type": "String",
-          "value": "Joao",
-          "salt": "397b809df57fb5046229cf85b814336099a641a0081cfd36032a4425f6aa215f"
-        },
-        "middle": {
-          "timestamp": 1527706184.575,
-          "id": "1:civ:Identity:name.middle:4732d8a87c36939a0065998c7765a8420a766bf8df613994e5f521d37447599b",
-          "identifier": "civ:Identity:name.middle",
-          "version": "1",
-          "type": "String",
-          "value": "Barbosa",
-          "salt": "047fc2a71a738e8121a7544a656cf8e90af8278d919aa98e878fcaf76db892ef"
-        },
-        "last": {
-          "timestamp": 1527706184.575,
-          "id": "1:civ:Identity:name.last:8071573fd1af791f3a29107c2ed90125ee74e71aadef4afea6f08045cada7201",
-          "identifier": "civ:Identity:name.last",
-          "version": "1",
-          "type": "String",
-          "value": "Santos",
-          "salt": "c9c018f795f676c86e24641f41c8a9bd270f1d878e5d90dd6b5fe63744bcca6d"
-        }
+  "id": null,
+  "issuer": "jest:test",
+  "issued": "2018-06-26T23:31:52.228Z",
+  "identifier": "civ:Credential:SimpleTest",
+  "expiry": null,
+  "version": 1,
+  "type": [
+    "Credential",
+    "civ:Credential:SimpleTest"
+  ],
+  "claims": {
+    "identity": {
+      "name": {
+        "first": "Joao",
+        "last": "Santos",
+        "middle": "Barbosa"
+      },
+      "dateOfBirth": {
+        "day": 20,
+        "month": 3,
+        "year": 1978
       }
     }
-"}
+  },
+  "signature": {
+    "type": "CivicMerkleProof2018",
+    "merkleRoot": "ccafdcd832e387447cf26a47f0865be38e23d5903689e17c865027e1cdaf6d2d",
+    "anchor": "TBD (Civic Blockchain Attestation)",
+    "leaves": [
+      {
+        "identifier": "civ:Identity:name",
+        "value": "urn:first:f22eb39e63dde54d6ba22f090118459de3f015a5ac221c7b2ddbd189362e53a2:Joao|urn:last:358c5aa0aff20bf4f5efc5cf1d8b5f07e06545e1afbd121a1e909b3947b73085:Santos|urn:middle:de4fa49d9708c4a1b7d14d96076cbdc9c2c2a4a959ef2723b3466acc5befdb1b:Barbosa|",
+        "claimPath": "identity.name",
+        "targetHash": "0135f11c7ac0d424a8565dabe87bfc7702a29ca82b66551105892ad156f26304",
+        "proof": [
+          {
+            "right": "4adb4b12312cfab30e766f9e1846eb84308368c0d8e74680a56a6f3534171b1f"
+          },
+          {
+            "right": "d72b46aa23e300a8f55b56d424576e3284ca6121ecba69318c56ae8ed344fdcd"
+          },
+          {
+            "right": "de9db4b23cb9981d7ae49d69670a7bacb2682deebd7804ed2d280d0d89d2a693"
+          },
+          {
+            "right": "e89b0becae54e035d61a90ddaeb0a2d61fd799105ceeaa21aba09c9fd347845b"
+          },
+          {
+            "right": "7ef47952ec4daba58f149356ec10c1120d3d6e051f1105414befc02881898071"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:name.first",
+        "value": "urn:first:f22eb39e63dde54d6ba22f090118459de3f015a5ac221c7b2ddbd189362e53a2:Joao",
+        "claimPath": "identity.name.first",
+        "targetHash": "4adb4b12312cfab30e766f9e1846eb84308368c0d8e74680a56a6f3534171b1f",
+        "proof": [
+          {
+            "left": "0135f11c7ac0d424a8565dabe87bfc7702a29ca82b66551105892ad156f26304"
+          },
+          {
+            "right": "d72b46aa23e300a8f55b56d424576e3284ca6121ecba69318c56ae8ed344fdcd"
+          },
+          {
+            "right": "de9db4b23cb9981d7ae49d69670a7bacb2682deebd7804ed2d280d0d89d2a693"
+          },
+          {
+            "right": "e89b0becae54e035d61a90ddaeb0a2d61fd799105ceeaa21aba09c9fd347845b"
+          },
+          {
+            "right": "7ef47952ec4daba58f149356ec10c1120d3d6e051f1105414befc02881898071"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:name.middle",
+        "value": "urn:middle:de4fa49d9708c4a1b7d14d96076cbdc9c2c2a4a959ef2723b3466acc5befdb1b:Barbosa",
+        "claimPath": "identity.name.middle",
+        "targetHash": "e07ae9a487593942f776d68ad2734da0bd86c33c6fb224ffb47ac4a11cd50249",
+        "proof": [
+          {
+            "right": "49714c326e6c330e66800f74454b6aa5a4925dc3f6223d97a95eeb79721291f8"
+          },
+          {
+            "left": "76b998980de49201b916b9c64197e6108c3d67050a305c9af935118754282cb2"
+          },
+          {
+            "right": "de9db4b23cb9981d7ae49d69670a7bacb2682deebd7804ed2d280d0d89d2a693"
+          },
+          {
+            "right": "e89b0becae54e035d61a90ddaeb0a2d61fd799105ceeaa21aba09c9fd347845b"
+          },
+          {
+            "right": "7ef47952ec4daba58f149356ec10c1120d3d6e051f1105414befc02881898071"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:name.last",
+        "value": "urn:last:358c5aa0aff20bf4f5efc5cf1d8b5f07e06545e1afbd121a1e909b3947b73085:Santos",
+        "claimPath": "identity.name.last",
+        "targetHash": "49714c326e6c330e66800f74454b6aa5a4925dc3f6223d97a95eeb79721291f8",
+        "proof": [
+          {
+            "left": "e07ae9a487593942f776d68ad2734da0bd86c33c6fb224ffb47ac4a11cd50249"
+          },
+          {
+            "left": "76b998980de49201b916b9c64197e6108c3d67050a305c9af935118754282cb2"
+          },
+          {
+            "right": "de9db4b23cb9981d7ae49d69670a7bacb2682deebd7804ed2d280d0d89d2a693"
+          },
+          {
+            "right": "e89b0becae54e035d61a90ddaeb0a2d61fd799105ceeaa21aba09c9fd347845b"
+          },
+          {
+            "right": "7ef47952ec4daba58f149356ec10c1120d3d6e051f1105414befc02881898071"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:dateOfBirth",
+        "value": "urn:day:fdc8f529d261eb57c0506de83fcc6265d4c68edb3fcf1d9fda19fcb429a4e6f9:00000020|urn:month:0a1ad6def5a3b7fbab777be6e72e324f038d1eacf5cf7b48f82145ff3d02b083:00000003|urn:year:4e1da169cd7a410c3631eeb7bee0e04907b36c19cc1999d0056e81d1a9dc1838:00001978|",
+        "claimPath": "identity.dateOfBirth",
+        "targetHash": "7c29203647db461bb7ab23b1a70c24592c1f6d58401fda3d98c829b75ede670c",
+        "proof": [
+          {
+            "right": "c8e8675e62389441b1795dec7c8e890ec89c2afbeb2fd2d0ff54e800fcaedc03"
+          },
+          {
+            "right": "1f07de4ee4288c0f8b7ec0343684bc653f26821cf2504b0c46db474073633bd8"
+          },
+          {
+            "left": "1b0870d7fb651b15af8da3408e74aab06773cbf1101d2842ca08a8694169a9be"
+          },
+          {
+            "right": "e89b0becae54e035d61a90ddaeb0a2d61fd799105ceeaa21aba09c9fd347845b"
+          },
+          {
+            "right": "7ef47952ec4daba58f149356ec10c1120d3d6e051f1105414befc02881898071"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:issuer",
+        "value": "urn:issuer:21eb0ecc12cece7d26701243104227c8dda0effa0a4a511d26b9137018547fc5:jest:test",
+        "claimPath": "meta.issuer",
+        "targetHash": "c8e8675e62389441b1795dec7c8e890ec89c2afbeb2fd2d0ff54e800fcaedc03",
+        "proof": [
+          {
+            "left": "7c29203647db461bb7ab23b1a70c24592c1f6d58401fda3d98c829b75ede670c"
+          },
+          {
+            "right": "1f07de4ee4288c0f8b7ec0343684bc653f26821cf2504b0c46db474073633bd8"
+          },
+          {
+            "left": "1b0870d7fb651b15af8da3408e74aab06773cbf1101d2842ca08a8694169a9be"
+          },
+          {
+            "right": "e89b0becae54e035d61a90ddaeb0a2d61fd799105ceeaa21aba09c9fd347845b"
+          },
+          {
+            "right": "7ef47952ec4daba58f149356ec10c1120d3d6e051f1105414befc02881898071"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:issued",
+        "value": "urn:issued:448d49c769c2a47b920ef144b643f38d532cceb2997050cf62291f3f5df8c34c:2018-06-26T23:31:52.228Z",
+        "claimPath": "meta.issued",
+        "targetHash": "94fc31dbf55e91171f686547299d44490bbbecdd25fba2c56f3b1df1b528089f",
+        "proof": [
+          {
+            "right": "826ddf38bb962ba95eef95b7cb90aebc41c43b2ea014e17b9fea101a028dd5ba"
+          },
+          {
+            "left": "4c416305d4144675a4ee938b50a4b4fe664d0474e6fbfe1faf5111bd01bd0267"
+          },
+          {
+            "left": "1b0870d7fb651b15af8da3408e74aab06773cbf1101d2842ca08a8694169a9be"
+          },
+          {
+            "right": "e89b0becae54e035d61a90ddaeb0a2d61fd799105ceeaa21aba09c9fd347845b"
+          },
+          {
+            "right": "7ef47952ec4daba58f149356ec10c1120d3d6e051f1105414befc02881898071"
+          }
+        ]
+      }
+    ]
+  }
+}
 ```
 
 ### Credentials

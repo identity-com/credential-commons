@@ -19,6 +19,8 @@ function getAuthHeaderExtension(http, requestBody, config) {
 }
 
 /**
+ * TODO ADD THIS TEST ON COVERAGE ONCE ALL THE SKIPS OF INTEGRATION TESTS ARE REMOVED
+ *
  * Request an JWT for the Authorization header
  * 
  * @param {*} http 

@@ -40,7 +40,7 @@ describe('UCA Constructions tests', () => {
   });
 
   test('UCA dont construct invalid day', () => {
-    const identifier = 'civ:Identity:DateOfBirth';
+    const identifier = 'civ:Identity:dateOfBirth';
     const value = {
       day: 40,
       month: 13,
@@ -54,7 +54,7 @@ describe('UCA Constructions tests', () => {
   });
 
   test('UCA dont construct invalid month', () => {
-    const identifier = 'civ:Identity:DateOfBirth';
+    const identifier = 'civ:Identity:dateOfBirth';
     const value = {
       day: 20,
       month: 13,
@@ -68,7 +68,7 @@ describe('UCA Constructions tests', () => {
   });
 
   test('UCA dont construct invalid year', () => {
-    const identifier = 'civ:Identity:DateOfBirth';
+    const identifier = 'civ:Identity:dateOfBirth';
     const value = {
       day: 20,
       month: 3,
@@ -83,7 +83,7 @@ describe('UCA Constructions tests', () => {
 
 
   test('UCA has type String', () => {
-    const identifier = 'civ:Verify:phoneNumber.Token';
+    const identifier = 'civ:Verify:phoneNumber.token';
     const value = '12345';
     const v = new UCA(identifier, value);
     expect(v).toBeDefined();
@@ -119,7 +119,7 @@ describe('UCA Constructions tests', () => {
   });
 
   test('UCA has correct complex object value', () => {
-    const identifier = 'civ:Identity:DateOfBirth';
+    const identifier = 'civ:Identity:dateOfBirth';
     const value = {
       day: 20,
       month: 3,
@@ -144,23 +144,20 @@ describe('UCA Constructions tests', () => {
     const v = new UCA.IdentityNameFirst('Joao');
     expect(v).toBeDefined();
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(1);
     expect(attValues[0].identifier).toBe('civ:Identity:name.first');
-    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain('urn:');
     expect(attValues[0].value).toContain(':Joao');
   });
 
   test('UCA should Construct with a simple Attestatble Value', () => {
-    const aSingleAttestationValue = 's:873b59b3c4faa0c63e6ec788041291f36b915357cffaaf6c39661b2a94783d19:Joao';
+    const aSingleAttestationValue = 'urn:first:873b59b3c4faa0c63e6ec788041291f36b915357cffaaf6c39661b2a94783d19:Joao';
     const v = new UCA.IdentityNameFirst({ attestableValue: aSingleAttestationValue });
     expect(v).toBeDefined();
-    // console.log(v);
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(1);
     expect(attValues[0].identifier).toBe('civ:Identity:name.first');
-    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain('urn:');
     expect(attValues[0].value).toContain(':Joao');
   });
 
@@ -168,10 +165,9 @@ describe('UCA Constructions tests', () => {
     const v = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     expect(v).toBeDefined();
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(4);
     expect(attValues[0].identifier).toBe('civ:Identity:name');
-    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain('urn:');
     expect(attValues[0].value).toContain(':Joao');
     expect(attValues[0].value).toContain(':Barbosa');
     expect(attValues[0].value).toContain(':Santos');
@@ -179,55 +175,46 @@ describe('UCA Constructions tests', () => {
 
   test('UCA should Construct with a complex Attestatble Value: civ:Identity:name', () => {
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 's:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|s:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|s:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
-
+    const aComplexAttestableValue = 'urn:first:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:last:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:middle:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
     const v = new UCA.IdentityName({ attestableValue: aComplexAttestableValue });
     expect(v).toBeDefined();
-    // console.log(v);
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(4);
     expect(attValues[0].identifier).toBe('civ:Identity:name');
-    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain('urn:');
     expect(attValues[0].value).toContain(':Joao');
     expect(attValues[0].value).toContain(':Barbosa');
     expect(attValues[0].value).toContain(':Santos');
   });
 
-  test('UCA should Construct with a complex Attestatble Value: IdentityName sintaxe suggar', () => {
+  test('UCA should Construct with a complex Attestatble Value: IdentityName syntax\'s sugar', () => {
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 's:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|s:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|s:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
+    const aComplexAttestableValue = 'urn:first:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:last:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:middle:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
     const identifier = 'civ:Identity:name';
-
     const v = new UCA(identifier, { attestableValue: aComplexAttestableValue });
     expect(v).toBeDefined();
-    // console.log(v);
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(4);
     expect(attValues[0].identifier).toBe(identifier);
-    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain('urn:');
     expect(attValues[0].value).toContain('0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de');
     expect(attValues[0].value).toContain(':Joao');
     expect(attValues[0].value).toContain(':Barbosa');
     expect(attValues[0].value).toContain(':Santos');
   });
 
-  test('UCA should Construct with a complex Attestatble Value: civ:Identity:DateOfBirth', () => {
-    const identifier = 'civ:Identity:DateOfBirth';
+  test('UCA should Construct with a complex Attestatble Value: civ:Identity:dateOfBirth', () => {
+    const identifier = 'civ:Identity:dateOfBirth';
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 'n:bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49:00000020|n:0ff6a4dc3b4e7a0b2cfb3a9f0479dc89d9757736d7e46e31ddb3dc53a9179b56:00000003|n:ec4fcd9bad1839c052d0a23a9fba92eaf35d457e83ae50ea902bf3b5c3b490ad:00001978|';
+    const aComplexAttestableValue = 'urn:day:bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49:00000020|urn:month:0ff6a4dc3b4e7a0b2cfb3a9f0479dc89d9757736d7e46e31ddb3dc53a9179b56:00000003|urn:year:ec4fcd9bad1839c052d0a23a9fba92eaf35d457e83ae50ea902bf3b5c3b490ad:00001978|';
 
     const v = new UCA(identifier, { attestableValue: aComplexAttestableValue });
-    // console.log(v);
     const attestableValue = v.getAttestableValue();
-    // console.log(attestableValue);
     expect(attestableValue).toBe(aComplexAttestableValue);
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(1);
     expect(attValues[0].identifier).toBe(identifier);
-    expect(attValues[0].value).toContain('n:');
+    expect(attValues[0].value).toContain('urn:');
     expect(attValues[0].value).toContain(':bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49');
     expect(attValues[0].value).toContain(':00000020');
     expect(attValues[0].value).toContain(':00000003');
@@ -239,26 +226,30 @@ describe('UCA Constructions tests', () => {
     const isoDate = '2018-06-20T13:51:18.640Z';
     const v = new UCA(identifier, isoDate);
     expect(v).toBeDefined();
-    // console.log(v);
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(1);
     expect(attValues[0].identifier).toBe(identifier);
-    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain('urn:');
     expect(attValues[0].value).toContain(`:${isoDate}`);
   });
 
-  test('Construct a civ:Meta:expiry as a Attestatble Value', () => {
+  test('Construct a civ:Meta:expiry as a Attestable Value', () => {
     const identifier = 'civ:Meta:expiry';
-    const anAttestationValue = 's:9dabdd37eca1bc98bcc725d66c77f10707fa9f3292752a31ad9dd94d17557e81:2018-06-20T13:51:18.640Z';
+    const anAttestationValue = 'urn:expiry:9dabdd37eca1bc98bcc725d66c77f10707fa9f3292752a31ad9dd94d17557e81:2018-06-20T13:51:18.640Z';
     const v = new UCA(identifier, { attestableValue: anAttestationValue });
     expect(v).toBeDefined();
-    // console.log(v);
     const attValues = v.getAttestableValues();
-    // console.log(attValues);
     expect(attValues).toHaveLength(1);
     expect(attValues[0].identifier).toBe(identifier);
-    expect(attValues[0].value).toContain('s:');
+    expect(attValues[0].value).toContain('urn:');
     expect(attValues[0].value).toContain(':2018-06-20T13:51:18.640Z');
+  });
+
+  test('Construct a civ:Identity.name without one the last property value', () => {
+    const identifier = 'civ:Identity:name';
+    const attestationValue = 'urn:first:9619312ef69e2b417edc1e48f2be8f844f2c3b6b04707060fc9052dff1551c9d:Joao|urn:middle:5280dfb5bfcf80469156b68807f280c0db8bf3f8ea4653b41d4c61996cd75afd:Barbosa|';
+    const v = new UCA(identifier, { attestableValue: attestationValue });
+    expect(v).toBeDefined();
+    expect(v.last).toBeUndefined();
   });
 });

@@ -26,7 +26,7 @@ const initServices = (conf, http) => {
   if (conf) {
     services.resetProviders(['Http']);
     logger.debug('Registering custom Config service implementation');
-    services.factory('Config', () => http);
+    services.factory('Config', () => conf);
   }
 
   return services;

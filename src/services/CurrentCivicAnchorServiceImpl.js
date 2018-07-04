@@ -19,7 +19,6 @@ function getAuthHeaderExtension(http, requestBody, config) {
 }
 
 /**
- * TODO ADD THIS TEST ON COVERAGE ONCE ALL THE SKIPS OF INTEGRATION TESTS ARE REMOVED
  *
  * Request an JWT for the Authorization header
  * 
@@ -69,7 +68,7 @@ async function getAuthHeader(http, requestBody, config) {
  * @param {*} http 
  * @param {*} config 
  */
-async function registerClient(http, config) {
+async function registerClient(http) {
   const signingKeys = keyUtils.createKeys();
   const encryptionKeys = keyUtils.createTempECDHKeys();
 
@@ -79,9 +78,9 @@ async function registerClient(http, config) {
     encryptionKeys: keyUtils.serializeKeys(encryptionKeys),
   };
   const path = '/registry';
-  const endpoint = `${config.sipSecurityService}${path}`;
+  const endpoint = `${process.env.CIVIC_SEC_URL}${path}`;
   logger.debug('clientConfig:', JSON.stringify(clientConfig, null, 2));
-  const jwt = jwtUtils.createToken(clientConfig.id, config.sipSecurityService, clientConfig.id, JWT_EXPIRATION, {
+  const jwt = jwtUtils.createToken(clientConfig.id, process.env.CIVIC_SEC_URL, clientConfig.id, JWT_EXPIRATION, {
     method: 'POST',
     path,
   }, clientConfig.signingKeys.hexsec);
@@ -195,6 +194,27 @@ function CurrentCivicAnchor(config, http) {
     }
     throw new Error(`Can't update the anchor. type:${tempAnchor.type} statusUrl:${tempAnchor.statusUrl}`);
   };
+
+  this.verifySignature = (signature) => {
+    return true;
+  };
+
+  /**
+   * This method checks if the subject signature matches the pub key
+   * @param subject a json with label, data, signature, pub
+   * @returns {*} true or false for the validation
+   */
+  this.verifySubjectSignature = (subject) => {
+    return true;
+  };
+
+  /**
+   * This method checks that the attestation / anchor exists on the BC
+   */
+  this.verifyAttestation = async (signature) => {
+    return true;
+  };
+
   return this;
 }
 

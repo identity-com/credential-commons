@@ -67,13 +67,37 @@ const resolveType = definition => {
   return resolveType(refDefinition);
 };
 
+const isAttestableValue = value => value && value.attestableValue;
+
+const parseAttestableValue = value => {
+  const values = [];
+  const splitPipes = _.split(value.attestableValue, '|');
+  const attestableValueRegex = /^urn:(\w*):(\w*):([\w|\W]*)/;
+  _.each(splitPipes, stringValue => {
+    const match = attestableValueRegex.exec(stringValue);
+    if (match && match.length === 4) {
+      const v = {
+        propertyName: match[1],
+        salt: match[2],
+        value: match[3],
+        stringValue
+      };
+      values.push(v);
+    }
+  });
+  if (splitPipes.length !== values.length && splitPipes.length !== values.length + 1) {
+    throw new Error('Invalid attestableValue');
+  }
+  return values;
+};
+
 /**
  * Creates new UCA instances
  * @param {*} identifier
  * @param {*} value
  */
 function UCABaseConstructor(identifier, value, version) {
-  this.timestamp = timestamp.now();
+  this.timestamp = null;
   this.id = null;
 
   if (!_.includes(validIdentifiers, identifier)) {
@@ -87,7 +111,28 @@ function UCABaseConstructor(identifier, value, version) {
   this.type = getTypeName(definition);
 
   definition.type = resolveType(definition);
-  if (isValueOfType(value, this.type)) {
+  if (isAttestableValue(value)) {
+    // Trying to construct UCA with a existing attestableValue
+    const parsedAttestableValue = parseAttestableValue(value);
+    if (parsedAttestableValue.length === 1) {
+      // This is a simple attestableValue
+      this.timestamp = null;
+      this.salt = parsedAttestableValue[0].salt;
+      this.value = parsedAttestableValue[0].value;
+    } else {
+      const ucaValue = {};
+      for (let i = 0; i < parsedAttestableValue.length; i += 1) {
+        const propertyName = parsedAttestableValue[i].propertyName;
+        // we have stored only the property name on the urn, so we have to find the UCA definition
+        const filteredIdentifier = definition.type.properties.find(property => property.type.endsWith(propertyName)).type;
+        ucaValue[propertyName] = new UCABaseConstructor(filteredIdentifier, { attestableValue: parsedAttestableValue[i].stringValue });
+      }
+      // console.log(ucaValue);
+      this.value = ucaValue;
+    }
+  } else if (isValueOfType(value, this.type)) {
+    // Trying to construct UCA with a normal value
+    this.timestamp = timestamp.now();
     if (!isValid(value, this.type, definition)) {
       throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
     }
@@ -109,13 +154,17 @@ function UCABaseConstructor(identifier, value, version) {
   }
 
   this.getAttestableValue = () => {
+    // all UCA properties they have the form of :propertyName or :something.propertyName
+    const startIndexForPropertyName = this.identifier.includes('.') ? this.identifier.lastIndexOf('.') : this.identifier.lastIndexOf(':');
+    const propertyName = this.identifier.substring(startIndexForPropertyName + 1);
+    // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
     switch (this.type) {
       case 'String':
-        return `s:${this.salt}:${this.value}`;
+        return `urn:${propertyName}:${this.salt}:${this.value}`;
       case 'Number':
-        return `n:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`;
+        return `urn:${propertyName}:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`; // TODO @jpsantosbh why did you pad this value?
       case 'Boolean':
-        return `b:${this.salt}:${this.value}`;
+        return `urn:${propertyName}:${this.salt}:${this.value}`;
       default:
         return _.reduce(_.sortBy(_.keys(this.value)), (s, k) => `${s}${this.value[k].getAttestableValue()}|`, '');
     }
