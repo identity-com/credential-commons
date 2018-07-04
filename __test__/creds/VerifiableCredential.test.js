@@ -35,9 +35,9 @@ describe('VerifiableCredential', () => {
     expect(cred.claims.identity.dateOfBirth.day).toBe(20);
     expect(cred.claims.identity.dateOfBirth.month).toBe(3);
     expect(cred.claims.identity.dateOfBirth.year).toBe(1978);
-    expect(cred.signature.leaves).toHaveLength(7);
+    expect(cred.signature.leaves).toHaveLength(8);
   });
-  test('New Defined Credentials', () => {
+  it('should validate new defined credentials with the obligatory Meta:expiry UCA with null value', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], 1);
@@ -50,8 +50,9 @@ describe('VerifiableCredential', () => {
     expect(cred.claims.identity.dateOfBirth.year).toBe(1978);
     expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:issuer' })).toBeDefined();
     expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:issued' })).toBeDefined();
-    expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:expiry' })).not.toBeDefined();
-    expect(cred.signature.leaves).toHaveLength(6);
+    expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
+    expect(cred.expiry).toBeNull();
+    expect(cred.signature.leaves).toHaveLength(7);
   });
   test('New Expirable Credentials', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
@@ -69,19 +70,6 @@ describe('VerifiableCredential', () => {
     expect(cred.expiry).toBeDefined();
     expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
     expect(cred.signature.leaves).toHaveLength(7);
-  });
-  test('New Defined Credentials', () => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], 1);
-    expect(cred).toBeDefined();
-    expect(cred.claims.identity.name.first).toBe('Joao');
-    expect(cred.claims.identity.name.middle).toBeUndefined();
-    expect(cred.claims.identity.name.last).toBe('Santos');
-    expect(cred.claims.identity.dateOfBirth.day).toBe(20);
-    expect(cred.claims.identity.dateOfBirth.month).toBe(3);
-    expect(cred.claims.identity.dateOfBirth.year).toBe(1978);
-    expect(cred.signature.leaves).toHaveLength(6);
   });
   test('New Defined Credentials return the correct global Credential Identifier', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
@@ -267,7 +255,7 @@ describe('VerifiableCredential', () => {
     done();
   });
 
-  it('should check an unrevoked attestation and ', async (done) => {
+  it('should check an unrevoked attestation and validate that is not revoked', async (done) => {
     const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
     const credentialJson = JSON.parse(credentialContents);
     const cred = VC.fromJSON(credentialJson);

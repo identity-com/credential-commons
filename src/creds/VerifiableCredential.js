@@ -168,7 +168,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   const issuedUCA = new UCA('civ:Meta:issued', this.issued);
   this.identifier = identifier;
   this.expiry = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-  const expiryUCA = this.expiry ? new UCA('civ:Meta:expiry', this.expiry) : undefined;
+  const expiryUCA = new UCA('civ:Meta:expiry', this.expiry ? this.expiry : 'null');
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuedUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuedUCA);
 
