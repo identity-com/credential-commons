@@ -10,6 +10,8 @@ function Anchor(impl) {
   this.verifySignature = subject => this.impl.verifySignature(subject);
   this.verifySubjectSignature = subject => this.impl.verifySubjectSignature(subject);
   this.verifyAttestation = signature => this.impl.verifyAttestation(signature);
+  this.revokeAttestation = signature => this.impl.revokeAttestation(signature);
+  this.isRevoked = signature => this.impl.isRevoked(signature);
   return this;
 }
 

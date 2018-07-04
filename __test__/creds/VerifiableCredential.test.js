@@ -111,7 +111,7 @@ describe('VerifiableCredential', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
-    // mock the function or otherwise it would call the server
+    // TODO refactor this to mock only attester.multiAttest inside this function
     cred.requestAnchor = jest.fn().mockImplementation(async () => {
       // mock the function or otherwise it would call the server
       const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
@@ -249,6 +249,32 @@ describe('VerifiableCredential', () => {
       // TODO jests does not work with assert from node
       expect(err.message).toBe('Could not verify authority signature');
     }
+    done();
+  });
+
+  it('should revoke the permanent anchor and succed verification', async (done) => {
+    const timestamp = new Date().getTime();
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', `jest:test${timestamp}`, null, [name, dob], 1);
+    await cred.requestAnchor();
+    await cred.updateAnchor();
+    const validation = await cred.verifyAttestation();
+    if (validation) {
+      const isRevoked = await cred.revokeAttestation();
+      expect(isRevoked).toBeTruthy();
+    }
+    done();
+  });
+
+  it('should check an unrevoked attestation and ', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+    expect(cred).toBeDefined();
+    expect(cred.signature.anchor).toBeDefined();
+    const isRevoked = await cred.isRevoked();
+    expect(isRevoked).toBeFalsy();
     done();
   });
 });

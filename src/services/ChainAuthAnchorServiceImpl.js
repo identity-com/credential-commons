@@ -3,7 +3,8 @@
  *
  */
 const { cloneDeep } = require('lodash');
-const { Verifier, tbsAttestationSubject, Attester, attestationRequest, bitgo } = require('chainauth');
+const { Verifier, tbsAttestationSubject, Attester, attestationRequest, bitgo, attestationRevocation } = require('chainauth');
+const assert = require('assert');
 
 const {
   BitGo, bitcoin: {
@@ -106,6 +107,60 @@ function CurrentCivicAnchor(config) {
       return validation;
     }
     return false;
+  };
+
+  this.revokeAttestation = async (signature) => {
+    const keychains = [{ prv: process.env.CIVIC_KEYCHAIN }];
+    const wallet = await this.getWalletHandle(signature.anchor, process.env.CLIENT_ACCESS_TOKEN);
+    await this.revokeAttestationWithWalletAndCosigner(wallet, signature.anchor, keychains);
+    return this.verifyFundsSpent(signature.anchor);
+  };
+
+  this.isRevoked = async signature => this.verifyFundsSpent(signature.anchor);
+
+  this.verifyFundsSpent = async (attestation, retries = 10) => {
+    // Verify that the funds at the address are spent, effectively revoking the attestation
+    // Note - the retries value passed to Verifier is 0, as we are testing the opposite of verify
+    // namely, if verify succeeds, we retry, if it fails, we stop immediately
+    const verifier = new Verifier({ retries: 0 });
+    let remainingRetries = retries;
+    const retry = () => {
+      if (remainingRetries) {
+        remainingRetries -= 1;
+        return verifier.verify(attestation)
+          .then(new Promise(resolve => setTimeout(resolve, 1000 * (remainingRetries > 0 ? 1 : 0))))
+          .then(retry);
+      }
+      return true;
+    };
+    // if verification succeeds (i.e. the unspents are still unspent
+    // then revocation fails. Retry a few times and then fail out
+    return retry().then(assert.fail).catch((err) => {
+      // if verification fails (for the right reason) then the revocation was successful
+      if (err.toString() === 'Error: Unspent not found in blockchain') {
+        return true;
+      }
+      return false;
+    });
+  };
+
+  this.revokeAttestationWithWalletAndCosigner = async (wallet, attestation, keychains) => {
+    // Prepare revocation tx
+    const { revocation } = attestationRevocation({
+      attestation,
+      keychains,
+      amount: Attester.DUST_THRESHOLD_SATOSHIS + 1,
+    });
+    // Get cosigned, broadcast by wallet provider
+    await wallet.submitTransaction({ txHex: revocation });
+    return true;
+  };
+
+  this.getWalletHandle = async (attestation, accessToken) => {
+    const bitgoEnv = attestation.network === 'testnet' ? 'test' : 'prod';
+    const sdk = new BitGo({ accessToken, env: bitgoEnv });
+    const { walletId: id } = attestation;
+    return sdk.coin(attestation.coin).wallets().get({ id });
   };
 
   return this;
