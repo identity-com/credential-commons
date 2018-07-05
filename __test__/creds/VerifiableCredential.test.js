@@ -5,7 +5,7 @@ const fs = require('fs');
 
 jest.mock('../../src/creds/definitions');
 
-jest.setTimeout(100000);
+jest.setTimeout(200000);
 
 describe('VerifiableCredential', () => {
   test('Dont construct undefined Credentials', () => {
@@ -165,6 +165,15 @@ describe('VerifiableCredential', () => {
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
     expect(cred.verify()).toEqual(VC.VERIFY_LEVELS.INVALID);
+  });
+
+  it('should fail verification since it doesn\'t have an Meta:expiry UCA', () => {
+    const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
+    // messing up with the targetHash:
+    credJSon.signature.leaves[0].targetHash = credJSon.signature.leaves[0].targetHash.replace('a', 'b');
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeFalsy();
   });
 
   test('cred.verifyProofs(): with a valid cred with expiry, should return TRUE', () => {

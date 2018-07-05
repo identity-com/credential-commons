@@ -54,7 +54,17 @@ and consists of the following settings:
 * CIVIC_CLIENT_XPRIV - The public key used by this installation
 * CIVIC_PASSPHASE - Civic User Wallet Passphrase. prefer setting this in code
 * CIVIC_KEYCHAIN - Civic User Wallet KEYCHAIN. prefer setting this in code
+* CLIENT_WALLET_ID - For revocation and verification functions, the BitGo Wallet ID (not the address)
+* CLIENT_WALLET_PASSPHRASE - For revocation and verification functions, the BitGo Wallet ID (not the xprv nor the use key card pdf, store that safely!)
+* CLIENT_ACCESS_TOKEN - BitGo access token to access wallets, must have the Admin property to the target wallet that will make spending
  
+There is an utility on cli folder, the configuration.js, just run it:
+
+```bash
+node cli/configuration.js
+```
+
+And it will store the file like below:
 
 ### Etc Config File /etc/civic/config
 ### User Config File ~/.civic/config
