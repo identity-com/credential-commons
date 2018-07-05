@@ -1,41 +1,44 @@
 # Verifiable Credential and Attestation Library
 
-[![tests][tests]][tests-url]
-[![coverage][cover]][cover-url]
-
-Verifiable Credential and Attestation Library - CCS-38
+[![CircleCI](https://circleci.com/gh/civicteam/civic-credentials-commons-js.svg?style=svg&circle-token=d989196488010043c3dbd96d70864614ce3e6eba)](https://circleci.com/gh/civicteam/civic-credentials-commons-js)
 
 ## Contents
 
-- [Verifiable Credential and Attestation Library](#verifiable-credential-and-attestation-library)
-  * [Contents](#contents)
-  * [Prerequisites](#prerequisites)
-  * [Features](#features)
-    + [User Collectable Attributes](#user-collectable-attributes)
-      - [Defining new UCA](#defining-new-uca)
-      - [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services)
-      - [Using a UCA in javascript (with this library)](#using-a-uca-in-javascript--with-this-library-)
-        * [creating UCA instances with the constructor](#creating-uca-instances-with-the-constructor)
-    + [Credentials](#credentials)
-      - [Defining new UCA](#defining-new-uca-1)
-      - [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services-1)
-      - [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
-        * [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
-          + [Verifiable Credential Sample](#verifiable-credential-sample)
-        * [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-json)
-        * [Verifying a Verifiable Credential](#verifying-a-verifiable-credential)
-  * [Schema Generator](#schema-generator)
-  * [Conventions:](#conventions-)
-  * [Commands](#commands)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+- [Prerequisites](#prerequisites)
+- [Configuration](#configuration)
+  * [Etc Config File /etc/civic/config](#etc-config-file--etc-civic-config)
+  * [User Config File ~/.civic/config](#user-config-file---civic-config)
+  * [incode](#incode)
+    + [Prepare Bitgo Wallet](#prepare-bitgo-wallet)
+- [Features](#features)
+  * [User Collectable Attributes](#user-collectable-attributes)
+    + [Defining new UCA](#defining-new-uca)
+    + [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services)
+    + [Using a UCA in javascript (with this library)](#using-a-uca-in-javascript--with-this-library-)
+      - [creating UCA instances with the constructor](#creating-uca-instances-with-the-constructor)
+  * [Credentials](#credentials)
+    + [Defining new UCA](#defining-new-uca-1)
+    + [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services-1)
+    + [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
+      - [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
+      - [anchoring VerifiableCredential instances with the constructor](#anchoring-verifiablecredential-instances-with-the-constructor)
+      - [refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor](#refreshing-an-anchor--temp----permanent--verifiablecredential-instances-with-the-constructor)
+      - [Verifiable Credential Sample](#verifiable-credential-sample)
+      - [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-json)
+      - [Verifying a Verifiable Credential](#verifying-a-verifiable-credential)
+- [Schema Generator](#schema-generator)
+- [Conventions:](#conventions-)
+- [Commands](#commands)
+- [Integration with CCS Libraries](#integration-with-ccs-libraries)
+- [ES5 and ES6 definitions](#es5-and-es6-definitions)
+- [Node vs React usage of this library](#node-vs-react-usage-of-this-library)
+- [Releases](#releases)
 
 ## Prerequisites
 
-[![node][node]][node-url]
 [![npm][npm]][npm-url]
       
-- [Node.js](http://es6-features.org)
+- [Node.js](https://nodejs.org/en/)
 
 ## Configuration
 
@@ -87,6 +90,36 @@ const ccc = new CCC({
 })
  
 ```
+
+If you are not sure how to get those informations, see the tutorial down below.
+
+#### Prepare Bitgo Wallet
+a. Create a wallet with Bitgo - record the following information as you need them later:
+
+**Wallet ID:** <obtained from the Bitgo URL: https://test.bitgo.com/enterprise/5aabb27e8a0a3c9c07fc7db49017fc7f/coin/tbch/*5aabb2aced2e259a079259b01c05d21a*/transactions >
+
+**Wallet passphrase:** < set when creating the wallet - this may be different to your account passcode for bitgo>
+
+**Wallet XPrv:** < You receive this in encrypted form in the PDF - section 1. User Key>
+
+**Enterprise ID:** < obtained from the Bitgo URL: https://test.bitgo.com/enterprise/*5aabb27e8a0a3c9c07fc7db49017fc7f*/coin/tbch/5aabb2aced2e259a079259b01c05d21a/transactions >
+
+b. Decrypt the XPrv
+
+```
+git clone git@github.com:masonicGIT/sjcl-cli.git
+cd sjcl-cli
+node src/index
+```
+
+Enter encrypted data: <enter the User Key from the PDF **without newlines**>
+
+Enter passcode: <your BitGo account password (see above)>
+
+c. Generate an access token
+
+Via the BitGO Website User Settings -> Developer Options
+* Ensure you add a high spending limit for BCH
 
 
 ## Features
@@ -558,6 +591,9 @@ const cred = VC.fromJSON(credJSon);
 Now you can access any method of a `cred` instance, like `.updateAnchor()` or `.verify()`
 
 ##### Verifying a Verifiable Credential
+
+Remember to check the section about configuration or else this part will fail.
+
 To verify a credential JSON, you can construct a VC using `.fromJSON` and call `.verify()` method:
 ```
 const credJSon = require('./ACred.json');
@@ -778,13 +814,4 @@ All releases are tagged on github and won't follow lodash pattern, that release 
 
 [npm]: https://img.shields.io/badge/npm-5.3.0-blue.svg
 [npm-url]: https://npmjs.com/
-
-[node]: https://img.shields.io/node/v/webpack-es6-boilerplate.svg
-[node-url]: https://nodejs.org
-
-[tests]: http://img.shields.io/travis/jluccisano/webpack-es6-boilerplate.svg
-[tests-url]: 
-
-[cover]: https://codecov.io/gh/jluccisano/webpack-es6-boilerplate/branch/master/graph/badge.svg
-[cover-url]: https://codecov.io/gh/jluccisano/webpack-es6-boilerplate
 
