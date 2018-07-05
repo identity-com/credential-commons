@@ -82,11 +82,6 @@ describe('VerifiableCredential', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
-    cred.requestAnchor = jest.fn().mockImplementation(async () => {
-      // mock the function or otherwise it would call the server
-      const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCTempAnchor.json', 'utf8');
-      return VC.fromJSON(JSON.parse(credentialContents));
-    });
     return cred.requestAnchor().then((updated) => {
       expect(updated.signature.anchor.type).toBe('temporary');
       expect(updated.signature.anchor.value).not.toBeDefined();
@@ -187,6 +182,13 @@ describe('VerifiableCredential', () => {
     const credJSon = require('./fixtures/CredExpired.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).not.toBeTruthy();
+  });
+
+  it('should fail verification since the leaf value is tampered', () => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCWithTamperedLeafValue.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
     expect(cred.verifyProofs()).not.toBeTruthy();
   });
 
