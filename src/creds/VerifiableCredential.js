@@ -168,7 +168,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   const issuedUCA = new UCA('civ:Meta:issued', this.issued);
   this.identifier = identifier;
   this.expiry = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-  const expiryUCA = this.expiry ? new UCA('civ:Meta:expiry', this.expiry) : undefined;
+  const expiryUCA = new UCA('civ:Meta:expiry', this.expiry ? this.expiry : 'null');
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuedUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuedUCA);
 
@@ -276,7 +276,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       }
     });
 
-    // 3. If present, check Credential expiry
+    // It has to be present Credential expiry even with null value
     const expiryIdx = _.indexOf(leavesClaimPaths, 'meta.expiry');
     if (expiryIdx >= 0) {
       const expiryLeave = signLeaves[expiryIdx];
@@ -289,11 +289,14 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
       const totalLengthAfter = invalidValues.length + invalidHashs.length + invalidProofs.length;
       if (totalLengthAfter === totalLengthBefore) {
-        const now = new Date();
-        const expiryDate = new Date(expiry);
-        if (now.getTime() > expiryDate.getTime()) {
-          // console.log(JSON.stringify(expiry));
-          invalidExpiry.push(expiry);
+        // expiry has always to be string formatted date or null value
+        // if it is null it means it's indefinitely
+        if (expiry !== null) {
+          const now = new Date();
+          const expiryDate = new Date(expiry);
+          if (now.getTime() > expiryDate.getTime()) {
+            invalidExpiry.push(expiry);
+          }
         }
       }
     }

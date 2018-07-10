@@ -35,21 +35,6 @@ describe('UCA Json Sample Date Construction tests', () => {
     done();
   });
 
-  it('Should generate Sample Data from all mock UCAs and validate with AJV', async (done) => {
-    jest.mock('../../src/uca/definitions');
-
-    ucaMockDefinitions.forEach((definition) => {
-      const json = SchemaGenerator.buildSampleJson(definition);
-      const jsonSchema = SchemaGenerator.process(definition, json);
-      expect(jsonSchema.title).toEqual(definition.identifier);
-      const ajv = new Ajv();
-      const validate = ajv.compile(jsonSchema);
-      const isValid = validate(json);
-      expect(isValid).toBeTruthy();
-    });
-    done();
-  });
-
   it('Should change the type of String to Boolean and fail AJV validation', async (done) => {
     const identifier = 'civ:Identity:name';
     const value = {
@@ -111,3 +96,4 @@ describe('UCA Json Sample Date Construction tests', () => {
     done();
   });
 });
+

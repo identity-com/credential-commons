@@ -48,6 +48,21 @@ const askOptions = () => {
       name: 'CIVIC_KEYCHAIN',
       message: 'CIVIC_KEYCHAIN',
     },
+    {
+      type: 'input',
+      name: 'CLIENT_WALLET_ID',
+      message: 'CLIENT_WALLET_ID',
+    },
+    {
+      type: 'input',
+      name: 'CLIENT_WALLET_PASSPHRASE',
+      message: 'CLIENT_WALLET_PASSPHRASE',
+    },
+    {
+      type: 'input',
+      name: 'CLIENT_ACCESS_TOKEN',
+      message: 'CLIENT_ACCESS_TOKEN',
+    },
   ];
   return inquirer.prompt(questions);
 };

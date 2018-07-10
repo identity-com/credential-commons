@@ -5,7 +5,7 @@ const fs = require('fs');
 
 jest.mock('../../src/creds/definitions');
 
-jest.setTimeout(100000);
+jest.setTimeout(200000);
 
 describe('VerifiableCredential', () => {
   test('Dont construct undefined Credentials', () => {
@@ -35,9 +35,9 @@ describe('VerifiableCredential', () => {
     expect(cred.claims.identity.dateOfBirth.day).toBe(20);
     expect(cred.claims.identity.dateOfBirth.month).toBe(3);
     expect(cred.claims.identity.dateOfBirth.year).toBe(1978);
-    expect(cred.signature.leaves).toHaveLength(7);
+    expect(cred.signature.leaves).toHaveLength(8);
   });
-  test('New Defined Credentials', () => {
+  it('should validate new defined credentials with the obligatory Meta:expiry UCA with null value', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], 1);
@@ -50,8 +50,9 @@ describe('VerifiableCredential', () => {
     expect(cred.claims.identity.dateOfBirth.year).toBe(1978);
     expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:issuer' })).toBeDefined();
     expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:issued' })).toBeDefined();
-    expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:expiry' })).not.toBeDefined();
-    expect(cred.signature.leaves).toHaveLength(6);
+    expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
+    expect(cred.expiry).toBeNull();
+    expect(cred.signature.leaves).toHaveLength(7);
   });
   test('New Expirable Credentials', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
@@ -70,19 +71,6 @@ describe('VerifiableCredential', () => {
     expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
     expect(cred.signature.leaves).toHaveLength(7);
   });
-  test('New Defined Credentials', () => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], 1);
-    expect(cred).toBeDefined();
-    expect(cred.claims.identity.name.first).toBe('Joao');
-    expect(cred.claims.identity.name.middle).toBeUndefined();
-    expect(cred.claims.identity.name.last).toBe('Santos');
-    expect(cred.claims.identity.dateOfBirth.day).toBe(20);
-    expect(cred.claims.identity.dateOfBirth.month).toBe(3);
-    expect(cred.claims.identity.dateOfBirth.year).toBe(1978);
-    expect(cred.signature.leaves).toHaveLength(6);
-  });
   test('New Defined Credentials return the correct global Credential Identifier', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
@@ -94,11 +82,6 @@ describe('VerifiableCredential', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
-    cred.requestAnchor = jest.fn().mockImplementation(async () => {
-      // mock the function or otherwise it would call the server
-      const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCTempAnchor.json', 'utf8');
-      return VC.fromJSON(JSON.parse(credentialContents));
-    });
     return cred.requestAnchor().then((updated) => {
       expect(updated.signature.anchor.type).toBe('temporary');
       expect(updated.signature.anchor.value).not.toBeDefined();
@@ -179,6 +162,15 @@ describe('VerifiableCredential', () => {
     expect(cred.verify()).toEqual(VC.VERIFY_LEVELS.INVALID);
   });
 
+  it('should fail verification since it doesn\'t have an Meta:expiry UCA', () => {
+    const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
+    // messing up with the targetHash:
+    credJSon.signature.leaves[0].targetHash = credJSon.signature.leaves[0].targetHash.replace('a', 'b');
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeFalsy();
+  });
+
   test('cred.verifyProofs(): with a valid cred with expiry, should return TRUE', () => {
     const credJSon = require('./fixtures/CredWithFutureExpiry.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
@@ -190,6 +182,13 @@ describe('VerifiableCredential', () => {
     const credJSon = require('./fixtures/CredExpired.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).not.toBeTruthy();
+  });
+
+  it('should fail verification since the leaf value is tampered', () => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCWithTamperedLeafValue.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
     expect(cred.verifyProofs()).not.toBeTruthy();
   });
 
@@ -267,7 +266,7 @@ describe('VerifiableCredential', () => {
     done();
   });
 
-  it('should check an unrevoked attestation and ', async (done) => {
+  it('should check an unrevoked attestation and validate that is not revoked', async (done) => {
     const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
     const credentialJson = JSON.parse(credentialContents);
     const cred = VC.fromJSON(credentialJson);
