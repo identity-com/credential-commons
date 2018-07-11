@@ -4,9 +4,12 @@ const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');
 const ucaDefinitions = require('../../src/uca/definitions');
 const Ajv = require('ajv');
-const fs = require('fs');
+
 jest.setTimeout(1000000);
-// TODO add more tests to validate the integrity of the json schemas
+
+/**
+ * Also check the integration tests, they add a new layer of testing on the published schemas
+ */
 describe('VerifiableCredentials SchemaGenerator validation', () => {
   it('Should validate the VC Schema generation against a single well known definition', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
@@ -66,9 +69,11 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
+    // changing the data
     generatedJson.claims.type.phone.countryCode = 123456;
     const ajv = new Ajv();
     const validate = ajv.compile(jsonSchema);
+    // cannot be valid since country code is an string on the json schema type and uca definition
     const isValid = validate(generatedJson);
     expect(isValid).toBeFalsy();
   });
