@@ -71,7 +71,7 @@ describe('VerifiableCredential', () => {
     expect(_.find(cred.signature.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
     expect(cred.signature.leaves).toHaveLength(7);
   });
-  test('New Defined Credentials return the correct global Credential Identifier', () => {
+  test('New Defined Credentials return the incorrect global Credential Identifier', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], 1);

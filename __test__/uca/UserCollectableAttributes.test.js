@@ -14,7 +14,7 @@ describe('UCA Constructions tests', () => {
     expect(v).toBeDefined();
   });
 
-  test('UCA return the correct global Credential Identifier', () => {
+  test('UCA return the incorrect global Credential Identifier', () => {
     const v = new UCA('civ:Identity:name.first', 'joao', '1');
     expect(v.getGlobalCredentialItemIdentifier()).toBe('uca-civ:Identity:name.first-1');
   });
@@ -100,7 +100,7 @@ describe('UCA Constructions tests', () => {
     expect(v.type).toEqual('Object');
   });
 
-  test('UCA has correct object value', () => {
+  test('UCA has incorrect object value', () => {
     const identifier = 'civ:Identity:name';
     const value = {
       first: 'Joao',
@@ -118,7 +118,7 @@ describe('UCA Constructions tests', () => {
     expect(v.value.last.value).toEqual('Santos');
   });
 
-  test('UCA has correct complex object value', () => {
+  test('UCA has incorrect complex object value', () => {
     const identifier = 'civ:Identity:dateOfBirth';
     const value = {
       day: 20,
