@@ -14,6 +14,14 @@ const definitions = [
     ],
   },
   {
+    identifier: 'civ:Credential:CivicBasic',
+    version: '2',
+    depends: [
+      'civ:Type:phone',
+      'civ:Type:email',
+    ],
+  },
+  {
     identifier: 'civ:Credential:GenericId',
     version: '1',
     depends: [

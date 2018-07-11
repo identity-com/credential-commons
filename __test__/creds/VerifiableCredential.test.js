@@ -5,9 +5,9 @@ const fs = require('fs');
 
 jest.mock('../../src/creds/definitions');
 
-jest.setTimeout(200000);
+jest.setTimeout(100000);
 
-describe('VerifiableCredential', () => {
+describe('Unit tests for Verifiable Credentials', () => {
   test('Dont construct undefined Credentials', () => {
     function createCredential() {
       const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
@@ -27,7 +27,7 @@ describe('VerifiableCredential', () => {
   test('New Defined Credentials', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
+    const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], '1');
     expect(cred).toBeDefined();
     expect(cred.claims.identity.name.first).toBe('Joao');
     expect(cred.claims.identity.name.middle).toBe('Barbosa');
@@ -40,7 +40,7 @@ describe('VerifiableCredential', () => {
   it('should validate new defined credentials with the obligatory Meta:expiry UCA with null value', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], 1);
+    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], '1');
     expect(cred).toBeDefined();
     expect(cred.claims.identity.name.first).toBe('Joao');
     expect(cred.claims.identity.name.middle).toBeUndefined();
@@ -57,7 +57,7 @@ describe('VerifiableCredential', () => {
   test('New Expirable Credentials', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', '-1d', [name, dob], 1);
+    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', '-1d', [name, dob], '1');
     expect(cred).toBeDefined();
     expect(cred.claims.identity.name.first).toBe('Joao');
     expect(cred.claims.identity.name.middle).toBeUndefined();
@@ -74,14 +74,14 @@ describe('VerifiableCredential', () => {
   test('New Defined Credentials return the incorrect global Credential Identifier', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], 1);
+    const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], '1');
     expect(cred.getGlobalCredentialItemIdentifier()).toBe('credential-civ:Credential:TestWithExcludes-1');
   });
 
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
+    const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], '1');
     return cred.requestAnchor().then((updated) => {
       expect(updated.signature.anchor.type).toBe('temporary');
       expect(updated.signature.anchor.value).not.toBeDefined();
@@ -93,7 +93,7 @@ describe('VerifiableCredential', () => {
   it('should refresh an temporary anchoring with an permanent one', async (done) => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], 1);
+    const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], '1');
     // TODO refactor this to mock only attester.multiAttest inside this function
     cred.requestAnchor = jest.fn().mockImplementation(async () => {
       // mock the function or otherwise it would call the server
@@ -255,7 +255,7 @@ describe('VerifiableCredential', () => {
     const timestamp = new Date().getTime();
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:SimpleTest', `jest:test${timestamp}`, null, [name, dob], 1);
+    const cred = new VC('civ:Credential:SimpleTest', `jest:test${timestamp}`, null, [name, dob], '1');
     await cred.requestAnchor();
     await cred.updateAnchor();
     const validation = await cred.verifyAttestation();

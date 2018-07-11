@@ -5,7 +5,7 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 
 const fixturesPath = '__integrations__/fixtures';
-// TODO should we use process env, or test production directly?
+// testings is done only on the test bucket, since we only release to production on manual CircleCI flow
 const s3BucketUrl = 'https://s3.amazonaws.com/dev-schemas.civic.com';
 
 describe('Public Schemas Integration Test Suite', () => {
@@ -14,6 +14,7 @@ describe('Public Schemas Integration Test Suite', () => {
     const jsonFolder = `${fixturesPath}/correct/Credential`;
     // iterate all over the credential's definitions
     credentialDefinitions.forEach(async (credentialDefinition) => {
+      const jsonFolderVersion = `v${credentialDefinition.version}`;
       // the file name is the last part of the identifier
       const jsonFileName = credentialDefinition.identifier.substring(credentialDefinition.identifier.lastIndexOf(':') + 1);
       // all fixtures are json
@@ -21,7 +22,7 @@ describe('Public Schemas Integration Test Suite', () => {
       // read the generated json
       const json = fs.readFileSync(`${jsonFolder}/${jsonFile}`, 'utf8');
       // fetch from the S3 url bucket, it's a public one
-      fetch(`${s3BucketUrl}/Credential/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
+      fetch(`${s3BucketUrl}/Credential/${jsonFolderVersion}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
         const ajv = new Ajv();
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
@@ -39,6 +40,7 @@ describe('Public Schemas Integration Test Suite', () => {
     const jsonFolder = `${fixturesPath}/incorrect/Credential`;
     // iterate all over the credential's definitions
     credentialDefinitions.forEach(async (credentialDefinition) => {
+      const jsonFolderVersion = `v${credentialDefinition.version}`;
       // the file name is the last part of the identifier
       const jsonFileName = credentialDefinition.identifier.substring(credentialDefinition.identifier.lastIndexOf(':') + 1);
       // all fixtures are json
@@ -46,7 +48,7 @@ describe('Public Schemas Integration Test Suite', () => {
       // read the generated json
       const json = fs.readFileSync(`${jsonFolder}/${jsonFile}`, 'utf8');
       // fetch from the S3 url bucket, it's a public one
-      fetch(`${s3BucketUrl}/Credential/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
+      fetch(`${s3BucketUrl}/Credential/${jsonFolderVersion}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
         const ajv = new Ajv();
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
@@ -62,6 +64,7 @@ describe('Public Schemas Integration Test Suite', () => {
   it('Should succeed validation from the json file in UCAs folders', async (done) => {
     // iterate all over the credential's definitions
     ucaDefinitions.forEach((definition) => {
+      const jsonFolderVersion = `v${definition.version}`;
       const identifier = definition.identifier;
       const typeFolder = identifier.substring(identifier.indexOf(':') + 1, identifier.lastIndexOf(':'));
       const jsonFolder = `${fixturesPath}/correct/${typeFolder}`;
@@ -72,7 +75,7 @@ describe('Public Schemas Integration Test Suite', () => {
       // read the generated json
       const json = fs.readFileSync(`${jsonFolder}/${jsonFile}`, 'utf8');
       // fetch from the S3 url bucket, it's a public one
-      fetch(`${s3BucketUrl}/${typeFolder}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
+      fetch(`${s3BucketUrl}/${typeFolder}/${jsonFolderVersion}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
         const ajv = new Ajv();
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
@@ -88,6 +91,7 @@ describe('Public Schemas Integration Test Suite', () => {
   it('Should fail validation from the json file in UCAs folders', async (done) => {
     // iterate all over the credential's definitions
     ucaDefinitions.forEach((definition) => {
+      const jsonFolderVersion = `v${definition.version}`;
       const identifier = definition.identifier;
       const typeFolder = identifier.substring(identifier.indexOf(':') + 1, identifier.lastIndexOf(':'));
       const jsonFolder = `${fixturesPath}/incorrect/${typeFolder}`;
@@ -98,7 +102,7 @@ describe('Public Schemas Integration Test Suite', () => {
       // read the generated json
       const json = fs.readFileSync(`${jsonFolder}/${jsonFile}`, 'utf8');
       // fetch from the S3 url bucket, it's a public one
-      fetch(`${s3BucketUrl}/${typeFolder}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
+      fetch(`${s3BucketUrl}/${typeFolder}/${jsonFolderVersion}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
         const ajv = new Ajv();
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);

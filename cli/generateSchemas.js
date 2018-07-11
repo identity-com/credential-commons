@@ -39,7 +39,9 @@ const askOptions = () => {
 const generateUcaSchemas = async () => {
   ucaDefinitions.forEach((definition) => {
     const json = schemaGenerator.buildSampleJson(definition);
+    console.log(json);
     const jsonSchema = schemaGenerator.process(definition, json);
+    console.log(jsonSchema);
     const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
     const jsonFolderVersion = `v${definition.version}`;
     const folderPath = `${GENERATION_FOLDER}/uca/${jsonFolderVersion}`;
@@ -50,7 +52,7 @@ const generateUcaSchemas = async () => {
     const fullPath = `${folderPath}/${filePath}`;
     fs.writeFile(fullPath, JSON.stringify(jsonSchema, null, 2), (err) => {
       if (err) throw err;
-      console.log(`Json Schema generated on:${GENERATION_FOLDER}${fileName}${SCHEMA_FILE_EXTENSION}`);
+      console.log(`Json Schema generated on:${fullPath}`);
     });
   });
 };
@@ -72,11 +74,12 @@ const generateCredentialSchemas = async () => {
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(definition.identifier, 'jest:test', null, ucaArray, definition.version);
+    const credential = new VC(definition.identifier, 'jest:test', null, ucaArray);
     await credential.requestAnchor();
     await credential.updateAnchor();
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
+    console.log(jsonString);
     const jsonSchema = schemaGenerator.process(credential, generatedJson);
     const jsonFolderVersion = `v${definition.version}`;
     const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
@@ -88,7 +91,7 @@ const generateCredentialSchemas = async () => {
     const fullPath = `${folderPath}/${filePath}`;
     fs.writeFile(fullPath, JSON.stringify(jsonSchema, null, 2), (err) => {
       if (err) throw err;
-      console.log(`Json Schema generated on:${GENERATION_FOLDER}${fileName}${SCHEMA_FILE_EXTENSION}`);
+      console.log(`Json Schema generated on:${fullPath}`);
     });
   });
 };
