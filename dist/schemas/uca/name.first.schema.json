@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "civ:Identity:name.first",
+  "type": "object",
+  "properties": {
+    "first": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "first"
+  ],
+  "additionalProperties": false
+}

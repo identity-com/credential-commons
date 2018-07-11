@@ -3,9 +3,9 @@ const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');
 const ucaDefinitions = require('../../src/uca/definitions');
-
 const Ajv = require('ajv');
-
+const fs = require('fs');
+jest.setTimeout(1000000);
 // TODO add more tests to validate the integrity of the json schemas
 describe('VerifiableCredentials SchemaGenerator validation', () => {
   it('Should validate the VC Schema generation against a single well known definition', () => {
@@ -21,8 +21,8 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     expect(jsonSchema.properties.signature.type).toBe('object');
   });
 
-  it('Should validate the generated VC against it\'s generated schema looping the definitions', () => {
-    credentialDefinitions.forEach((credentialDefinition) => {
+  it('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
+    credentialDefinitions.forEach(async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
         const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
@@ -35,6 +35,8 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         ucaArray.push(dependentUca);
       });
       const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+      await credential.requestAnchor();
+      await credential.updateAnchor();
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
@@ -42,6 +44,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
       expect(isValid).toBeTruthy();
+      done();
     });
   });
 

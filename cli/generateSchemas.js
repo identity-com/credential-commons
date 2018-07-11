@@ -53,7 +53,7 @@ const generateUcaSchemas = async () => {
  * @returns {Promise<void>}
  */
 const generateCredentialSchemas = async () => {
-  credentialDefinitions.forEach((definition) => {
+  credentialDefinitions.forEach(async (definition) => {
     const ucaArray = [];
     definition.depends.forEach((ucaDefinitionIdentifier) => {
       const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
@@ -66,6 +66,8 @@ const generateCredentialSchemas = async () => {
       ucaArray.push(dependentUca);
     });
     const credential = new VC(definition.identifier, 'jest:test', null, ucaArray, 1);
+    await credential.requestAnchor();
+    await credential.updateAnchor();
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = schemaGenerator.process(credential, generatedJson);

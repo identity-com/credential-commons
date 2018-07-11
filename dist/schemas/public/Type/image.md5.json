@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "civ:Type:image.md5",
+  "type": "object",
+  "properties": {
+    "md5": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
