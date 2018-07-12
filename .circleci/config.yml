@@ -10,7 +10,7 @@ workflows:
           filters:
             branches:
               only:
-                - developcir
+                - develop
 
   # releases trigger a release on prod
   # tags of the form x.x.x trigger contract migration and deployment of the node server to prod
