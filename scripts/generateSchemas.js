@@ -102,18 +102,19 @@ const generateBoth = async () => {
 };
 
 const generate = async () => {
-  clear();
-  console.log(
-    chalk.green(
-      figlet.textSync('CIVIC', { horizontalLayout: 'full' }),
-    ),
-  );
-
-  const selectedOption = await askOptions();
-  if (selectedOption.value === 'uca') {
-    await generateUcaSchemas();
-  } else if (selectedOption.value === 'credentials') {
-    await generateCredentialSchemas();
+  if (!process.env.NODE_ENV) {
+    clear();
+    console.log(
+      chalk.green(
+        figlet.textSync('CIVIC', { horizontalLayout: 'full' }),
+      ),
+    );
+    const selectedOption = await askOptions();
+    if (selectedOption.value === 'uca') {
+      await generateUcaSchemas();
+    } else if (selectedOption.value === 'credentials') {
+      await generateCredentialSchemas();
+    }
   } else {
     await generateBoth();
   }
