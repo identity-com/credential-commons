@@ -1,1 +1,0 @@
-"use strict";var UCA=require("./uca/UserCollectableAttribute"),VC=require("./creds/VerifiableCredential"),_require=require("./services/index"),initServices=_require.initServices;function CredentialCommons(){return this.UCA=UCA,this.VC=VC,this.init=initServices,this}module.exports=new CredentialCommons;
