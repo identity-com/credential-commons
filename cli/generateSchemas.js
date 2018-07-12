@@ -9,9 +9,10 @@ const clear = require('clear');
 const figlet = require('figlet');
 const inquirer = require('inquirer');
 const fs = require('fs');
+const shell = require('shelljs');
 
 // static variables only for the CLI, not used in any other place
-const GENERATION_FOLDER = 'dist/schemas/';
+const GENERATION_FOLDER = 'dist/schemas';
 // https://stackoverflow.com/questions/9391370/json-schema-file-extension
 const SCHEMA_FILE_EXTENSION = '.schema.json';
 
@@ -38,12 +39,20 @@ const askOptions = () => {
 const generateUcaSchemas = async () => {
   ucaDefinitions.forEach((definition) => {
     const json = schemaGenerator.buildSampleJson(definition);
+    console.log(json);
     const jsonSchema = schemaGenerator.process(definition, json);
+    console.log(jsonSchema);
     const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
-    const filePath = `${GENERATION_FOLDER}/uca/${fileName}${SCHEMA_FILE_EXTENSION}`;
-    fs.writeFile(filePath, JSON.stringify(jsonSchema, null, 2), (err) => {
+    const jsonFolderVersion = `v${definition.version}`;
+    const folderPath = `${GENERATION_FOLDER}/uca/${jsonFolderVersion}`;
+    if (!fs.existsSync(folderPath)) {
+      shell.mkdir('-p', folderPath);
+    }
+    const filePath = `${fileName}${SCHEMA_FILE_EXTENSION}`;
+    const fullPath = `${folderPath}/${filePath}`;
+    fs.writeFile(fullPath, JSON.stringify(jsonSchema, null, 2), (err) => {
       if (err) throw err;
-      console.log(`Json Schema generated on:${GENERATION_FOLDER}${fileName}${SCHEMA_FILE_EXTENSION}`);
+      console.log(`Json Schema generated on:${fullPath}`);
     });
   });
 };
@@ -65,18 +74,24 @@ const generateCredentialSchemas = async () => {
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(definition.identifier, 'jest:test', null, ucaArray, 1);
+    const credential = new VC(definition.identifier, 'jest:test', null, ucaArray);
     await credential.requestAnchor();
     await credential.updateAnchor();
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
+    console.log(jsonString);
     const jsonSchema = schemaGenerator.process(credential, generatedJson);
+    const jsonFolderVersion = `v${definition.version}`;
     const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
-    const filePath = `${GENERATION_FOLDER}/credentials/${fileName}${SCHEMA_FILE_EXTENSION}`;
-    console.log(filePath);
-    fs.writeFile(filePath, JSON.stringify(jsonSchema, null, 2), (err) => {
+    const folderPath = `${GENERATION_FOLDER}/credentials/${jsonFolderVersion}`;
+    if (!fs.existsSync(folderPath)) {
+      shell.mkdir('-p', folderPath);
+    }
+    const filePath = `${fileName}${SCHEMA_FILE_EXTENSION}`;
+    const fullPath = `${folderPath}/${filePath}`;
+    fs.writeFile(fullPath, JSON.stringify(jsonSchema, null, 2), (err) => {
       if (err) throw err;
-      console.log(`Json Schema generated on:${GENERATION_FOLDER}${fileName}${SCHEMA_FILE_EXTENSION}`);
+      console.log(`Json Schema generated on:${fullPath}`);
     });
   });
 };

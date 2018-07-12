@@ -189,43 +189,43 @@ const definitions = [
   },
   {
     identifier: 'civ:Type:address.street',
-    version: 'v1',
+    version: '1',
     type: 'String',
   },
 
   {
     identifier: 'civ:Type:address.unit',
-    version: 'v1',
+    version: '1',
     type: 'String',
   },
 
   {
     identifier: 'civ:Type:address.city',
-    version: 'v1',
+    version: '1',
     type: 'String',
   },
 
   {
     identifier: 'civ:Type:address.zipCode',
-    version: 'v1',
+    version: '1',
     type: 'String',
   },
 
   {
     identifier: 'civ:Type:address.state',
-    version: 'v1',
+    version: '1',
     type: 'String',
   },
 
   {
     identifier: 'civ:Type:address.county',
-    version: 'v1',
+    version: '1',
     type: 'String',
   },
 
   {
     identifier: 'civ:Type:address.country',
-    version: 'v1',
+    version: '1',
     type: 'String',
   },
 
@@ -310,7 +310,7 @@ const definitions = [
 
   {
     identifier: 'civ:Type:phone',
-    version: 'v1',
+    version: '1',
     type: {
       properties: [{
         name: 'number',
@@ -339,7 +339,7 @@ const definitions = [
 
   {
     identifier: 'civ:Type:image',
-    version: 'v1',
+    version: '1',
     type: {
       properties: [{
         name: 'image',
