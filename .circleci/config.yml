@@ -95,8 +95,8 @@ jobs:
         environment:
           S3_BUCKET_SCHEMA_URL: s3://dev-schemas.civic.com/
           S3_PUBLIC_SCHEMA_URL: http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com
-          AWS_ACCESS_KEY_ID: AKIAID354FSJY5HLCR3Q
-          AWS_SECRET_ACCESS_KEY: rqE5MfkS3tQFB8XWQzWRM1cJlHOHFbfmNdRqqHzL
+          #AWS_ACCESS_KEY_ID: put your token here
+          #AWS_SECRET_ACCESS_KEY: put your token here
 
     # working directory for all tasks is the backend folder
     working_directory: ~/repo
