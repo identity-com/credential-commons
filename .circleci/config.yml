@@ -7,13 +7,22 @@ workflows:
       - build
       - publish-schemas-to-dev:
           context: Development
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - develop
+      - check-schemas-on-dev:
+          requires:
+            - publish-schemas-to-dev
           filters:
             branches:
               only:
                 - develop
 
   # releases trigger a release on prod
-  # tags of the form x.x.x trigger contract migration and deployment of the node server to prod
+  # after the release it will tag on github on the form x.x.x
   release-and-publish:
     jobs:
       - hold:
@@ -31,9 +40,17 @@ workflows:
             branches:
               only:
                 - master
+      - check-schemas-on-prod:
+          requires:
+            - publish-schemas-to-prod
+          filters:
+            branches:
+              only:
+                - master
       - release:
           requires:
-                - publish-schemas-to-prod
+            - publish-schemas-to-prod
+            - check-schemas-on-prod
           filters:
             branches:
               only:
@@ -73,36 +90,13 @@ jobs:
   publish-schemas-to-dev:
     docker:
       # image extended from circleci/node:8.9 and includes AWS CLI
+      # uncomment and configure aws access key and secret to work with local circleci cli
       - image: civicteam/circle-aws-node
-
-    # working directory for all tasks is the backend folder
-    working_directory: ~/repo
-
-    steps:
-      # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
-      - checkout:
-          path: ~/repo
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-
-      - run: sudo npm install -g npm
-      - run: npm install
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-
-      - run: npm run generate-schemas
-      - run: npm run publish-schemas-test
-
-  publish-schemas-to-prod:
-    docker:
-      # image extended from circleci/node:8.9 and includes AWS CLI
-      - image: civicteam/circle-aws-node
+        environment:
+          S3_BUCKET_SCHEMA_URL: s3://dev-schemas.civic.com/
+          S3_PUBLIC_SCHEMA_URL: http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com
+          AWS_ACCESS_KEY_ID: AKIAID354FSJY5HLCR3Q
+          AWS_SECRET_ACCESS_KEY: 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
 
     # working directory for all tasks is the backend folder
     working_directory: ~/repo
@@ -127,6 +121,104 @@ jobs:
 
       - run: npm run generate-schemas
       - run: npm run publish-schemas
+
+  check-schemas-to-dev:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      - image: civicteam/circle-aws-node
+        environment:
+          S3_PUBLIC_SCHEMA_URL: http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com
+
+    # working directory for all tasks is the backend folder
+    working_directory: ~/repo
+
+    steps:
+      #uncomment this to run on local circleci
+      #- add_ssh_keys
+      #- run:
+      #    name: Keyscan Github (HACK)
+      #    command: mkdir ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+      # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
+      - checkout:
+          path: ~/repo
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: npm run check-schemas
+
+  publish-schemas-to-prod:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      - image: civicteam/circle-aws-node
+        environment:
+          S3_BUCKET_SCHEMA_URL: s3://schemas.civic.com/
+          S3_PUBLIC_SCHEMA_URL: https://schemas.civic.com
+
+    # working directory for all tasks is the backend folder
+    working_directory: ~/repo
+
+    steps:
+      # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
+      - checkout:
+          path: ~/repo
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: npm run generate-schemas
+      - run: npm run publish-schemas
+
+  check-schemas-to-prod:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      - image: civicteam/circle-aws-node
+        environment:
+          S3_PUBLIC_SCHEMA_URL: http://schemas.civic.com
+
+    # working directory for all tasks is the backend folder
+    working_directory: ~/repo
+
+    steps:
+      # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
+      - checkout:
+          path: ~/repo
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: npm run check-schemas
 
   release:
     docker:
