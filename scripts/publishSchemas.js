@@ -8,7 +8,7 @@ const PUBLISH_DIR = 'dist/schemas/public';
 
 
 if (!fs.existsSync(PUBLISH_DIR)) {
-  fs.mkdirSync(PUBLISH_DIR);
+  shell.mkdir('-p', PUBLISH_DIR);
 }
 
 const indexContent = [];
