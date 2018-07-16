@@ -5,7 +5,7 @@ const credentialDefinitions = require('../../src/creds/definitions');
 const ucaDefinitions = require('../../src/uca/definitions');
 const Ajv = require('ajv');
 
-jest.setTimeout(1000000);
+jest.setTimeout(1500000);
 
 /**
  * Also check the integration tests, they add a new layer of testing on the published schemas

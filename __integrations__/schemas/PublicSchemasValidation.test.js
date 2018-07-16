@@ -6,7 +6,8 @@ const fetch = require('node-fetch');
 
 const fixturesPath = '__integrations__/fixtures';
 // testings is done only on the test bucket, since we only release to production on manual CircleCI flow
-const s3BucketUrl = 'https://s3.amazonaws.com/dev-schemas.civic.com';
+// check process env for S3 SChema URL or fallback to an fixed one
+const s3BucketUrl = process.env.S3_PUBLIC_SCHEMA_URL ? process.env.S3_PUBLIC_SCHEMA_URL : 'http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com';
 
 describe('Public Schemas Integration Test Suite', () => {
   it('Should succeed validation from the from the correct json file in Credential folder', async (done) => {
@@ -14,7 +15,7 @@ describe('Public Schemas Integration Test Suite', () => {
     const jsonFolder = `${fixturesPath}/correct/Credential`;
     // iterate all over the credential's definitions
     credentialDefinitions.forEach(async (credentialDefinition) => {
-      const jsonFolderVersion = `v${credentialDefinition.version}`;
+      const jsonFolderVersion = `${credentialDefinition.version}`;
       // the file name is the last part of the identifier
       const jsonFileName = credentialDefinition.identifier.substring(credentialDefinition.identifier.lastIndexOf(':') + 1);
       // all fixtures are json
@@ -40,7 +41,7 @@ describe('Public Schemas Integration Test Suite', () => {
     const jsonFolder = `${fixturesPath}/incorrect/Credential`;
     // iterate all over the credential's definitions
     credentialDefinitions.forEach(async (credentialDefinition) => {
-      const jsonFolderVersion = `v${credentialDefinition.version}`;
+      const jsonFolderVersion = `${credentialDefinition.version}`;
       // the file name is the last part of the identifier
       const jsonFileName = credentialDefinition.identifier.substring(credentialDefinition.identifier.lastIndexOf(':') + 1);
       // all fixtures are json
@@ -64,7 +65,7 @@ describe('Public Schemas Integration Test Suite', () => {
   it('Should succeed validation from the json file in UCAs folders', async (done) => {
     // iterate all over the credential's definitions
     ucaDefinitions.forEach((definition) => {
-      const jsonFolderVersion = `v${definition.version}`;
+      const jsonFolderVersion = `${definition.version}`;
       const identifier = definition.identifier;
       const typeFolder = identifier.substring(identifier.indexOf(':') + 1, identifier.lastIndexOf(':'));
       const jsonFolder = `${fixturesPath}/correct/${typeFolder}`;
@@ -91,7 +92,7 @@ describe('Public Schemas Integration Test Suite', () => {
   it('Should fail validation from the json file in UCAs folders', async (done) => {
     // iterate all over the credential's definitions
     ucaDefinitions.forEach((definition) => {
-      const jsonFolderVersion = `v${definition.version}`;
+      const jsonFolderVersion = `${definition.version}`;
       const identifier = definition.identifier;
       const typeFolder = identifier.substring(identifier.indexOf(':') + 1, identifier.lastIndexOf(':'));
       const jsonFolder = `${fixturesPath}/incorrect/${typeFolder}`;

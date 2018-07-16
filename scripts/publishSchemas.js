@@ -8,7 +8,7 @@ const PUBLISH_DIR = 'dist/schemas/public';
 
 
 if (!fs.existsSync(PUBLISH_DIR)) {
-  fs.mkdirSync(PUBLISH_DIR);
+  shell.mkdir('-p', PUBLISH_DIR);
 }
 
 const indexContent = [];
@@ -22,8 +22,9 @@ const publishUcaSchemas = () => {
           const schemaContent = fs.readFileSync(`${UCA_DIR}/${folder}/${file}`, 'UTF-8');
           const schema = JSON.parse(schemaContent);
           console.log(schema.title);
-          const targetDir = _.split(schema.title, ':')[1];
-          const targetFile = _.split(schema.title, ':')[2];
+          const schemaTitleSplit = schema.title.split(':');
+          const targetDir = schemaTitleSplit[1];
+          const targetFile = schemaTitleSplit[2];
           if (!fs.existsSync(`${PUBLISH_DIR}/${targetDir}/${folder}`)) {
             shell.mkdir('-p', `${PUBLISH_DIR}/${targetDir}/${folder}`);
           }
