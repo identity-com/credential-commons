@@ -122,7 +122,7 @@ jobs:
       - run: npm run generate-schemas
       - run: npm run publish-schemas
 
-  check-schemas-to-dev:
+  check-schemas-on-dev:
     docker:
       # image extended from circleci/node:8.9 and includes AWS CLI
       - image: civicteam/circle-aws-node
@@ -190,7 +190,7 @@ jobs:
       - run: npm run generate-schemas
       - run: npm run publish-schemas
 
-  check-schemas-to-prod:
+  check-schemas-on-prod:
     docker:
       # image extended from circleci/node:8.9 and includes AWS CLI
       - image: civicteam/circle-aws-node
