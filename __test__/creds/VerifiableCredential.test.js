@@ -5,7 +5,7 @@ const fs = require('fs');
 
 jest.mock('../../src/creds/definitions');
 
-jest.setTimeout(100000);
+jest.setTimeout(150000);
 
 describe('Unit tests for Verifiable Credentials', () => {
   test('Dont construct undefined Credentials', () => {
