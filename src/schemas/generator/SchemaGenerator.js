@@ -13,31 +13,7 @@ const getPropertyNameFromDefinition = (definition) => {
   return definition.identifier.substring(substrIndex);
 };
 
-/**
- * Generate json schemas from JSON sample data generated from UCA/Credentials identifiers
- */
-const getPropertyFormat = (value) => {
-  const type = Type.string(value).toLowerCase();
-
-  if (type === 'date') return 'date-time';
-
-  return null;
-};
-
-const getPropertyType = (value) => {
-  const type = Type.string(value).toLowerCase();
-
-  if (type === 'date') return 'string';
-  if (type === 'regexp') return 'string';
-  if (type === 'function') return 'string';
-
-  return type;
-};
-
-const getUniqueKey = (property, requiredArray) => {
-  const required = requiredArray || [];
-  return required;
-};
+const getPropertyType = value => Type.string(value).toLowerCase();
 
 const processObject = (object, outputParam, nested) => {
   let output = outputParam;
@@ -55,140 +31,48 @@ const processObject = (object, outputParam, nested) => {
   // https://github.com/airbnb/javascript/issues/1122
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of keys) {
-    let type = getPropertyType(value);
-    const format = getPropertyFormat(value);
-    type = type === 'undefined' ? 'string' : type;
+    const type = getPropertyType(value);
     if (type === 'object') {
       output.properties[key] = processObject(value, output.properties[key]);
     } else if (type === 'array') {
       // recursion
       // eslint-disable-next-line
       output.properties[key] = processArray(value, output.properties[key]);
-    } else if (output.properties[key]) {
-      const entry = output.properties[key];
-      const hasTypeArray = Array.isArray(entry.type);
-      // When an array already exists, we check the existing
-      // type array to see if it contains our current property
-      // type, if not, we add it to the array and continue
-      if (hasTypeArray && entry.type.indexOf(type) < 0) {
-        entry.type.push(type);
-      }
-      // When multiple fields of differing types occur,
-      // json schema states that the field must specify the
-      // primitive types the field allows in array format.
-      if (!hasTypeArray && entry.type !== type) {
-        entry.type = [entry.type, type];
-      }
     } else {
       output.properties[key] = {};
       output.properties[key].type = type === 'null' ? ['null', 'string'] : type;
-      if (format) {
-        output.properties[key].format = format;
-      }
     }
   }
   return nested ? output.properties : output;
 };
 
 const processArray = (array, outputParam, nested) => {
-  let format;
-  let oneOf;
-  let type;
   let output = outputParam;
-
-  if (nested && output) {
-    output = { items: output };
-  } else {
-    output = output || {};
-    output.type = getPropertyType(array);
-    output.items = output.items || {};
-    type = output.items.type || null;
-  }
-
-  // Determine whether each item is different
-  for (let arrIndex = 0, arrLength = array.length; arrIndex < arrLength; arrIndex += 1) {
-    const elementType = getPropertyType(array[arrIndex]);
-    const elementFormat = getPropertyFormat(array[arrIndex]);
-
-    if (type && elementType !== type) {
-      output.items.oneOf = [];
-      oneOf = true;
-      break;
-    } else {
-      type = elementType;
-      format = elementFormat;
-    }
-  }
-
-  // Setup type otherwise
-  if (!oneOf && type) {
-    output.items.type = type;
-    if (format) {
-      output.items.format = format;
-    }
-  } else if (oneOf && type !== 'object') {
-    output.items = {
-      oneOf: [{
-        type,
-      }],
-      required: output.items.required,
-    };
-  }
-
-  // Process each item depending
-  if (typeof output.items.oneOf !== 'undefined' || type === 'object') {
-    for (let itemIndex = 0, itemLength = array.length; itemIndex < itemLength; itemIndex += 1) {
-      const value = array[itemIndex];
-      const itemType = getPropertyType(value);
-      const itemFormat = getPropertyFormat(value);
-      let arrayItem;
-      if (itemType === 'object') {
-        if (output.items.properties) {
-          output.items.required = getUniqueKey(value, output.items.required);
-        }
-        arrayItem = processObject(value, oneOf ? {} : output.items.properties, true);
-      } else if (itemType === 'array') {
-        arrayItem = processArray(value, oneOf ? {} : output.items.properties, true);
-      } else {
-        arrayItem = {};
-        arrayItem.type = itemType;
-        if (itemFormat) {
-          arrayItem.format = itemFormat;
-        }
-      }
-      if (oneOf) {
-        const childType = Type.string(value).toLowerCase();
-        const tempObj = {};
-        if (!arrayItem.type && childType === 'object') {
-          tempObj.properties = arrayItem;
-          tempObj.type = 'object';
-          arrayItem = tempObj;
-        }
-        output.items.oneOf.push(arrayItem);
-      } else if (output.items.type === 'object') {
-        output.items.properties = arrayItem;
-      }
-    }
-  }
+  output = outputParam || {};
+  output.type = getPropertyType(array);
+  output.items = output.items || {};
+  const type = getPropertyType(array[0]);
+  output.items.type = type;
   return nested ? output.items : output;
 };
 
+/**
+ * Entry point of this class. Use this to generate an sample json data
+ * then an json schema from that data. That way you do not need to
+ * create sample or mocks json from Credentials
+ *
+ * @param definition UCA/VC definition
+ * @param json generated json
+ * @returns {{$schema: string}} expected json schema to validate this data
+ */
 const process = (definition, json) => {
-  let object = json;
-  let title = definition.identifier;
+  const object = json;
+  const title = definition.identifier;
   let processOutput;
   const output = {
     $schema: DRAFT,
   };
-
-  // Determine title exists
-  if (typeof title !== 'string') {
-    object = title;
-    title = undefined;
-  } else {
-    output.title = title;
-  }
-
+  output.title = title;
   // Set initial object type
   output.type = Type.string(object).toLowerCase();
 
@@ -198,18 +82,6 @@ const process = (definition, json) => {
     output.type = processOutput.type;
     output.properties = processOutput.properties;
   }
-
-  if (output.type === 'array') {
-    processOutput = processArray(object);
-    output.type = processOutput.type;
-    output.items = processOutput.items;
-
-    if (output.title) {
-      output.items.title = output.title;
-      output.title += ' Set';
-    }
-  }
-
   // for simple UCA get json schema properties
   if (typeof definition !== 'undefined' && definition !== null) {
     if (Array.isArray(definition.required)) {
@@ -242,13 +114,6 @@ const process = (definition, json) => {
  * Build a sample json from an definition identifier
  * Recursively make the UCA from nested properties and UCA references
  *
- * TODO minimum: 0,
- * TODO exclusiveMinimum: true,
- * TODO maximum: 32,
- * TODO exclusiveMaximum: true,
- * TODO array -> values
- * TODO DocType
- *
  * @param definition receive an UCA and build an sample json from it's properties
  * @returns {{$schema: string}}
  */
@@ -258,6 +123,10 @@ const buildSampleJson = (definition) => {
   return output;
 };
 
+/**
+ * Recursion to build the schema from an json value
+ * @param ucaDefinition
+ */
 const makeJsonRecursion = (ucaDefinition) => {
   let output = {};
   const typeName = UCA.getTypeName(ucaDefinition);
@@ -278,6 +147,13 @@ const makeJsonRecursion = (ucaDefinition) => {
   return output;
 };
 
+/**
+ * This method is an auxiliary method to allow random values to easy create
+ * json schemas from JSON values generated from UCA/VC
+ *
+ * @param definition
+ * @returns {number}
+ */
 const generateRandomNumberValueWithRange = (definition) => {
   let genRandomNumber = Math.random() * 100;
   if (definition !== null) {

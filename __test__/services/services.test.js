@@ -21,4 +21,11 @@ describe('Services Container  Tests', () => {
     expect(http).toBeDefined();
     expect(http.name).toBe('mockHttp');
   });
+  test('Override Config Service', () => {
+    initServices({ test: '' }, null);
+    const http = services.container.Http;
+    expect(http).toBeDefined();
+    // TODO cannot branch out the IFs to cover all code this is strange
+    expect(http.name).toBe('mockHttp');
+  });
 });

@@ -1,1 +1,0 @@
-"use strict";function Anchor(a){var b=this;return this.impl=a,this.anchor=function(a,c,d){return b.impl.anchor(a,c,d)},this.update=function(a){return b.impl.update(a)},this}module.exports=Anchor;

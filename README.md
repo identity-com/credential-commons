@@ -1,41 +1,44 @@
 # Verifiable Credential and Attestation Library
 
-[![tests][tests]][tests-url]
-[![coverage][cover]][cover-url]
-
-Verifiable Credential and Attestation Library - CCS-38
+[![CircleCI](https://circleci.com/gh/civicteam/civic-credentials-commons-js.svg?style=svg&circle-token=d989196488010043c3dbd96d70864614ce3e6eba)](https://circleci.com/gh/civicteam/civic-credentials-commons-js)
 
 ## Contents
 
-- [Verifiable Credential and Attestation Library](#verifiable-credential-and-attestation-library)
-  * [Contents](#contents)
-  * [Prerequisites](#prerequisites)
-  * [Features](#features)
-    + [User Collectable Attributes](#user-collectable-attributes)
-      - [Defining new UCA](#defining-new-uca)
-      - [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services)
-      - [Using a UCA in javascript (with this library)](#using-a-uca-in-javascript--with-this-library-)
-        * [creating UCA instances with the constructor](#creating-uca-instances-with-the-constructor)
-    + [Credentials](#credentials)
-      - [Defining new UCA](#defining-new-uca-1)
-      - [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services-1)
-      - [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
-        * [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
-          + [Verifiable Credential Sample](#verifiable-credential-sample)
-        * [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-json)
-        * [Verifying a Verifiable Credential](#verifying-a-verifiable-credential)
-  * [Schema Generator](#schema-generator)
-  * [Conventions:](#conventions-)
-  * [Commands](#commands)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+- [Prerequisites](#prerequisites)
+- [Configuration](#configuration)
+  * [Etc Config File /etc/civic/config](#etc-config-file--etc-civic-config)
+  * [User Config File ~/.civic/config](#user-config-file---civic-config)
+  * [incode](#incode)
+    + [Prepare Bitgo Wallet](#prepare-bitgo-wallet)
+- [Features](#features)
+  * [User Collectable Attributes](#user-collectable-attributes)
+    + [Defining new UCA](#defining-new-uca)
+    + [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services)
+    + [Using a UCA in javascript (with this library)](#using-a-uca-in-javascript--with-this-library-)
+      - [creating UCA instances with the constructor](#creating-uca-instances-with-the-constructor)
+  * [Credentials](#credentials)
+    + [Defining new UCA](#defining-new-uca-1)
+    + [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services-1)
+    + [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
+      - [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
+      - [anchoring VerifiableCredential instances with the constructor](#anchoring-verifiablecredential-instances-with-the-constructor)
+      - [refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor](#refreshing-an-anchor--temp----permanent--verifiablecredential-instances-with-the-constructor)
+      - [Verifiable Credential Sample](#verifiable-credential-sample)
+      - [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-json)
+      - [Verifying a Verifiable Credential](#verifying-a-verifiable-credential)
+- [Schema Generator](#schema-generator)
+- [Conventions:](#conventions-)
+- [Commands](#commands)
+- [Integration with CCS Libraries](#integration-with-ccs-libraries)
+- [ES5 and ES6 definitions](#es5-and-es6-definitions)
+- [Node vs React usage of this library](#node-vs-react-usage-of-this-library)
+- [Releases](#releases)
 
 ## Prerequisites
 
-[![node][node]][node-url]
 [![npm][npm]][npm-url]
       
-- [Node.js](http://es6-features.org)
+- [Node.js](https://nodejs.org/en/)
 
 ## Configuration
 
@@ -54,7 +57,17 @@ and consists of the following settings:
 * CIVIC_CLIENT_XPRIV - The public key used by this installation
 * CIVIC_PASSPHASE - Civic User Wallet Passphrase. prefer setting this in code
 * CIVIC_KEYCHAIN - Civic User Wallet KEYCHAIN. prefer setting this in code
+* CLIENT_WALLET_ID - For revocation and verification functions, the BitGo Wallet ID (not the address)
+* CLIENT_WALLET_PASSPHRASE - For revocation and verification functions, the BitGo Wallet ID (not the xprv nor the use key card pdf, store that safely!)
+* CLIENT_ACCESS_TOKEN - BitGo access token to access wallets, must have the Admin property to the target wallet that will make spending
  
+There is an utility on cli folder, the configuration.js, just run it:
+
+```bash
+node cli/configuration.js
+```
+
+And it will store the file like below:
 
 ### Etc Config File /etc/civic/config
 ### User Config File ~/.civic/config
@@ -77,6 +90,36 @@ const ccc = new CCC({
 })
  
 ```
+
+If you are not sure how to get those informations, see the tutorial down below.
+
+#### Prepare Bitgo Wallet
+a. Create a wallet with Bitgo - record the following information as you need them later:
+
+**Wallet ID:** <obtained from the Bitgo URL: https://test.bitgo.com/enterprise/5aabb27e8a0a3c9c07fc7db49017fc7f/coin/tbch/*5aabb2aced2e259a079259b01c05d21a*/transactions >
+
+**Wallet passphrase:** < set when creating the wallet - this may be different to your account passcode for bitgo>
+
+**Wallet XPrv:** < You receive this in encrypted form in the PDF - section 1. User Key>
+
+**Enterprise ID:** < obtained from the Bitgo URL: https://test.bitgo.com/enterprise/*5aabb27e8a0a3c9c07fc7db49017fc7f*/coin/tbch/5aabb2aced2e259a079259b01c05d21a/transactions >
+
+b. Decrypt the XPrv
+
+```
+git clone git@github.com:masonicGIT/sjcl-cli.git
+cd sjcl-cli
+node src/index
+```
+
+Enter encrypted data: <enter the User Key from the PDF **without newlines**>
+
+Enter passcode: <your BitGo account password (see above)>
+
+c. Generate an access token
+
+Via the BitGO Website User Settings -> Developer Options
+* Ensure you add a high spending limit for BCH
 
 
 ## Features
@@ -122,54 +165,246 @@ const name = new UCA.IdentityName({
 
 **values** can be:
 *  Plain JavaScript Objects:
-`{
-	first: 'Joao', 
-    middle: 'Barbosa', 
-    last: 'Santos'
-}`
-* Attestable Values: `{attestableValue: 's:0902b1abf8b30dbf03c79d144d24f44055637eefa84f2ca024d1d2d9a39f30c5:Joao|s:ee9c6b4e76224bc3f56ed3f4bd2f9037f3665b546abdc49e0a59fcb25b771c14:Santos|s:c1dfa74b335f81a19914c3b8aa98ce25a30371836d740579edc69ceec5f597c6:Barbosa|'}`
+```json
+{
+	"first": 'Joao', 
+    "middle": 'Barbosa', 
+    "last": 'Santos'
+}
+```
+* Attestable Values: 
+```json
+{
+  "attestableValue": "urn:first:0902b1abf8b30dbf03c79d144d24f44055637eefa84f2ca024d1d2d9a39f30c5:Joao|s:ee9c6b4e76224bc3f56ed3f4bd2f9037f3665b546abdc49e0a59fcb25b771c14:Santos|urn:middle:c1dfa74b335f81a19914c3b8aa98ce25a30371836d740579edc69ceec5f597c6:Barbosa|"
+}
+```
 
 JSON String
  
-```
-{JSON: "
+```json
+
 {
-      "timestamp": 1527706184.575,
-      "id": "1:civ:Identity:name:817c71d0eb9db9a583143c1d92becf765945d62982f26998e9249850e8ad41bf",
-      "identifier": "civ:Identity:name",
-      "version": "1",
-      "type": "Object",
-      "value": {
-        "first": {
-          "timestamp": 1527706184.575,
-          "id": "1:civ:Identity:name.first:c88b3d4d5b937b8c72908b7537b0bc42826d1d296392e90e58ac0b55c71dab31",
-          "identifier": "civ:Identity:name.first",
-          "version": "1",
-          "type": "String",
-          "value": "Joao",
-          "salt": "397b809df57fb5046229cf85b814336099a641a0081cfd36032a4425f6aa215f"
-        },
-        "middle": {
-          "timestamp": 1527706184.575,
-          "id": "1:civ:Identity:name.middle:4732d8a87c36939a0065998c7765a8420a766bf8df613994e5f521d37447599b",
-          "identifier": "civ:Identity:name.middle",
-          "version": "1",
-          "type": "String",
-          "value": "Barbosa",
-          "salt": "047fc2a71a738e8121a7544a656cf8e90af8278d919aa98e878fcaf76db892ef"
-        },
-        "last": {
-          "timestamp": 1527706184.575,
-          "id": "1:civ:Identity:name.last:8071573fd1af791f3a29107c2ed90125ee74e71aadef4afea6f08045cada7201",
-          "identifier": "civ:Identity:name.last",
-          "version": "1",
-          "type": "String",
-          "value": "Santos",
-          "salt": "c9c018f795f676c86e24641f41c8a9bd270f1d878e5d90dd6b5fe63744bcca6d"
-        }
+  "id": null,
+  "issuer": "jest:test",
+  "issued": "2018-07-04T00:11:55.698Z",
+  "identifier": "civ:Credential:SimpleTest",
+  "expiry": null,
+  "version": 1,
+  "type": [
+    "Credential",
+    "civ:Credential:SimpleTest"
+  ],
+  "claims": {
+    "identity": {
+      "name": {
+        "first": "Joao",
+        "last": "Santos",
+        "middle": "Barbosa"
+      },
+      "dateOfBirth": {
+        "day": 20,
+        "month": 3,
+        "year": 1978
       }
     }
-"}
+  },
+  "signature": {
+    "type": "CivicMerkleProof2018",
+    "merkleRoot": "14613d43860ea919e6bbcff2405fdd59685ab1295048c301448cb4f68b0ea51f",
+    "anchor": {
+      "subject": {
+        "pub": "xpub661MyMwAqRbcFNXRK7kdsoidhiyfqiwhVhbphdKZjqnik83L1w1mWsPwVrsvbRrPa7sysiJRRBxr6jyrCbPScdXkhSjyYtQtFfwxGBwrBzn",
+        "label": "civ:Credential:SimpleTest",
+        "data": "14613d43860ea919e6bbcff2405fdd59685ab1295048c301448cb4f68b0ea51f",
+        "signature": "30440220112d63de4802353002ae4bde013293b3e7afe3c60ecf6eaf27de733862a06a65022048d38e58112193ea27c7758cad6d984742ed4d48f7f5b16bdb49322c0a797d36"
+      },
+      "walletId": "5b3c10ddf9d2a73c058bd66b7e177b73",
+      "cosigners": [
+        {
+          "pub": "xpub661MyMwAqRbcG2SWCd7SPuXZiJf9Ve4txwoB6en8c8xFPRr4uDmUz3F5QtWdnot6qeK2jbmttCvTcDG254qybxdJUEV9B2kqLraG2Tc5cK1"
+        },
+        {
+          "pub": "xpub661MyMwAqRbcFKpX1ZDiKqnRzy7GR7CdP4fvEa41uU2PX2vSNfhLFxDJkod3ru8jJGmDfBqasvFE4EA6gp4FqDCWCm9UbSNtU4iTj3EkeiG"
+        }
+      ],
+      "authority": {
+        "pub": "xpub661MyMwAqRbcGvSnxEsF3ozUA1kqjNE9fdBpDjKG6YvMuBCjiwf5w9DxDPubPpgpueWkczH21gJ1a7t7J7xw6fTiQmFiWd57opAgTRCCq1H",
+        "path": "/0/0/1/20"
+      },
+      "coin": "tbch",
+      "tx": "02000000012b21f4dc444b91c10bbacf048fec27730bd80dc99670ead531b5b9d7bf4104c101000000fdfd0000483045022100de36fe741f6541aa6485221aaabd3bce5f0335c68538d3b1218f4b7de51906dc022021ab523b0de1ec064b48d4a42119b81936008a9c466502a6179a952885dc46b24147304402202bbb7a2b6b6ad8ce3d1a87237b203981d923a5500a5f7827abe7e3f6556fd01702200f0ca09db08150c365998bcd45cce23b1b24839bd21eb5d62ab272459e2bf17c414c69522103808232b1bc89ed37476edd1638a75b24af52aa7c140126e86a5615e2d17c045d21021476547f77decae5a6b32428f7fd5c5a1a165be53e463f2cba6a149ca51bf4dc21026b0531f0dae953950134eaccd776cbbc575e29a58806374114b36ef278c205cd53aeffffffff02fb1700000000000017a9143bde603bc79fff22e2fda29b339d839e9b4d75398777b57d0f0000000017a914615bc84fed98ae4bbb5e8938c29a4a5cb6484b7e8700000000",
+      "network": "testnet",
+      "value": 259903582,
+      "type": "permanent",
+      "civicAsPrimary": false,
+      "schema": "tbch-20180201"
+    },
+    "leaves": [
+      {
+        "identifier": "civ:Identity:name",
+        "value": "urn:first:285a8c66e6d8f43cb283702e1d7cc90daf79a1c7ad25f2fe20aa7547116fef67:Joao|urn:last:a91a394ebe8994f1e881c15013aa1b27628d6e0354ad7ce0330ba561dc75db47:Santos|urn:middle:d44dc458743ebd1ac93007245a2651415f78b7f475c1c4b162b7aaf616a106e3:Barbosa|",
+        "claimPath": "identity.name",
+        "targetHash": "5650d74edbb4a0148e7f19f89df3e98ea9328a49e874123041b0fe6e25072fe3",
+        "proof": [
+          {
+            "right": "8b3f8f06b6801e2f7e4d3078d8f3c8a522ce903eca350249cd9cf73daa8582be"
+          },
+          {
+            "right": "cbdcd57d230006cae3d1c8d2c310cc24e5230813357e01d939ee372870d34912"
+          },
+          {
+            "right": "8c40b790bf674653a0357418bde7befc3c3baf32c97369ae679133709a062fdd"
+          },
+          {
+            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
+          },
+          {
+            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:name.first",
+        "value": "urn:first:285a8c66e6d8f43cb283702e1d7cc90daf79a1c7ad25f2fe20aa7547116fef67:Joao",
+        "claimPath": "identity.name.first",
+        "targetHash": "8b3f8f06b6801e2f7e4d3078d8f3c8a522ce903eca350249cd9cf73daa8582be",
+        "proof": [
+          {
+            "left": "5650d74edbb4a0148e7f19f89df3e98ea9328a49e874123041b0fe6e25072fe3"
+          },
+          {
+            "right": "cbdcd57d230006cae3d1c8d2c310cc24e5230813357e01d939ee372870d34912"
+          },
+          {
+            "right": "8c40b790bf674653a0357418bde7befc3c3baf32c97369ae679133709a062fdd"
+          },
+          {
+            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
+          },
+          {
+            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:name.middle",
+        "value": "urn:middle:d44dc458743ebd1ac93007245a2651415f78b7f475c1c4b162b7aaf616a106e3:Barbosa",
+        "claimPath": "identity.name.middle",
+        "targetHash": "145765549b2e429d2f204bc6f4c79c6b702a5f017ce2ff703bf6c1d29af3d555",
+        "proof": [
+          {
+            "right": "9a059dedc58a623d41adf18e33452ebd9de6b9130152bb54ca0a0d2b8b4965bf"
+          },
+          {
+            "left": "4f7776fc52f605ae20b5e814c9f68d81c59912ee73af8f75903c1832bdcac580"
+          },
+          {
+            "right": "8c40b790bf674653a0357418bde7befc3c3baf32c97369ae679133709a062fdd"
+          },
+          {
+            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
+          },
+          {
+            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:name.last",
+        "value": "urn:last:a91a394ebe8994f1e881c15013aa1b27628d6e0354ad7ce0330ba561dc75db47:Santos",
+        "claimPath": "identity.name.last",
+        "targetHash": "9a059dedc58a623d41adf18e33452ebd9de6b9130152bb54ca0a0d2b8b4965bf",
+        "proof": [
+          {
+            "left": "145765549b2e429d2f204bc6f4c79c6b702a5f017ce2ff703bf6c1d29af3d555"
+          },
+          {
+            "left": "4f7776fc52f605ae20b5e814c9f68d81c59912ee73af8f75903c1832bdcac580"
+          },
+          {
+            "right": "8c40b790bf674653a0357418bde7befc3c3baf32c97369ae679133709a062fdd"
+          },
+          {
+            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
+          },
+          {
+            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Identity:dateOfBirth",
+        "value": "urn:day:bf08b91cd35c58a292dc863870279f6f830cdcf3e8adc96680ab820792930c92:00000020|urn:month:2bbe6772ac5c2d46d70ca25087921558b100146634c1e108d48afc29556f6bd4:00000003|urn:year:eafecd446e940db6013b23111416cbd195f5a3a719c7b11742b9716fbce44012:00001978|",
+        "claimPath": "identity.dateOfBirth",
+        "targetHash": "691aaec939c0d9a4eab7468ab46a437e04c2136e4c0237e2703ba4fd4a4b2d2d",
+        "proof": [
+          {
+            "right": "64afc43b9b4b81b4a40f72257856a819d3b27486f07405a63269fa8d798843bb"
+          },
+          {
+            "right": "2fec1daece49821628925c62c0987a5b155f6b98182be4bfb1492a9c09dc2e96"
+          },
+          {
+            "left": "7318d1f8404486db45b07ab0b37de17da4a4a32e8852c119305039e32b5b6269"
+          },
+          {
+            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
+          },
+          {
+            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:issuer",
+        "value": "urn:issuer:0b822a1fe0102bb015faa91b8477c80c493db79cdb1005a652fb5bbc9741c9cc:jest:test",
+        "claimPath": "meta.issuer",
+        "targetHash": "64afc43b9b4b81b4a40f72257856a819d3b27486f07405a63269fa8d798843bb",
+        "proof": [
+          {
+            "left": "691aaec939c0d9a4eab7468ab46a437e04c2136e4c0237e2703ba4fd4a4b2d2d"
+          },
+          {
+            "right": "2fec1daece49821628925c62c0987a5b155f6b98182be4bfb1492a9c09dc2e96"
+          },
+          {
+            "left": "7318d1f8404486db45b07ab0b37de17da4a4a32e8852c119305039e32b5b6269"
+          },
+          {
+            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
+          },
+          {
+            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:issued",
+        "value": "urn:issued:df4409776ee40a60cda4aeec6aa1d05691c0e8ffd55d9c23821b6e50d0c48d13:2018-07-04T00:11:55.698Z",
+        "claimPath": "meta.issued",
+        "targetHash": "76a3a4c07abc9439cd60a426977c22361d580faddbcfabb6d8a18ddd476ce05e",
+        "proof": [
+          {
+            "right": "b4958af157dffab9d9e39810c60ea962d08aca925822a3403158d86c666f3381"
+          },
+          {
+            "left": "d6030c82985569f7abe8602ac67bc5a3562e4f17329497c38c547ae9689a4ac8"
+          },
+          {
+            "left": "7318d1f8404486db45b07ab0b37de17da4a4a32e8852c119305039e32b5b6269"
+          },
+          {
+            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
+          },
+          {
+            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+          }
+        ]
+      }
+    ]
+  }
+}
+
 ```
 
 ### Credentials
@@ -356,6 +591,9 @@ const cred = VC.fromJSON(credJSon);
 Now you can access any method of a `cred` instance, like `.updateAnchor()` or `.verify()`
 
 ##### Verifying a Verifiable Credential
+
+Remember to check the section about configuration or else this part will fail.
+
 To verify a credential JSON, you can construct a VC using `.fromJSON` and call `.verify()` method:
 ```
 const credJSon = require('./ACred.json');
@@ -515,6 +753,55 @@ The browser transpiled version only guarantees the profile we want to target and
 
 But as pointed out before, if the target project is ES6 compliant, the pkg.module will point out to the ES version.
 
+## Node vs React usage of this library
+
+Put this in your webpack config under plugins if you are running an Webpack Node App
+```js
+new webpack.DefinePlugin({
+    'process.env': {
+        NODE_ENV: 'production',
+        APP_ENV: false
+    }
+})
+```
+
+If you are on a React app add this:
+
+```js
+new webpack.DefinePlugin({
+    'process.env': {
+        NODE_ENV: false,
+        APP_ENV: 'browser'
+    }
+})
+```
+
+With that you can check if you're running in a browser or not this way:
+
+```js
+
+if (process.env.APP_ENV === 'browser') {
+    const doSomething = require('./browser-only-js');
+    doSomething();
+} else {
+    const somethingServer = require('./server-only-js');
+    somethingServer();
+}
+
+if (process.env.APP_ENV !== 'browser') {
+    const somethingServer = require('./server-only-js');
+    somethingServer();
+}
+```
+
+Because these environment variables get replaced during the build, Webpack will not include resources that are server-only. You should always do these kinds of things in an easy way, with a simple, direct compare. Uglify will remove all dead code.
+
+Since you used a function before and the function is not evaluated during build, Webpack wasn't able to know what requires it could skip.
+
+(The NODE_ENV-variable should always be set to production in production mode, since many libraries including React use it for optimisations.)
+
+This is used on this library on src/services/config.js
+
 ## Releases
 
 For now the default branch is "develop" as this is an WIP library.
@@ -527,13 +814,4 @@ All releases are tagged on github and won't follow lodash pattern, that release 
 
 [npm]: https://img.shields.io/badge/npm-5.3.0-blue.svg
 [npm-url]: https://npmjs.com/
-
-[node]: https://img.shields.io/node/v/webpack-es6-boilerplate.svg
-[node-url]: https://nodejs.org
-
-[tests]: http://img.shields.io/travis/jluccisano/webpack-es6-boilerplate.svg
-[tests-url]: 
-
-[cover]: https://codecov.io/gh/jluccisano/webpack-es6-boilerplate/branch/master/graph/badge.svg
-[cover-url]: https://codecov.io/gh/jluccisano/webpack-es6-boilerplate
 

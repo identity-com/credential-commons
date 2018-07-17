@@ -79,14 +79,12 @@ const isAttestableValue = value => (
 const parseAttestableValue = (value) => {
   const values = [];
   const splitPipes = _.split(value.attestableValue, '|');
-  // console.log(splitPipes);
-  const attestableValueRegex = /^(\w):(\w*):([\w|\W]*)/;
+  const attestableValueRegex = /^urn:(\w*):(\w*):([\w|\W]*)/;
   _.each(splitPipes, (stringValue) => {
     const match = attestableValueRegex.exec(stringValue);
-    // console.log(match);
     if (match && match.length === 4) {
       const v = {
-        typeS: match[1],
+        propertyName: match[1],
         salt: match[2],
         value: match[3],
         stringValue,
@@ -119,28 +117,23 @@ function UCABaseConstructor(identifier, value, version) {
   this.version = version || definition.version;
 
   this.type = getTypeName(definition);
-  // console.log(`this.type=${this.type}`);
 
   definition.type = resolveType(definition);
-  // console.log(`definition.type=${JSON.stringify(definition.type)}`);
   if (isAttestableValue(value)) {
     // Trying to construct UCA with a existing attestableValue
-    // console.log('isAttestableValue');
     const parsedAttestableValue = parseAttestableValue(value);
     if (parsedAttestableValue.length === 1) {
       // This is a simple attestableValue
-      // console.log('simple attestationValue');
       this.timestamp = null;
       this.salt = parsedAttestableValue[0].salt;
       this.value = parsedAttestableValue[0].value;
     } else {
-      const sortedDefinitions = _.sortBy(definition.type.properties, ['name']);
       const ucaValue = {};
-      // TODO: Review the marshaller and unmarsheller: if some no required attribute is missing, unmarshelling may be unpredictable
       for (let i = 0; i < parsedAttestableValue.length; i += 1) {
-        // console.log(sortedDefinitions[i].type);
-        // console.log(parsedAttestableValue[i].stringValue);
-        ucaValue[sortedDefinitions[i].name] = new UCABaseConstructor(sortedDefinitions[i].type, { attestableValue: parsedAttestableValue[i].stringValue });
+        const propertyName = parsedAttestableValue[i].propertyName;
+        // we have stored only the property name on the urn, so we have to find the UCA definition
+        const filteredIdentifier = definition.type.properties.find(property => property.type.endsWith(propertyName)).type;
+        ucaValue[propertyName] = new UCABaseConstructor(filteredIdentifier, { attestableValue: parsedAttestableValue[i].stringValue });
       }
       // console.log(ucaValue);
       this.value = ucaValue;
@@ -165,20 +158,22 @@ function UCABaseConstructor(identifier, value, version) {
       const uca = new UCABaseConstructor(propertyDef.type, v, propertyDef.version);
       return { key: k, value: uca };
     }), 'key'), 'value');
-    // console.log(ucaValue);
     this.value = ucaValue;
   }
 
   this.getAttestableValue = () => {
+    // all UCA properties they have the form of :propertyName or :something.propertyName
+    const startIndexForPropertyName = this.identifier.includes('.') ? this.identifier.lastIndexOf('.') : this.identifier.lastIndexOf(':');
+    const propertyName = this.identifier.substring(startIndexForPropertyName + 1);
+    // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
     switch (this.type) {
       case 'String':
-        return `s:${this.salt}:${this.value}`;
+        return `urn:${propertyName}:${this.salt}:${this.value}`;
       case 'Number':
-        return `n:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`;
+        return `urn:${propertyName}:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`; // TODO @jpsantosbh why did you pad this value?
       case 'Boolean':
-        return `b:${this.salt}:${this.value}`;
+        return `urn:${propertyName}:${this.salt}:${this.value}`;
       default:
-        // TODO: Review the marshaller and unmarsheller: if some no required attribute is missing, unmarshelling may be unpredictable
         return _.reduce(_.sortBy(_.keys(this.value)), (s, k) => `${s}${this.value[k].getAttestableValue()}|`, '');
     }
   };

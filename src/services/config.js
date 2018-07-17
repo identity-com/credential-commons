@@ -4,11 +4,7 @@ const fs = require('fs');
 
 if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
 
-// filesync will have to be avoided or bypassed so we can deploy to all enviroments including the browser
-const isNode = typeof global !== 'undefined'
-  && ({}).toString.call(global) === '[object global]';
-
-if (isNode) {
+if (process.env.APP_ENV !== 'browser') {
   const CONFIG_FILE = 'config';
 
   const CONFIG_PATH = {
@@ -42,6 +38,9 @@ const config = {
   },
   passphrase: process.env.CIVIC_PASSPHRASE,
   keychain: { prv: process.env.CIVIC_KEYCHAIN },
+  accessToken: process.env.CLIENT_ACCESS_TOKEN,
+  walletId: process.env.CLIENT_WALLET_ID,
+  walletPassphrase: process.env.CLIENT_WALLET_PASSPHRASE,
 };
 
 module.exports = config;

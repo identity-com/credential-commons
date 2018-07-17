@@ -2,16 +2,60 @@ version: 2
 
 workflows:
   version: 2
-  build:
+  build-and-test:
     jobs:
       - build
-      - release:
+      - publish-schemas-to-dev:
+          context: Development
           requires:
-                - build
+            - build
+          filters:
+            branches:
+              only:
+                - develop
+      - check-schemas-on-dev:
+          requires:
+            - publish-schemas-to-dev
+          filters:
+            branches:
+              only:
+                - develop
+
+  # releases trigger a release on prod
+  # after the release it will tag on github on the form x.x.x
+  release-and-publish:
+    jobs:
+      - hold:
+          type: approval
           filters:
             branches:
               only:
                 - master
+      - publish-schemas-to-prod:
+          context: Production
+          requires:
+            - hold
+          filters:
+            # ignore any non-tagged commit on any branch by default
+            branches:
+              only:
+                - master
+      - check-schemas-on-prod:
+          requires:
+            - publish-schemas-to-prod
+          filters:
+            branches:
+              only:
+                - master
+      - release:
+          requires:
+            - publish-schemas-to-prod
+            - check-schemas-on-prod
+          filters:
+            branches:
+              only:
+                - master
+
 jobs:
   build:
     docker:
@@ -19,11 +63,6 @@ jobs:
         environment:
           CIVIC_SEC_URL: https://api.civic.com/sip-sec-dev/DEV
           CIVIC_ATTN_URL: https://dev.api.civic.com/request-attestation-tbch
-          CIVIC_CLIENT_ID: c8a64a8185de33d19de8021fbe228d2a5a77c1117db7542ed148354cbf7d4ef1
-          CIVIC_CLIENT_XPUB: 045d1e078c67458c0d6cdc843a12d7fa233ee8a754558884b8b69fe1faf99c5931f1ac081cf352d8eed425964a9671526493c1a89d5754b5ecfb05d0da3dced846
-          CIVIC_CLIENT_XPRV: d0f9e1bfe871c0e9d2c041e55cabc3280e4cc0641f7db148cf0e805cc055b1b4
-          CIVIC_PASSPHRASE: segredo
-          CIVIC_KEYCHAIN: xprv9s21ZrQH143K2tSxD6DdWfmu9h9BSGDr8UgDuEuxBWFjsKiBUPhWy55TeZbPuifLqGgXvgurEZeP5PbNpZyfinMkdSsVn1YiRSiXDX3VeFG
 
     working_directory: ~/repo
 
@@ -47,6 +86,139 @@ jobs:
           name: run tests incl coverage
           command: npm run test
       - run: npm run lint
+
+  publish-schemas-to-dev:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      # uncomment and configure aws access key and secret to work with local circleci cli
+      - image: civicteam/circle-aws-node
+        environment:
+          S3_BUCKET_SCHEMA_URL: s3://dev-schemas.civic.com/
+          S3_PUBLIC_SCHEMA_URL: http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com
+          #AWS_ACCESS_KEY_ID: put your token here
+          #AWS_SECRET_ACCESS_KEY: put your token here
+
+    # working directory for all tasks is the backend folder
+    working_directory: ~/repo
+
+    steps:
+      # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
+      - checkout:
+          path: ~/repo
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: npm run generate-schemas
+      - run: npm run publish-schemas
+
+  check-schemas-on-dev:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      - image: civicteam/circle-aws-node
+        environment:
+          S3_PUBLIC_SCHEMA_URL: http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com
+
+    # working directory for all tasks is the backend folder
+    working_directory: ~/repo
+
+    steps:
+      #uncomment this to run on local circleci
+      #- add_ssh_keys
+      #- run:
+      #    name: Keyscan Github (HACK)
+      #    command: mkdir ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+      # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
+      - checkout:
+          path: ~/repo
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: npm run check-schemas
+
+  publish-schemas-to-prod:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      - image: civicteam/circle-aws-node
+        environment:
+          S3_BUCKET_SCHEMA_URL: s3://schemas.civic.com/
+          S3_PUBLIC_SCHEMA_URL: https://schemas.civic.com
+
+    # working directory for all tasks is the backend folder
+    working_directory: ~/repo
+
+    steps:
+      # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
+      - checkout:
+          path: ~/repo
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: npm run generate-schemas
+      - run: npm run publish-schemas
+
+  check-schemas-on-prod:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      - image: civicteam/circle-aws-node
+        environment:
+          S3_PUBLIC_SCHEMA_URL: http://schemas.civic.com
+
+    # working directory for all tasks is the backend folder
+    working_directory: ~/repo
+
+    steps:
+      # checkout the repo into the root folder (required because working_directory is ~/repo/backend)
+      - checkout:
+          path: ~/repo
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: npm run check-schemas
 
   release:
     docker:
