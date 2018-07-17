@@ -244,6 +244,7 @@ jobs:
 
       - run: sudo npm install -g npm
       - run: npm ci
+      - run: npm run build
 
       # - save_cache:
       #     paths:
