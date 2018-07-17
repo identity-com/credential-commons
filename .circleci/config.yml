@@ -41,7 +41,7 @@ workflows:
               ignore: /.*/
             tags:
               # This Regex says: only run on tags of the type x.x.x
-              only: /^\d+\.\d+\.\d+$/
+              only: /v\d+\.\d+\.\d+$/
       - publish-schemas-to-prod:
           context: Production
           requires:
@@ -52,7 +52,7 @@ workflows:
               ignore: /.*/
             tags:
               # This Regex says: only run on tags of the type x.x.x
-              only: /^\d+\.\d+\.\d+$/
+              only: /v\d+\.\d+\.\d+$/
       - check-schemas-on-prod:
           requires:
             - publish-schemas-to-prod
@@ -62,7 +62,7 @@ workflows:
               ignore: /.*/
             tags:
               # This Regex says: only run on tags of the type x.x.x
-              only: /^\d+\.\d+\.\d+$/
+              only: /v\d+\.\d+\.\d+$/
 
 jobs:
   build:
