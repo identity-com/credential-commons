@@ -164,7 +164,7 @@ jobs:
       - image: civicteam/circle-aws-node
         environment:
           S3_BUCKET_SCHEMA_URL: s3://schemas.civic.com/
-          S3_PUBLIC_SCHEMA_URL: https://schemas.civic.com
+          S3_PUBLIC_SCHEMA_URL: http://schemas.civic.com.s3-website-us-east-1.amazonaws.com
 
     # working directory for all tasks is the backend folder
     working_directory: ~/repo
@@ -195,7 +195,7 @@ jobs:
       # image extended from circleci/node:8.9 and includes AWS CLI
       - image: civicteam/circle-aws-node
         environment:
-          S3_PUBLIC_SCHEMA_URL: http://schemas.civic.com
+          S3_PUBLIC_SCHEMA_URL: http://schemas.civic.com.s3-website-us-east-1.amazonaws.com
 
     # working directory for all tasks is the backend folder
     working_directory: ~/repo
