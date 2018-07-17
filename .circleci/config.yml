@@ -21,16 +21,27 @@ workflows:
               only:
                 - develop
 
-  # releases trigger a release on prod
+  # trigger a release on production
   # after the release it will tag on github on the form x.x.x
-  release-and-publish:
+  release-tag:
     jobs:
-      - hold:
-          type: approval
+      - release:
           filters:
             branches:
               only:
                 - master
+  # after the tag, it will
+  publish-schemas:
+    jobs:
+      - hold:
+          type: approval
+          filters:
+            # ignore any non-tagged commit on any branch by default
+            branches:
+              ignore: /.*/
+            tags:
+              # This Regex says: only run on tags of the type x.x.x
+              only: /^\d+\.\d+\.\d+$/
       - publish-schemas-to-prod:
           context: Production
           requires:
@@ -38,23 +49,20 @@ workflows:
           filters:
             # ignore any non-tagged commit on any branch by default
             branches:
-              only:
-                - master
+              ignore: /.*/
+            tags:
+              # This Regex says: only run on tags of the type x.x.x
+              only: /^\d+\.\d+\.\d+$/
       - check-schemas-on-prod:
           requires:
             - publish-schemas-to-prod
           filters:
+            # ignore any non-tagged commit on any branch by default
             branches:
-              only:
-                - master
-      - release:
-          requires:
-            - publish-schemas-to-prod
-            - check-schemas-on-prod
-          filters:
-            branches:
-              only:
-                - master
+              ignore: /.*/
+            tags:
+              # This Regex says: only run on tags of the type x.x.x
+              only: /^\d+\.\d+\.\d+$/
 
 jobs:
   build:
@@ -236,6 +244,7 @@ jobs:
 
       - run: sudo npm install -g npm
       - run: npm ci
+      - run: npm run build
 
       # - save_cache:
       #     paths:
