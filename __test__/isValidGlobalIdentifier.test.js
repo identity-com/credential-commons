@@ -13,6 +13,18 @@ describe('isGlobalIdentifier Tests', () => {
     }
     expect(target).toThrow('Invalid Global Identifier Prefix');
   });
+  test('claim-civ:Identity:firstNome-1 is invalid', () => {
+    function target() {
+      isGlobalIdentifier('claim-civ:Identity:firstNome-1');
+    }
+    expect(target).toThrow('claim-civ:Identity:firstNome-1 is not valid');
+  });
+  test('credential-civ:Credential:CivicBasico-1 is invalid', () => {
+    function target() {
+      isGlobalIdentifier('credential-civ:Credential:CivicBasico-1');
+    }
+    expect(target).toThrow('credential-civ:Credential:CivicBasico-1 is not valid');
+  });
   test('claim-civ:Identity:firstName-1 is valid', () => {
     expect(isGlobalIdentifier('claim-civ:Identity:firstName-1')).toBeTruthy();
   });
