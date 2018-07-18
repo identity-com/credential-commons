@@ -34,33 +34,24 @@ workflows:
           requires:
             - release-tag
           filters:
-            # ignore any non-tagged commit on any branch by default
             branches:
-              ignore: /.*/
-            tags:
-              # This Regex says: only run on tags of the type x.x.x
-              only: /^v.*/
+              only:
+                - master
       - publish-schemas-to-prod:
           context: Production
           requires:
             - hold
           filters:
-            # ignore any non-tagged commit on any branch by default
             branches:
-              ignore: /.*/
-            tags:
-              # This Regex says: only run on tags of the type x.x.x
-              only: /^v.*/
+              only:
+                - master
       - check-schemas-on-prod:
           requires:
             - publish-schemas-to-prod
           filters:
-            # ignore any non-tagged commit on any branch by default
             branches:
-              ignore: /.*/
-            tags:
-              # This Regex says: only run on tags of the type x.x.x
-              only: /^v.*/
+              only:
+                - master
 
 
 jobs:
