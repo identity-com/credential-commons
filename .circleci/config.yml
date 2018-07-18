@@ -22,7 +22,7 @@ workflows:
                 - develop
       # trigger a release on production
       # after the release it will tag on github on the form x.x.x
-      - release-tag:
+      - release:
           requires:
             - build
           filters:
