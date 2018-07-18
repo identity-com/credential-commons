@@ -20,28 +20,26 @@ workflows:
             branches:
               only:
                 - develop
-
-  # trigger a release on production
-  # after the release it will tag on github on the form x.x.x
-  release-tag:
-    jobs:
-      - release:
+      # trigger a release on production
+      # after the release it will tag on github on the form x.x.x
+      - release-tag:
+          requires:
+            - build
           filters:
             branches:
               only:
                 - master
-  # after the tag, it will
-  publish-schemas:
-    jobs:
       - hold:
           type: approval
+          requires:
+            - release-tag
           filters:
             # ignore any non-tagged commit on any branch by default
             branches:
               ignore: /.*/
             tags:
               # This Regex says: only run on tags of the type x.x.x
-              only: /v\d+\.\d+\.\d+$/
+              only: /^v.*/
       - publish-schemas-to-prod:
           context: Production
           requires:
@@ -52,7 +50,7 @@ workflows:
               ignore: /.*/
             tags:
               # This Regex says: only run on tags of the type x.x.x
-              only: /v\d+\.\d+\.\d+$/
+              only: /^v.*/
       - check-schemas-on-prod:
           requires:
             - publish-schemas-to-prod
@@ -62,7 +60,8 @@ workflows:
               ignore: /.*/
             tags:
               # This Regex says: only run on tags of the type x.x.x
-              only: /v\d+\.\d+\.\d+$/
+              only: /^v.*/
+
 
 jobs:
   build:
