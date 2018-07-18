@@ -22,7 +22,7 @@ workflows:
                 - develop
       # trigger a release on production
       # after the release it will tag on github on the form x.x.x
-      - release:
+      - release-tag:
           requires:
             - build
           filters:
@@ -227,7 +227,7 @@ jobs:
 
       - run: npm run check-schemas
 
-  release:
+  release-tag:
     docker:
       - image: circleci/node:8.11
 
