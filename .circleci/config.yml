@@ -21,7 +21,7 @@ workflows:
               only:
                 - develop
       # trigger a release on production
-        # after the release it will tag on github on the form x.x.x
+      # after the release it will tag on github on the form x.x.x
       - release-tag:
           requires:
             - build
@@ -29,40 +29,30 @@ workflows:
             branches:
               only:
                 - master
-
-  # after the tag, it will
-  publish-schemas:
-    jobs:
       - hold:
           type: approval
+          requires:
+            - release-tag
           filters:
-            # ignore any non-tagged commit on any branch by default
             branches:
-              ignore: /.*/
-            tags:
-              # This Regex says: only run on tags of the type x.x.x
-              only: /^v.*/
+              only:
+                - master
       - publish-schemas-to-prod:
           context: Production
           requires:
             - hold
           filters:
-            # ignore any non-tagged commit on any branch by default
             branches:
-              ignore: /.*/
-            tags:
-              # This Regex says: only run on tags of the type x.x.x
-              only: /^v.*/
+              only:
+                - master
       - check-schemas-on-prod:
           requires:
             - publish-schemas-to-prod
           filters:
-            # ignore any non-tagged commit on any branch by default
             branches:
-              ignore: /.*/
-            tags:
-              # This Regex says: only run on tags of the type x.x.x
-              only: /^v.*/
+              only:
+                - master
+
 
 jobs:
   build:
@@ -228,7 +218,7 @@ jobs:
 
       - run: npm run check-schemas
 
-  release:
+  release-tag:
     docker:
       - image: circleci/node:8.11
 

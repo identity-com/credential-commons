@@ -1,9 +1,10 @@
+const Ajv = require('ajv');
+
 const UCA = require('../../src/uca/UserCollectableAttribute');
 const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');
 const ucaDefinitions = require('../../src/uca/definitions');
-const Ajv = require('ajv');
 
 jest.setTimeout(1500000);
 
@@ -25,7 +26,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
   });
 
   it('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
-    credentialDefinitions.forEach(async (credentialDefinition) => {
+    const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
         const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
@@ -38,15 +39,23 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         ucaArray.push(dependentUca);
       });
       const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+
       await credential.requestAnchor();
       await credential.updateAnchor();
+
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
+
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
       const ajv = new Ajv();
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
-      expect(isValid).toBeTruthy();
+      return isValid;
+    };
+    const promises = [];
+    credentialDefinitions.forEach((credentialDefinition) => { promises.push(validateSchemaJestStep(credentialDefinition)); });
+    Promise.all(promises).then((values) => {
+      values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
     });
   });
