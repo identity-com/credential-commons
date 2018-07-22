@@ -1,5 +1,7 @@
 const UCA = require('./uca/UserCollectableAttribute');
 const VC = require('./creds/VerifiableCredential');
+const ucaDefinitions = require('./uca/definitions');
+const credentialDefinitions = require('./creds/definitions');
 const { initServices } = require('./services/index');
 
 /**
@@ -10,6 +12,8 @@ const { initServices } = require('./services/index');
 function CredentialCommons() {
   this.UCA = UCA;
   this.VC = VC;
+  this.ucaDefinitions = ucaDefinitions;
+  this.credentialDefinitions = credentialDefinitions;
   this.init = initServices;
   return this;
 }
