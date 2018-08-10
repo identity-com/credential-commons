@@ -45,7 +45,6 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
-
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
       const ajv = new Ajv();
       const validate = ajv.compile(jsonSchema);

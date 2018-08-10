@@ -1,7 +1,8 @@
-const UCA = require('../../src/uca/UserCollectableAttribute');
-const VC = require('../../src/creds/VerifiableCredential');
 const _ = require('lodash');
 const fs = require('fs');
+
+const UCA = require('../../src/uca/UserCollectableAttribute');
+const VC = require('../../src/creds/VerifiableCredential');
 
 jest.mock('../../src/creds/definitions');
 
