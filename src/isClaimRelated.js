@@ -8,7 +8,7 @@ const vcDefinitions = require('./creds/definitions');
  * @param credential the parent identifier, eg: civ:Credential:GenericId
  * @return true if the dependency exists and false if it doesn't
  */
-function isValidClaim(claim, uca, credential) {
+function isClaimRelated(claim, uca, credential) {
   // first get the UCA identifier
   const ucaIdentifier = uca.substring(uca.indexOf('-') + 1, uca.lastIndexOf('-'));
   // check on the credential commons if this identifier exists
@@ -39,4 +39,4 @@ function isValidClaim(claim, uca, credential) {
   }
 }
 
-module.exports = isValidClaim;
+module.exports = isClaimRelated;
