@@ -4,6 +4,7 @@ const UCA = require('./uca/UserCollectableAttribute');
 const VC = require('./creds/VerifiableCredential');
 const { initServices } = require('./services/index');
 const isValidGlobalIdentifier = require('./isValidGlobalIdentifier');
+const isClaimRelated = require('./isClaimRelated');
 /**
  * Entry Point for Civic Credential Commons
  * @returns {CredentialCommons}
@@ -14,6 +15,7 @@ function CredentialCommons() {
   this.VC = VC;
   this.init = initServices;
   this.isValidGlobalIdentifier = isValidGlobalIdentifier;
+  this.isClaimRleated = isClaimRelated;
   return this;
 }
 

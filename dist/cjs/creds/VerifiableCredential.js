@@ -5,12 +5,12 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 const _ = require('lodash');
 const MerkleTools = require('merkle-tools');
 const sjcl = require('sjcl');
+const timestamp = require('unix-timestamp');
+const flatten = require('flat');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
-const timestamp = require('unix-timestamp');
-const flatten = require('flat');
 
 const anchorService = services.container.AnchorService;
 
@@ -154,10 +154,10 @@ const VERIFY_LEVELS = {
 
 /**
  * Creates a new Verifiable Credential based on an well-known identifier and it's claims dependencies
- * @param {*} identifier 
- * @param {*} issuer 
- * @param {*} ucas 
- * @param {*} version 
+ * @param {*} identifier
+ * @param {*} issuer
+ * @param {*} ucas
+ * @param {*} version
  */
 function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
   var _this = this;
@@ -203,7 +203,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
   /**
    * Creates a filtered credential exposing only the requested claims
-   * @param {*} requestedClaims 
+   * @param {*} requestedClaims
    */
   this.filter = requestedClaims => {
     const filtered = _.cloneDeep(this);
@@ -220,7 +220,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   /**
    * Request that this credential MerkleRoot is anchored on the Blockchain.
    * This will return a _temporary_ anchor meaning that the blockchain entry is still not confirmed.
-   * @param {*} options 
+   * @param {*} options
    */
   this.requestAnchor = (() => {
     var _ref = _asyncToGenerator(function* (options) {
