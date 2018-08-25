@@ -5,6 +5,7 @@ const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');
 const ucaDefinitions = require('../../src/uca/definitions');
+const uuidv1 = require('uuid/v1');
 
 jest.setTimeout(1500000);
 
@@ -38,7 +39,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
         ucaArray.push(dependentUca);
       });
-      const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+      const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
 
       await credential.requestAnchor();
       await credential.updateAnchor();
@@ -73,7 +74,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+    const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
@@ -100,7 +101,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+    const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
