@@ -101,6 +101,12 @@ const definitions = [
     credentialItem: true,
   },
   {
+    identifier: 'civ:Type:documentNumber',
+    version: '1',
+    type: 'Number',
+    credentialItem: true,
+  },
+  {
     identifier: 'civ:Identity:name', // We can define a new identifier and the structure at same definition
     version: '1',
     type: {
