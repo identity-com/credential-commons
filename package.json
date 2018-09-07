@@ -65,7 +65,6 @@
     "chainauth": "civicteam/multisig-attest.git#v1.0.1",
     "chalk": "^2.4.1",
     "civic-auth-utils": "github:civicteam/civic-auth-utils",
-    "civic-log": "civicteam/civic-log#2.1.5",
     "clear": "^0.1.0",
     "cross-env": "^5.1.6",
     "dotenv": "^6.0.0",
@@ -87,7 +86,8 @@
     "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "winston": "^3.1.0"
   },
   "jest": {
     "modulePathIgnorePatterns": [
