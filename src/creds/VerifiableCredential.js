@@ -73,8 +73,8 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   if (hash !== leave.targetHash) invalidHashs.push(leave.targetHash);
 
   // 2. Validate targetHashs + proofs with merkleRoot
-  const isValidProof = merkleTools.validateProof(leave.proof, leave.targetHash, signature.merkleRoot);
-  // console.log(`leave.proof / ${leave.targetHash} / ${signature.merkleRoot}: ${isValidProof}`);
+  const isValidProof = merkleTools.validateProof(leave.node, leave.targetHash, signature.merkleRoot);
+  // console.log(`leave.node / ${leave.targetHash} / ${signature.merkleRoot}: ${isValidProof}`);
   if (!isValidProof) invalidProofs.push(leave.targetHash);
 }
 
@@ -103,7 +103,7 @@ class CivicMerkleProof {
     _.forEach(hashes, (hash, idx) => {
       this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier);
       this.leaves[idx].targetHash = hash;
-      this.leaves[idx].proof = merkleTools.getProof(idx);
+      this.leaves[idx].node = merkleTools.getProof(idx);
     });
     this.leaves = _.filter(this.leaves, el => !(el.identifier === 'civ:Random:node'));
     this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
@@ -186,12 +186,12 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
-    this.claims = new ClaimModel(ucas);
-    this.signature = new CivicMerkleProof(proofUCAs);
+    this.claim = new ClaimModel(ucas);
+    this.proof = new CivicMerkleProof(proofUCAs);
     if (!_.isEmpty(definition.excludes)) {
-      const removed = _.remove(this.signature.leaves, el => _.includes(definition.excludes, el.identifier));
+      const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
-        _.unset(this.claims, r.claimPath);
+        _.unset(this.claim, r.claimPath);
       });
     }
   }
@@ -207,11 +207,11 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.filter = (requestedClaims) => {
     const filtered = _.cloneDeep(this);
-    _.remove(filtered.signature.leaves, el => !_.includes(requestedClaims, el.identifier));
+    _.remove(filtered.proof.leaves, el => !_.includes(requestedClaims, el.identifier));
 
-    filtered.claims = {};
-    _.forEach(filtered.signature.leaves, (el) => {
-      _.set(filtered.claims, el.claimPath, _.get(this.claims, el.claimPath));
+    filtered.claim = {};
+    _.forEach(filtered.proof.leaves, (el) => {
+      _.set(filtered.claim, el.claimPath, _.get(this.claim, el.claimPath));
     });
 
     return filtered;
@@ -223,8 +223,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @param {*} options
    */
   this.requestAnchor = async (options) => {
-    const anchor = await anchorService.anchor(this.identifier, this.signature.merkleRoot, options);
-    this.signature.anchor = anchor;
+    const anchor = await anchorService.anchor(this.identifier, this.proof.merkleRoot, options);
+    this.proof.anchor = anchor;
     return this;
   };
 
@@ -233,8 +233,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * already confirmed on the blockchain.
    */
   this.updateAnchor = async () => {
-    const anchor = await anchorService.update(this.signature.anchor);
-    this.signature.anchor = anchor;
+    const anchor = await anchorService.update(this.proof.anchor);
+    this.proof.anchor = anchor;
     return this;
   };
 
@@ -244,8 +244,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.verifyProofs = () => {
     const expiry = _.clone(this.expiry);
-    const claims = _.clone(this.claims);
-    const signature = _.clone(this.signature);
+    const claims = _.clone(this.claim);
+    const signature = _.clone(this.proof);
     const signLeaves = _.get(signature, 'leaves');
     let valid = false;
 
@@ -326,24 +326,24 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This method checks if the signature matches for the root of the Merkle Tree
    * @return true or false for the validation
    */
-  this.verifySignature = async () => anchorService.verifySignature(this.signature);
+  this.verifySignature = async () => anchorService.verifySignature(this.proof);
 
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
-  this.verifyAttestation = async () => anchorService.verifyAttestation(this.signature);
+  this.verifyAttestation = async () => anchorService.verifyAttestation(this.proof);
 
   /**
    * This method will revoke the attestation on the chain
    * @returns {Promise<Promise<*>|void>}
    */
-  this.revokeAttestation = async () => anchorService.revokeAttestation(this.signature);
+  this.revokeAttestation = async () => anchorService.revokeAttestation(this.proof);
 
   /**
    * This method will check on the chain the balance of the transaction and if it's still unspent, than it's not revoked
    * @returns {Promise<Promise<*>|void>}
    */
-  this.isRevoked = async () => anchorService.isRevoked(this.signature);
+  this.isRevoked = async () => anchorService.isRevoked(this.proof);
   return this;
 }
 
@@ -359,8 +359,8 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
   newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
   newObj.version = _.clone(verifiableCredentialJSON.version);
   newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
-  newObj.claims = _.cloneDeep(verifiableCredentialJSON.claims);
-  newObj.signature = _.cloneDeep(verifiableCredentialJSON.signature);
+  newObj.claim = _.cloneDeep(verifiableCredentialJSON.claim);
+  newObj.proof = _.cloneDeep(verifiableCredentialJSON.proof);
   return newObj;
 };
 

@@ -9,7 +9,7 @@
       "Credential",
       "civ:Credential:TestWithExcludes"
     ],
-    "claims": {
+    "claim": {
       "identity": {
         "name": {
           "first": "Joao",
@@ -22,7 +22,7 @@
         }
       }
     },
-    "signature": {
+    "proof": {
       "type": "CivicMerkleProof2018",
       "merkleRoot": "7636eb5e587f9f1270f5af9348c19f7ab0f8ee43997437b7308acfec24937514",
       "anchor": "TBD (Civic Blockchain Attestation)",
@@ -32,7 +32,7 @@
           "value": "urn:first:61949c328ecea8fbf10ec4189e6ea8534bc228bd93fe5d125116bd91610dbb15:Joao|urn:last:aa70b8a4277037d5a404f71e9626144e8ab973adc6b9399be4afa3cc9ae3a175:Santos|urn:middle:b37d72f4a2f0f3f331a45c98d818a003710795efdbe3d5affc75fb8521d89c70:Barbosa|",
           "claimPath": "identity.name",
           "targetHash": "37183cff33f4f983c2be1fbdd73f4797826b6b939bce545c6533ba8d0b20cd1d",
-          "proof": [
+          "node": [
             {
               "right": "e28f4e5ad7eb0fbd29826e3bf8a7841bd2595945038eb7e281b3f288d60f3ee2"
             },
@@ -55,7 +55,7 @@
           "value": "urn:first:61949c328ecea8fbf10ec4189e6ea8534bc228bd93fe5d125116bd91610dbb15:Joao",
           "claimPath": "identity.name.first",
           "targetHash": "e28f4e5ad7eb0fbd29826e3bf8a7841bd2595945038eb7e281b3f288d60f3ee2",
-          "proof": [
+          "node": [
             {
               "left": "37183cff33f4f983c2be1fbdd73f4797826b6b939bce545c6533ba8d0b20cd1d"
             },
@@ -78,7 +78,7 @@
           "value": "urn:first:aa70b8a4277037d5a404f71e9626144e8ab973adc6b9399be4afa3cc9ae3a175:Santos",
           "claimPath": "identity.name.last",
           "targetHash": "860aa781133edbffd2b9066f3c7e853c4264de00a48d642cd95f9a8df5d9271e",
-          "proof": [
+          "node": [
             {
               "left": "716924e2249c1fd5ec0854d8c80cb5a177a07dfd24ff01c5d54ebef679f8ed46"
             },
@@ -101,7 +101,7 @@
           "value": "urn:day:2f11532f21ab7580fe4ac35e34e30ce14d1d7aec7e14522ec2730f1121c69854:00000020|urn:month:c70a5cd544f0dfd06821e89c8ee1d96e9e758ebff83d0c577dae81784f638daa:00000003|urn:year:4adf06986e1631d8c583180f1db75a0469ec14c2afb535ad557066d401348429:00001978|",
           "claimPath": "identity.dateOfBirth",
           "targetHash": "931ee94f8c9418ec2b7da431b6a2758669d0643ebfd64efc2202ff2f79deebf5",
-          "proof": [
+          "node": [
             {
               "right": "667ffc7a048249d940ba7fe736a288c4b58cfba4e944a893dbaf4b1da4963949"
             },
@@ -124,7 +124,7 @@
           "value": "urn:issuer:bad4d23161913860d5e153385dbd819ce2845b5784cee2f00e6c4d7912524ebc:jest:test",
           "claimPath": "meta.issuer",
           "targetHash": "667ffc7a048249d940ba7fe736a288c4b58cfba4e944a893dbaf4b1da4963949",
-          "proof": [
+          "node": [
             {
               "left": "931ee94f8c9418ec2b7da431b6a2758669d0643ebfd64efc2202ff2f79deebf5"
             },
@@ -147,7 +147,7 @@
           "value": "urn:issued:f777976fe1bcce5ed9e4efa989a3b8d552b978c3e7346757e5f794cf4e884a1c:2018-06-19T21:55:54.858Z",
           "claimPath": "meta.issued",
           "targetHash": "fcac61714cf60bd930fc954eba2e3e650914984169d7db64614c72388c1cee17",
-          "proof": [
+          "node": [
             {
               "right": "44f043ba4dab310ddd3cb517cccb3d99b9b7428ed2d3d03885fffc0d10b66430"
             },
@@ -170,7 +170,7 @@
           "value": "urn:expiry:960912486859e1593837587731a83127237fb0a8ca684bcaefc08025db35d2b8:2018-06-18T21:55:54.858Z",
           "claimPath": "meta.expiry",
           "targetHash": "44f043ba4dab310ddd3cb517cccb3d99b9b7428ed2d3d03885fffc0d10b66430",
-          "proof": [
+          "node": [
             {
               "left": "fcac61714cf60bd930fc954eba2e3e650914984169d7db64614c72388c1cee17"
             },
