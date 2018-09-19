@@ -221,8 +221,8 @@ describe('UCA Constructions tests', () => {
     expect(attValues[0].value).toContain(':00001978');
   });
 
-  test('Construct a civ:Meta:expiry', () => {
-    const identifier = 'civ:Meta:expiry';
+  test('Construct a civ:Meta::expirationDate', () => {
+    const identifier = 'civ:Meta::expirationDate';
     const isoDate = '2018-06-20T13:51:18.640Z';
     const v = new UCA(identifier, isoDate);
     expect(v).toBeDefined();
@@ -233,9 +233,9 @@ describe('UCA Constructions tests', () => {
     expect(attValues[0].value).toContain(`:${isoDate}`);
   });
 
-  test('Construct a civ:Meta:expiry as a Attestable Value', () => {
-    const identifier = 'civ:Meta:expiry';
-    const anAttestationValue = 'urn:expiry:9dabdd37eca1bc98bcc725d66c77f10707fa9f3292752a31ad9dd94d17557e81:2018-06-20T13:51:18.640Z';
+  test('Construct a civ:Meta::expirationDate as a Attestable Value', () => {
+    const identifier = 'civ:Meta::expirationDate';
+    const anAttestationValue = 'urn::expirationDate:9dabdd37eca1bc98bcc725d66c77f10707fa9f3292752a31ad9dd94d17557e81:2018-06-20T13:51:18.640Z';
     const v = new UCA(identifier, { attestableValue: anAttestationValue });
     expect(v).toBeDefined();
     const attValues = v.getAttestableValues();

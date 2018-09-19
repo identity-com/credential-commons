@@ -168,7 +168,7 @@
       {
         "identifier": "civ:Meta:expiry",
         "value": "urn:expiry:3277d5308fc57e84a792b2286cc5675ff01c46c244c85d036d224c633ab65d87:2045-11-12T22:55:01.604Z",
-        "claimPath": "meta.expiry",
+        "claimPath": "meta.expirationDate",
         "targetHash": "cddf46685dba13cb79443a6f753bffd72e1ea3a3df0eacdd904985be0d4fde8f",
         "node": [
           {

@@ -52,7 +52,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuer' })).toBeDefined();
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuanceDate' })).toBeDefined();
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
-    expect(cred.expiry).toBeNull();
+    expect(cred.expirationDate).toBeNull();
     expect(cred.proof.leaves).toHaveLength(7);
   });
   test('New Expirable Credentials', () => {
@@ -68,7 +68,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuer' })).toBeDefined();
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuanceDate' })).toBeDefined();
-    expect(cred.expiry).toBeDefined();
+    expect(cred.expirationDate).toBeDefined();
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
     expect(cred.proof.leaves).toHaveLength(7);
   });

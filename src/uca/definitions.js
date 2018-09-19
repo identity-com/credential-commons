@@ -18,7 +18,7 @@ const definitions = [
     attestable: true,
   },
   {
-    identifier: 'civ:Meta:expiry',
+    identifier: 'civ:Meta:expirationDate',
     version: '1',
     type: 'String',
     attestable: true,

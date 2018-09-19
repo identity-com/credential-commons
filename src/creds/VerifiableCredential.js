@@ -168,8 +168,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.issuanceDate = (new Date()).toISOString();
   const issuanceDateUCA = new UCA('civ:Meta:issuanceDate', this.issuanceDate);
   this.identifier = identifier;
-  this.expiry = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-  const expiryUCA = new UCA('civ:Meta:expiry', this.expiry ? this.expiry : 'null');
+  this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
+  const expiryUCA = new UCA('civ:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
@@ -243,7 +243,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @returns {boolean}
    */
   this.verifyProofs = () => {
-    const expiry = _.clone(this.expiry);
+    const expiry = _.clone(this.expirationDate);
     const claims = _.clone(this.claim);
     const signature = _.clone(this.proof);
     const signLeaves = _.get(signature, 'leaves');
@@ -278,7 +278,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     });
 
     // It has to be present Credential expiry even with null value
-    const expiryIdx = _.indexOf(leavesClaimPaths, 'meta.expiry');
+    const expiryIdx = _.indexOf(leavesClaimPaths, 'meta.expirationDate');
     if (expiryIdx >= 0) {
       const expiryLeave = signLeaves[expiryIdx];
       const metaClaim = {
@@ -355,7 +355,7 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
   const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
-  newObj.expiry = _.clone(verifiableCredentialJSON.expiry);
+  newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
   newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
   newObj.version = _.clone(verifiableCredentialJSON.version);
   newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
