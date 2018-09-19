@@ -173,7 +173,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   test('cred.verifyProofs(): with a valid cred with expirationDate, should return TRUE', () => {
-    const credJSon = require('./fixtures/CredWithFutureexpirationDate.json'); // eslint-disable-line
+    const credJSon = require('./fixtures/CredWithFutureExpiry.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
     expect(cred.verifyProofs()).toBeTruthy();
