@@ -165,13 +165,13 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.id = null;
   this.issuer = issuer;
   const issuerUCA = new UCA('civ:Meta:issuer', this.issuer);
-  this.issued = (new Date()).toISOString();
-  const issuedUCA = new UCA('civ:Meta:issued', this.issued);
+  this.issuanceDate = (new Date()).toISOString();
+  const issuanceDateUCA = new UCA('civ:Meta:issuanceDate', this.issuanceDate);
   this.identifier = identifier;
   this.expiry = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
   const expiryUCA = new UCA('civ:Meta:expiry', this.expiry ? this.expiry : 'null');
 
-  const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuedUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuedUCA);
+  const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
   if (!_.includes(validIdentifiers(), identifier)) {
     throw new Error(`${identifier} is not defined`);
@@ -354,7 +354,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
   const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
-  newObj.issued = _.clone(verifiableCredentialJSON.issued);
+  newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
   newObj.expiry = _.clone(verifiableCredentialJSON.expiry);
   newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
   newObj.version = _.clone(verifiableCredentialJSON.version);

@@ -12,7 +12,7 @@ const definitions = [
     attestable: true,
   },
   {
-    identifier: 'civ:Meta:issued',
+    identifier: 'civ:Meta:issuanceDate',
     version: '1',
     type: 'String',
     attestable: true,

@@ -1,7 +1,7 @@
 {
   "id": null,
   "issuer": "jest:test",
-  "issued": "2018-06-19T21:52:47.512Z",
+  "issuanceDate": "2018-06-19T21:52:47.512Z",
   "identifier": "civ:Credential:TestWithExcludes",
   "expiry": "2028-06-19T08:04:47.512Z",
   "version": 1,
@@ -143,9 +143,9 @@
         ]
       },
       {
-        "identifier": "civ:Meta:issued",
-        "value": "urn:issued:6e8ec32829149c0e79f842bcea74e9ecb35b5caef8ebbef3a2cb4d0acc050c7b:2018-06-19T21:52:47.512Z",
-        "claimPath": "meta.issued",
+        "identifier": "civ:Meta:issuanceDate",
+        "value": "urn:issuanceDate:6e8ec32829149c0e79f842bcea74e9ecb35b5caef8ebbef3a2cb4d0acc050c7b:2018-06-19T21:52:47.512Z",
+        "claimPath": "meta.issuanceDate",
         "targetHash": "c2b6b8d96dd3a3ff0e08fd9ee3c92c2a1092188553264a7269f1141e7335afb6",
         "node": [
           {
