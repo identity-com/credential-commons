@@ -3,7 +3,7 @@
   "issuer": "jest:test",
   "issuanceDate": "2018-06-26T23:31:52.228Z",
   "identifier": "civ:Credential:SimpleTest",
-  "expiry": null,
+  "expirationDate": null,
   "version": 1,
   "type": [
     "Credential",

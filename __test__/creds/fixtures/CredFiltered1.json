@@ -3,7 +3,7 @@
   "issuer": "jest:test",
   "issuanceDate": "2018-06-19T21:52:47.512Z",
   "identifier": "civ:Credential:TestWithExcludes",
-  "expiry": "2028-06-19T08:04:47.512Z",
+  "expirationDate": "2028-06-19T08:04:47.512Z",
   "version": 1,
   "type": [
     "Credential",
@@ -166,8 +166,8 @@
         ]
       },
       {
-        "identifier": "civ:Meta:expiry",
-        "value": "urn:expiry:f4729360448714d9902894b38f5f977702441379ffc53337f2261914879fc32d:2028-06-19T08:04:47.512Z",
+        "identifier": "civ:Meta:expirationDate",
+        "value": "urn:expirationDate:f4729360448714d9902894b38f5f977702441379ffc53337f2261914879fc32d:2028-06-19T08:04:47.512Z",
         "claimPath": "meta.expirationDate",
         "targetHash": "6393b47db993ca6de857f5ea39f987d2a324e1cfcdb8076a63a8b35b8cdab6e7",
         "node": [

@@ -38,7 +38,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
     expect(cred.proof.leaves).toHaveLength(8);
   });
-  it('should validate new defined credentials with the obligatory Meta:expiry UCA with null value', () => {
+  it('should validate new defined credentials with the obligatory Meta:expirationDate UCA with null value', () => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:TestWithExcludes', 'jest:test', null, [name, dob], '1');
@@ -51,7 +51,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuer' })).toBeDefined();
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuanceDate' })).toBeDefined();
-    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
+    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:expirationDate' })).toBeDefined();
     expect(cred.expirationDate).toBeNull();
     expect(cred.proof.leaves).toHaveLength(7);
   });
@@ -69,7 +69,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuer' })).toBeDefined();
     expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuanceDate' })).toBeDefined();
     expect(cred.expirationDate).toBeDefined();
-    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:expiry' })).toBeDefined();
+    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:expirationDate' })).toBeDefined();
     expect(cred.proof.leaves).toHaveLength(7);
   });
   test('New Defined Credentials return the incorrect global Credential Identifier', () => {
@@ -138,7 +138,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
 
-  test('cred.verifyProofs(): with a valid cred without expiry, should return TRUE', () => {
+  test('cred.verifyProofs(): with a valid cred without expirationDate, should return TRUE', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
@@ -146,7 +146,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
 
-  test('cred.verify(): with a valid cred without expiry, should return at least VERIFY_LEVELS.PROOFS level', () => {
+  test('cred.verify(): with a valid cred without expirationDate, should return at least VERIFY_LEVELS.PROOFS level', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
@@ -154,7 +154,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
 
-  test('cred.verify(): VERIFY_LEVELS.PROOFS without expiry INVALID', () => {
+  test('cred.verify(): VERIFY_LEVELS.PROOFS without expirationDate INVALID', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     // messing up with the targetHash:
     credJSon.proof.leaves[0].targetHash = credJSon.proof.leaves[0].targetHash.replace('a', 'b');
@@ -163,7 +163,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.verify()).toEqual(VC.VERIFY_LEVELS.INVALID);
   });
 
-  it('should fail verification since it doesn\'t have an Meta:expiry UCA', () => {
+  it('should fail verification since it doesn\'t have an Meta:expirationDate UCA', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     // messing up with the targetHash:
     credJSon.proof.leaves[0].targetHash = credJSon.proof.leaves[0].targetHash.replace('a', 'b');
@@ -172,8 +172,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.verifyProofs()).toBeFalsy();
   });
 
-  test('cred.verifyProofs(): with a valid cred with expiry, should return TRUE', () => {
-    const credJSon = require('./fixtures/CredWithFutureExpiry.json'); // eslint-disable-line
+  test('cred.verifyProofs(): with a valid cred with expirationDate, should return TRUE', () => {
+    const credJSon = require('./fixtures/CredWithFutureexpirationDate.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
     expect(cred.verifyProofs()).toBeTruthy();
