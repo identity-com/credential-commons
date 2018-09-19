@@ -13,10 +13,10 @@ describe('Integration Tests for Verifiable Credentials', () => {
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', `jest:test${timestamp}`, null, [name, dob], 1);
     return cred.requestAnchor().then((updated) => {
-      expect(updated.signature.anchor.type).toBe('temporary');
-      expect(updated.signature.anchor.value).not.toBeDefined();
-      expect(updated.signature.anchor).toBeDefined();
-      expect(updated.signature.anchor.schema).toBe('tbch-20180201');
+      expect(updated.proof.anchor.type).toBe('temporary');
+      expect(updated.proof.anchor.value).not.toBeDefined();
+      expect(updated.proof.anchor).toBeDefined();
+      expect(updated.proof.anchor.schema).toBe('tbch-20180201');
       done();
     });
   });
@@ -26,11 +26,11 @@ describe('Integration Tests for Verifiable Credentials', () => {
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', `jest:test${timestamp}`, null, [name, dob], 1);
     return cred.requestAnchor().then((updated) => {
-      expect(updated.signature.anchor).toBeDefined();
+      expect(updated.proof.anchor).toBeDefined();
       return updated.updateAnchor().then((newUpdated) => {
-        expect(newUpdated.signature.anchor.type).toBe('permanent');
-        expect(newUpdated.signature.anchor).toBeDefined();
-        expect(newUpdated.signature.anchor.value).toBeDefined();
+        expect(newUpdated.proof.anchor.type).toBe('permanent');
+        expect(newUpdated.proof.anchor).toBeDefined();
+        expect(newUpdated.proof.anchor.value).toBeDefined();
         done();
       });
     });
