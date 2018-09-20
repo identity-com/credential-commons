@@ -283,7 +283,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       const expiryLeave = signLeaves[expiryIdx];
       const metaClaim = {
         meta: {
-          expiry,
+          expirationDate: expiry,
         },
       };
       const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
