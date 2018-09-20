@@ -42,7 +42,7 @@ describe('Civic Anchor Module Tests', () => {
   });
 
 
-  test('Poll update until a permanent anchor', () => {
+  test.skip('Poll update until a permanent anchor', () => {
     expect.assertions(5);
     const timestamp = new Date().getTime();
     async function pollUpdate(attestation) {

@@ -1,15 +1,15 @@
 {
   "id": null,
   "issuer": "jest:test",
-  "issued": "2018-06-28T22:55:01.604Z",
+  "issuanceDate": "2018-06-28T22:55:01.604Z",
   "identifier": "civ:Credential:TestWithExcludes",
-  "expiry": "2045-11-12T22:55:01.604Z",
+  "expirationDate": "2045-11-12T22:55:01.604Z",
   "version": 1,
   "type": [
     "Credential",
     "civ:Credential:TestWithExcludes"
   ],
-  "claims": {
+  "claim": {
     "identity": {
       "name": {
         "first": "Joao",
@@ -22,7 +22,7 @@
       }
     }
   },
-  "signature": {
+  "proof": {
     "type": "CivicMerkleProof2018",
     "merkleRoot": "3b4948edea7cd6fb2fb91753ffabec0d420e411a78dc45eae7cf8707d92b3191",
     "anchor": "TBD (Civic Blockchain Attestation)",
@@ -32,7 +32,7 @@
         "value": "urn:first:a39b41b2544035c71620675b7074e355f03e89379aa5047bd0e93b289bcf19c3:Joao|urn:last:acc98e1d05a3a4763df5c00fca89bace8a51c678aae20abd8d36a270cbd934e7:Santos|urn:middle:3dfed9f9c1d51ec18ed5c7870d6b8ac9617502b83ddea4415877bff6d86e9ed7:Tampered|",
         "claimPath": "identity.name",
         "targetHash": "5516d9729a442ee6266863b8faca648503af8a58a7e71b3139abdd402763bc19",
-        "proof": [
+        "node": [
           {
             "right": "dd7c5095824542bb4cc30806cc9a215c24e1ad8ef3b662cc6310c38643a23205"
           },
@@ -55,7 +55,7 @@
         "value": "urn:first:a39b41b2544035c71620675b7074e355f03e89379aa5047bd0e93b289bcf19c3:Joao",
         "claimPath": "identity.name.first",
         "targetHash": "dd7c5095824542bb4cc30806cc9a215c24e1ad8ef3b662cc6310c38643a23205",
-        "proof": [
+        "node": [
           {
             "left": "5516d9729a442ee6266863b8faca648503af8a58a7e71b3139abdd402763bc19"
           },
@@ -78,7 +78,7 @@
         "value": "urn:last:acc98e1d05a3a4763df5c00fca89bace8a51c678aae20abd8d36a270cbd934e7:Santos",
         "claimPath": "identity.name.last",
         "targetHash": "fb70a0eddf63085abef31406eae9c6c24a956e5c4f272c34542a3e50c1125a4d",
-        "proof": [
+        "node": [
           {
             "left": "3ec0199c113a8a1a484f38aaa45658985e6f99c31ca57d9c91a1e3f14e62b87b"
           },
@@ -101,7 +101,7 @@
         "value": "urn:day:bdae380cba59d1de9a206ade05d8cf4b34e92b11263149f6bb4158668d20501e:00000020|urn:month:9ea86448b0641613d57340b3c5b100dc71b00381dc8e5157b56d779dbe021abb:00000003|urn:year:82bf848000426df53d215990fd37906d287682d555dff0bce4d02de68d514648:00001978|",
         "claimPath": "identity.dateOfBirth",
         "targetHash": "671ecc1c516d70b4e5b77e192649e099d3fbacddfffc928cedfad30ba94d7b6c",
-        "proof": [
+        "node": [
           {
             "right": "f4bf625aa6d2f17c66fffb478fda05db8fe20b4b28c635c1b79e2376c20a1bf7"
           },
@@ -124,7 +124,7 @@
         "value": "urn:issuer:2e8906fe6bbe4e8336879fddc38355a0e66152299a799fabf8aa1954049afbb1:jest:test",
         "claimPath": "meta.issuer",
         "targetHash": "f4bf625aa6d2f17c66fffb478fda05db8fe20b4b28c635c1b79e2376c20a1bf7",
-        "proof": [
+        "node": [
           {
             "left": "671ecc1c516d70b4e5b77e192649e099d3fbacddfffc928cedfad30ba94d7b6c"
           },
@@ -143,11 +143,11 @@
         ]
       },
       {
-        "identifier": "civ:Meta:issued",
-        "value": "urn:issued:9acb794b2f63d9c2846db070f24d8d02db1fea836e23971040a2aa5ab683d783:2018-06-28T22:55:01.604Z",
-        "claimPath": "meta.issued",
+        "identifier": "civ:Meta:issuanceDate",
+        "value": "urn:issuanceDate:9acb794b2f63d9c2846db070f24d8d02db1fea836e23971040a2aa5ab683d783:2018-06-28T22:55:01.604Z",
+        "claimPath": "meta.issuanceDate",
         "targetHash": "c7ee7935b63af76c5657acb10e096897217dce4eba12900bfe925f43c5068789",
-        "proof": [
+        "node": [
           {
             "right": "cddf46685dba13cb79443a6f753bffd72e1ea3a3df0eacdd904985be0d4fde8f"
           },
@@ -166,11 +166,11 @@
         ]
       },
       {
-        "identifier": "civ:Meta:expiry",
-        "value": "urn:expiry:3277d5308fc57e84a792b2286cc5675ff01c46c244c85d036d224c633ab65d87:2045-11-12T22:55:01.604Z",
-        "claimPath": "meta.expiry",
+        "identifier": "civ:Meta:expirationDate",
+        "value": "urn:expirationDate:3277d5308fc57e84a792b2286cc5675ff01c46c244c85d036d224c633ab65d87:2045-11-12T22:55:01.604Z",
+        "claimPath": "meta.expirationDate",
         "targetHash": "cddf46685dba13cb79443a6f753bffd72e1ea3a3df0eacdd904985be0d4fde8f",
-        "proof": [
+        "node": [
           {
             "left": "c7ee7935b63af76c5657acb10e096897217dce4eba12900bfe925f43c5068789"
           },

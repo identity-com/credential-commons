@@ -22,8 +22,8 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const jsonSchema = SchemaGenerator.process(cred, generatedJson);
     expect(jsonSchema.properties.type.type).toBe('array');
     expect(jsonSchema.properties.version.type).toBe('number');
-    expect(jsonSchema.properties.claims.type).toBe('object');
-    expect(jsonSchema.properties.signature.type).toBe('object');
+    expect(jsonSchema.properties.claim.type).toBe('object');
+    expect(jsonSchema.properties.proof.type).toBe('object');
   });
 
   it('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
@@ -79,7 +79,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
     // changing the data
-    generatedJson.claims.type.phone.countryCode = 123456;
+    generatedJson.claim.type.phone.countryCode = 123456;
     const ajv = new Ajv();
     const validate = ajv.compile(jsonSchema);
     // cannot be valid since country code is an string on the json schema type and uca definition
