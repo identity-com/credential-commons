@@ -3,6 +3,7 @@ const config = require('../../src/services/config');
 const { initServices, services } = require('../../src/services/index');
 const { registerClient } = require('../../src/services/CurrentCivicAnchorServiceImpl');
 const fs = require('fs');
+const uuidv4 = require('uuid/v4');
 
 initServices(null, http);
 
@@ -12,7 +13,7 @@ jest.setTimeout(100000);
 
 // Reenable when BitGo Interface continues working.
 describe('Civic Anchor Module Tests', () => {
-  // We don't want to run register a new client on every test 
+  // We don't want to run register a new client on every test
   test('Register as a valid client', () => {
     expect.assertions(4);
     return registerClient(http, config).then((result) => {
@@ -41,7 +42,6 @@ describe('Civic Anchor Module Tests', () => {
   });
 
   test('Update credential anchor', async (done) => {
-    const timestamp = new Date().getTime();
     expect.assertions(5);
     civicAnchor.anchor = jest.fn().mockImplementation(async () => {
       // mock the function or otherwise it would call the server
@@ -51,7 +51,7 @@ describe('Civic Anchor Module Tests', () => {
       // mock the function or otherwise it would call the server
       return JSON.parse(fs.readFileSync('__test__/creds/fixtures/PermanentAnchor.json', 'utf8'));
     });
-    return civicAnchor.anchor(`test${timestamp}`, `test${timestamp}`).then((result) => {
+    return civicAnchor.anchor(uuidv4(), uuidv4()).then((result) => {
       expect(result).toBeDefined();
       expect(result).toHaveProperty('type');
       return result;
