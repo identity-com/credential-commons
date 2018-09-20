@@ -23,7 +23,7 @@
     "test:watch": "jest --watch",
     "check-schemas": "cross-env NODE_ENV=false jest --no-coverage __integrations__/schemas/",
     "generate-schemas": "cross-env NODE_ENV=test node scripts/generateSchemas.js",
-    "publish-schemas": "node scripts/publishSchemas.js && aws s3 cp ./dist/schemas/public/ s3://$S3_BUCKET_SCHEMA_URL --recursive --acl public-read",
+    "publish-schemas": "node scripts/publishSchemas.js && aws s3 cp ./dist/schemas/public/ $S3_BUCKET_SCHEMA_URL --recursive --acl public-read",
     "generate-civic-config": "cross-env NODE_ENV=test node scripts/configuration.js",
     "build:cjs": "BABEL_ENV=cjs babel src -d dist/cjs",
     "build:es": "babel src -d dist/es --no-babelrc",
@@ -86,7 +86,7 @@
     "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
-    "uuid": "^3.2.1",
+    "uuid": "^3.3.2",
     "winston": "^3.1.0"
   },
   "jest": {

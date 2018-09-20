@@ -1,4 +1,4 @@
-
+const uuidv4 = require('uuid/v4');
 const { services } = require('../../src/services/index');
 const { registerClient } = require('../../src/services/CurrentCivicAnchorServiceImpl');
 
@@ -19,9 +19,8 @@ describe('Civic Anchor Module Tests', () => {
   });
 
   test('Anchor new credential', () => {
-    const timestamp = new Date().getTime();
     expect.assertions(3);
-    return civicAnchor.anchor(`test${timestamp}`, `test${timestamp}`).then((result) => {
+    return civicAnchor.anchor(uuidv4(), uuidv4()).then((result) => {
       expect(result).toBeDefined();
       expect(result).toHaveProperty('type');
       if (result.type === 'temporary') {
@@ -33,18 +32,16 @@ describe('Civic Anchor Module Tests', () => {
   });
 
   test('Update credential anchor', async (done) => {
-    const timestamp = new Date().getTime();
     expect.assertions(2);
-    const attestation = await civicAnchor.anchor(`test${timestamp}`, `test${timestamp}`);
+    const attestation = await civicAnchor.anchor(uuidv4(), uuidv4());
     expect(attestation).toBeDefined();
     expect(attestation).toHaveProperty('type');
     done();
   });
 
 
-  test.skip('Poll update until a permanent anchor', () => {
+  test('Poll update until a permanent anchor', () => {
     expect.assertions(5);
-    const timestamp = new Date().getTime();
     async function pollUpdate(attestation) {
       const updated = await civicAnchor.update(attestation);
       if (updated.type !== 'permanent') {
@@ -53,7 +50,7 @@ describe('Civic Anchor Module Tests', () => {
       return updated;
     }
 
-    return civicAnchor.anchor(`teste${timestamp}`, `teste${timestamp}`).then((result) => {
+    return civicAnchor.anchor(uuidv4(), uuidv4()).then((result) => {
       expect(result).toBeDefined();
       expect(result).toHaveProperty('type');
       return result;

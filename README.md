@@ -39,6 +39,36 @@
 [![npm][npm]][npm-url]
       
 - [Node.js](https://nodejs.org/en/)
+- BitGO Wallet setup
+
+#### Prepare Bitgo Wallet
+a. Create a wallet with Bitgo - record the following information as you need them later:
+
+**Wallet ID:** <obtained from the Bitgo URL: https://test.bitgo.com/enterprise/5aabb27e8a0a3c9c07fc7db49017fc7f/coin/tbch/*5aabb2aced2e259a079259b01c05d21a*/transactions >
+
+**Wallet passphrase:** < set when creating the wallet - this may be different to your account passcode for bitgo>
+
+**Wallet XPrv:** < You receive this in encrypted form in the PDF - section 1. User Key>
+
+**Enterprise ID:** < obtained from the Bitgo URL: https://test.bitgo.com/enterprise/*5aabb27e8a0a3c9c07fc7db49017fc7f*/coin/tbch/5aabb2aced2e259a079259b01c05d21a/transactions >
+
+b. Decrypt the XPrv
+
+```
+git clone git@github.com:masonicGIT/sjcl-cli.git
+cd sjcl-cli
+npm install
+node src/index.js decrypt
+```
+
+Enter encrypted data: <enter the User Key from the PDF **without newlines**>
+
+Enter passcode: <your BitGo account password (see above)>
+
+c. Generate an access token
+
+Via the BitGO Website User Settings -> Developer Options
+* Ensure you add a high spending limit for BCH
 
 ## Configuration
 
@@ -92,35 +122,6 @@ const ccc = new CCC({
 ```
 
 If you are not sure how to get those informations, see the tutorial down below.
-
-#### Prepare Bitgo Wallet
-a. Create a wallet with Bitgo - record the following information as you need them later:
-
-**Wallet ID:** <obtained from the Bitgo URL: https://test.bitgo.com/enterprise/5aabb27e8a0a3c9c07fc7db49017fc7f/coin/tbch/*5aabb2aced2e259a079259b01c05d21a*/transactions >
-
-**Wallet passphrase:** < set when creating the wallet - this may be different to your account passcode for bitgo>
-
-**Wallet XPrv:** < You receive this in encrypted form in the PDF - section 1. User Key>
-
-**Enterprise ID:** < obtained from the Bitgo URL: https://test.bitgo.com/enterprise/*5aabb27e8a0a3c9c07fc7db49017fc7f*/coin/tbch/5aabb2aced2e259a079259b01c05d21a/transactions >
-
-b. Decrypt the XPrv
-
-```
-git clone git@github.com:masonicGIT/sjcl-cli.git
-cd sjcl-cli
-node src/index
-```
-
-Enter encrypted data: <enter the User Key from the PDF **without newlines**>
-
-Enter passcode: <your BitGo account password (see above)>
-
-c. Generate an access token
-
-Via the BitGO Website User Settings -> Developer Options
-* Ensure you add a high spending limit for BCH
-
 
 ## Features
 
