@@ -43,4 +43,6 @@ const config = {
   walletPassphrase: process.env.CLIENT_WALLET_PASSPHRASE,
 };
 
+console.log(config);
+
 module.exports = config;
