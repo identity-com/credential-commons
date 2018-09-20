@@ -10,6 +10,7 @@ const figlet = require('figlet');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const shell = require('shelljs');
+const uuidv4 = require('uuid/v4');
 
 // static variables only for the CLI, not used in any other place
 const GENERATION_FOLDER = 'dist/schemas';
@@ -79,7 +80,6 @@ const generateCredentialSchemas = async () => {
     await credential.updateAnchor();
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
-    console.log(jsonString);
     const jsonSchema = schemaGenerator.process(credential, generatedJson);
     const jsonFolderVersion = `${definition.version}`;
     const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
