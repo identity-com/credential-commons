@@ -79,7 +79,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.getGlobalCredentialItemIdentifier()).toBe('credential-civ:Credential:TestWithExcludes-1');
   });
 
-  it.skip('should request an anchor for Credential and return an temporary attestation', async (done) => {
+  it('should request an anchor for Credential and return an temporary attestation', async (done) => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], '1');
@@ -91,7 +91,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       done();
     });
   });
-  it.skip('should refresh an temporary anchoring with an permanent one', async (done) => {
+  it('should refresh an temporary anchoring with an permanent one', async (done) => {
     const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('civ:Credential:SimpleTest', 'jest:test', null, [name, dob], '1');

@@ -84,7 +84,7 @@ const generateSampleCivicBasic = () => {
   };
   const phoneUca = new UCA('civ:Type:phone', phone);
 
-  const civicBasic = new VC('civ:Credential:CivicBasic', 'Civic', null, [emailUca, phoneUca], 1);
+  const civicBasic = new VC('civ:Credential:CivicBasic', 'did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8', 4102365600000, [emailUca, phoneUca], 1);
 
   civicBasic.requestAnchor().then((updatedCredential) => {
     updatedCredential.updateAnchor().then((definitive) => {

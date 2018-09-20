@@ -88,7 +88,14 @@ describe('Public Schemas Integration Test Suite', () => {
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
         // validate now the json from the fixture against the json from the S3
-        return validate(JSON.parse(json));
+        const val = validate(JSON.parse(json));
+        if (!val) {
+          console.log(json);
+          console.log(jsonSchema);
+          console.log(identifier);
+          console.log(val);
+        }
+        return val;
       });
     };
     const promises = [];
