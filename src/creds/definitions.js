@@ -7,7 +7,7 @@
 const definitions = [
   {
     identifier: 'civ:Credential:CivicBasic',
-    version: 1,
+    version: '1',
     depends: [
       'civ:Type:phone',
       'civ:Type:email',
@@ -15,7 +15,7 @@ const definitions = [
   },
   {
     identifier: 'civ:Credential:GenericId',
-    version: 1,
+    version: '1',
     depends: [
       'civ:Type:address',
       'civ:Type:documentType',
@@ -30,7 +30,7 @@ const definitions = [
   },
   {
     identifier: 'civ:Credential:Address',
-    version: 1,
+    version: '1',
     depends: [
       'civ:Type:address',
     ],

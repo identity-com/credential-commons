@@ -181,7 +181,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   if (!definition) {
     throw new Error(`Credential definition for ${identifier} v${version} not found`);
   }
-  this.version = version || definition.version;
+  this.version = `${version}` || definition.version;
   this.type = ['Credential', identifier];
 
   // ucas can be empty here if it is been constructed from JSON
@@ -223,6 +223,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @param {*} options
    */
   this.requestAnchor = async (options) => {
+    // TODO @jpsantosbh please check this line, the anchor here is the label on chainauth that will create an cold wallet, if the name equals in the same time, we get an double spending
+    // TODO this could be the ID of the VC
     const anchor = await anchorService.anchor(this.identifier, this.proof.merkleRoot, options);
     this.proof.anchor = anchor;
     return this;

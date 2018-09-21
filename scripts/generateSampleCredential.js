@@ -112,6 +112,9 @@ const generateSampleAddress = () => {
   });
 };
 
-// generateSampleCivicBasic();
-// generateSampleGenericId();
+console.log('---------------------------------------------------');
+generateSampleCivicBasic();
+console.log('---------------------------------------------------');
+generateSampleGenericId();
+console.log('---------------------------------------------------');
 generateSampleAddress();

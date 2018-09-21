@@ -21,7 +21,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(cred, generatedJson);
     expect(jsonSchema.properties.type.type).toBe('array');
-    expect(jsonSchema.properties.version.type).toBe('number');
+    expect(jsonSchema.properties.version.type).toBe('string');
     expect(jsonSchema.properties.claim.type).toBe('object');
     expect(jsonSchema.properties.proof.type).toBe('object');
   });
