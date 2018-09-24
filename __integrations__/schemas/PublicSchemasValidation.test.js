@@ -23,21 +23,25 @@ describe('Public Schemas Integration Test Suite', () => {
       // read the generated json
       const json = fs.readFileSync(`${jsonFolder}/${jsonFile}`, 'utf8');
       // fetch from the S3 url bucket, it's a public one
-      return fetch(`${s3BucketUrl}/Credential/${jsonFolderVersion}/${jsonFile}`)
-        .then((res => res.json()))
-        .then((jsonSchema) => {
-          const ajv = new Ajv();
-          // compile ajv with the schema
-          const validate = ajv.compile(jsonSchema);
-          // validate now the json from the fixture against the json from the S3
-          return validate(JSON.parse(json));
-        });
+      const response = await fetch(`${s3BucketUrl}/Credential/${jsonFolderVersion}/${jsonFile}`);
+      const jsonSchema = await response.json();
+      try {
+        const ajv = new Ajv();
+        // compile ajv with the schema
+        const validate = ajv.compile(jsonSchema);
+        // validate now the json from the fixture against the json from the S3
+        return validate(JSON.parse(json));
+      } catch (err) {
+        return false;
+      }
     };
     const promises = [];
     credentialDefinitions.forEach((credentialDefinition) => { promises.push(validateSchemaJestStep(credentialDefinition)); });
     Promise.all(promises).then((values) => {
       values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
+    }).catch((err) => {
+      done.fail(err);
     });
   });
 
@@ -53,19 +57,26 @@ describe('Public Schemas Integration Test Suite', () => {
       // read the generated json
       const json = fs.readFileSync(`${jsonFolder}/${jsonFile}`, 'utf8');
       // fetch from the S3 url bucket, it's a public one
-      return fetch(`${s3BucketUrl}/Credential/${jsonFolderVersion}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
+      const response = await fetch(`${s3BucketUrl}/Credential/${jsonFolderVersion}/${jsonFile}`);
+      const jsonSchema = await response.json();
+      try {
         const ajv = new Ajv();
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
         // validate now the json from the fixture against the json from the S3
         return validate(JSON.parse(json));
-      });
+      } catch (err) {
+        // this test is supposed to fail, so If we have an unexpected error return true
+        return true;
+      }
     };
     const promises = [];
     credentialDefinitions.forEach((credentialDefinition) => { promises.push(validateSchemaJestStep(credentialDefinition)); });
     Promise.all(promises).then((values) => {
       values.forEach(isValid => expect(isValid).toBeFalsy());
       done();
+    }).catch((err) => {
+      done.fail(err);
     });
   });
 
@@ -83,26 +94,25 @@ describe('Public Schemas Integration Test Suite', () => {
       // read the generated json
       const json = fs.readFileSync(`${jsonFolder}/${jsonFile}`, 'utf8');
       // fetch from the S3 url bucket, it's a public one
-      return fetch(`${s3BucketUrl}/${typeFolder}/${jsonFolderVersion}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
+      const response = await fetch(`${s3BucketUrl}/${typeFolder}/${jsonFolderVersion}/${jsonFile}`);
+      const jsonSchema = await response.json();
+      try {
         const ajv = new Ajv();
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
         // validate now the json from the fixture against the json from the S3
-        const val = validate(JSON.parse(json));
-        if (!val) {
-          console.log(json);
-          console.log(jsonSchema);
-          console.log(identifier);
-          console.log(val);
-        }
-        return val;
-      });
+        return validate(JSON.parse(json));
+      } catch (err) {
+        return false;
+      }
     };
     const promises = [];
     ucaDefinitions.forEach((definition) => { promises.push(validateSchemaJestStep(definition)); });
     Promise.all(promises).then((values) => {
       values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
+    }).catch((err) => {
+      done.fail(err);
     });
   });
 
@@ -110,7 +120,7 @@ describe('Public Schemas Integration Test Suite', () => {
     // iterate all over the credential's definitions
     const validateSchemaJestStep = async (definition) => {
       const jsonFolderVersion = `${definition.version}`;
-      const identifier = definition.identifier;
+      const { identifier } = definition;
       const typeFolder = identifier.substring(identifier.indexOf(':') + 1, identifier.lastIndexOf(':'));
       const jsonFolder = `${fixturesPath}/incorrect/${typeFolder}`;
       // the file name is the last part of the identifier
@@ -120,22 +130,31 @@ describe('Public Schemas Integration Test Suite', () => {
       // read the generated json
       const json = fs.readFileSync(`${jsonFolder}/${jsonFile}`, 'utf8');
       // fetch from the S3 url bucket, it's a public one
-      fetch(`${s3BucketUrl}/${typeFolder}/${jsonFolderVersion}/${jsonFile}`).then((res => res.json())).then((jsonSchema) => {
+      const response = await fetch(`${s3BucketUrl}/${typeFolder}/${jsonFolderVersion}/${jsonFile}`);
+      const jsonSchema = await response.json();
+      try {
         const ajv = new Ajv();
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
         // validate now the json from the fixture against the json from the S3
-        const isValid = validate(JSON.parse(json));
-        // it has to succeed, if not the published schemas has an problem
-        expect(isValid).toBeFalsy();
-        done();
-      });
+        return validate(JSON.parse(json));
+      } catch (err) {
+        return true;
+      }
     };
     const promises = [];
-    ucaDefinitions.forEach((definition) => { promises.push(validateSchemaJestStep(definition)); });
+    ucaDefinitions.forEach((definition) => {
+      try {
+        promises.push(validateSchemaJestStep(definition));
+      } catch (err) {
+        done.fail(err);
+      }
+    });
     Promise.all(promises).then((values) => {
       values.forEach(isValid => expect(isValid).toBeFalsy());
       done();
+    }).catch((err) => {
+      done.fail(err);
     });
   });
 });

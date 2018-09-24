@@ -93,4 +93,28 @@ const generateSampleCivicBasic = () => {
   });
 };
 
+const generateSampleAddress = () => {
+  const address = {
+    street: 'Alameda dos Anjos',
+    unit: '',
+    city: 'Belo Horizonte',
+    zipCode: '94103345',
+    state: 'Minas Gerais',
+    county: 'Sao Bento',
+    country: 'Brazil',
+  };
+  const addressUca = new UCA('civ:Type:address', address);
+  const civicAddress = new VC('civ:Credential:Address', 'did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8', 4102365600000, [addressUca], 1);
+  civicAddress.requestAnchor().then((updatedCredential) => {
+    updatedCredential.updateAnchor().then((definitive) => {
+      console.log(JSON.stringify(definitive, null, 2));
+    });
+  });
+};
+
+console.log('---------------------------------------------------');
 generateSampleCivicBasic();
+console.log('---------------------------------------------------');
+generateSampleGenericId();
+console.log('---------------------------------------------------');
+generateSampleAddress();
