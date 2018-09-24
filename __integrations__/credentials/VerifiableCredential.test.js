@@ -16,7 +16,7 @@ describe('Integration Tests for Verifiable Credentials', () => {
       expect(updated.proof.anchor.type).toBe('temporary');
       expect(updated.proof.anchor.value).not.toBeDefined();
       expect(updated.proof.anchor).toBeDefined();
-      expect(updated.proof.anchor.schema).toBe('tbch-20180201');
+      expect(updated.proof.anchor.schema).toBe('dummy-20180201');
       done();
     });
   });
