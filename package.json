@@ -96,7 +96,7 @@
       "!**/node_modules/**",
       "!**/build/**",
       "!**/vendor/**",
-      "!src/services/CurrentCivicAnchorServiceImpl.js",
+      "!src/services/DummyAnchorServiceImpl.js",
       "!src/services/anchorService.js"
     ],
     "coverageThreshold": {
