@@ -10,7 +10,7 @@ const fixturesPath = '__integrations__/fixtures';
 // check process env for S3 SChema URL or fallback to an fixed one
 const s3BucketUrl = process.env.S3_PUBLIC_SCHEMA_URL ? process.env.S3_PUBLIC_SCHEMA_URL : 'http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com';
 
-describe('Public Schemas Integration Test Suite', () => {
+describe.skip('Public Schemas Integration Test Suite', () => {
   it('Should succeed validation from the from the correct json file in Credential folder', async (done) => {
     // this is a fixed folder
     const jsonFolder = `${fixturesPath}/correct/Credential`;
