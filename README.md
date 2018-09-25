@@ -44,13 +44,15 @@
 #### Prepare Bitgo Wallet
 a. Create a wallet with Bitgo - record the following information as you need them later:
 
-**Wallet ID:** <obtained from the Bitgo URL: https://test.bitgo.com/enterprise/5aabb27e8a0a3c9c07fc7db49017fc7f/coin/tbch/*5aabb2aced2e259a079259b01c05d21a*/transactions >
+**Wallet ID:** < obtained from the Bitgo URL 
+https://test.bitgo.com/enterprise/.../coin/tbch/{YOUR_WALLET_ID}/transactions >
 
 **Wallet passphrase:** < set when creating the wallet - this may be different to your account passcode for bitgo>
 
 **Wallet XPrv:** < You receive this in encrypted form in the PDF - section 1. User Key>
 
-**Enterprise ID:** < obtained from the Bitgo URL: https://test.bitgo.com/enterprise/*5aabb27e8a0a3c9c07fc7db49017fc7f*/coin/tbch/5aabb2aced2e259a079259b01c05d21a/transactions >
+**Enterprise ID:** < obtained from the Bitgo URL 
+https://test.bitgo.com/enterprise/{YOUR_ENTERPRISE_ID}/coin/tbch/.../transactions >
 
 b. Decrypt the XPrv
 
@@ -149,256 +151,185 @@ npm run export-definitions
 
 Example
 ```
-const name = new UCA('civ:Identity:name', {
-	first: 'Joao', 
-    middle: 'Barbosa', 
-    last: 'Santos'
-}, '1')
+const name = new UCA('civ:Type:address', {
+    street: 'Alameda dos Anjos',
+    unit: '102',
+    city: 'Belo Horizonte',
+    zipCode: '94103345',
+    state: 'Minas Gerais',
+    county: 'Sao Bento',
+    country: 'Brazil',
+});
 ```
 Or use the shorthand
 ```
-const name = new UCA.IdentityName({
-	first: 'Joao', 
-    middle: 'Barbosa', 
-    last: 'Santos'
-}, '1')
+const name = new UCA.TypeAddress({
+    street: 'Alameda dos Anjos',
+    unit: '102',
+    city: 'Belo Horizonte',
+    zipCode: '94103345',
+    state: 'Minas Gerais',
+    county: 'Sao Bento',
+    country: 'Brazil',
+})
 ```
 
 **values** can be:
 *  Plain JavaScript Objects:
 ```json
 {
-	"first": 'Joao', 
-    "middle": 'Barbosa', 
-    "last": 'Santos'
+    "street": "Alameda dos Anjos",
+    "unit": "102",
+    "city": "Belo Horizonte",
+    "zipCode": "94103345",
+    "state": "Minas Gerais",
+    "county": "Sao Bento",
+    "country": "Brazil",
 }
 ```
 * Attestable Values: 
 ```json
 {
-  "attestableValue": "urn:first:0902b1abf8b30dbf03c79d144d24f44055637eefa84f2ca024d1d2d9a39f30c5:Joao|s:ee9c6b4e76224bc3f56ed3f4bd2f9037f3665b546abdc49e0a59fcb25b771c14:Santos|urn:middle:c1dfa74b335f81a19914c3b8aa98ce25a30371836d740579edc69ceec5f597c6:Barbosa|"
+  "attestableValue": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|"
 }
 ```
 
 JSON String
  
 ```json
-
 {
   "id": null,
-  "issuer": "jest:test",
-  "issued": "2018-07-04T00:11:55.698Z",
-  "identifier": "civ:Credential:SimpleTest",
-  "expiry": null,
-  "version": 1,
+  "issuer": "did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
+  "issuanceDate": "2018-09-25T21:51:56.511Z",
+  "identifier": "civ:Credential:Address",
+  "expirationDate": "+132017-07-11T05:51:56.512Z",
+  "version": "1",
   "type": [
     "Credential",
-    "civ:Credential:SimpleTest"
+    "civ:Credential:Address"
   ],
-  "claims": {
-    "identity": {
-      "name": {
-        "first": "Joao",
-        "last": "Santos",
-        "middle": "Barbosa"
-      },
-      "dateOfBirth": {
-        "day": 20,
-        "month": 3,
-        "year": 1978
+  "claim": {
+    "type": {
+      "address": {
+        "city": "Belo Horizonte",
+        "country": "Brazil",
+        "county": "Sao Bento",
+        "state": "Minas Gerais",
+        "street": "Alameda dos Anjos",
+        "unit": "102",
+        "zipCode": "94103345"
       }
     }
   },
-  "signature": {
+  "proof": {
     "type": "CivicMerkleProof2018",
-    "merkleRoot": "14613d43860ea919e6bbcff2405fdd59685ab1295048c301448cb4f68b0ea51f",
+    "merkleRoot": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
     "anchor": {
       "subject": {
-        "pub": "xpub661MyMwAqRbcFNXRK7kdsoidhiyfqiwhVhbphdKZjqnik83L1w1mWsPwVrsvbRrPa7sysiJRRBxr6jyrCbPScdXkhSjyYtQtFfwxGBwrBzn",
-        "label": "civ:Credential:SimpleTest",
-        "data": "14613d43860ea919e6bbcff2405fdd59685ab1295048c301448cb4f68b0ea51f",
-        "signature": "30440220112d63de4802353002ae4bde013293b3e7afe3c60ecf6eaf27de733862a06a65022048d38e58112193ea27c7758cad6d984742ed4d48f7f5b16bdb49322c0a797d36"
+        "pub": "xpub:dummy",
+        "label": "civ:Credential:Address",
+        "data": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
+        "signature": "signed:dummy"
       },
-      "walletId": "5b3c10ddf9d2a73c058bd66b7e177b73",
+      "walletId": "none",
       "cosigners": [
         {
-          "pub": "xpub661MyMwAqRbcG2SWCd7SPuXZiJf9Ve4txwoB6en8c8xFPRr4uDmUz3F5QtWdnot6qeK2jbmttCvTcDG254qybxdJUEV9B2kqLraG2Tc5cK1"
+          "pub": "xpub:dummy"
         },
         {
-          "pub": "xpub661MyMwAqRbcFKpX1ZDiKqnRzy7GR7CdP4fvEa41uU2PX2vSNfhLFxDJkod3ru8jJGmDfBqasvFE4EA6gp4FqDCWCm9UbSNtU4iTj3EkeiG"
+          "pub": "xpub:dummy"
         }
       ],
       "authority": {
-        "pub": "xpub661MyMwAqRbcGvSnxEsF3ozUA1kqjNE9fdBpDjKG6YvMuBCjiwf5w9DxDPubPpgpueWkczH21gJ1a7t7J7xw6fTiQmFiWd57opAgTRCCq1H",
-        "path": "/0/0/1/20"
+        "pub": "xpub:dummy",
+        "path": "/"
       },
-      "coin": "tbch",
-      "tx": "02000000012b21f4dc444b91c10bbacf048fec27730bd80dc99670ead531b5b9d7bf4104c101000000fdfd0000483045022100de36fe741f6541aa6485221aaabd3bce5f0335c68538d3b1218f4b7de51906dc022021ab523b0de1ec064b48d4a42119b81936008a9c466502a6179a952885dc46b24147304402202bbb7a2b6b6ad8ce3d1a87237b203981d923a5500a5f7827abe7e3f6556fd01702200f0ca09db08150c365998bcd45cce23b1b24839bd21eb5d62ab272459e2bf17c414c69522103808232b1bc89ed37476edd1638a75b24af52aa7c140126e86a5615e2d17c045d21021476547f77decae5a6b32428f7fd5c5a1a165be53e463f2cba6a149ca51bf4dc21026b0531f0dae953950134eaccd776cbbc575e29a58806374114b36ef278c205cd53aeffffffff02fb1700000000000017a9143bde603bc79fff22e2fda29b339d839e9b4d75398777b57d0f0000000017a914615bc84fed98ae4bbb5e8938c29a4a5cb6484b7e8700000000",
-      "network": "testnet",
-      "value": 259903582,
+      "coin": "dummycoin",
+      "tx": {},
+      "network": "dummynet",
       "type": "permanent",
       "civicAsPrimary": false,
-      "schema": "tbch-20180201"
+      "schema": "dummy-20180201",
+      "value": {}
     },
     "leaves": [
       {
-        "identifier": "civ:Identity:name",
-        "value": "urn:first:285a8c66e6d8f43cb283702e1d7cc90daf79a1c7ad25f2fe20aa7547116fef67:Joao|urn:last:a91a394ebe8994f1e881c15013aa1b27628d6e0354ad7ce0330ba561dc75db47:Santos|urn:middle:d44dc458743ebd1ac93007245a2651415f78b7f475c1c4b162b7aaf616a106e3:Barbosa|",
-        "claimPath": "identity.name",
-        "targetHash": "5650d74edbb4a0148e7f19f89df3e98ea9328a49e874123041b0fe6e25072fe3",
-        "proof": [
+        "identifier": "civ:Type:address",
+        "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
+        "claimPath": "type.address",
+        "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
+        "node": [
           {
-            "right": "8b3f8f06b6801e2f7e4d3078d8f3c8a522ce903eca350249cd9cf73daa8582be"
+            "right": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482"
           },
           {
-            "right": "cbdcd57d230006cae3d1c8d2c310cc24e5230813357e01d939ee372870d34912"
+            "right": "e0dbcf542838280f07d49c2b7c9a4bf9e681b43fc6a55ff7db1973d17b44c37c"
           },
           {
-            "right": "8c40b790bf674653a0357418bde7befc3c3baf32c97369ae679133709a062fdd"
+            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
           },
           {
-            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
-          },
-          {
-            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
-          }
-        ]
-      },
-      {
-        "identifier": "civ:Identity:name.first",
-        "value": "urn:first:285a8c66e6d8f43cb283702e1d7cc90daf79a1c7ad25f2fe20aa7547116fef67:Joao",
-        "claimPath": "identity.name.first",
-        "targetHash": "8b3f8f06b6801e2f7e4d3078d8f3c8a522ce903eca350249cd9cf73daa8582be",
-        "proof": [
-          {
-            "left": "5650d74edbb4a0148e7f19f89df3e98ea9328a49e874123041b0fe6e25072fe3"
-          },
-          {
-            "right": "cbdcd57d230006cae3d1c8d2c310cc24e5230813357e01d939ee372870d34912"
-          },
-          {
-            "right": "8c40b790bf674653a0357418bde7befc3c3baf32c97369ae679133709a062fdd"
-          },
-          {
-            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
-          },
-          {
-            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
-          }
-        ]
-      },
-      {
-        "identifier": "civ:Identity:name.middle",
-        "value": "urn:middle:d44dc458743ebd1ac93007245a2651415f78b7f475c1c4b162b7aaf616a106e3:Barbosa",
-        "claimPath": "identity.name.middle",
-        "targetHash": "145765549b2e429d2f204bc6f4c79c6b702a5f017ce2ff703bf6c1d29af3d555",
-        "proof": [
-          {
-            "right": "9a059dedc58a623d41adf18e33452ebd9de6b9130152bb54ca0a0d2b8b4965bf"
-          },
-          {
-            "left": "4f7776fc52f605ae20b5e814c9f68d81c59912ee73af8f75903c1832bdcac580"
-          },
-          {
-            "right": "8c40b790bf674653a0357418bde7befc3c3baf32c97369ae679133709a062fdd"
-          },
-          {
-            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
-          },
-          {
-            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
-          }
-        ]
-      },
-      {
-        "identifier": "civ:Identity:name.last",
-        "value": "urn:last:a91a394ebe8994f1e881c15013aa1b27628d6e0354ad7ce0330ba561dc75db47:Santos",
-        "claimPath": "identity.name.last",
-        "targetHash": "9a059dedc58a623d41adf18e33452ebd9de6b9130152bb54ca0a0d2b8b4965bf",
-        "proof": [
-          {
-            "left": "145765549b2e429d2f204bc6f4c79c6b702a5f017ce2ff703bf6c1d29af3d555"
-          },
-          {
-            "left": "4f7776fc52f605ae20b5e814c9f68d81c59912ee73af8f75903c1832bdcac580"
-          },
-          {
-            "right": "8c40b790bf674653a0357418bde7befc3c3baf32c97369ae679133709a062fdd"
-          },
-          {
-            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
-          },
-          {
-            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
-          }
-        ]
-      },
-      {
-        "identifier": "civ:Identity:dateOfBirth",
-        "value": "urn:day:bf08b91cd35c58a292dc863870279f6f830cdcf3e8adc96680ab820792930c92:00000020|urn:month:2bbe6772ac5c2d46d70ca25087921558b100146634c1e108d48afc29556f6bd4:00000003|urn:year:eafecd446e940db6013b23111416cbd195f5a3a719c7b11742b9716fbce44012:00001978|",
-        "claimPath": "identity.dateOfBirth",
-        "targetHash": "691aaec939c0d9a4eab7468ab46a437e04c2136e4c0237e2703ba4fd4a4b2d2d",
-        "proof": [
-          {
-            "right": "64afc43b9b4b81b4a40f72257856a819d3b27486f07405a63269fa8d798843bb"
-          },
-          {
-            "right": "2fec1daece49821628925c62c0987a5b155f6b98182be4bfb1492a9c09dc2e96"
-          },
-          {
-            "left": "7318d1f8404486db45b07ab0b37de17da4a4a32e8852c119305039e32b5b6269"
-          },
-          {
-            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
-          },
-          {
-            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
           }
         ]
       },
       {
         "identifier": "civ:Meta:issuer",
-        "value": "urn:issuer:0b822a1fe0102bb015faa91b8477c80c493db79cdb1005a652fb5bbc9741c9cc:jest:test",
+        "value": "urn:issuer:a68ed1b5f92ee8ce1e142b232dcb4ca0e2733f51f9893383e6adc3c53887e2fd:did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
         "claimPath": "meta.issuer",
-        "targetHash": "64afc43b9b4b81b4a40f72257856a819d3b27486f07405a63269fa8d798843bb",
-        "proof": [
+        "targetHash": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482",
+        "node": [
           {
-            "left": "691aaec939c0d9a4eab7468ab46a437e04c2136e4c0237e2703ba4fd4a4b2d2d"
+            "left": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d"
           },
           {
-            "right": "2fec1daece49821628925c62c0987a5b155f6b98182be4bfb1492a9c09dc2e96"
+            "right": "e0dbcf542838280f07d49c2b7c9a4bf9e681b43fc6a55ff7db1973d17b44c37c"
           },
           {
-            "left": "7318d1f8404486db45b07ab0b37de17da4a4a32e8852c119305039e32b5b6269"
+            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
           },
           {
-            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
-          },
-          {
-            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
           }
         ]
       },
       {
-        "identifier": "civ:Meta:issued",
-        "value": "urn:issued:df4409776ee40a60cda4aeec6aa1d05691c0e8ffd55d9c23821b6e50d0c48d13:2018-07-04T00:11:55.698Z",
-        "claimPath": "meta.issued",
-        "targetHash": "76a3a4c07abc9439cd60a426977c22361d580faddbcfabb6d8a18ddd476ce05e",
-        "proof": [
+        "identifier": "civ:Meta:issuanceDate",
+        "value": "urn:issuanceDate:c3b9798fe98020b041b4bd20027eee5c2895ff47b3fb0c5a4e8d1d061ae2733d:2018-09-25T21:51:56.511Z",
+        "claimPath": "meta.issuanceDate",
+        "targetHash": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08",
+        "node": [
           {
-            "right": "b4958af157dffab9d9e39810c60ea962d08aca925822a3403158d86c666f3381"
+            "right": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312"
           },
           {
-            "left": "d6030c82985569f7abe8602ac67bc5a3562e4f17329497c38c547ae9689a4ac8"
+            "left": "9dbba3ce114413f76478581417768af3d2f2e6517513c5257b6c5313824f6e68"
           },
           {
-            "left": "7318d1f8404486db45b07ab0b37de17da4a4a32e8852c119305039e32b5b6269"
+            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
           },
           {
-            "right": "90fba71c9292050d2f8673484901c84984b6f395b17fbd3cce35133e00c29751"
+            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:expirationDate",
+        "value": "urn:expirationDate:7388ed27d10476f47cd9c68a732a9b9eccfd44598cdcb2f785f5131c33991f5b:+132017-07-11T05:51:56.512Z",
+        "claimPath": "meta.expirationDate",
+        "targetHash": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312",
+        "node": [
+          {
+            "left": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08"
           },
           {
-            "right": "e4617d7a402a5755b1a6b86862ff2e9d97644f76532b592ec3248e99d9d681b0"
+            "left": "9dbba3ce114413f76478581417768af3d2f2e6517513c5257b6c5313824f6e68"
+          },
+          {
+            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
+          },
+          {
+            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
           }
         ]
       }
@@ -459,128 +390,145 @@ cred.updateAnchor().then(() => {
 
 ##### Verifiable Credential Sample
 ```
-    {
-      "id": null,
-      "issuer": "jest:test",
-      "issued": "2018-05-30T19:01:22.880Z",
-      "version": "1",
-      "type": [
-        "Credential",
-        "civ:cred:Test"
-      ],
-      "claims": {
-        "identity": {
-          "name": {
-            "first": "Joao",
-            "last": "Santos"
-          },
-          "DateOfBirth": {
-            "day": 20,
-            "month": 3,
-            "year": 1978
-          }
-        }
+{
+  "id": null,
+  "issuer": "did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
+  "issuanceDate": "2018-09-25T21:51:56.511Z",
+  "identifier": "civ:Credential:Address",
+  "expirationDate": "+132017-07-11T05:51:56.512Z",
+  "version": "1",
+  "type": [
+    "Credential",
+    "civ:Credential:Address"
+  ],
+  "claim": {
+    "type": {
+      "address": {
+        "city": "Belo Horizonte",
+        "country": "Brazil",
+        "county": "Sao Bento",
+        "state": "Minas Gerais",
+        "street": "Alameda dos Anjos",
+        "unit": "102",
+        "zipCode": "94103345"
+      }
+    }
+  },
+  "proof": {
+    "type": "CivicMerkleProof2018",
+    "merkleRoot": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
+    "anchor": {
+      "subject": {
+        "pub": "xpub:dummy",
+        "label": "civ:Credential:Address",
+        "data": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
+        "signature": "signed:dummy"
       },
-      "signature": {
-        "type": "CivicMerkleProof2018",
-        "merkleRoot": "39dac9c79965f33f5f3f0738636d50937f70a7da32a810f23a876f1e7c94c3d7",
-        "anchor": "TBD (Civic Blockchain Attestation)",
-        "leaves": [
+      "walletId": "none",
+      "cosigners": [
+        {
+          "pub": "xpub:dummy"
+        },
+        {
+          "pub": "xpub:dummy"
+        }
+      ],
+      "authority": {
+        "pub": "xpub:dummy",
+        "path": "/"
+      },
+      "coin": "dummycoin",
+      "tx": {},
+      "network": "dummynet",
+      "type": "permanent",
+      "civicAsPrimary": false,
+      "schema": "dummy-20180201",
+      "value": {}
+    },
+    "leaves": [
+      {
+        "identifier": "civ:Type:address",
+        "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
+        "claimPath": "type.address",
+        "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
+        "node": [
           {
-            "identifier": "civ:Identity:name",
-            "value": "s:a8df73a9028603921bdb9167acc63e6e5c60a582e11283f81ce8f355a39d9617:Joao|s:e6a29e876ba248125026fb31846bbed7da7db51e2c861b0d4f1a317dce09930b:Santos|s:0e2b187cb38ac012b03d3a675ab5e37702e1e3fd12ac4f205e61fc6f2f641b49:Barbosa|",
-            "claimPath": "identity.name",
-            "targetHash": "418743983be14b74faf11499d7790e365ced5bd7ead8b2d8f381567f53959831",
-            "proof": [
-              {
-                "right": "c7717cfdbd2d2a199c79760d17c2aa8f549dda0285a71a53c17fab04bdf531ff"
-              },
-              {
-                "right": "5757a28c2a7a5311be7bd465887ab2195b7238c31e167d47c01d11a11bba55f4"
-              },
-              {
-                "right": "173760a0c0c0f1e5312855b5607649c7fc1246a6a22a8d9b54e88487747b021c"
-              },
-              {
-                "right": "71a40449b98a95c458b775362c3152878f57428c92b0ff20e8768d2138f9d8fe"
-              },
-              {
-                "right": "e8c1cafa1f20c862c739d26216539738cff23b57947954b757461dc14a689559"
-              }
-            ]
+            "right": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482"
           },
           {
-            "identifier": "civ:Identity:name.first",
-            "value": "s:a8df73a9028603921bdb9167acc63e6e5c60a582e11283f81ce8f355a39d9617:Joao",
-            "claimPath": "identity.name.first",
-            "targetHash": "c7717cfdbd2d2a199c79760d17c2aa8f549dda0285a71a53c17fab04bdf531ff",
-            "proof": [
-              {
-                "left": "418743983be14b74faf11499d7790e365ced5bd7ead8b2d8f381567f53959831"
-              },
-              {
-                "right": "5757a28c2a7a5311be7bd465887ab2195b7238c31e167d47c01d11a11bba55f4"
-              },
-              {
-                "right": "173760a0c0c0f1e5312855b5607649c7fc1246a6a22a8d9b54e88487747b021c"
-              },
-              {
-                "right": "71a40449b98a95c458b775362c3152878f57428c92b0ff20e8768d2138f9d8fe"
-              },
-              {
-                "right": "e8c1cafa1f20c862c739d26216539738cff23b57947954b757461dc14a689559"
-              }
-            ]
+            "right": "e0dbcf542838280f07d49c2b7c9a4bf9e681b43fc6a55ff7db1973d17b44c37c"
           },
           {
-            "identifier": "civ:Identity:name.last",
-            "value": "s:e6a29e876ba248125026fb31846bbed7da7db51e2c861b0d4f1a317dce09930b:Santos",
-            "claimPath": "identity.name.last",
-            "targetHash": "cc19edeed421621c97eb01f4eb344c5bcd9d0346ca6a36d257d9e5200fff2b51",
-            "proof": [
-              {
-                "left": "d736ca29cb6f9933dd7040fc035277e94ea39b53577a28a6c5cee5b0b1b7202f"
-              },
-              {
-                "left": "d7a66659bcbb9ee67b025db8342cc20441c9ad58cc4b2c052f8c8f0146a5cf84"
-              },
-              {
-                "right": "173760a0c0c0f1e5312855b5607649c7fc1246a6a22a8d9b54e88487747b021c"
-              },
-              {
-                "right": "71a40449b98a95c458b775362c3152878f57428c92b0ff20e8768d2138f9d8fe"
-              },
-              {
-                "right": "e8c1cafa1f20c862c739d26216539738cff23b57947954b757461dc14a689559"
-              }
-            ]
+            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
           },
           {
-            "identifier": "civ:Identity:DateOfBirth",
-            "value": "n:94db726e00e43767c969c1e23ce3fd6f0fccdaedd3e49154d56fa0d436f6f935:00000020|n:6a5ae6282cf1c6c363cfb6ac4eeac972581c7e2757e4948d4e63d394839991fe:00000003|n:4f8631638e8685998e17e220d30489b7b12a5197a26b4f6885a5371346fde211:00001978|",
-            "claimPath": "identity.DateOfBirth",
-            "targetHash": "d976377fca90fc98aed048bda3a2796750a1b4c96fb04e052c90dd9434ae0196",
-            "proof": [
-              {
-                "right": "52d0e0f1dee556f456ba149bfde2c7b07c40070dcf18a82ee5e750d3b15f32a9"
-              },
-              {
-                "right": "4fda24814d65e12aceb1e63240785eedcad1332da75b404b166be2dff9144c18"
-              },
-              {
-                "left": "cbfd7b92424edd878956b97637549bdaba39b4d469294d96e13d0ae6e7c0b594"
-              },
-              {
-                "right": "71a40449b98a95c458b775362c3152878f57428c92b0ff20e8768d2138f9d8fe"
-              },
-              {
-                "right": "e8c1cafa1f20c862c739d26216539738cff23b57947954b757461dc14a689559"
-              }
-            ]
+            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:issuer",
+        "value": "urn:issuer:a68ed1b5f92ee8ce1e142b232dcb4ca0e2733f51f9893383e6adc3c53887e2fd:did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
+        "claimPath": "meta.issuer",
+        "targetHash": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482",
+        "node": [
+          {
+            "left": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d"
+          },
+          {
+            "right": "e0dbcf542838280f07d49c2b7c9a4bf9e681b43fc6a55ff7db1973d17b44c37c"
+          },
+          {
+            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
+          },
+          {
+            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:issuanceDate",
+        "value": "urn:issuanceDate:c3b9798fe98020b041b4bd20027eee5c2895ff47b3fb0c5a4e8d1d061ae2733d:2018-09-25T21:51:56.511Z",
+        "claimPath": "meta.issuanceDate",
+        "targetHash": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08",
+        "node": [
+          {
+            "right": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312"
+          },
+          {
+            "left": "9dbba3ce114413f76478581417768af3d2f2e6517513c5257b6c5313824f6e68"
+          },
+          {
+            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
+          },
+          {
+            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
+          }
+        ]
+      },
+      {
+        "identifier": "civ:Meta:expirationDate",
+        "value": "urn:expirationDate:7388ed27d10476f47cd9c68a732a9b9eccfd44598cdcb2f785f5131c33991f5b:+132017-07-11T05:51:56.512Z",
+        "claimPath": "meta.expirationDate",
+        "targetHash": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312",
+        "node": [
+          {
+            "left": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08"
+          },
+          {
+            "left": "9dbba3ce114413f76478581417768af3d2f2e6517513c5257b6c5313824f6e68"
+          },
+          {
+            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
+          },
+          {
+            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
           }
         ]
       }
-    }
+    ]
+  }
+}
 ```
 
 ##### Construting a VerifiableCredential from a JSON
@@ -622,10 +570,10 @@ A identifier like this:
 Example
 ```javascript
 const name = new UCA('civ:Identity:name', {
-	first: 'Joao', 
-    middle: 'Barbosa', 
-    last: 'Santos'
-}, '1')
+  first: 'Joao', 
+  middle: 'Barbosa', 
+  last: 'Santos'
+})
 ```
 
 Will generate a JSON like this:
@@ -633,9 +581,9 @@ Will generate a JSON like this:
 
 ```
 {
-	first: 'Joao', 
-    middle: 'Barbosa', 
-    last: 'Santos'
+  first: 'Joao', 
+  middle: 'Barbosa', 
+  last: 'Santos'
 }
 ```
 
@@ -726,6 +674,7 @@ Don't forget to add the version on your package.json, or else it will always get
 
 The project structure is made like this:
 
+```
 |_ __tests__
 |_ __integration__
 |_ src
@@ -735,6 +684,7 @@ The project structure is made like this:
 |__ browser
 |_ reports
 |__ coverage
+```
 
 * Tests and Integration folder contains jest tests
 * src contains all ES6 non-transpiled source
