@@ -45,14 +45,14 @@
 a. Create a wallet with Bitgo - record the following information as you need them later:
 
 **Wallet ID:** < obtained from the Bitgo URL 
-https://test.bitgo.com/enterprise/.../coin/tbch/{YOUR_WALLET_ID}/transactions >
+https://test.bitgo.com/enterprise/.../coin/tcoin/{YOUR_WALLET_ID}/transactions >
 
 **Wallet passphrase:** < set when creating the wallet - this may be different to your account passcode for bitgo>
 
 **Wallet XPrv:** < You receive this in encrypted form in the PDF - section 1. User Key>
 
 **Enterprise ID:** < obtained from the Bitgo URL 
-https://test.bitgo.com/enterprise/{YOUR_ENTERPRISE_ID}/coin/tbch/.../transactions >
+https://test.bitgo.com/enterprise/{YOUR_ENTERPRISE_ID}/coin/tcoin/.../transactions >
 
 b. Decrypt the XPrv
 

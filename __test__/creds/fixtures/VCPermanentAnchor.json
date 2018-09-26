@@ -28,7 +28,7 @@
     "merkleRoot": "14613d43860ea919e6bbcff2405fdd59685ab1295048c301448cb4f68b0ea51f",
     "anchor": {
       "subject": {
-        "pub": "xpub661MyMwAqRbcFNXRK7kdsoidhiyfqiwhVhbphdKZjqnik83L1w1mWsPwVrsvbRrPa7sysiJRRBxr6jyrCbPScdXkhSjyYtQtFfwxGBwrBzn",
+        "pub": "xpub:dummy",
         "label": "civ:Credential:SimpleTest",
         "data": "14613d43860ea919e6bbcff2405fdd59685ab1295048c301448cb4f68b0ea51f",
         "signature": "30440220112d63de4802353002ae4bde013293b3e7afe3c60ecf6eaf27de733862a06a65022048d38e58112193ea27c7758cad6d984742ed4d48f7f5b16bdb49322c0a797d36"
@@ -36,23 +36,23 @@
       "walletId": "5b3c10ddf9d2a73c058bd66b7e177b73",
       "cosigners": [
         {
-          "pub": "xpub661MyMwAqRbcG2SWCd7SPuXZiJf9Ve4txwoB6en8c8xFPRr4uDmUz3F5QtWdnot6qeK2jbmttCvTcDG254qybxdJUEV9B2kqLraG2Tc5cK1"
+          "pub": "xpub:dummy"
         },
         {
-          "pub": "xpub661MyMwAqRbcFKpX1ZDiKqnRzy7GR7CdP4fvEa41uU2PX2vSNfhLFxDJkod3ru8jJGmDfBqasvFE4EA6gp4FqDCWCm9UbSNtU4iTj3EkeiG"
+          "pub": "xpub:dummy"
         }
       ],
       "authority": {
-        "pub": "xpub661MyMwAqRbcGvSnxEsF3ozUA1kqjNE9fdBpDjKG6YvMuBCjiwf5w9DxDPubPpgpueWkczH21gJ1a7t7J7xw6fTiQmFiWd57opAgTRCCq1H",
-        "path": "/0/0/1/20"
+        "pub": "xpub:dummy",
+        "path": "/"
       },
-      "coin": "tbch",
-      "tx": "02000000012b21f4dc444b91c10bbacf048fec27730bd80dc99670ead531b5b9d7bf4104c101000000fdfd0000483045022100de36fe741f6541aa6485221aaabd3bce5f0335c68538d3b1218f4b7de51906dc022021ab523b0de1ec064b48d4a42119b81936008a9c466502a6179a952885dc46b24147304402202bbb7a2b6b6ad8ce3d1a87237b203981d923a5500a5f7827abe7e3f6556fd01702200f0ca09db08150c365998bcd45cce23b1b24839bd21eb5d62ab272459e2bf17c414c69522103808232b1bc89ed37476edd1638a75b24af52aa7c140126e86a5615e2d17c045d21021476547f77decae5a6b32428f7fd5c5a1a165be53e463f2cba6a149ca51bf4dc21026b0531f0dae953950134eaccd776cbbc575e29a58806374114b36ef278c205cd53aeffffffff02fb1700000000000017a9143bde603bc79fff22e2fda29b339d839e9b4d75398777b57d0f0000000017a914615bc84fed98ae4bbb5e8938c29a4a5cb6484b7e8700000000",
-      "network": "testnet",
+      "coin": "dummycoin",
+      "tx": "523b0de1ec064b48d4a42119b81936008a9c466502a6179a952885dc46b24147304402202bbb7a2b6b6ad8ce3d1a87237b2002000000012b21f4dc444b91c10bbacf048fec27730bd80dc99670ead531b5b9d7bf4104c101000000fdfd000048304502210bb5e8938c29a4a5cb6480de36fe741f6541aa6485221aaabd3bce5f0335c68538d3b1218f4b7de51906dc022021ab3981d923a5500a5f7827abe7e3f6556fd01702200f0ca09db08150c365998bcd45cce23b1b24839bd21eb5d62ab272459e2bf17c414c69522103808232b1bc89ed37476edd1638a75b24af52aa7c140126e86a5615e2d17c045d21021476547f77decae5a6b32428f7fd5c5a1a165be53e463f2cba6a149ca51bf4dc21026b0531f0dae953950134eaccd776cbbc575e29a58806374114b36ef278c205cd53aeffffffff02fb1700000000000017a9143bde603bc79fff22e2fda29b339d839e9b4d75398777b57d0f0000000017a914615bc84fed98ae4b4b7e8700000000",
+      "network": "dummynet",
       "value": 259903582,
       "type": "permanent",
       "civicAsPrimary": false,
-      "schema": "tbch-20180201"
+      "schema": "dummy-20180201"
     },
     "leaves": [
       {
