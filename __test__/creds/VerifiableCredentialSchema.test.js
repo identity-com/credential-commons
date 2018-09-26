@@ -5,6 +5,7 @@ const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');
 const ucaDefinitions = require('../../src/uca/definitions');
+const uuidv1 = require('uuid/v1');
 
 jest.setTimeout(1500000);
 
@@ -20,9 +21,9 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(cred, generatedJson);
     expect(jsonSchema.properties.type.type).toBe('array');
-    expect(jsonSchema.properties.version.type).toBe('number');
-    expect(jsonSchema.properties.claims.type).toBe('object');
-    expect(jsonSchema.properties.signature.type).toBe('object');
+    expect(jsonSchema.properties.version.type).toBe('string');
+    expect(jsonSchema.properties.claim.type).toBe('object');
+    expect(jsonSchema.properties.proof.type).toBe('object');
   });
 
   it('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
@@ -38,7 +39,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
         ucaArray.push(dependentUca);
       });
-      const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+      const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
 
       await credential.requestAnchor();
       await credential.updateAnchor();
@@ -73,12 +74,12 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+    const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
     // changing the data
-    generatedJson.claims.type.phone.countryCode = 123456;
+    generatedJson.claim.type.phone.countryCode = 123456;
     const ajv = new Ajv();
     const validate = ajv.compile(jsonSchema);
     // cannot be valid since country code is an string on the json schema type and uca definition
@@ -100,7 +101,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(credentialDefinition.identifier, 'jest:test', null, ucaArray, 1);
+    const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);

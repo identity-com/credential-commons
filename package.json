@@ -1,8 +1,8 @@
 {
-  "name": "civic-credentials-common-js",
+  "name": "credential-common-js",
   "version": "0.2.14",
-  "author": "Civic",
-  "license": "UNLICENSED",
+  "author": "Identity.com Community",
+  "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
   "private": true,
   "keywords": [
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:civicteam/civic-credentials-commons-js"
+    "url": "git+https://github.com/identity-com/credential-commons-js.git"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -62,10 +62,7 @@
     "bluebird": "^3.5.1",
     "bottlejs": "^1.7.1",
     "bson": "^3.0.0",
-    "chainauth": "civicteam/multisig-attest.git#v1.0.1",
     "chalk": "^2.4.1",
-    "civic-auth-utils": "github:civicteam/civic-auth-utils",
-    "civic-log": "civicteam/civic-log#2.1.3",
     "clear": "^0.1.0",
     "cross-env": "^5.1.6",
     "dotenv": "^6.0.0",
@@ -75,6 +72,7 @@
     "install": "^0.11.0",
     "json-format": "^1.0.1",
     "lodash": "4.17.10",
+    "md5": "^2.2.1",
     "merkle-tools": "^1.4.0",
     "node-fetch": "^2.1.2",
     "npm": "^6.1.0",
@@ -83,10 +81,11 @@
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "shelljs": "^0.8.2",
-    "sjcl": "civicteam/sjcl#v1.0.7-ecc",
+    "sjcl": "^1.0.7",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
-    "uuid": "^3.2.1"
+    "uuid": "^3.3.2",
+    "winston": "^3.1.0"
   },
   "jest": {
     "modulePathIgnorePatterns": [
@@ -97,7 +96,7 @@
       "!**/node_modules/**",
       "!**/build/**",
       "!**/vendor/**",
-      "!src/services/CurrentCivicAnchorServiceImpl.js",
+      "!src/services/DummyAnchorServiceImpl.js",
       "!src/services/anchorService.js"
     ],
     "coverageThreshold": {
