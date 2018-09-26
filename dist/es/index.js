@@ -13,7 +13,7 @@ function CredentialCommons() {
   this.VC = VC;
   this.init = initServices;
   this.isValidGlobalIdentifier = isValidGlobalIdentifier;
-  this.isClaimRleated = isClaimRelated;
+  this.isClaimRelated = isClaimRelated;
   return this;
 }
 

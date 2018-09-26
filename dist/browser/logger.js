@@ -1,1 +1,1 @@
-"use strict";var civicLog=require("civic-log"),logger=civicLog({loggly:{level:"debug",subdomain:"civicteam",tags:[]},dstream:{env:"dev",region:"us-east-1"}});module.exports=logger;
+"use strict";var _require=require("winston"),createLogger=_require.createLogger,format=_require.format,transports=_require.transports,logger=createLogger({level:"info",format:format.combine(format.splat(),format.simple()),transports:[new transports.Console]});module.exports=logger;
