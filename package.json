@@ -81,7 +81,7 @@
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "shelljs": "^0.8.2",
-    "sjcl": "^1.0.7",
+    "sjcl": "civicteam/sjcl#v1.0.7-ecc",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
     "uuid": "^3.3.2",
