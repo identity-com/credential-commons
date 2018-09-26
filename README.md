@@ -52,15 +52,6 @@ npm install
 node src/index.js decrypt
 ```
 
-Enter encrypted data: <enter the User Key from the PDF **without newlines**>
-
-Enter passcode: <your BitGo account password (see above)>
-
-b. Generate an access token
-
-Via the BitGO Website User Settings -> Developer Options
-* Ensure you add a high spending limit for BCH
-
 ## Configuration
 
 This library depends on some configuration settings to work properly.
