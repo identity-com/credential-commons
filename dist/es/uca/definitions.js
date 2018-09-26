@@ -10,12 +10,12 @@ const definitions = [{
   type: 'String',
   attestable: true
 }, {
-  identifier: 'civ:Meta:issued',
+  identifier: 'civ:Meta:issuanceDate',
   version: '1',
   type: 'String',
   attestable: true
 }, {
-  identifier: 'civ:Meta:expiry',
+  identifier: 'civ:Meta:expirationDate',
   version: '1',
   type: 'String',
   attestable: true
@@ -83,6 +83,11 @@ const definitions = [{
   identifier: 'civ:Type:documentType',
   version: '1',
   type: 'String', // change to Array and change the constructor and SchemaGenerator
+  credentialItem: true
+}, {
+  identifier: 'civ:Type:documentNumber',
+  version: '1',
+  type: 'Number',
   credentialItem: true
 }, {
   identifier: 'civ:Identity:name', // We can define a new identifier and the structure at same definition

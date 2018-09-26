@@ -1,17 +1,13 @@
 'use strict';
 
-const civicLog = require('civic-log');
+const { createLogger, format, transports } = require('winston');
 
-const logger = civicLog({
-  loggly: {
-    level: 'debug',
-    subdomain: 'civicteam',
-    tags: []
-  },
-  dstream: {
-    env: 'dev',
-    region: 'us-east-1'
-  }
+// Configure the Winston logger. For the complete documentation see https://github.com/winstonjs/winston
+const logger = createLogger({
+  // To see more detailed errors, change this to 'debug'
+  level: 'info',
+  format: format.combine(format.splat(), format.simple()),
+  transports: [new transports.Console()]
 });
 
 module.exports = logger;
