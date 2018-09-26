@@ -1,18 +1,16 @@
 /**
- * Current Civic Anchor/Attester service
- * 
+ * Current Anchor/Attester service
+ *
  */
-const _ = require('lodash');
-const SecureRandom = require('../SecureRandom');
 const uuid = require('uuid/v4');
 const logger = require('../logger');
 
 
 /**
- * Civic Anchor/Attester implementation
- * 
- * @param {*} config 
- * @param {*} http 
+ * An Anchor/Attester implementation
+ *
+ * @param {*} config
+ * @param {*} http
  */
 function DummyAnchorServiceImpl(config, http) {
   this.config = config;
@@ -29,7 +27,8 @@ function DummyAnchorServiceImpl(config, http) {
 
       if (!attestation || !attestation.type) {
         return await pollService(statusUrl);
-      } else if (attestation && attestation.type !== 'permanent') {
+      }
+      if (attestation && attestation.type !== 'permanent') {
         attestation.statusUrl = statusUrl;
         return attestation;
       }
@@ -40,37 +39,37 @@ function DummyAnchorServiceImpl(config, http) {
     }
   };
 
-  this.anchor = async (label, data, options) => {
-    return await Promise.resolve({
-        "subject": {
-          "pub": "unsigned",
-          "label": label,
-          "data": data,
-          "signature": "unsigned"
-        },
-        "walletId": "none",
-        "cosigners": [{
-          "pub": "unsigned"
-        }, {
-          "pub": "unsigned"
-        }],
-        "authority": {
-          "pub": "unsigned",
-          "path": "/"
-        },
-        "coin": "dummy",
-        "tx": new uuid(),
-        "network": "dummy",
-        "type": "temporary",
-        "civicAsPrimary": false,
-        "schema": "dummy-20180201"
-      });
-  };
+  this.anchor = async (label, data, options) => (
+    Promise.resolve({
+      subject: {
+        pub: 'xpub:dummy',
+        label,
+        data,
+        signature: 'signed:dummy',
+      },
+      walletId: 'none',
+      cosigners: [{
+        pub: 'xpub:dummy',
+      }, {
+        pub: 'xpub:dummy',
+      }],
+      authority: {
+        pub: 'xpub:dummy',
+        path: '/',
+      },
+      coin: 'dummycoin',
+      tx: new uuid(), // eslint-disable-line
+      network: 'dummynet',
+      type: 'temporary',
+      civicAsPrimary: false,
+      schema: 'dummy-20180201',
+    })
+  );
 
   this.update = async (tempAnchor) => {
-    tempAnchor.type = "permanent";
-    tempAnchor.value = new uuid();
-    return await Promise.resolve(tempAnchor);
+    tempAnchor.type = 'permanent'; // eslint-disable-line
+    tempAnchor.value = new uuid(); // eslint-disable-line
+    return Promise.resolve(tempAnchor);
   };
 
   this.verifySignature = (signature) => {
@@ -93,19 +92,18 @@ function DummyAnchorServiceImpl(config, http) {
     return true;
   };
 
-  this.revokeAttestation =  async (signature) => {
-    signature.revoked = true;
-    return await Promise.resolve(signature);
+  this.revokeAttestation = async (signature) => {
+    signature.revoked = true; // eslint-disable-line
+    return Promise.resolve(signature);
   };
 
   this.isRevoked = (signature) => {
-      return signature.revoked ? signature.revoked : false;
-  }
+    return signature.revoked ? signature.revoked : false;
+  };
 
   return this;
 }
 
 module.exports = {
   CurrentCivicAnchor: DummyAnchorServiceImpl,
-}
-;
+};

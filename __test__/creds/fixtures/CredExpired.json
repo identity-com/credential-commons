@@ -25,7 +25,34 @@
     "proof": {
       "type": "CivicMerkleProof2018",
       "merkleRoot": "7636eb5e587f9f1270f5af9348c19f7ab0f8ee43997437b7308acfec24937514",
-      "anchor": "TBD (Civic Blockchain Attestation)",
+      "anchor": {
+      "subject": {
+        "pub": "xpub:dummy",
+        "label": "civ:Credential:Address",
+        "data": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
+        "signature": "signed:dummy"
+      },
+      "walletId": "none",
+      "cosigners": [
+        {
+          "pub": "xpub:dummy"
+        },
+        {
+          "pub": "xpub:dummy"
+        }
+      ],
+      "authority": {
+        "pub": "xpub:dummy",
+        "path": "/"
+      },
+      "coin": "dummycoin",
+      "tx": {},
+      "network": "dummynet",
+      "type": "permanent",
+      "civicAsPrimary": false,
+      "schema": "dummy-20180201",
+      "value": {}
+    },
       "leaves": [
         {
           "identifier": "civ:Identity:name",

@@ -28,7 +28,7 @@
     "merkleRoot": "7b7c31a9d4d84ebf4c1455a79efca2942aca0f4bfb0a902f243e97e996831f74",
     "anchor": {
       "subject": {
-        "pub": "xpub661MyMwAqRbcFNXRK7kdsoidhiyfqiwhVhbphdKZjqnik83L1w1mWsPwVrsvbRrPa7sysiJRRBxr6jyrCbPScdXkhSjyYtQtFfwxGBwrBzn",
+        "pub": "xpub:dummy",
         "label": "civ:Credential:SimpleTest",
         "data": "7b7c31a9d4d84ebf4c1455a79efca2942aca0f4bfb0a902f243e97e996831f74",
         "signature": "3045022100a9ec789ef675b35efe5518cdc4a6a64d23954561071a9032e9987bb99a67ba010220693aa642576dda2a31d25fdbd4207f8d1f78eabcc04de0a6705c6c4e21a73c25"
@@ -36,23 +36,23 @@
       "walletId": "5ba3d4f802c02aa5037ccff035ed160c",
       "cosigners": [
         {
-          "pub": "xpub661MyMwAqRbcGy9YzJh1S94vomSQtqiiVj88NYQaWsyYAssGQpvKMUxYudnmr2a9FS81GbwudwqsB4TQuUoi1Frbh5B7gWLQE94NiCenbHq"
+          "pub": "xpub:dummy"
         },
         {
-          "pub": "xpub661MyMwAqRbcEmC4ZfXHzRPc6673TXvWsh1zaV6SjsyjwEvP616Hy9pmQmwaKcSK7z1o3SuSGHMgoGcEFGRoFPKUPyi21AiHX41VEg6bNbf"
+          "pub": "xpub:dummy"
         }
       ],
       "authority": {
-        "pub": "xpub661MyMwAqRbcGvSnxEsF3ozUA1kqjNE9fdBpDjKG6YvMuBCjiwf5w9DxDPubPpgpueWkczH21gJ1a7t7J7xw6fTiQmFiWd57opAgTRCCq1H",
-        "path": "/0/0/1/949"
+        "pub": "xpub:dummy",
+        "path": "/"
       },
-      "coin": "tbch",
-      "tx": "020000000183116c24e1ea980bed02c88b5e9ab4e0b3b8299ceaf2fa95d2b9556e2f5047a900000000fc00473044022100accc2c4a4d9f1a3d6ad28dd51bdd3d4a7288a6267f3c044dd468001da97ef4cd021f659b94b7d7bf9c1d7fbb85224b58fad4b719bf68742d0d3ab165566c1f8a6b4147304402203f22b0a4d02fb7381264b2e7f4ffc01cb154b864cb037402c5120c68598084a802203e5006c3da18727bfc1572cdefd6f90c5125ee243eefdb6d1d30e0a8fa2f5d97414c695221034d2290ae3ddad074a3d4b489484f42b55e6eea8e0523a3e169cf72d159cfa4e8210316db9cb525eda107dfe97d0c456835aba84b6e570fb3c650e33a8d1fa2cb6bb22103ad4f3adc2b6943f2b2d8f2e6e447adbadf739bb905229bbfdb546b82f45d368053aeffffffff02fb1700000000000017a914d1e353064a09cd9c7ec6b406926bae751e9eadf98749f263010000000017a914b69f2be7cff10ddc0d10240f6511917924d446bf8700000000",
-      "network": "testnet",
+      "coin": "dummycoin",
+      "tx": "b546b82f45d368053aeffffffff02fb1700000000000017a914d1e353064a09cd9c7ec6b406926bae751e9eadf98749f263010000000017a914b69f2b020000000183116c24e1ea980bed02c88b5e9ab4e0b3b8299ceaf2fa95d2b9556e2f5047a900000000fc00473044022100accc2c4a4d9f1a3d6ad28dd51bdd3d4a7288a6267f3c044dd468001da97ef4cd021f659b94b7d7bf9c1d7fbb85224b58fad4b719bf68742d0d3ab165566c1f8a6b4147304402203f22b0a4d02fb7381264b2e7f4ffc01cb154b864cb037402c5120c68598084a802203e5006c3da18727bfc1572cdefd6f90c5125ee243eefdb6d1d30e0a8fa2f5d97414c695221034d2290ae3ddad074a3d4b489484f42b55e6eea8e0523a3e169cf72d159cfa4e8210316db9cb525eda107dfe97d0c456835aba84b6e570fb3c650e33a8d1fa2cb6bb22103ad4f3adc2b6943f2b2d8f2e6e447adbadf739bb905229bbfde7cff10ddc0d10240f6511917924d446bf8700000000",
+      "network": "dummynet",
       "value": 23334192,
       "type": "permanent",
       "civicAsPrimary": false,
-      "schema": "tbch-20180201"
+      "schema": "dummy-20180201"
     },
     "leaves": [
       {
