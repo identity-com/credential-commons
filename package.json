@@ -1,8 +1,8 @@
 {
-  "name": "civic-credentials-common-js",
+  "name": "credential-common-js",
   "version": "0.2.14",
-  "author": "Civic",
-  "license": "UNLICENSED",
+  "author": "Identity.com Community",
+  "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
   "private": true,
   "keywords": [
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:civicteam/civic-credentials-commons-js"
+    "url": "git+https://github.com/identity-com/credential-commons-js.git"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -81,7 +81,7 @@
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "shelljs": "^0.8.2",
-    "sjcl": "civicteam/sjcl#v1.0.7-ecc",
+    "sjcl": "^1.0.7",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
     "uuid": "^3.3.2",
