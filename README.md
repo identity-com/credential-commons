@@ -1,7 +1,5 @@
 # Verifiable Credential and Attestation Library
 
-[![CircleCI](https://circleci.com/gh/civicteam/civic-credentials-commons-js.svg?style=svg&circle-token=d989196488010043c3dbd96d70864614ce3e6eba)](https://circleci.com/gh/civicteam/civic-credentials-commons-js)
-
 ## Contents
 
 - [Prerequisites](#prerequisites)
@@ -40,6 +38,7 @@
       
 - [Node.js](https://nodejs.org/en/)
 - BitGO Wallet setup
+- SJCL library with ECC binary. Please refer how to build with support after the `npm i` here: https://github.com/bitwiseshiftleft/sjcl/wiki/Getting-Started
 
 #### Prepare Bitgo Wallet
 a. Create a wallet with Bitgo - record the following information as you need them later:
@@ -106,7 +105,7 @@ And it will store the file like below:
 
 ### incode
 ```
-const CCC = require('civic-credentials-commons');
+const CCC = require('credential-commons-js');
 const ccc = new CCC({
   sipSecurityService: "",
   attestationService: "",
@@ -636,32 +635,21 @@ For now all libraries are released only on GitHub tags.
 
 For Civic Developers on Node 8 or superior add this dependency to package.json
 
-"civic-credentials-common-js": "github:civicteam/civic-credentials-commons-js"
+"credential-common-js": "github:identity-com/credential-commons-js"
 
 This will install the latest version of the default branch on github (currently that branch is develop, but as soon as we release to production it should change to master).
 
 You can also add via npm install with the command:
 
-```bash npm install civicteam/civic-credentials-commons-js```
+```bash npm install identity-com/credential-commons-js```
 
 When the project is released to NPM Release the command will be only:
 
-```bash npm install civic-credentials-commons-js```
-
-The following question may arise, why the civic name on the project?
-
-Modules are lower case and usually dash-separated. If your module is a pure utility, you should generally favor clear and "boring" names for better discoverability and code clarity.
-
-This library is not pure utility and has a lot of Civic only patterns, so using the civic-* pattern becomes useful as it won't have any name clash with other packages and also makes it clear, that it's not a pure utility for other projects to use.
-
-For future projects that we release on public, if it's a pure utility, the prefix civic-* should not be used.
-
-Using specific tags on projects configuration
-On the project that is going to use the library, configure on the package.json as the following example:
+```bash npm install credential-commons-js```
 
 ```json
 
-"civic-credentials-commons-js": "civicteam/civic-credentials-commons-js.git#vX.Y.Z",
+"credential-commons-js": "github:identity-com/credential-commons-js#vX.Y.Z",
 
 ```
 
