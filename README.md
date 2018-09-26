@@ -38,6 +38,7 @@
       
 - [Node.js](https://nodejs.org/en/)
 - BitGO Wallet setup
+- SJCL library with ECC binary. Please refer how to build with support after the `npm i` here: https://github.com/bitwiseshiftleft/sjcl/wiki/Getting-Started
 
 #### Prepare Bitgo Wallet
 a. Create a wallet with Bitgo - record the following information as you need them later:
