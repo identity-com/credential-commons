@@ -1,0 +1,120 @@
+{
+  "name": "credential-commons-js",
+  "version": "0.2.16",
+  "author": "Identity.com Community",
+  "license": "MIT",
+  "description": "Verifiable Credential and Attestation Library",
+  "private": true,
+  "keywords": [
+    "credentials",
+    "anchor",
+    "attestation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/identity-com/credential-commons-js.git"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "browser": "dist/browser/index.js",
+  "scripts": {
+    "lint": "eslint ./src/**.js",
+    "test": "cross-env NODE_ENV=false jest",
+    "test:watch": "jest --watch",
+    "check-schemas": "cross-env NODE_ENV=false jest --no-coverage __integrations__/schemas/",
+    "generate-schemas": "cross-env NODE_ENV=test node scripts/generateSchemas.js",
+    "publish-schemas": "node scripts/publishSchemas.js && aws s3 cp ./dist/schemas/public/ $S3_BUCKET_SCHEMA_URL --recursive --acl public-read",
+    "generate-civic-config": "cross-env NODE_ENV=test node scripts/configuration.js",
+    "build:cjs": "BABEL_ENV=cjs babel src -d dist/cjs",
+    "build:es": "babel src -d dist/es --no-babelrc",
+    "build:browser:before": "BABEL_ENV=browser babel src -d dist/prebrowser",
+    "build:browser:after": "minify dist/prebrowser -d dist/browser",
+    "build:browser:clean": "rimraf dist/prebrowser",
+    "build:browser": "npm run build:browser:before && npm run build:browser:after && npm run build:browser:clean",
+    "build": "npm run build:browser && npm run build:cjs && npm run build:es",
+    "postversion": "git add --all && git commit -m\"build and version $npm_package_version\" -m\"[skip ci]\" && git push",
+    "pretag": "git fetch --tags",
+    "tag": "git tag v$npm_package_version && git push origin --tags"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.24.1",
+    "babel-jest": "^23.4.0",
+    "babel-minify": "^0.4.3",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-no-only-tests": "^2.0.0",
+    "eslint-plugin-react": "^7.10.0",
+    "jest": "^23.4.1",
+    "jest-html-reporter": "^2.3.0",
+    "request-debug": "^0.2.0",
+    "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "ajv": "^6.5.0",
+    "babel-runtime": "^6.26.0",
+    "bluebird": "^3.5.1",
+    "bottlejs": "^1.7.1",
+    "bson": "^3.0.0",
+    "chalk": "^2.4.1",
+    "clear": "^0.1.0",
+    "cross-env": "^5.1.6",
+    "dotenv": "^6.0.0",
+    "figlet": "^1.2.0",
+    "flat": "^4.0.0",
+    "inquirer": "^6.0.0",
+    "install": "^0.11.0",
+    "json-format": "^1.0.1",
+    "lodash": "4.17.10",
+    "md5": "^2.2.1",
+    "merkle-tools": "^1.4.0",
+    "node-fetch": "^2.1.2",
+    "npm": "^6.1.0",
+    "randexp": "^0.4.9",
+    "randomstring": "^1.1.5",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5",
+    "shelljs": "^0.8.2",
+    "sjcl": "^1.0.7",
+    "type-of-is": "^3.5.1",
+    "unix-timestamp": "^0.2.0",
+    "uuid": "^3.3.2",
+    "winston": "^3.1.0"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "<rootDir>/dist/"
+    ],
+    "collectCoverageFrom": [
+      "**/src/**/*.{js}",
+      "!**/node_modules/**",
+      "!**/build/**",
+      "!**/vendor/**",
+      "!src/services/DummyAnchorServiceImpl.js",
+      "!src/services/anchorService.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 85,
+        "functions": 85,
+        "lines": 85,
+        "statements": 85
+      }
+    },
+    "coverageDirectory": "reports/coverage",
+    "collectCoverage": true,
+    "testResultsProcessor": "./node_modules/jest-html-reporter",
+    "verbose": true
+  },
+  "jest-html-reporter": {
+    "pageTitle": "Verifiable Credential and Attestation Library Test Suite",
+    "outputPath": "reports/test-report.html",
+    "includeFailureMsg": true
+  }
+}
