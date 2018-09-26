@@ -1,6 +1,6 @@
 {
-  "name": "credential-common-js",
-  "version": "0.2.15",
+  "name": "credential-commons-js",
+  "version": "0.2.16",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
