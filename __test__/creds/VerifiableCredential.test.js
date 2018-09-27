@@ -439,4 +439,23 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     expect(VC.isMatchCredentialMeta(vcMeta, constraints)).toBeFalsy();
   });
+
+
+  it('Should not match credential if constraints invalid or empty', () => {
+    const vcMeta = {
+      id: '123456789',
+      identifier: 'civ:Credential:CivicBasic',
+      issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      issuanceDate: '2018-09-27T01:14:41.287Z',
+      expirationDate: '2028-09-26T11:22:21.287Z',
+      version: '1',
+      type: [
+        'Credential',
+        'civ:Credential:CivicBasic',
+      ],
+    };
+
+    const constraint = {};
+    expect(VC.isMatchCredentialMeta(vcMeta, constraint)).toBeFalsy();
+  });
 });

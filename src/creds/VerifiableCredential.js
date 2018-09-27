@@ -4,6 +4,7 @@ const MerkleTools = require('merkle-tools');
 const sjcl = require('sjcl');
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
+const uuidv4 = require('uuid/v4');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const SecureRandom = require('../SecureRandom');
@@ -185,7 +186,7 @@ const VERIFY_LEVELS = {
  * @param {*} version
  */
 function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
-  this.id = null;
+  this.id = uuidv4();
   this.issuer = issuer;
   const issuerUCA = new UCA('civ:Meta:issuer', this.issuer);
   this.issuanceDate = (new Date()).toISOString();
@@ -453,7 +454,10 @@ const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
   console.log(JSON.stringify(credentialMeta, null, 2));
   const metaConstrait = transformMetaConstraint(constraintsMeta);
   console.log(JSON.stringify(metaConstrait, null, 2));
-  const result = sift.indexOf(metaConstrait, [credentialMeta]) > -1;
+  let result = false;
+  if (!_.isEmpty(metaConstrait)) {
+    result = sift.indexOf(metaConstrait, [credentialMeta]) > -1;
+  }
   return result;
 };
 
