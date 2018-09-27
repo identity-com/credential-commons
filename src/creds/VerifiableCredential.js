@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const sift = require('sift');
 const MerkleTools = require('merkle-tools');
 const sjcl = require('sjcl');
 const timestamp = require('unix-timestamp');
@@ -7,7 +8,6 @@ const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
-
 
 const anchorService = services.container.AnchorService;
 
@@ -79,6 +79,29 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
 }
 
 /**
+ * Transform DSR constraints to sift constraits
+ * @param {*} constraints
+ */
+function transformConstraint(constraints) {
+  const resultConstraints = [];
+
+  _.forEach(constraints.claims, (constraint) => {
+    if (!constraint.path) {
+      throw new Error('Malformed contraint: missing PATTH');
+    }
+    if (!constraint.is) {
+      throw new Error('Malformed contraint: missing IS');
+    }
+
+    const siftConstraint = {};
+    siftConstraint[constraint.path] = constraint.is;
+    resultConstraints.push(siftConstraint);
+  });
+
+  return resultConstraints;
+}
+
+/**
  * Transforms a list of UCAs into the signature property of the verifiable cliams
  */
 class CivicMerkleProof {
@@ -111,8 +134,8 @@ class CivicMerkleProof {
 
   static padTree(nodes) {
     const currentLength = nodes.length;
-    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS :
-      _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
+    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS
+      : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
       newNodes.push(new UCA('civ:Random:node', SecureRandom.wordWith(16)));
@@ -346,6 +369,24 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @returns {Promise<Promise<*>|void>}
    */
   this.isRevoked = async () => anchorService.isRevoked(this.proof);
+
+  this.isMatch = (constraints) => {
+    console.log(JSON.stringify(constraints, null, 2));
+
+    const siftConstraints = transformConstraint(constraints);
+    console.log(JSON.stringify(siftConstraints, null, 2));
+    let result = true;
+
+    _.forEach(siftConstraints, (constraint) => {
+      console.log(JSON.stringify(constraint, null, 2));
+      console.log(JSON.stringify([this], null, 2));
+      result = (sift.indexOf(constraint, [this.claim]) > -1);
+      console.log(JSON.stringify(result, null, 2));
+      return result;
+    });
+    return result;
+  };
+
   return this;
 }
 

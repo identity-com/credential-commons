@@ -276,4 +276,50 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(isRevoked).toBeFalsy();
     done();
   });
+
+
+  it('Should match with one constraint', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.name.first', is: { $eq: 'Joao' } },
+      ],
+    })).toBeTruthy();
+  });
+
+  it('Should match with two constraint', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.name.first', is: { $eq: 'Joao' } },
+        { path: 'identity.name.middle', is: { $eq: 'Barbosa' } },
+      ],
+    })).toBeTruthy();
+  });
+
+  it('Should match with gt constraint', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.dateOfBirth.year', is: { $gt: 1900 } },
+      ],
+    })).toBeTruthy();
+  });
+
+  it('Should not match', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.name.first', is: { $eq: 'Savio' } },
+      ],
+    })).toBeFalsy();
+  });
 });
