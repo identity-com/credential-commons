@@ -54,7 +54,6 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   } else if (ucaValue.type === 'Object') {
     const ucaValueValue = ucaValue.value;
     const claimValue = _.get(claims, leave.claimPath);
-    // console.log(`${JSON.stringify(ucaValueValue)} / ${JSON.stringify(claimValue)}`);
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
       const ucaType = _.get(ucaValueValue[k], 'type');
@@ -75,7 +74,6 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
 
   // 2. Validate targetHashs + proofs with merkleRoot
   const isValidProof = merkleTools.validateProof(leave.node, leave.targetHash, signature.merkleRoot);
-  // console.log(`leave.node / ${leave.targetHash} / ${signature.merkleRoot}: ${isValidProof}`);
   if (!isValidProof) invalidProofs.push(leave.targetHash);
 }
 
@@ -372,17 +370,12 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.isRevoked = async () => anchorService.isRevoked(this.proof);
 
   this.isMatch = (constraints) => {
-    console.log(JSON.stringify(constraints, null, 2));
 
     const siftConstraints = transformConstraint(constraints);
-    console.log(JSON.stringify(siftConstraints, null, 2));
     let result = true;
 
     _.forEach(siftConstraints, (constraint) => {
-      console.log(JSON.stringify(constraint, null, 2));
-      console.log(JSON.stringify([this], null, 2));
       result = (sift.indexOf(constraint, [this.claim]) > -1);
-      console.log(JSON.stringify(result, null, 2));
       return result;
     });
     return result;
@@ -420,16 +413,13 @@ function transformMetaConstraint(constraintsMeta) {
 
   // handle special field constraints.meta.credential
   const constraintsMetaCredential = _.get(constraintsMeta, 'meta.credential');
-  console.log(`constraintsMetaCredential=${JSON.stringify(constraintsMetaCredential)}`);
   if (constraintsMetaCredential) {
     // (type)-(identifier)-(version)
     const regexp = /(.*)-(.*)-(.*)/g;
     const matches = regexp.exec(constraintsMetaCredential);
-    console.log(`matches=${JSON.stringify(matches)}`);
     [, , siftConstraint.identifier, siftConstraint.version] = matches;
 
     const metaFieldConstrait = getCredentialMeta(constraintsMeta.meta);
-    console.log(`metaFieldConstrait=${JSON.stringify(metaFieldConstrait)}`);
     _.forEach(_.keys(metaFieldConstrait), (k) => {
       siftConstraint[k] = metaFieldConstrait[k].is;
     });
@@ -450,10 +440,7 @@ function transformMetaConstraint(constraintsMeta) {
  * //   }
  */
 const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
-  // console.log(JSON.stringify(constraints, null, 2));
-  console.log(JSON.stringify(credentialMeta, null, 2));
   const metaConstrait = transformMetaConstraint(constraintsMeta);
-  console.log(JSON.stringify(metaConstrait, null, 2));
   let result = false;
   if (!_.isEmpty(metaConstrait)) {
     result = sift.indexOf(metaConstrait, [credentialMeta]) > -1;
