@@ -1,13 +1,14 @@
 const _ = require('lodash');
+const sift = require('sift');
 const MerkleTools = require('merkle-tools');
 const sjcl = require('sjcl');
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
+const uuidv4 = require('uuid/v4');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
-
 
 const anchorService = services.container.AnchorService;
 
@@ -79,6 +80,29 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
 }
 
 /**
+ * Transform DSR constraints to sift constraits
+ * @param {*} constraints
+ */
+function transformConstraint(constraints) {
+  const resultConstraints = [];
+
+  _.forEach(constraints.claims, (constraint) => {
+    if (!constraint.path) {
+      throw new Error('Malformed contraint: missing PATTH');
+    }
+    if (!constraint.is) {
+      throw new Error('Malformed contraint: missing IS');
+    }
+
+    const siftConstraint = {};
+    siftConstraint[constraint.path] = constraint.is;
+    resultConstraints.push(siftConstraint);
+  });
+
+  return resultConstraints;
+}
+
+/**
  * Transforms a list of UCAs into the signature property of the verifiable cliams
  */
 class CivicMerkleProof {
@@ -111,8 +135,8 @@ class CivicMerkleProof {
 
   static padTree(nodes) {
     const currentLength = nodes.length;
-    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS :
-      _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
+    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS
+      : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
       newNodes.push(new UCA('civ:Random:node', SecureRandom.wordWith(16)));
@@ -162,7 +186,7 @@ const VERIFY_LEVELS = {
  * @param {*} version
  */
 function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
-  this.id = null;
+  this.id = uuidv4();
   this.issuer = issuer;
   const issuerUCA = new UCA('civ:Meta:issuer', this.issuer);
   this.issuanceDate = (new Date()).toISOString();
@@ -346,8 +370,100 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @returns {Promise<Promise<*>|void>}
    */
   this.isRevoked = async () => anchorService.isRevoked(this.proof);
+
+  this.isMatch = (constraints) => {
+    console.log(JSON.stringify(constraints, null, 2));
+
+    const siftConstraints = transformConstraint(constraints);
+    console.log(JSON.stringify(siftConstraints, null, 2));
+    let result = true;
+
+    _.forEach(siftConstraints, (constraint) => {
+      console.log(JSON.stringify(constraint, null, 2));
+      console.log(JSON.stringify([this], null, 2));
+      result = (sift.indexOf(constraint, [this.claim]) > -1);
+      console.log(JSON.stringify(result, null, 2));
+      return result;
+    });
+    return result;
+  };
+
   return this;
 }
+
+
+/**
+ * CREDENTIAL_META_FIELDS - Array with meta fields of a credential
+ */
+const CREDENTIAL_META_FIELDS = [
+  'id',
+  'identifier',
+  'issuer',
+  'issuanceDate',
+  'expirationDate',
+  'version',
+  'type',
+];
+
+/**
+ *
+ * @param {*} vc
+ */
+const getCredentialMeta = vc => _.pick(vc, CREDENTIAL_META_FIELDS);
+
+/**
+ *
+ * @param {*} constraintsMeta
+ */
+function transformMetaConstraint(constraintsMeta) {
+  const siftConstraint = {};
+
+  // handle special field constraints.meta.credential
+  const constraintsMetaCredential = _.get(constraintsMeta, 'meta.credential');
+  console.log(`constraintsMetaCredential=${JSON.stringify(constraintsMetaCredential)}`);
+  if (constraintsMetaCredential) {
+    // (type)-(identifier)-(version)
+    const regexp = /(.*)-(.*)-(.*)/g;
+    const matches = regexp.exec(constraintsMetaCredential);
+    console.log(`matches=${JSON.stringify(matches)}`);
+    [, , siftConstraint.identifier, siftConstraint.version] = matches;
+
+    const metaFieldConstrait = getCredentialMeta(constraintsMeta.meta);
+    console.log(`metaFieldConstrait=${JSON.stringify(metaFieldConstrait)}`);
+    _.forEach(_.keys(metaFieldConstrait), (k) => {
+      siftConstraint[k] = metaFieldConstrait[k].is;
+    });
+  }
+  return siftConstraint;
+}
+
+/**
+ * isMatchCredentialMeta
+ * @param {*} credentialMeta A Object continais only VC meta fields. Other object keys will be ignored.
+ * @param {*} constraintsMeta Example:
+ * // constraints.meta = {
+ * //   "credential": "credential-civ:Credential:CivicBasic-1",
+ * //   "issuer": {
+ * //     "is": {
+ * //       "$eq": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD"
+ * //     }
+ * //   }
+ */
+const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
+  // console.log(JSON.stringify(constraints, null, 2));
+  console.log(JSON.stringify(credentialMeta, null, 2));
+  const metaConstrait = transformMetaConstraint(constraintsMeta);
+  console.log(JSON.stringify(metaConstrait, null, 2));
+  let result = false;
+  if (!_.isEmpty(metaConstrait)) {
+    result = sift.indexOf(metaConstrait, [credentialMeta]) > -1;
+  }
+  return result;
+};
+
+VerifiableCredentialBaseConstructor.CREDENTIAL_META_FIELDS = CREDENTIAL_META_FIELDS;
+VerifiableCredentialBaseConstructor.getCredentialMeta = getCredentialMeta;
+VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMeta;
 
 /**
  * Factory function that creates a new Verifiable Credential based on a JSON object
