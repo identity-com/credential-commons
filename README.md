@@ -1,6 +1,10 @@
-# Verifiable Credential and Attestation Library
+# Identity.com Verifiable Credential Library
 
-Warning: this still is a working in progress and is not ready for usage yet. Please feel free to explore the code but don't integrate yet. We expect API changes before the 1st release.
+*Warning:* this still is a working in progress and is not ready for usage yet. Please feel free to explore the code but don't integrate yet. We expect API changes before the 1st release.
+
+## Summary
+
+This Javascript Library provides functionality around Verifiable Credentials (VC), a W3C standard. Enables Validators to issue, Credential Wallets to verify, filter and Requesters to verify credentials.
 
 ## Contents
 
@@ -8,8 +12,6 @@ Warning: this still is a working in progress and is not ready for usage yet. Ple
 - [Configuration](#configuration)
   * [Etc Config File /etc/civic/config](#etc-config-file--etc-civic-config)
   * [User Config File ~/.civic/config](#user-config-file---civic-config)
-  * [incode](#incode)
-    + [Prepare Bitgo Wallet](#prepare-bitgo-wallet)
 - [Features](#features)
   * [User Collectable Attributes](#user-collectable-attributes)
     + [Defining new UCA](#defining-new-uca)
@@ -39,23 +41,9 @@ Warning: this still is a working in progress and is not ready for usage yet. Ple
 [![npm][npm]][npm-url]
       
 - [Node.js](https://nodejs.org/en/)
-- BitGO Wallet setup
 - SJCL library with ECC binary. Please refer how to build with support after the `npm i` here: https://github.com/bitwiseshiftleft/sjcl/wiki/Getting-Started
 
-#### Prepare Bitgo Wallet
-a. Create a wallet with Bitgo - record the following information as you need them later:
-
-**Wallet ID:** < obtained from the Bitgo URL 
-https://test.bitgo.com/enterprise/.../coin/tcoin/{YOUR_WALLET_ID}/transactions >
-
-**Wallet passphrase:** < set when creating the wallet - this may be different to your account passcode for bitgo>
-
-**Wallet XPrv:** < You receive this in encrypted form in the PDF - section 1. User Key>
-
-**Enterprise ID:** < obtained from the Bitgo URL 
-https://test.bitgo.com/enterprise/{YOUR_ENTERPRISE_ID}/coin/tcoin/.../transactions >
-
-b. Decrypt the XPrv
+a. Decrypt the XPrv
 
 ```
 git clone git@github.com:masonicGIT/sjcl-cli.git
@@ -64,15 +52,6 @@ npm install
 node src/index.js decrypt
 ```
 
-Enter encrypted data: <enter the User Key from the PDF **without newlines**>
-
-Enter passcode: <your BitGo account password (see above)>
-
-c. Generate an access token
-
-Via the BitGO Website User Settings -> Developer Options
-* Ensure you add a high spending limit for BCH
-
 ## Configuration
 
 This library depends on some configuration settings to work properly.
@@ -80,19 +59,6 @@ The configuration is made in three different ways that override each other:
 * etc config file
 * user config file
 * environment's variables, in code (not recommended as you can push that to your repo)
-
-and consists of the following settings:
-
-* CIVIC_SEC_URL - Base endpoint address to the Civic Security Service, where you can register this lib as a client
-* CIVIC_ATTN_URL - Base endpoint address to the Civic Attestation Service
-* CIVIC_CLIENT_ID - The ID of this lib installation
-* CIVIC_CLIENT_XPUB - The public key used by this installation
-* CIVIC_CLIENT_XPRIV - The public key used by this installation
-* CIVIC_PASSPHASE - Civic User Wallet Passphrase. prefer setting this in code
-* CIVIC_KEYCHAIN - Civic User Wallet KEYCHAIN. prefer setting this in code
-* CLIENT_WALLET_ID - For revocation and verification functions, the BitGo Wallet ID (not the address)
-* CLIENT_WALLET_PASSPHRASE - For revocation and verification functions, the BitGo Wallet ID (not the xprv nor the use key card pdf, store that safely!)
-* CLIENT_ACCESS_TOKEN - BitGo access token to access wallets, must have the Admin property to the target wallet that will make spending
  
 There is an utility on cli folder, the configuration.js, just run it:
 
