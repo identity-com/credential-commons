@@ -67,7 +67,7 @@
     "cross-env": "^5.1.6",
     "dotenv": "^6.0.0",
     "figlet": "^1.2.0",
-    "flat": "^4.0.0",
+    "flat": "^4.1.0",
     "inquirer": "^6.0.0",
     "install": "^0.11.0",
     "json-format": "^1.0.1",
