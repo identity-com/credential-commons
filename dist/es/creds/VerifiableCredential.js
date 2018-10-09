@@ -16,12 +16,10 @@ function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
 }
 
-function getClaimPath(identifier, claimsPathRef) {
+function getClaimPath(identifier) {
   const identifierComponentes = _.split(identifier, ':');
   const baseName = _.lowerCase(identifierComponentes[1]);
-  const sufix = `${baseName}.${identifierComponentes[2]}`;
-  const claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
-  return claimPath || sufix;
+  return `${baseName}.${identifierComponentes[2]}`;
 }
 
 function validIdentifiers() {
@@ -33,11 +31,7 @@ function getClaimsWithFlatKeys(claims) {
   const flattenDepth3 = flatten(claims, { maxDepth: 3 });
   const flattenDepth2 = flatten(claims, { maxDepth: 2 });
   const flattenClaim = _.merge({}, flattenDepth3, flattenDepth2);
-  const flattenSortedKeysClaim = _(flattenClaim)
-    .toPairs()
-    .sortBy(0)
-    .fromPairs()
-    .value();
+  const flattenSortedKeysClaim = _(flattenClaim).toPairs().sortBy(0).fromPairs().value();
   return flattenSortedKeysClaim;
 }
 
@@ -57,7 +51,7 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
     const ucaValueValue = ucaValue.value;
     const claimValue = _.get(claims, leave.claimPath);
     const ucaValueKeys = _.keys(ucaValue.value);
-    _.each(ucaValueKeys, (k) => {
+    _.each(ucaValueKeys, k => {
       const ucaType = _.get(ucaValueValue[k], 'type');
       // number values are padded on the attestation value
       const expectedClaimValue = ucaType === 'Number' ? _.padStart(claimValue[k], 8, '0') : claimValue[k];
@@ -86,7 +80,7 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
 function transformConstraint(constraints) {
   const resultConstraints = [];
 
-  _.forEach(constraints.claims, (constraint) => {
+  _.forEach(constraints.claims, constraint => {
     if (!constraint.path) {
       throw new Error('Malformed contraint: missing PATTH');
     }
@@ -110,43 +104,42 @@ class CivicMerkleProof {
     return 16;
   }
 
-  constructor(ucas, claimsPathRef) {
+  constructor(ucas) {
     const withRandomUcas = CivicMerkleProof.padTree(ucas);
     this.type = 'CivicMerkleProof2018';
     this.merkleRoot = null;
     this.anchor = 'TBD (Civic Blockchain Attestation)';
     this.leaves = CivicMerkleProof.getAllAttestableValue(withRandomUcas);
-    this.buildMerkleTree(claimsPathRef);
+    this.buildMerkleTree();
   }
 
-  buildMerkleTree(claimsPathRef) {
+  buildMerkleTree() {
     const merkleTools = new MerkleTools();
     const hashes = _.map(this.leaves, n => sha256(n.value));
     merkleTools.addLeaves(hashes);
     merkleTools.makeTree();
     _.forEach(hashes, (hash, idx) => {
-      this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier, claimsPathRef);
+      this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier);
       this.leaves[idx].targetHash = hash;
       this.leaves[idx].node = merkleTools.getProof(idx);
     });
-    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'cvc:Random:node'));
+    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'civ:Random:node'));
     this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
   }
 
   static padTree(nodes) {
     const currentLength = nodes.length;
-    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS
-      : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
+    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
-      newNodes.push(new UCA('cvc:Random:node', SecureRandom.wordWith(16)));
+      newNodes.push(new UCA('civ:Random:node', SecureRandom.wordWith(16)));
     }
     return newNodes;
   }
 
   static getAllAttestableValue(ucas) {
     const values = [];
-    _.forEach(ucas, (uca) => {
+    _.forEach(ucas, uca => {
       const innerValues = uca.getAttestableValues();
       _.reduce(innerValues, (res, iv) => {
         res.push(iv);
@@ -161,7 +154,7 @@ class CivicMerkleProof {
  */
 class ClaimModel {
   constructor(ucas) {
-    _.forEach(ucas, (uca) => {
+    _.forEach(ucas, uca => {
       const rootPropertyName = uca.getClaimRootPropertyName();
       if (!this[rootPropertyName]) {
         this[rootPropertyName] = {};
@@ -175,7 +168,7 @@ const VERIFY_LEVELS = {
   INVALID: -1,
   PROOFS: 0, // Includes expiry if its there
   ANCHOR: 1,
-  BLOCKCHAIN: 2,
+  BLOCKCHAIN: 2
 };
 
 /**
@@ -188,12 +181,12 @@ const VERIFY_LEVELS = {
 function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
   this.id = uuidv4();
   this.issuer = issuer;
-  const issuerUCA = new UCA('cvc:Meta:issuer', this.issuer);
-  this.issuanceDate = (new Date()).toISOString();
-  const issuanceDateUCA = new UCA('cvc:Meta:issuanceDate', this.issuanceDate);
+  const issuerUCA = new UCA('civ:Meta:issuer', this.issuer);
+  this.issuanceDate = new Date().toISOString();
+  const issuanceDateUCA = new UCA('civ:Meta:issuanceDate', this.issuanceDate);
   this.identifier = identifier;
   this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-  const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
+  const expiryUCA = new UCA('civ:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
@@ -211,11 +204,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
     this.claim = new ClaimModel(ucas);
-    const claimsPathRef = _.keys(flatten(this.claim, { safe: true }));
-    this.proof = new CivicMerkleProof(proofUCAs, claimsPathRef);
+    this.proof = new CivicMerkleProof(proofUCAs);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
-      _.forEach(removed, (r) => {
+      _.forEach(removed, r => {
         _.unset(this.claim, r.claimPath);
       });
     }
@@ -224,18 +216,18 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   /**
    * Returns the global CredentialItemIdentifier of the Credential
    */
-  this.getGlobalCredentialItemIdentifier = () => (`credential-${this.identifier}-${this.version}`);
+  this.getGlobalCredentialItemIdentifier = () => `credential-${this.identifier}-${this.version}`;
 
   /**
    * Creates a filtered credential exposing only the requested claims
    * @param {*} requestedClaims
    */
-  this.filter = (requestedClaims) => {
+  this.filter = requestedClaims => {
     const filtered = _.cloneDeep(this);
     _.remove(filtered.proof.leaves, el => !_.includes(requestedClaims, el.identifier));
 
     filtered.claim = {};
-    _.forEach(filtered.proof.leaves, (el) => {
+    _.forEach(filtered.proof.leaves, el => {
       _.set(filtered.claim, el.claimPath, _.get(this.claim, el.claimPath));
     });
 
@@ -247,7 +239,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This will return a _temporary_ anchor meaning that the blockchain entry is still not confirmed.
    * @param {*} options
    */
-  this.requestAnchor = async (options) => {
+  this.requestAnchor = async options => {
     // TODO @jpsantosbh please check this line, the anchor here is the label on chainauth that will create an cold wallet, if the name equals in the same time, we get an double spending
     // TODO this could be the ID of the VC
     const anchor = await anchorService.anchor(this.identifier, this.proof.merkleRoot, options);
@@ -284,7 +276,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     const invalidValues = [];
     const invalidHashs = [];
     const invalidProofs = [];
-    _.forEach(_.keys(claimsWithFlatKeys), (claimKey) => {
+    _.forEach(_.keys(claimsWithFlatKeys), claimKey => {
       // check if `claimKey` has a `claimPath` proof
       const leaveIdx = _.indexOf(leavesClaimPaths, claimKey);
       // if not found
@@ -310,8 +302,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       const expiryLeave = signLeaves[expiryIdx];
       const metaClaim = {
         meta: {
-          expirationDate: expiry,
-        },
+          expirationDate: expiry
+        }
       };
       const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
       verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
@@ -328,11 +320,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         }
       }
     }
-    if (_.isEmpty(invalidClaim)
-        && _.isEmpty(invalidValues)
-        && _.isEmpty(invalidHashs)
-        && _.isEmpty(invalidProofs)
-        && _.isEmpty(invalidExpiry)) {
+    if (_.isEmpty(invalidClaim) && _.isEmpty(invalidValues) && _.isEmpty(invalidHashs) && _.isEmpty(invalidProofs) && _.isEmpty(invalidExpiry)) {
       valid = true;
     }
     return valid;
@@ -342,7 +330,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * Verify the Credencial and return a verification level.
    * @return Any of VC.VERIFY_LEVELS
    */
-  this.verify = (higherVerifyLevel) => {
+  this.verify = higherVerifyLevel => {
     const hVerifyLevel = higherVerifyLevel || VERIFY_LEVELS.PROOFS;
     let verifiedlevel = VERIFY_LEVELS.INVALID;
     if (hVerifyLevel >= VERIFY_LEVELS.PROOFS && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
@@ -372,13 +360,13 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.isRevoked = async () => anchorService.isRevoked(this.proof);
 
-  this.isMatch = (constraints) => {
+  this.isMatch = constraints => {
 
     const siftConstraints = transformConstraint(constraints);
     let result = true;
 
-    _.forEach(siftConstraints, (constraint) => {
-      result = (sift.indexOf(constraint, [this.claim]) > -1);
+    _.forEach(siftConstraints, constraint => {
+      result = sift.indexOf(constraint, [this.claim]) > -1;
       return result;
     });
     return result;
@@ -387,19 +375,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   return this;
 }
 
-
 /**
  * CREDENTIAL_META_FIELDS - Array with meta fields of a credential
  */
-const CREDENTIAL_META_FIELDS = [
-  'id',
-  'identifier',
-  'issuer',
-  'issuanceDate',
-  'expirationDate',
-  'version',
-  'type',
-];
+const CREDENTIAL_META_FIELDS = ['id', 'identifier', 'issuer', 'issuanceDate', 'expirationDate', 'version', 'type'];
 
 /**
  *
@@ -420,10 +399,10 @@ function transformMetaConstraint(constraintsMeta) {
     // (type)-(identifier)-(version)
     const regexp = /(.*)-(.*)-(.*)/g;
     const matches = regexp.exec(constraintsMetaCredential);
-    [, , siftConstraint.identifier, siftConstraint.version] = matches;
+    [,, siftConstraint.identifier, siftConstraint.version] = matches;
 
     const metaFieldConstrait = getCredentialMeta(constraintsMeta.meta);
-    _.forEach(_.keys(metaFieldConstrait), (k) => {
+    _.forEach(_.keys(metaFieldConstrait), k => {
       siftConstraint[k] = metaFieldConstrait[k].is;
     });
   }
@@ -459,7 +438,7 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
  * Factory function that creates a new Verifiable Credential based on a JSON object
  * @param {*} verifiableCredentialJSON
  */
-VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
+VerifiableCredentialBaseConstructor.fromJSON = verifiableCredentialJSON => {
   const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);

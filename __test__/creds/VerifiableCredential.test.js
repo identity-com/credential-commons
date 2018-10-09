@@ -276,4 +276,186 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(isRevoked).toBeFalsy();
     done();
   });
+
+
+  it('Should match with one constraint', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.name.first', is: { $eq: 'Joao' } },
+      ],
+    })).toBeTruthy();
+  });
+
+  it('Should match with two constraint', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.name.first', is: { $eq: 'Joao' } },
+        { path: 'identity.name.middle', is: { $eq: 'Barbosa' } },
+      ],
+    })).toBeTruthy();
+  });
+
+  it('Should match with gt constraint', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.dateOfBirth.year', is: { $gt: 1900 } },
+      ],
+    })).toBeTruthy();
+  });
+
+  it('Should not match', () => {
+    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.name.first', is: { $eq: 'Savio' } },
+      ],
+    })).toBeFalsy();
+  });
+
+  it('Should match credential on constraints.meta', () => {
+    const vcMeta = {
+      id: '123456789',
+      identifier: 'civ:Credential:CivicBasic',
+      issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      issuanceDate: '2018-09-27T01:14:41.287Z',
+      expirationDate: '2028-09-26T11:22:21.287Z',
+      version: '1',
+      type: [
+        'Credential',
+        'civ:Credential:CivicBasic',
+      ],
+    };
+
+    const constraints = {
+      meta: {
+        credential: 'credential-civ:Credential:CivicBasic-1',
+      },
+    };
+
+    expect(VC.isMatchCredentialMeta(vcMeta, constraints)).toBeTruthy();
+  });
+
+  it('Should match credential on constraints.meta with issuer', () => {
+    const vcMeta = {
+      id: '123456789',
+      identifier: 'civ:Credential:CivicBasic',
+      issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      issuanceDate: '2018-09-27T01:14:41.287Z',
+      expirationDate: '2028-09-26T11:22:21.287Z',
+      version: '1',
+      type: [
+        'Credential',
+        'civ:Credential:CivicBasic',
+      ],
+    };
+
+    const constraints = {
+      meta: {
+        credential: 'credential-civ:Credential:CivicBasic-1',
+        issuer: {
+          is: {
+            $eq: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+          },
+        },
+      },
+    };
+
+    expect(VC.isMatchCredentialMeta(vcMeta, constraints)).toBeTruthy();
+  });
+
+  it('Should match credential on constraints.meta with multiple fileds', () => {
+    const vcMeta = {
+      id: '123456789',
+      identifier: 'civ:Credential:CivicBasic',
+      issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      issuanceDate: '2018-09-27T01:14:41.287Z',
+      expirationDate: '2028-09-26T11:22:21.287Z',
+      version: '1',
+      type: [
+        'Credential',
+        'civ:Credential:CivicBasic',
+      ],
+    };
+
+    const constraints = {
+      meta: {
+        credential: 'credential-civ:Credential:CivicBasic-1',
+        issuer: {
+          is: {
+            $eq: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+          },
+        },
+        id: {
+          is: {
+            $eq: '123456789',
+          },
+        },
+      },
+    };
+
+    expect(VC.isMatchCredentialMeta(vcMeta, constraints)).toBeTruthy();
+  });
+
+  it('Should not match credential on constraints.meta with invalid filed', () => {
+    const vcMeta = {
+      id: '123456789',
+      identifier: 'civ:Credential:CivicBasic',
+      issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      issuanceDate: '2018-09-27T01:14:41.287Z',
+      expirationDate: '2028-09-26T11:22:21.287Z',
+      version: '1',
+      type: [
+        'Credential',
+        'civ:Credential:CivicBasic',
+      ],
+    };
+
+    const constraints = {
+      meta: {
+        credential: 'credential-civ:Credential:CivicBasic-1',
+        issuer: {
+          is: {
+            $eq: 'did:ethr:NOT_MATCH',
+          },
+        },
+        id: {
+          is: {
+            $eq: '123456789',
+          },
+        },
+      },
+    };
+
+    expect(VC.isMatchCredentialMeta(vcMeta, constraints)).toBeFalsy();
+  });
+
+
+  it('Should not match credential if constraints invalid or empty', () => {
+    const vcMeta = {
+      id: '123456789',
+      identifier: 'civ:Credential:CivicBasic',
+      issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      issuanceDate: '2018-09-27T01:14:41.287Z',
+      expirationDate: '2028-09-26T11:22:21.287Z',
+      version: '1',
+      type: [
+        'Credential',
+        'civ:Credential:CivicBasic',
+      ],
+    };
+
+    const constraint = {};
+    expect(VC.isMatchCredentialMeta(vcMeta, constraint)).toBeFalsy();
+  });
 });
