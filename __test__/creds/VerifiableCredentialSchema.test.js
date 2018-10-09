@@ -14,6 +14,7 @@ jest.setTimeout(1500000);
  */
 describe('VerifiableCredentials SchemaGenerator validation', () => {
   it('Should validate the VC Schema generation against a single well known definition', () => {
+    // const address = new UCA('cvc:Address:country', 'Brazil');
     const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 1, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', 'jest:test', null, [name, dob], 1);
