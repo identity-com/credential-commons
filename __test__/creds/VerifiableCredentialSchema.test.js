@@ -14,7 +14,6 @@ jest.setTimeout(1500000);
  */
 describe('VerifiableCredentials SchemaGenerator validation', () => {
   it('Should validate the VC Schema generation against a single well known definition', () => {
-    //const address = new UCA('cvc:Address:country', 'Brazil');
     const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 1, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', 'jest:test', null, [name, dob], 1);
@@ -49,6 +48,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
       const ajv = new Ajv();
+      console.log(JSON.stringify(generatedJson, null, 2));
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
       return isValid;
