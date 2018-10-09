@@ -80,7 +80,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
     // changing the data
-    generatedJson.claim.type.phone.countryCode = 123456;
+    generatedJson.claim.identity.familyNames = 123456;
     const ajv = new Ajv();
     const validate = ajv.compile(jsonSchema);
     // cannot be valid since country code is an string on the json schema type and uca definition
