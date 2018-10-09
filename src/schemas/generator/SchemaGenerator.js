@@ -1,15 +1,15 @@
 /* eslint-disable no-use-before-define */
 const randomString = require('randomstring');
-const UCA = require('../../uca/UserCollectableAttribute');
-const ucaDefinitions = require('../../uca/definitions');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
+const UCA = require('../../uca/UserCollectableAttribute');
+const ucaDefinitions = require('../../uca/definitions');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
 const getPropertyNameFromDefinition = (definition) => {
-  const substrIndex = definition.identifier.lastIndexOf('.') > -1 ? definition.identifier.lastIndexOf('.') + 1 :
-    definition.identifier.lastIndexOf(':') + 1;
+  const substrIndex = definition.identifier.lastIndexOf('.') > -1 ? definition.identifier.lastIndexOf('.') + 1
+    : definition.identifier.lastIndexOf(':') + 1;
   return definition.identifier.substring(substrIndex);
 };
 
@@ -172,8 +172,8 @@ const generateRandomNumberValueWithRange = (definition) => {
     if (typeof definition.minimum !== 'undefined' && definition.minimum !== null
       && typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
       if (Number.isInteger(definition.minimum)) {
-        genRandomNumber = Math.floor(definition.minimum + exclusiveMinVariance + (Math.random() *
-          (definition.maximum + exclusiveMaxVariance)));
+        genRandomNumber = Math.floor(definition.minimum + exclusiveMinVariance + (Math.random()
+          * (definition.maximum + exclusiveMaxVariance)));
       }
       genRandomNumber = definition.minimum + (Math.random() * definition.maximum);
     } else if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
