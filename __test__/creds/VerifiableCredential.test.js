@@ -4,85 +4,85 @@ const uuidv4 = require('uuid/v4');
 const UCA = require('../../src/uca/UserCollectableAttribute');
 const VC = require('../../src/creds/VerifiableCredential');
 
-jest.mock('../../src/creds/definitions');
-
 jest.setTimeout(150000);
 
 describe('Unit tests for Verifiable Credentials', () => {
   test('Dont construct undefined Credentials', () => {
     function createCredential() {
-      const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+      const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
       const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-      return new VC('civ:cred:Test', uuidv4(), null, [name, dob], '1');
+      return new VC('cvc:cred:Test', uuidv4(), null, [name, dob], '1');
     }
-    expect(createCredential).toThrowError('civ:cred:Test is not defined');
+    expect(createCredential).toThrowError('cvc:cred:Test is not defined');
   });
   test('Dont construct Credentials with wrong version', () => {
     function createCredential() {
-      const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+      const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
       const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-      return new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '2');
+      return new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '2');
     }
-    expect(createCredential).toThrowError('Credential definition for civ:Credential:SimpleTest v2 not found');
+    expect(createCredential).toThrowError('Credential definition for cvc:Credential:Identity v2 not found');
   });
   test('New Defined Credentials', () => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred).toBeDefined();
-    expect(cred.claim.identity.name.first).toBe('Joao');
-    expect(cred.claim.identity.name.middle).toBe('Barbosa');
-    expect(cred.claim.identity.name.last).toBe('Santos');
+    expect(cred.claim.identity.name.givenNames).toBe('Joao');
+    expect(cred.claim.identity.name.otherNames).toBe('Barbosa');
+    expect(cred.claim.identity.name.familyNames).toBe('Santos');
     expect(cred.claim.identity.dateOfBirth.day).toBe(20);
     expect(cred.claim.identity.dateOfBirth.month).toBe(3);
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
     expect(cred.proof.leaves).toHaveLength(8);
   });
-  it('should validate new defined credentials with the obligatory Meta:expirationDate UCA with null value', () => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+
+  // This test was skiped cause in the current definitions we don't have this case any more
+  test.skip('should validate new defined credentials with the obligatory Meta:expirationDate UCA with null value', () => {
+    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred).toBeDefined();
-    expect(cred.claim.identity.name.first).toBe('Joao');
-    expect(cred.claim.identity.name.middle).toBeUndefined();
-    expect(cred.claim.identity.name.last).toBe('Santos');
+    expect(cred.claim.identity.name.givenNames).toBe('Joao');
+    expect(cred.claim.identity.name.otherNames).toBeUndefined();
+    expect(cred.claim.identity.name.familyNames).toBe('Santos');
     expect(cred.claim.identity.dateOfBirth.day).toBe(20);
     expect(cred.claim.identity.dateOfBirth.month).toBe(3);
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
-    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuer' })).toBeDefined();
-    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuanceDate' })).toBeDefined();
-    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:expirationDate' })).toBeDefined();
+    expect(_.find(cred.proof.leaves, { identifier: 'cvc:Meta:issuer' })).toBeDefined();
+    expect(_.find(cred.proof.leaves, { identifier: 'cvc:Meta:issuanceDate' })).toBeDefined();
+    expect(_.find(cred.proof.leaves, { identifier: 'cvc:Meta:expirationDate' })).toBeDefined();
     expect(cred.expirationDate).toBeNull();
     expect(cred.proof.leaves).toHaveLength(7);
   });
   test('New Expirable Credentials', () => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', uuidv4(), '-1d', [name, dob], '1');
+    const cred = new VC('cvc:Credential:Identity', uuidv4(), '-1d', [name, dob], '1');
     expect(cred).toBeDefined();
-    expect(cred.claim.identity.name.first).toBe('Joao');
-    expect(cred.claim.identity.name.middle).toBeUndefined();
-    expect(cred.claim.identity.name.last).toBe('Santos');
+    expect(cred.claim.identity.name.givenNames).toBe('Joao');
+    expect(cred.claim.identity.name.otherNames).toBe('Barbosa');
+    expect(cred.claim.identity.name.familyNames).toBe('Santos');
     expect(cred.claim.identity.dateOfBirth.day).toBe(20);
     expect(cred.claim.identity.dateOfBirth.month).toBe(3);
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
-    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuer' })).toBeDefined();
-    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:issuanceDate' })).toBeDefined();
+    expect(_.find(cred.proof.leaves, { identifier: 'cvc:Meta:issuer' })).toBeDefined();
+    expect(_.find(cred.proof.leaves, { identifier: 'cvc:Meta:issuanceDate' })).toBeDefined();
     expect(cred.expirationDate).toBeDefined();
-    expect(_.find(cred.proof.leaves, { identifier: 'civ:Meta:expirationDate' })).toBeDefined();
-    expect(cred.proof.leaves).toHaveLength(7);
+    expect(_.find(cred.proof.leaves, { identifier: 'cvc:Meta:expirationDate' })).toBeDefined();
+    expect(cred.proof.leaves).toHaveLength(8);
   });
   test('New Defined Credentials return the incorrect global Credential Identifier', () => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:TestWithExcludes', uuidv4(), null, [name, dob], '1');
-    expect(cred.getGlobalCredentialItemIdentifier()).toBe('credential-civ:Credential:TestWithExcludes-1');
+    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
+    expect(cred.getGlobalCredentialItemIdentifier()).toBe('credential-cvc:Credential:Identity-1');
   });
 
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('cvc:Credential:Identity', uuidv4(), '-1d', [name, dob], '1');
     return cred.requestAnchor().then((updated) => {
       expect(updated.proof.anchor.type).toBe('temporary');
       expect(updated.proof.anchor.value).not.toBeDefined();
@@ -92,9 +92,9 @@ describe('Unit tests for Verifiable Credentials', () => {
     });
   });
   it('should refresh an temporary anchoring with an permanent one', async (done) => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     // TODO refactor this to mock only attester.multiAttest inside this function
     cred.requestAnchor = jest.fn().mockImplementation(async () => {
       // mock the function or otherwise it would call the server
@@ -108,16 +108,16 @@ describe('Unit tests for Verifiable Credentials', () => {
       return updated.updateAnchor().then((newUpdated) => {
         expect(newUpdated.proof.anchor.type).toBe('permanent');
         expect(newUpdated.proof.anchor).toBeDefined();
-        expect(newUpdated.proof.anchor.value).toBeDefined();
+        expect(newUpdated.proof.anchor.subject).toBeDefined();
         done();
       });
     });
   });
   test('Filter claims', () => {
     const civIdentityName = {
-      first: 'Joao',
-      middle: 'Barbosa',
-      last: 'Santos',
+      givenNames: 'Joao',
+      otherNames: 'Barbosa',
+      familyNames: 'Santos',
     };
 
     const civIdentityDateOfBirth = {
@@ -127,18 +127,18 @@ describe('Unit tests for Verifiable Credentials', () => {
     };
     const nameUca = new UCA.IdentityName(civIdentityName);
 
-    const dobUca = new UCA('civ:Identity:dateOfBirth', civIdentityDateOfBirth);
+    const dobUca = new UCA('cvc:Identity:dateOfBirth', civIdentityDateOfBirth);
 
-    const simpleIdentity = new VC('civ:Credential:SimpleIdentity', 'Civic-Identity-Verifier', null, [nameUca, dobUca], '1');
+    const simpleIdentity = new VC('cvc:Credential:Identity', 'Civic-Identity-Verifier', null, [nameUca, dobUca], '1');
 
-    const filtered = simpleIdentity.filter(['civ:Identity:name.first']);
-    expect(filtered.claim.identity.name.first).toBeDefined();
-    expect(filtered.claim.identity.name.last).not.toBeDefined();
-    expect(filtered.claim.identity.name.middle).not.toBeDefined();
+    const filtered = simpleIdentity.filter(['cvc:Name:givenNames']);
+    expect(filtered.claim.identity.name.givenNames).toBeDefined();
+    expect(filtered.claim.identity.name.otherNames).not.toBeDefined();
+    expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
   });
 
 
-  test('cred.verifyProofs(): with a valid cred without expirationDate, should return TRUE', () => {
+  test('cred verifyProofs', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
@@ -253,9 +253,9 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should revoke the permanent anchor and succed verification', async (done) => {
-    const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('civ:Credential:SimpleTest', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     await cred.requestAnchor();
     await cred.updateAnchor();
     const validation = await cred.verifyAttestation();
