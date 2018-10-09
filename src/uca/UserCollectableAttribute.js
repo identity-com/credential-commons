@@ -104,26 +104,6 @@ const getUCAProperties = (definition, pathName) => {
   return properties;
 };
 
-// const getUCAProperties = (definition, pathName) => {
-//   const properties = [];
-//   const type = resolveType(definition);
-//   const typeDefinition = _.find(definitions, { identifier: type });
-//   if (getTypeName(typeDefinition) === 'Object') {
-//     _.forEach(typeDefinition.type.properties, (prop) => {
-//       const basePropName = `${pathName ? `${pathName}.` : ''}${_.split(typeDefinition.identifier, ':')[2]}`;
-//       if (_.includes(['String', 'Number', 'Boolean'], prop.type)) {
-//         // Propertie is not an object
-//         properties.push(`${basePropName}.${prop.name}`);
-//       } else {
-//         const propDefinition = _.find(definitions, { identifier: prop.type });
-//         const proProperties = getUCAProperties(propDefinition, basePropName);
-//         _.forEach(proProperties, p => properties.push(p));
-//       }
-//     });
-//   }
-//   return properties;
-// };
-
 const isAttestableValue = value => (
   value && value.attestableValue
 );
