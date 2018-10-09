@@ -196,8 +196,9 @@ const generateRandomValueForType = (typeName) => {
   let resolvedTypeName = typeName;
   if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
     refDefinition = ucaDefinitions.find(def => def.identifier === typeName);
+    //console.log(UCA.resolveType(refDefinition));
     if (refDefinition !== null) {
-      resolvedTypeName = refDefinition.type;
+      resolvedTypeName = UCA.resolveType(refDefinition);
     }
   }
   // generate sample data
