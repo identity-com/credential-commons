@@ -5,4 +5,9 @@ node_modules/
 *.iml
 npm-debug.log
 build
+<<<<<<< HEAD
 .DS_Store
+=======
+.DS_Store
+dist
+>>>>>>> af7064392705e9ae0b1bed60066b2ec41657ed98

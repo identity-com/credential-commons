@@ -25,10 +25,10 @@ describe('isGlobalIdentifier Tests', () => {
     }
     expect(target).toThrow('credential-civ:Credential:CivicBasico-1 is not valid');
   });
-  test('claim-civ:Identity:firstName-1 is valid', () => {
-    expect(isGlobalIdentifier('claim-civ:Identity:firstName-1')).toBeTruthy();
+  test('claim-cvc:Name:givenNames-1 is valid', () => {
+    expect(isGlobalIdentifier('claim-cvc:Name:givenNames-1')).toBeTruthy();
   });
-  test('credential-civ:Credential:CivicBasic-1 is valid', () => {
-    expect(isGlobalIdentifier('credential-civ:Credential:CivicBasic-1')).toBeTruthy();
+  test('credential-cvc:Credential:Identity-1 is valid', () => {
+    expect(isGlobalIdentifier('credential-cvc:Credential:Identity-1')).toBeTruthy();
   });
 });

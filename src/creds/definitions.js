@@ -6,33 +6,57 @@
  */
 const definitions = [
   {
-    identifier: 'civ:Credential:CivicBasic',
+    identifier: 'cvc:Credential:email',
     version: '1',
     depends: [
-      'civ:Type:phone',
-      'civ:Type:email',
+      'cvc:Contact:email',
     ],
   },
   {
-    identifier: 'civ:Credential:GenericId',
+    identifier: 'cvc:Credential:phoneNumber',
     version: '1',
     depends: [
-      'civ:Type:address',
-      'civ:Type:documentType',
-      'civ:Type:documentNumber',
-      'civ:Type:image',
-      'civ:Identity:name',
-      'civ:Identity:givenName',
-      'civ:Identity:dateOfBirth',
-      'civ:Identity:dateOfIssue',
-      'civ:Identity:dateOfExpiry',
+      'cvc:Contact:phoneNumber',
     ],
   },
   {
-    identifier: 'civ:Credential:Address',
+    identifier: 'cvc:Credential:User',
     version: '1',
     depends: [
-      'civ:Type:address',
+      'cvc:User:id',
+      'cvc:User:realm',
+    ],
+  },
+  {
+    identifier: 'cvc:Credential:GenericDocumentId',
+    version: '1',
+    depends: [
+      'cvc:Document:type',
+      'cvc:Document:number',
+      'cvc:Document:name',
+      'cvc:Document:gender',
+      'cvc:Document:issueLocation',
+      'cvc:Document:issueAuthority',
+      'cvc:Document:issueCountry',
+      'cvc:Document:placeOfBirth',
+      'cvc:Document:dateOfBirth',
+      'cvc:Document:address',
+      'cvc:Document:properties',
+    ],
+  },
+  {
+    identifier: 'cvc:Credential:Address',
+    version: '1',
+    depends: [
+      'cvc:Identity:address',
+    ],
+  },
+  {
+    identifier: 'cvc:Credential:Identity',
+    version: '1',
+    depends: [
+      'cvc:Identity:name',
+      'cvc:Identity:dateOfBirth',
     ],
   },
 ];
