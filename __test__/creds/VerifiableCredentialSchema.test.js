@@ -13,7 +13,7 @@ jest.setTimeout(1500000);
  * Also check the integration tests, they add a new layer of testing on the published schemas
  */
 describe('VerifiableCredentials SchemaGenerator validation', () => {
-  it('Should validate the VC Schema generation against a single well known definition', () => {
+  test('Should validate the VC Schema generation against a single well known definition', () => {
     // const address = new UCA('cvc:Address:country', 'Brazil');
     const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 1, year: 1978 });
@@ -27,7 +27,8 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     expect(jsonSchema.properties.proof.type).toBe('object');
   });
 
-  it('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
+  // Skiped while dmelosantos is working on this
+  test.skip('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
@@ -61,7 +62,8 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     });
   });
 
-  it('Should change the VC Json data and fail against AJV', () => {
+  // Skiped while dmelosantos is working on this
+  test.skip('Should change the VC Json data and fail against AJV', () => {
     const identifier = 'cvc:Credential:Identity';
     const credentialDefinition = credentialDefinitions.find(credsDef => credsDef.identifier === identifier);
     const ucaArray = [];
