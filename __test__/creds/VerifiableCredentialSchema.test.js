@@ -13,8 +13,7 @@ jest.setTimeout(1500000);
  * Also check the integration tests, they add a new layer of testing on the published schemas
  */
 describe('VerifiableCredentials SchemaGenerator validation', () => {
-  test('Should validate the VC Schema generation against a single well known definition', () => {
-    // const address = new UCA('cvc:Address:country', 'Brazil');
+  it('Should validate the VC Schema generation against a single well known definition', () => {
     const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 1, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', 'jest:test', null, [name, dob], 1);
@@ -27,8 +26,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     expect(jsonSchema.properties.proof.type).toBe('object');
   });
 
-  // Skiped while dmelosantos is working on this
-  test.skip('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
+  it('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
@@ -62,8 +60,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     });
   });
 
-  // Skiped while dmelosantos is working on this
-  test.skip('Should change the VC Json data and fail against AJV', () => {
+  it('Should change the VC Json data and fail against AJV', () => {
     const identifier = 'cvc:Credential:Identity';
     const credentialDefinition = credentialDefinitions.find(credsDef => credsDef.identifier === identifier);
     const ucaArray = [];
@@ -81,11 +78,9 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
-    // changing the data
-    generatedJson.claim.identity.familyNames = 123456;
+    generatedJson.claim.identity.name.familyNames = 123456;
     const ajv = new Ajv();
     const validate = ajv.compile(jsonSchema);
-    // cannot be valid since country code is an string on the json schema type and uca definition
     const isValid = validate(generatedJson);
     expect(isValid).toBeFalsy();
   });
