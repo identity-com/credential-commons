@@ -3,9 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/node:8.11
-        environment:
-          CIVIC_SEC_URL: https://api.civic.com/sip-sec-dev/DEV
-          CIVIC_ATTN_URL: https://dev.api.civic.com/request-attestation-tbch
 
     working_directory: ~/repo
 
