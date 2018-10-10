@@ -1,0 +1,31 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.11
+        environment:
+          CIVIC_SEC_URL: https://api.civic.com/sip-sec-dev/DEV
+          CIVIC_ATTN_URL: https://dev.api.civic.com/request-attestation-tbch
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm ci
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run:
+          name: run tests incl coverage
+          command: npm run test
+      - run: npm run lint
