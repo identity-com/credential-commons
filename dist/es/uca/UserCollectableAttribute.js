@@ -67,6 +67,38 @@ const resolveType = definition => {
   return resolveType(refDefinition);
 };
 
+const getUCAProperties = (definition, pathName) => {
+  const properties = [];
+  const type = resolveType(definition);
+  const typeDefinition = _.isString(type) ? _.find(definitions, { identifier: type }) : definition;
+
+  if (typeDefinition && getTypeName(typeDefinition) === 'Object') {
+    let typeDefProps;
+    if (typeDefinition.type.properties) {
+      typeDefProps = typeDefinition.type.properties;
+    } else {
+      const typeDefDefinition = _.find(definitions, { identifier: typeDefinition.type });
+      typeDefProps = resolveType(typeDefDefinition).properties;
+    }
+    const basePropName = `${pathName ? `${pathName}.` : ''}${_.split(typeDefinition.identifier, ':')[2]}`;
+
+    if (_.includes(['String', 'Number', 'Boolean'], `${typeDefProps.type}`)) {
+      // Propertie is not an object
+      properties.push(`${basePropName}.${typeDefProps.name}`);
+    } else {
+      _.forEach(typeDefProps, prop => {
+        const propDefinition = _.find(definitions, { identifier: prop.type });
+        const proProperties = getUCAProperties(propDefinition, basePropName);
+        _.forEach(proProperties, p => properties.push(p));
+      });
+    }
+  } else if (pathName) {
+    const propertieName = `${pathName}.${_.split(definition.identifier, ':')[2]}`;
+    properties.push(propertieName);
+  }
+  return properties;
+};
+
 const isAttestableValue = value => value && value.attestableValue;
 
 const parseAttestableValue = value => {
@@ -118,11 +150,12 @@ function UCABaseConstructor(identifier, value, version) {
       // This is a simple attestableValue
       this.timestamp = null;
       this.salt = parsedAttestableValue[0].salt;
-      this.value = parsedAttestableValue[0].value;
+      const ucaValue = parsedAttestableValue[0].value;
+      this.value = _.includes(['null', 'undefined'], ucaValue) ? null : ucaValue;
     } else {
       const ucaValue = {};
       for (let i = 0; i < parsedAttestableValue.length; i += 1) {
-        const propertyName = parsedAttestableValue[i].propertyName;
+        const { propertyName } = parsedAttestableValue[i];
         // we have stored only the property name on the urn, so we have to find the UCA definition
         const filteredIdentifier = definition.type.properties.find(property => property.type.endsWith(propertyName)).type;
         ucaValue[propertyName] = new UCABaseConstructor(filteredIdentifier, { attestableValue: parsedAttestableValue[i].stringValue });
@@ -223,12 +256,16 @@ function UCABaseConstructor(identifier, value, version) {
         }
         return newParent;
       default:
-
         _.forEach(_.sortBy(_.keys(this.value)), k => {
           result.push(this.value[k].getPlainValue(k));
         });
         _.forEach(result, properties => {
-          _.assign(newParent, properties);
+          if (propName) {
+            newParent[propName] = newParent[propName] ? newParent[propName] : {};
+            _.assign(newParent[propName], properties);
+          } else {
+            _.assign(newParent, properties);
+          }
         });
         return newParent;
     }
@@ -265,5 +302,6 @@ _.forEach(_.filter(definitions, d => d.credentialItem), def => {
 
 UCA.getTypeName = getTypeName;
 UCA.resolveType = resolveType;
+UCA.getUCAProperties = getUCAProperties;
 
 module.exports = UCA;

@@ -1,9 +1,9 @@
 /* eslint-disable no-use-before-define */
 const randomString = require('randomstring');
-const UCA = require('../../uca/UserCollectableAttribute');
-const ucaDefinitions = require('../../uca/definitions');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
+const UCA = require('../../uca/UserCollectableAttribute');
+const ucaDefinitions = require('../../uca/definitions');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
@@ -14,45 +14,52 @@ const getPropertyNameFromDefinition = definition => {
 
 const getPropertyType = value => Type.string(value).toLowerCase();
 
-const processObject = (object, outputParam, nested) => {
+const processObject = (object, outputParam, parentKey) => {
   let output = outputParam;
-  if (nested && output) {
-    output = {
-      properties: output
-    };
-  } else {
-    output = output || {};
-    output.type = getPropertyType(object);
-    output.properties = output.properties || {};
-  }
+  output = output || {};
+  output.type = getPropertyType(object);
+  output.properties = output.properties || {};
   const keys = Object.entries(object);
   // too much debate on this eslint
   // https://github.com/airbnb/javascript/issues/1122
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of keys) {
+    // we have to get the required array from the definitions properties
     const type = getPropertyType(value);
     if (type === 'object') {
-      output.properties[key] = processObject(value, output.properties[key]);
+      output.properties[key] = processObject(value, output.properties[key], `${parentKey}.${key}`);
     } else if (type === 'array') {
       // recursion
       // eslint-disable-next-line
-      output.properties[key] = processArray(value, output.properties[key]);
+      output.properties[key] = processArray(value, output.properties[key], key);
     } else {
       output.properties[key] = {};
       output.properties[key].type = type === 'null' ? ['null', 'string'] : type;
     }
   }
-  return nested ? output.properties : output;
+  // it must be 4 here, we start the json of the VC with root
+  // then it's claim, then all standardize UCA are type:name
+  if (parentKey.includes('claim') && parentKey.split('.').length === 4) {
+    // with the json key of the claim
+    const baseUcaName = parentKey.substring('root.claim.'.length);
+    const typeName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1)).replace('.', ':');
+    // regenerate uca
+    const refDefinition = ucaDefinitions.find(def => def.identifier.includes(typeName));
+    // get it's required definitions
+    output.required = refDefinition.type.required;
+  }
+  output.additionalProperties = false;
+  return output;
 };
 
-const processArray = (array, outputParam, nested) => {
-  let output = outputParam;
-  output = outputParam || {};
+const processArray = (array, outputParam) => {
+  const output = outputParam || {};
   output.type = getPropertyType(array);
   output.items = output.items || {};
   const type = getPropertyType(array[0]);
   output.items.type = type;
-  return nested ? output.items : output;
+  output.additionalProperties = false;
+  return output;
 };
 
 /**
@@ -77,17 +84,12 @@ const process = (definition, json) => {
 
   // Process object
   if (output.type === 'object') {
-    processOutput = processObject(object);
+    processOutput = processObject(object, {}, 'root');
     output.type = processOutput.type;
     output.properties = processOutput.properties;
   }
   // for simple UCA get json schema properties
   if (typeof definition !== 'undefined' && definition !== null) {
-    if (Array.isArray(definition.required)) {
-      output.required = definition.required;
-    } else if (definition.required) {
-      output.required = [getPropertyNameFromDefinition(definition)];
-    }
     if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
       if (definition.exclusiveMinimum) {
         output.exclusiveMinimum = definition.minimum;
@@ -198,7 +200,7 @@ const generateRandomValueForType = typeName => {
     // simple composite, one depth level civ:Identity.name for example
     refDefinition = ucaDefinitions.find(def => def.identifier === typeName);
     if (refDefinition !== null) {
-      resolvedTypeName = refDefinition.type;
+      resolvedTypeName = UCA.resolveType(refDefinition);
     }
   }
   // generate sample data

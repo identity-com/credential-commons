@@ -1,8 +1,9 @@
 'use strict';
 
+const _ = require('lodash');
 const ucaDefinitions = require('./uca/definitions');
 const vcDefinitions = require('./creds/definitions');
-
+const UCA = require('./uca/UserCollectableAttribute');
 /**
  * Validate an claim path against it's parent UCA, and the parent UCA against the dependencies of an Credential
  * @param claim path, eg: name.first
@@ -15,21 +16,17 @@ function isClaimRelated(claim, uca, credential) {
   const ucaIdentifier = uca.substring(uca.indexOf('-') + 1, uca.lastIndexOf('-'));
   // check on the credential commons if this identifier exists
   const ucaDefinition = ucaDefinitions.find(definition => definition.identifier === ucaIdentifier);
-  // does the claim exists in the UCA?
+  // does the UCA exist?
   if (ucaDefinition) {
-    if (claim.indexOf('.') === -1) {
-      throw new Error('Malformed claim path property');
-    }
-    // get the property on claim path
-    const property = claim.substring(claim.indexOf('.') + 1);
-    const claimUcaIdentifier = `${ucaIdentifier}.${property}`;
-    const claimUcaDefinition = ucaDefinitions.find(definition => definition.identifier === claimUcaIdentifier);
-    if (claimUcaDefinition) {
+    const ucaProperties = UCA.getUCAProperties(ucaDefinition);
+
+    // does the claim exists in the UCA?
+    if (_.includes(ucaProperties, claim)) {
       // we now have the composite uca, the uca for the claim property, they both are correct
       // we need to check now the UCA is inside the dependencies of the credential refered as parent
       const credentialDefinition = vcDefinitions.find(definition => definition.identifier === credential);
       if (credentialDefinition) {
-        return credentialDefinition.depends.includes(ucaIdentifier);
+        return _.includes(credentialDefinition.depends, ucaIdentifier);
       }
       throw new Error('Credential identifier does not exist');
     } else {
