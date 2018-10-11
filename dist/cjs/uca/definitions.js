@@ -3,116 +3,202 @@
 /* eslint-disable no-template-curly-in-string */
 // ######################################### DEFINITIONS ###########################################
 
-
-// That in consideration that this model is inpired by C++ language data definitions
-// Changed: to lower case pattern UCA to Uca
 const definitions = [{
-  identifier: 'civ:Meta:issuer',
+  identifier: 'cvc:Meta:issuer',
+  description: 'Credential Issuer',
   version: '1',
   type: 'String',
   attestable: true
 }, {
-  identifier: 'civ:Meta:issuanceDate',
+  identifier: 'cvc:Meta:issuanceDate',
+  description: 'Credential date of issuance',
   version: '1',
   type: 'String',
   attestable: true
 }, {
-  identifier: 'civ:Meta:expirationDate',
+  identifier: 'cvc:Meta:expirationDate',
+  description: 'Credential expiration data',
   version: '1',
   type: 'String',
   attestable: true
 }, {
-  identifier: 'civ:Random:node',
+  identifier: 'cvc:Random:node',
+  description: 'a random node on the merkleTree, ',
   version: '1',
   type: 'String',
   attestable: true
 }, {
-  identifier: 'civ:Identity:name.first',
+  identifier: 'cvc:Domain:local_part',
+  description: 'also known as email domian',
   version: '1',
   type: 'String',
-  credentialItem: true,
-  required: true
+  credentialItem: false
 }, {
-  identifier: 'civ:Identity:firstName',
+  identifier: 'cvc:Domain:tld',
   version: '1',
   type: 'String',
-  credentialItem: true,
-  alsoKnown: ['civ:Identity:name.first']
+  credentialItem: false
 }, {
-  identifier: 'civ:Identity:givenName',
+  identifier: 'cvc:Email:address',
+  description: 'also known as email user',
   version: '1',
   type: 'String',
-  credentialItem: true,
-  alsoKnown: ['civ:Identity:name.first']
+  credentialItem: false
 }, {
-  identifier: 'civ:Identity:name.middle',
+  identifier: 'cvc:Type:domain',
+  version: '1',
+  type: {
+    properties: [{
+      name: 'tld',
+      type: 'cvc:Domain:tld'
+    }, {
+      name: 'local_part',
+      type: 'cvc:Domain:local_part'
+    }],
+    required: ['local_part', 'tld']
+  },
+  credentialItem: false
+}, {
+  identifier: 'cvc:Email:domain',
+  version: '1',
+  type: 'cvc:Type:domain',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Contact:email',
+  version: '1',
+  type: {
+    properties: [{
+      name: 'domain',
+      type: 'cvc:Email:domain'
+    }, {
+      name: 'address',
+      type: 'cvc:Email:address'
+    }]
+  },
+  credentialItem: true
+}, {
+  identifier: 'cvc:User:id',
+  version: 1,
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:User:realm',
+  version: 1,
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Type:country',
+  version: 1,
+  type: 'String',
+  credentialItem: false
+}, {
+  identifier: 'cvc:Phone:countryCode',
+  version: 1,
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Phone:number',
+  version: 1,
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Phone:extension',
+  version: 1,
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Phone:lineType',
+  version: 1,
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Contact:phoneNumber',
+  version: 1,
+  type: {
+    properties: [{
+      name: 'country',
+      type: 'cvc:Type:country'
+    }, {
+      name: 'countryCode',
+      type: 'cvc:Phone:countryCode'
+    }, {
+      name: 'number',
+      type: 'cvc:Phone:number'
+    }, {
+      name: 'extension',
+      type: 'cvc:Phone:extension'
+    }, {
+      name: 'lineType',
+      type: 'cvc:Phone:lineType'
+    }],
+    required: ['country', 'countryCode', 'number', 'lineType']
+  },
+  credentialItem: true
+}, {
+  identifier: 'cvc:Name:givenNames',
   version: '1',
   type: 'String',
   credentialItem: true
 }, {
-  identifier: 'civ:Identity:name.last',
+  identifier: 'cvc:Name:familyNames',
   version: '1',
   type: 'String',
   credentialItem: true
 }, {
-  identifier: 'civ:Identity:name.nickname',
+  identifier: 'cvc:Name:otherNames',
   version: '1',
   type: 'String',
   credentialItem: true
 }, {
-  identifier: 'civ:Identity:name.username',
+  identifier: 'cvc:Type:Name',
   version: '1',
-  type: 'String',
-  credentialItem: true,
-  alsoKnown: ['civ:Identity:name.nickname'] // We can create alias (more precise dataSources)
+  type: {
+    properties: [{
+      name: 'givenNames',
+      type: 'cvc:Name:givenNames'
+    }, {
+      name: 'familyNames',
+      type: 'cvc:Name:familyNames'
+    }, {
+      name: 'otherNames',
+      type: 'cvc:Name:otherNames'
+    }],
+    required: ['givenNames']
+  },
+  credentialItem: false
 }, {
-  identifier: 'civ:Type:shortToken', // We can create a Typedef that don't have an identifier. This means it't not a UCA but this is helpful to DRY
+  identifier: 'cvc:Document:name',
+  version: '1',
+  type: 'cvc:Type:Name',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Identity:name',
+  version: '1',
+  type: 'cvc:Type:Name',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Type:shortToken',
   version: '1',
   type: 'String',
   pattern: '/^\\d{5}$/', // We can specify a constraint to define the type domain
   credentialItem: false
 }, {
-  identifier: 'civ:Verify:phoneNumber.token',
+  identifier: 'cvc:Verify:phoneNumberToken',
   version: '1',
-  type: 'civ:Type:shortToken',
+  type: 'cvc:Type:shortToken',
   credentialItem: false // An example on UCA that only relates with the user in short term
 }, {
-  identifier: 'civ:Verify:email.token',
+  identifier: 'cvc:Verify:emailToken',
   version: '1',
-  type: 'civ:Type:shortToken',
+  type: 'cvc:Type:shortToken',
   credentialItem: false
 }, {
-  identifier: 'civ:Type:documentType',
+  identifier: 'cvc:Document:number',
   version: '1',
-  type: 'String', // change to Array and change the constructor and SchemaGenerator
+  type: 'String',
   credentialItem: true
 }, {
-  identifier: 'civ:Type:documentNumber',
-  version: '1',
-  type: 'Number',
-  credentialItem: true
-}, {
-  identifier: 'civ:Identity:name', // We can define a new identifier and the structure at same definition
-  version: '1',
-  type: {
-    properties: [{
-      name: 'first', // We need a key for templating and regex
-      type: 'civ:Identity:name.first' // OR a type
-    }, {
-      name: 'middle',
-      type: 'civ:Identity:name.middle'
-    }, {
-      name: 'last',
-      type: 'civ:Identity:name.last'
-    }, {
-      name: 'nickname',
-      type: 'civ:Identity:name.nickname'
-    }],
-    required: ['first']
-  },
-  credentialItem: true
-}, {
-  identifier: 'civ:Type:day',
+  identifier: 'cvc:Type:day',
   version: '1',
   type: 'Number',
   minimum: 0,
@@ -120,7 +206,7 @@ const definitions = [{
   maximum: 32,
   exclusiveMaximum: true
 }, {
-  identifier: 'civ:Type:month',
+  identifier: 'cvc:Type:month',
   version: '1',
   type: 'Number',
   minimum: 0,
@@ -128,163 +214,242 @@ const definitions = [{
   maximum: 13,
   exclusiveMaximum: true
 }, {
-  identifier: 'civ:Type:year',
+  identifier: 'cvc:Type:year',
   version: '1',
   type: 'Number',
   minimum: 1900,
   exclusiveMinimum: true
 }, {
-  identifier: 'civ:Type:date',
+  identifier: 'cvc:Type:date',
   version: '1',
   type: {
     properties: [{
       name: 'day',
-      type: 'civ:Type:day'
+      type: 'cvc:Type:day'
     }, {
       name: 'month',
-      type: 'civ:Type:month'
+      type: 'cvc:Type:month'
     }, {
       name: 'year',
-      type: 'civ:Type:year'
+      type: 'cvc:Type:year'
     }],
     required: ['day', 'month', 'year']
   }
 }, {
-  identifier: 'civ:Identity:dateOfBirth',
+  identifier: 'cvc:Identity:dateOfBirth',
   version: '1',
-  type: 'civ:Type:date',
+  type: 'cvc:Type:date',
   credentialItem: true
 }, {
-  identifier: 'civ:Identity:dateOfIssue',
+  identifier: 'cvc:Address:street',
   version: '1',
-  type: 'civ:Type:date',
+  type: 'String'
+}, {
+  identifier: 'cvc:Address:unit',
+  version: '1',
+  type: 'String'
+}, {
+  identifier: 'cvc:Address:city',
+  version: '1',
+  type: 'String',
   credentialItem: true
 }, {
-  identifier: 'civ:Identity:dateOfExpiry',
+  identifier: 'cvc:Address:postalCode',
   version: '1',
-  type: 'civ:Type:date',
+  type: 'String',
   credentialItem: true
 }, {
-  identifier: 'civ:Type:address.street',
+  identifier: 'cvc:Address:state',
   version: '1',
-  type: 'String'
+  type: 'String',
+  credentialItem: true
 }, {
-  identifier: 'civ:Type:address.unit',
+  identifier: 'cvc:Address:county',
   version: '1',
-  type: 'String'
+  type: 'String',
+  credentialItem: true
 }, {
-  identifier: 'civ:Type:address.city',
+  identifier: 'cvc:Address:country',
   version: '1',
-  type: 'String'
+  type: 'cvc:Type:country',
+  credentialItem: true
 }, {
-  identifier: 'civ:Type:address.zipCode',
-  version: '1',
-  type: 'String'
-}, {
-  identifier: 'civ:Type:address.state',
-  version: '1',
-  type: 'String'
-}, {
-  identifier: 'civ:Type:address.county',
-  version: '1',
-  type: 'String'
-}, {
-  identifier: 'civ:Type:address.country',
-  version: '1',
-  type: 'String'
-}, {
-  identifier: 'civ:Type:address',
+  identifier: 'cvc:Type:address',
   version: '1',
   type: {
     properties: [{
-      name: 'street',
-      type: 'civ:Type:address.street'
-    }, {
-      name: 'unit',
-      type: 'civ:Type:address.unit'
-    }, {
-      name: 'city',
-      type: 'civ:Type:address.city'
-    }, {
-      name: 'zipCode',
-      type: 'civ:Type:address.zipCode'
-    }, {
-      name: 'state',
-      type: 'civ:Type:address.state'
+      name: 'country',
+      type: 'cvc:Address:country'
     }, {
       name: 'county',
-      type: 'civ:Type:address.county'
+      type: 'cvc:Address:county'
     }, {
-      name: 'country',
-      type: 'civ:Type:address.country'
+      name: 'state',
+      type: 'cvc:Address:state'
+    }, {
+      name: 'street',
+      type: 'cvc:Address:street'
+    }, {
+      name: 'unit',
+      type: 'cvc:Address:unit'
+    }, {
+      name: 'city',
+      type: 'cvc:Address:city'
+    }, {
+      name: 'postalCode',
+      type: 'cvc:Address:postalCode'
     }],
-    required: ['country']
+    required: ['street', 'unit', 'city', 'state', 'country']
+  },
+  credentialItem: false
+}, {
+  identifier: 'cvc:Document:address',
+  version: 1,
+  type: 'cvc:Type:address',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Identity:address',
+  version: 1,
+  type: 'cvc:Type:address',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:dateOfIssue',
+  version: '1',
+  type: 'cvc:Type:date',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:dateOfExpiry',
+  version: '1',
+  type: 'cvc:Type:date',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:dateOfBirth',
+  version: '1',
+  type: 'cvc:Type:date',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:properties',
+  version: '1',
+  type: {
+    properties: [{
+      name: 'dateOfIssue',
+      type: 'cvc:Document:dateOfIssue'
+    }, {
+      name: 'dateOfExpiry',
+      type: 'cvc:Document:dateOfExpiry'
+    }],
+    required: ['dateOfIssue']
   },
   credentialItem: true
 }, {
-  identifier: 'civ:Type:email.user',
+  identifier: 'cvc:Type:s3FileBucket',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:email.domain',
+  identifier: 'cvc:Type:s3FileKey',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:email',
+  identifier: 'cvc:Type:ContentType',
+  version: '1',
+  type: 'String'
+}, {
+  identifier: 'cvc:Type:MD5',
+  version: '1',
+  type: 'String'
+}, {
+  identifier: 'cvc:Type:ImageBase64',
+  version: '1',
+  type: 'String'
+}, {
+  identifier: 'cvc:Type:S3FileRef',
   version: '1',
   type: {
     properties: [{
-      name: 'user',
-      type: 'civ:Type:email.user'
+      name: 'Bucket',
+      type: 'cvc:Type:s3FileBucket'
     }, {
-      name: 'domain',
-      type: 'civ:Type:email.domain'
+      name: 'Key',
+      type: 'cvc:Type:s3FileKey'
+    }, {
+      name: 'MD5',
+      type: 'cvc:Type:MD5'
+    }, {
+      name: 'ContentType',
+      type: 'cvc:Type:ContentType'
     }],
-    required: ['user', 'domain']
+    required: ['Bucket', 'Key', 'MD5', 'ContentType']
   }
 }, {
-  identifier: 'civ:Type:phone.number',
+  identifier: 'cvc:Type:DocumentFace',
   version: '1',
   type: 'String'
 }, {
-  identifier: 'civ:Type:phone.countryCode',
-  version: '1',
-  type: 'String'
-}, {
-  identifier: 'civ:Type:phone',
+  identifier: 'cvc:Type:S3DocumentImageRef',
   version: '1',
   type: {
     properties: [{
-      name: 'number',
-      type: 'civ:Type:phone.number',
-      pattern: '/\\d*/'
+      name: 'type',
+      type: 'cvc:Document:type'
     }, {
-      name: 'countryCode',
-      type: 'civ:Type:phone.countryCode'
+      name: 'face',
+      type: 'cvc:Type:DocumentFace'
+    }, {
+      name: 'reference',
+      type: 'cvc:Type:S3FileRef'
     }],
-    required: ['countryCode', 'number']
+    required: ['type', 'face', 'reference']
   }
 }, {
-  identifier: 'civ:Type:image.image',
-  version: '1',
-  type: 'String'
-}, {
-  identifier: 'civ:Type:image.md5',
-  version: '1',
-  type: 'String'
-}, {
-  identifier: 'civ:Type:image',
+  identifier: 'cvc:Document:image',
   version: '1',
   type: {
     properties: [{
-      name: 'image',
-      type: 'civ:Type:image.image'
+      name: 'front',
+      type: 'cvc:Type:ImageBase64'
     }, {
-      name: 'md5',
-      type: 'civ:Type:image.md5'
+      name: 'frontMD5',
+      type: 'cvc:Type:MD5'
+    }, {
+      name: 'back',
+      type: 'cvc:Type:ImageBase64'
+    }, {
+      name: 'backMD5',
+      type: 'cvc:Type:MD5'
     }],
-    required: ['image', 'md5']
+    required: ['front', 'frontMD5'],
+    credentialItem: true
   }
+}, {
+  identifier: 'cvc:Document:type',
+  version: '1',
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:gender',
+  version: '1',
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:issueLocation',
+  version: '1',
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:issueAuthority',
+  version: '1',
+  type: 'String',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:issueCountry',
+  version: '1',
+  type: 'cvc:Type:country',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Document:placeOfBirth',
+  version: '1',
+  type: 'String',
+  credentialItem: true
 }];
 
 module.exports = definitions;

@@ -20,10 +20,12 @@ function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
 }
 
-function getClaimPath(identifier) {
+function getClaimPath(identifier, claimsPathRef) {
   const identifierComponentes = _.split(identifier, ':');
   const baseName = _.lowerCase(identifierComponentes[1]);
-  return `${baseName}.${identifierComponentes[2]}`;
+  const sufix = `${baseName}.${identifierComponentes[2]}`;
+  const claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
+  return claimPath || sufix;
 }
 
 function validIdentifiers() {
@@ -108,26 +110,26 @@ class CivicMerkleProof {
     return 16;
   }
 
-  constructor(ucas) {
+  constructor(ucas, claimsPathRef) {
     const withRandomUcas = CivicMerkleProof.padTree(ucas);
     this.type = 'CivicMerkleProof2018';
     this.merkleRoot = null;
     this.anchor = 'TBD (Civic Blockchain Attestation)';
     this.leaves = CivicMerkleProof.getAllAttestableValue(withRandomUcas);
-    this.buildMerkleTree();
+    this.buildMerkleTree(claimsPathRef);
   }
 
-  buildMerkleTree() {
+  buildMerkleTree(claimsPathRef) {
     const merkleTools = new MerkleTools();
     const hashes = _.map(this.leaves, n => sha256(n.value));
     merkleTools.addLeaves(hashes);
     merkleTools.makeTree();
     _.forEach(hashes, (hash, idx) => {
-      this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier);
+      this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier, claimsPathRef);
       this.leaves[idx].targetHash = hash;
       this.leaves[idx].node = merkleTools.getProof(idx);
     });
-    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'civ:Random:node'));
+    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'cvc:Random:node'));
     this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
   }
 
@@ -136,7 +138,7 @@ class CivicMerkleProof {
     const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
-      newNodes.push(new UCA('civ:Random:node', SecureRandom.wordWith(16)));
+      newNodes.push(new UCA('cvc:Random:node', SecureRandom.wordWith(16)));
     }
     return newNodes;
   }
@@ -187,12 +189,12 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
   this.id = uuidv4();
   this.issuer = issuer;
-  const issuerUCA = new UCA('civ:Meta:issuer', this.issuer);
+  const issuerUCA = new UCA('cvc:Meta:issuer', this.issuer);
   this.issuanceDate = new Date().toISOString();
-  const issuanceDateUCA = new UCA('civ:Meta:issuanceDate', this.issuanceDate);
+  const issuanceDateUCA = new UCA('cvc:Meta:issuanceDate', this.issuanceDate);
   this.identifier = identifier;
   this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-  const expiryUCA = new UCA('civ:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
+  const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
@@ -210,7 +212,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
     this.claim = new ClaimModel(ucas);
-    this.proof = new CivicMerkleProof(proofUCAs);
+    const claimsPathRef = _.keys(flatten(this.claim, { safe: true }));
+    this.proof = new CivicMerkleProof(proofUCAs, claimsPathRef);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, r => {
