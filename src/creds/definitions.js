@@ -42,6 +42,7 @@ const definitions = [
       'cvc:Document:dateOfBirth',
       'cvc:Document:address',
       'cvc:Document:properties',
+      'cvc:Document:image',
     ],
   },
   {
