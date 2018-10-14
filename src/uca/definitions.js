@@ -31,7 +31,7 @@ const definitions = [
     attestable: true,
   },
   {
-    identifier: 'cvc:Domain:local_part',
+    identifier: 'cvc:Domain:localPart',
     description: 'also known as email domian',
     version: '1',
     type: 'String',
@@ -60,11 +60,11 @@ const definitions = [
           type: 'cvc:Domain:tld',
         },
         {
-          name: 'local_part',
-          type: 'cvc:Domain:local_part',
+          name: 'localPart',
+          type: 'cvc:Domain:localPart',
         },
       ],
-      required: ['local_part', 'tld'],
+      required: ['localPart', 'tld'],
     },
     credentialItem: false,
   },
