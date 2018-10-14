@@ -32,7 +32,7 @@ const definitions = [
   },
   {
     identifier: 'cvc:Domain:localPart',
-    description: 'also known as email domian',
+    description: 'also known as email domain',
     version: '1',
     type: 'String',
     credentialItem: false,
