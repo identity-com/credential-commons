@@ -44,7 +44,7 @@ const definitions = [
     credentialItem: false,
   },
   {
-    identifier: 'cvc:Email:address',
+    identifier: 'cvc:Email:username',
     description: 'also known as email user',
     version: '1',
     type: 'String',
@@ -84,8 +84,8 @@ const definitions = [
           type: 'cvc:Email:domain',
         },
         {
-          name: 'address',
-          type: 'cvc:Email:address',
+          name: 'username',
+          type: 'cvc:Email:username',
         },
       ],
     },
