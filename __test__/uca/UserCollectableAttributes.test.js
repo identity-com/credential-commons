@@ -254,11 +254,11 @@ describe('UCA Constructions tests', () => {
 
   test('Construct a cvc:Contact:email UCA', () => {
     const identifier = 'cvc:Contact:email';
-    const email = new UCA(identifier, { address: 'joao', domain: { local_part: 'civic', tld: 'com' } });
+    const email = new UCA(identifier, { address: 'joao', domain: { localPart: 'civic', tld: 'com' } });
     const plain = email.getPlainValue();
     expect(plain.address).toBe('joao');
     expect(plain.domain).toBeDefined();
-    expect(plain.domain.local_part).toBe('civic');
+    expect(plain.domain.localPart).toBe('civic');
     expect(plain.domain.tld).toBe('com');
   });
 
@@ -306,7 +306,7 @@ describe('UCA Constructions tests', () => {
     const properties = UCA.getUCAProperties(emailDefinition);
     expect(properties).toHaveLength(3);
     expect(properties).toContain('email.address');
-    expect(properties).toContain('email.domain.local_part');
+    expect(properties).toContain('email.domain.localPart');
     expect(properties).toContain('email.domain.tld');
   });
 
