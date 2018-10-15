@@ -72,7 +72,10 @@ const resolveType = (definition) => {
   return resolveType(refDefinition);
 };
 
-const getUCAProperties = (definition, pathName) => {
+const getUCAProperties = (identifier, pathName) => {
+  console.log(`getUCAProperties ${JSON.stringify({ identifier, pathName }, null, 2)}`);
+  const definition = _.find(definitions, { identifier });
+  console.log(`definition ${JSON.stringify(definition, null, 2)}`);
   const properties = [];
   const type = resolveType(definition);
   const typeDefinition = _.isString(type) ? _.find(definitions, { identifier: type }) : definition;
@@ -92,8 +95,10 @@ const getUCAProperties = (definition, pathName) => {
       properties.push(`${basePropName}.${typeDefProps.name}`);
     } else {
       _.forEach(typeDefProps, (prop) => {
-        const propDefinition = _.find(definitions, { identifier: prop.type });
-        const proProperties = getUCAProperties(propDefinition, basePropName);
+        // const propDefinition = _.find(definitions, { identifier: prop.type });
+        const typeSufix = _.split(prop.type, ':')[2];
+        const newBasePropName = prop.name === typeSufix ? basePropName : `${basePropName}.${prop.name}`;
+        const proProperties = getUCAProperties(prop.type, newBasePropName);
         _.forEach(proProperties, p => properties.push(p));
       });
     }

@@ -458,4 +458,33 @@ describe('Unit tests for Verifiable Credentials', () => {
     const constraint = {};
     expect(VC.isMatchCredentialMeta(vcMeta, constraint)).toBeFalsy();
   });
+
+  test('Should return all Credential properties for cvc:Credential:GenericDocumentId', () => {
+    const properties = VC.getAllProperties('cvc:Credential:GenericDocumentId');
+    console.log(JSON.stringify(properties, null, 2));
+    expect(properties).toHaveLength(23);
+    expect(properties).toContain('name.givenNames');
+    expect(properties).toContain('name.familyNames');
+    expect(properties).toContain('name.otherNames');
+    expect(properties).toContain('dateOfBirth.day');
+    expect(properties).toContain('dateOfBirth.month');
+    expect(properties).toContain('dateOfBirth.year');
+    expect(properties).toContain('address.country');
+    expect(properties).toContain('address.county');
+    expect(properties).toContain('address.state');
+    expect(properties).toContain('address.street');
+    expect(properties).toContain('address.unit');
+    expect(properties).toContain('address.city');
+    expect(properties).toContain('address.postalCode');
+    expect(properties).toContain('properties.dateOfIssue.day');
+    expect(properties).toContain('properties.dateOfIssue.month');
+    expect(properties).toContain('properties.dateOfIssue.year');
+    expect(properties).toContain('properties.dateOfExpiry.day');
+    expect(properties).toContain('properties.dateOfExpiry.month');
+    expect(properties).toContain('properties.dateOfExpiry.year');
+    expect(properties).toContain('image.front.ImageBase64');
+    expect(properties).toContain('image.frontMD5.MD5');
+    expect(properties).toContain('image.back.ImageBase64');
+    expect(properties).toContain('image.backMD5.MD5');
+  });
 });

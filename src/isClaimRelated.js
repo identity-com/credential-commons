@@ -16,7 +16,7 @@ function isClaimRelated(claim, uca, credential) {
   const ucaDefinition = ucaDefinitions.find(definition => definition.identifier === ucaIdentifier);
   // does the UCA exist?
   if (ucaDefinition) {
-    const ucaProperties = UCA.getUCAProperties(ucaDefinition);
+    const ucaProperties = UCA.getUCAProperties(ucaIdentifier);
 
     // does the claim exists in the UCA?
     if (_.includes(ucaProperties, claim)) {
