@@ -28,18 +28,19 @@ const definitions = [{
   type: 'String',
   attestable: true
 }, {
-  identifier: 'cvc:Domain:local_part',
-  description: 'also known as email domian',
+  identifier: 'cvc:Domain:name',
+  description: 'also known as email address domain',
   version: '1',
   type: 'String',
   credentialItem: false
 }, {
   identifier: 'cvc:Domain:tld',
+  description: 'also known as email address domain suffix, like .com, .org, .com.br',
   version: '1',
   type: 'String',
   credentialItem: false
 }, {
-  identifier: 'cvc:Email:address',
+  identifier: 'cvc:Email:username',
   description: 'also known as email user',
   version: '1',
   type: 'String',
@@ -52,10 +53,10 @@ const definitions = [{
       name: 'tld',
       type: 'cvc:Domain:tld'
     }, {
-      name: 'local_part',
-      type: 'cvc:Domain:local_part'
+      name: 'name',
+      type: 'cvc:Domain:name'
     }],
-    required: ['local_part', 'tld']
+    required: ['name', 'tld']
   },
   credentialItem: false
 }, {
@@ -68,11 +69,11 @@ const definitions = [{
   version: '1',
   type: {
     properties: [{
+      name: 'username',
+      type: 'cvc:Email:username'
+    }, {
       name: 'domain',
       type: 'cvc:Email:domain'
-    }, {
-      name: 'address',
-      type: 'cvc:Email:address'
     }]
   },
   credentialItem: true

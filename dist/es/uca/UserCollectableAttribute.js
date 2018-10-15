@@ -67,7 +67,8 @@ const resolveType = definition => {
   return resolveType(refDefinition);
 };
 
-const getUCAProperties = (definition, pathName) => {
+const getAllProperties = (identifier, pathName) => {
+  const definition = _.find(definitions, { identifier });
   const properties = [];
   const type = resolveType(definition);
   const typeDefinition = _.isString(type) ? _.find(definitions, { identifier: type }) : definition;
@@ -87,8 +88,9 @@ const getUCAProperties = (definition, pathName) => {
       properties.push(`${basePropName}.${typeDefProps.name}`);
     } else {
       _.forEach(typeDefProps, prop => {
-        const propDefinition = _.find(definitions, { identifier: prop.type });
-        const proProperties = getUCAProperties(propDefinition, basePropName);
+        const typeSufix = _.split(prop.type, ':')[2];
+        const newBasePropName = prop.name === typeSufix ? basePropName : `${basePropName}.${prop.name}`;
+        const proProperties = getAllProperties(prop.type, newBasePropName);
         _.forEach(proProperties, p => properties.push(p));
       });
     }
@@ -302,6 +304,6 @@ _.forEach(_.filter(definitions, d => d.credentialItem), def => {
 
 UCA.getTypeName = getTypeName;
 UCA.resolveType = resolveType;
-UCA.getUCAProperties = getUCAProperties;
+UCA.getAllProperties = getAllProperties;
 
 module.exports = UCA;
