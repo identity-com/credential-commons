@@ -21,7 +21,7 @@ const definitions = [{
 }, {
   identifier: 'cvc:Credential:GenericDocumentId',
   version: '1',
-  depends: ['cvc:Document:type', 'cvc:Document:number', 'cvc:Document:name', 'cvc:Document:gender', 'cvc:Document:issueLocation', 'cvc:Document:issueAuthority', 'cvc:Document:issueCountry', 'cvc:Document:placeOfBirth', 'cvc:Document:dateOfBirth', 'cvc:Document:address', 'cvc:Document:properties', 'cvc:Document:image']
+  depends: ['cvc:Document:type', 'cvc:Document:number', 'cvc:Document:name', 'cvc:Document:gender', 'cvc:Document:issueLocation', 'cvc:Document:issueAuthority', 'cvc:Document:issueCountry', 'cvc:Document:placeOfBirth', 'cvc:Document:dateOfBirth', 'cvc:Document:address', 'cvc:Document:properties']
 }, {
   identifier: 'cvc:Credential:Address',
   version: '1',

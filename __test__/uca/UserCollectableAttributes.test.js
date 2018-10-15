@@ -254,11 +254,11 @@ describe('UCA Constructions tests', () => {
 
   test('Construct a cvc:Contact:email UCA', () => {
     const identifier = 'cvc:Contact:email';
-    const email = new UCA(identifier, { address: 'joao', domain: { local_part: 'civic', tld: 'com' } });
+    const email = new UCA(identifier, { username: 'joao', domain: { name: 'civic', tld: 'com' } });
     const plain = email.getPlainValue();
-    expect(plain.address).toBe('joao');
+    expect(plain.username).toBe('joao');
     expect(plain.domain).toBeDefined();
-    expect(plain.domain.local_part).toBe('civic');
+    expect(plain.domain.name).toBe('civic');
     expect(plain.domain.tld).toBe('com');
   });
 
@@ -301,18 +301,16 @@ describe('UCA Constructions tests', () => {
     expect(plain.street).toBe('Ruthllardstr');
   });
 
-  test('Should get ALL UCA properties', () => {
-    const emailDefinition = _.find(definitions, { identifier: 'cvc:Contact:email' });
-    const properties = UCA.getUCAProperties(emailDefinition);
+  test('Should get ALL UCA properties email', () => {
+    const properties = UCA.getAllProperties('cvc:Contact:email');
     expect(properties).toHaveLength(3);
-    expect(properties).toContain('email.address');
-    expect(properties).toContain('email.domain.local_part');
+    expect(properties).toContain('email.username');
+    expect(properties).toContain('email.domain.name');
     expect(properties).toContain('email.domain.tld');
   });
 
-  test('Should get ALL UCA properties', () => {
-    const emailDefinition = _.find(definitions, { identifier: 'cvc:Identity:name' });
-    const properties = UCA.getUCAProperties(emailDefinition);
+  test('Should get ALL UCA properties name', () => {
+    const properties = UCA.getAllProperties('cvc:Identity:name');
     expect(properties).toHaveLength(3);
     expect(properties).toContain('name.givenNames');
     expect(properties).toContain('name.familyNames');
