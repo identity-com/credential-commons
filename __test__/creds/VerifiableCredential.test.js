@@ -461,7 +461,6 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   test('Should return all Credential properties for cvc:Credential:GenericDocumentId', () => {
     const properties = VC.getAllProperties('cvc:Credential:GenericDocumentId');
-    console.log(JSON.stringify(properties, null, 2));
     expect(properties).toHaveLength(23);
     expect(properties).toContain('name.givenNames');
     expect(properties).toContain('name.familyNames');

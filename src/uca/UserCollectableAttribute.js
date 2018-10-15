@@ -93,7 +93,6 @@ const getAllProperties = (identifier, pathName) => {
       properties.push(`${basePropName}.${typeDefProps.name}`);
     } else {
       _.forEach(typeDefProps, (prop) => {
-        // const propDefinition = _.find(definitions, { identifier: prop.type });
         const typeSufix = _.split(prop.type, ':')[2];
         const newBasePropName = prop.name === typeSufix ? basePropName : `${basePropName}.${prop.name}`;
         const proProperties = getAllProperties(prop.type, newBasePropName);

@@ -479,11 +479,11 @@ VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
   if (vcDefinition) {
     const allProperties = [];
     _.forEach(vcDefinition.depends, (ucaIdentifier) => {
-      allProperties.push(...UCA.getUCAProperties(ucaIdentifier));
+      allProperties.push(...UCA.getAllProperties(ucaIdentifier));
     });
     const excludesProperties = [];
     _.forEach(vcDefinition.excludes, (ucaIdentifier) => {
-      excludesProperties.push(...UCA.getUCAProperties(ucaIdentifier));
+      excludesProperties.push(...UCA.getAllProperties(ucaIdentifier));
     });
     return _.difference(allProperties, excludesProperties);
   }
