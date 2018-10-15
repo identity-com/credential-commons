@@ -301,18 +301,16 @@ describe('UCA Constructions tests', () => {
     expect(plain.street).toBe('Ruthllardstr');
   });
 
-  test('Should get ALL UCA properties', () => {
-    const emailDefinition = _.find(definitions, { identifier: 'cvc:Contact:email' });
-    const properties = UCA.getUCAProperties(emailDefinition);
+  test('Should get ALL UCA properties email', () => {
+    const properties = UCA.getAllProperties('cvc:Contact:email');
     expect(properties).toHaveLength(3);
     expect(properties).toContain('email.username');
     expect(properties).toContain('email.domain.name');
     expect(properties).toContain('email.domain.tld');
   });
 
-  test('Should get ALL UCA properties', () => {
-    const emailDefinition = _.find(definitions, { identifier: 'cvc:Identity:name' });
-    const properties = UCA.getUCAProperties(emailDefinition);
+  test('Should get ALL UCA properties name', () => {
+    const properties = UCA.getAllProperties('cvc:Identity:name');
     expect(properties).toHaveLength(3);
     expect(properties).toContain('name.givenNames');
     expect(properties).toContain('name.familyNames');
