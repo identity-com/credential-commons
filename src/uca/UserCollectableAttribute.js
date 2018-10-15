@@ -72,10 +72,8 @@ const resolveType = (definition) => {
   return resolveType(refDefinition);
 };
 
-const getUCAProperties = (identifier, pathName) => {
-  console.log(`getUCAProperties ${JSON.stringify({ identifier, pathName }, null, 2)}`);
+const getAllProperties = (identifier, pathName) => {
   const definition = _.find(definitions, { identifier });
-  console.log(`definition ${JSON.stringify(definition, null, 2)}`);
   const properties = [];
   const type = resolveType(definition);
   const typeDefinition = _.isString(type) ? _.find(definitions, { identifier: type }) : definition;
@@ -98,7 +96,7 @@ const getUCAProperties = (identifier, pathName) => {
         // const propDefinition = _.find(definitions, { identifier: prop.type });
         const typeSufix = _.split(prop.type, ':')[2];
         const newBasePropName = prop.name === typeSufix ? basePropName : `${basePropName}.${prop.name}`;
-        const proProperties = getUCAProperties(prop.type, newBasePropName);
+        const proProperties = getAllProperties(prop.type, newBasePropName);
         _.forEach(proProperties, p => properties.push(p));
       });
     }
@@ -315,6 +313,6 @@ _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
 
 UCA.getTypeName = getTypeName;
 UCA.resolveType = resolveType;
-UCA.getUCAProperties = getUCAProperties;
+UCA.getAllProperties = getAllProperties;
 
 module.exports = UCA;

@@ -302,7 +302,7 @@ describe('UCA Constructions tests', () => {
   });
 
   test('Should get ALL UCA properties email', () => {
-    const properties = UCA.getUCAProperties('cvc:Contact:email');
+    const properties = UCA.getAllProperties('cvc:Contact:email');
     expect(properties).toHaveLength(3);
     expect(properties).toContain('email.address');
     expect(properties).toContain('email.domain.local_part');
@@ -310,7 +310,7 @@ describe('UCA Constructions tests', () => {
   });
 
   test('Should get ALL UCA properties name', () => {
-    const properties = UCA.getUCAProperties('cvc:Identity:name');
+    const properties = UCA.getAllProperties('cvc:Identity:name');
     expect(properties).toHaveLength(3);
     expect(properties).toContain('name.givenNames');
     expect(properties).toContain('name.familyNames');
