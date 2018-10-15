@@ -26,8 +26,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     expect(jsonSchema.properties.proof.type).toBe('object');
   });
 
-  // Skiped while dmelosantos is working on this
-  test.skip('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
+  it('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
