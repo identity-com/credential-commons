@@ -86,7 +86,18 @@ const getAllProperties = (identifier, pathName) => {
       const typeDefDefinition = _.find(definitions, { identifier: typeDefinition.type });
       typeDefProps = resolveType(typeDefDefinition).properties;
     }
-    const basePropName = `${pathName ? `${pathName}.` : ''}${_.split(typeDefinition.identifier, ':')[2]}`;
+
+    let basePropName;
+    const baseIdentifierComponentes = _.split(typeDefinition.identifier, ':');
+    if (pathName) {
+      if (_.includes(pathName, _.lowerCase(baseIdentifierComponentes[1]))) {
+        basePropName = `${pathName}.${baseIdentifierComponentes[2]}`;
+      } else {
+        basePropName = `${pathName}.${_.lowerCase(baseIdentifierComponentes[1])}.${baseIdentifierComponentes[2]}`;
+      }
+    } else {
+      basePropName = `${_.lowerCase(baseIdentifierComponentes[1])}.${baseIdentifierComponentes[2]}`;
+    }
 
     if (_.includes(['String', 'Number', 'Boolean'], `${typeDefProps.type}`)) {
       // Propertie is not an object
@@ -101,6 +112,10 @@ const getAllProperties = (identifier, pathName) => {
     }
   } else if (pathName) {
     const propertieName = `${pathName}.${_.split(definition.identifier, ':')[2]}`;
+    properties.push(propertieName);
+  } else {
+    const identifierComponentes = _.split(identifier, ':');
+    const propertieName = `${_.lowerCase(identifierComponentes[1])}.${identifierComponentes[2]}`;
     properties.push(propertieName);
   }
   return properties;
