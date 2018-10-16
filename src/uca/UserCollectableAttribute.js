@@ -72,7 +72,8 @@ const resolveType = (definition) => {
   return resolveType(refDefinition);
 };
 
-const getUCAProperties = (definition, pathName) => {
+const getAllProperties = (identifier, pathName) => {
+  const definition = _.find(definitions, { identifier });
   const properties = [];
   const type = resolveType(definition);
   const typeDefinition = _.isString(type) ? _.find(definitions, { identifier: type }) : definition;
@@ -85,20 +86,36 @@ const getUCAProperties = (definition, pathName) => {
       const typeDefDefinition = _.find(definitions, { identifier: typeDefinition.type });
       typeDefProps = resolveType(typeDefDefinition).properties;
     }
-    const basePropName = `${pathName ? `${pathName}.` : ''}${_.split(typeDefinition.identifier, ':')[2]}`;
+
+    let basePropName;
+    const baseIdentifierComponents = _.split(typeDefinition.identifier, ':');
+    if (pathName) {
+      if (_.includes(pathName, _.lowerCase(baseIdentifierComponents[1]))) {
+        basePropName = `${pathName}.${baseIdentifierComponents[2]}`;
+      } else {
+        basePropName = `${pathName}.${_.lowerCase(baseIdentifierComponents[1])}.${baseIdentifierComponents[2]}`;
+      }
+    } else {
+      basePropName = `${_.lowerCase(baseIdentifierComponents[1])}.${baseIdentifierComponents[2]}`;
+    }
 
     if (_.includes(['String', 'Number', 'Boolean'], `${typeDefProps.type}`)) {
       // Propertie is not an object
       properties.push(`${basePropName}.${typeDefProps.name}`);
     } else {
       _.forEach(typeDefProps, (prop) => {
-        const propDefinition = _.find(definitions, { identifier: prop.type });
-        const proProperties = getUCAProperties(propDefinition, basePropName);
+        const typeSufix = _.split(prop.type, ':')[2];
+        const newBasePropName = prop.name === typeSufix ? basePropName : `${basePropName}.${prop.name}`;
+        const proProperties = getAllProperties(prop.type, newBasePropName);
         _.forEach(proProperties, p => properties.push(p));
       });
     }
   } else if (pathName) {
     const propertieName = `${pathName}.${_.split(definition.identifier, ':')[2]}`;
+    properties.push(propertieName);
+  } else {
+    const identifierComponents = _.split(identifier, ':');
+    const propertieName = `${_.lowerCase(identifierComponents[1])}.${identifierComponents[2]}`;
     properties.push(propertieName);
   }
   return properties;
@@ -217,19 +234,19 @@ function UCABaseConstructor(identifier, value, version) {
   this.getGlobalCredentialItemIdentifier = () => (`claim-${this.identifier}-${this.version}`);
 
   this.getClaimRootPropertyName = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
-    return _.lowerCase(identifierComponentes[1]);
+    const identifierComponents = _.split(this.identifier, ':');
+    return _.lowerCase(identifierComponents[1]);
   };
 
   this.getClaimPropertyName = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
-    return identifierComponentes[2];
+    const identifierComponents = _.split(this.identifier, ':');
+    return identifierComponents[2];
   };
 
   this.getClaimPath = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
-    const baseName = _.lowerCase(identifierComponentes[1]);
-    return `${baseName}.${identifierComponentes[2]}`;
+    const identifierComponents = _.split(this.identifier, ':');
+    const baseName = _.lowerCase(identifierComponents[1]);
+    return `${baseName}.${identifierComponents[2]}`;
   };
 
   this.getAttestableValues = () => {
@@ -288,9 +305,9 @@ function UCABaseConstructor(identifier, value, version) {
 const UCA = UCABaseConstructor;
 
 function convertIdentifierToClassName(identifier) {
-  const identifierComponentes = _.split(identifier, ':');
-  const baseName = identifierComponentes[1];
-  const detailName = _.upperFirst(_.camelCase(identifierComponentes[2]));
+  const identifierComponents = _.split(identifier, ':');
+  const baseName = identifierComponents[1];
+  const detailName = _.upperFirst(_.camelCase(identifierComponents[2]));
   return `${baseName}${detailName}`;
 }
 
@@ -310,6 +327,6 @@ _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
 
 UCA.getTypeName = getTypeName;
 UCA.resolveType = resolveType;
-UCA.getUCAProperties = getUCAProperties;
+UCA.getAllProperties = getAllProperties;
 
 module.exports = UCA;

@@ -364,7 +364,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.isRevoked = async () => anchorService.isRevoked(this.proof);
 
   this.isMatch = constraints => {
-
     const siftConstraints = transformConstraint(constraints);
     let result = true;
 
@@ -452,6 +451,24 @@ VerifiableCredentialBaseConstructor.fromJSON = verifiableCredentialJSON => {
   newObj.claim = _.cloneDeep(verifiableCredentialJSON.claim);
   newObj.proof = _.cloneDeep(verifiableCredentialJSON.proof);
   return newObj;
+};
+
+/**
+ * List all properties al a Verifiable Credential
+ */
+VerifiableCredentialBaseConstructor.getAllProperties = identifier => {
+  const vcDefinition = _.find(definitions, { identifier });
+  if (vcDefinition) {
+    const allProperties = [];
+    _.forEach(vcDefinition.depends, ucaIdentifier => {
+      allProperties.push(...UCA.getAllProperties(ucaIdentifier));
+    });
+    const excludesProperties = [];
+    _.forEach(vcDefinition.excludes, ucaIdentifier => {
+      excludesProperties.push(...UCA.getAllProperties(ucaIdentifier));
+    });
+    return _.difference(allProperties, excludesProperties);
+  }
 };
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;
