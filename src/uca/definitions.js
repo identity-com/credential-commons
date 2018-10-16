@@ -49,7 +49,7 @@ const definitions = [
     description: 'also known as email user',
     version: '1',
     type: 'String',
-    credentialItem: false,
+    credentialItem: true,
   },
   {
     identifier: 'cvc:Type:domain',
