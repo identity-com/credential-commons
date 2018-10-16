@@ -459,8 +459,23 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(VC.isMatchCredentialMeta(vcMeta, constraint)).toBeFalsy();
   });
 
-  test('Should return all Credential properties for cvc:Credential:GenericDocumentId', () => {
+  test('Should create a valid cvc:Credential:GenericDocumentId', () => {
+    const type = new UCA('cvc:Document:type', 'passport');
+    const number = new UCA('cvc:Document:number', '123456');
+    const gender = new UCA('cvc:Document:gender', 'male');
+    const location = new UCA('cvc:Document:issueLocation', 'BR');
+    const authority = new UCA('cvc:Document:issueAuthority', 'SSP_MG');
+    const country = new UCA('cvc:Document:issueCountry', 'BR');
+    const placeOfBirth = new UCA('cvc:Document:placeOfBirth', 'Belo Horizonte');
+    const name = new UCA('cvc:Document:name', { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new UCA('cvc:Document:dateOfBirth', { day: 20, month: 3, year: 1978 });
+    const address = new UCA('cvc:Document:address', {
+      city: 'Belo', state: 'Minas', country: 'BR', street: 'Eli Seabre', unit: '100/1802', postalCode: '30300240',
+    });
+    const document = new VC('cvc:Credential:GenericDocumentId', uuidv4(), null, [type, number, gender, location, authority, country, placeOfBirth, address, name, dob], '1');
+    console.log(JSON.stringify(document.claim, null, 2));
     const properties = VC.getAllProperties('cvc:Credential:GenericDocumentId');
+    console.log(JSON.stringify(properties, null, 2));
     expect(properties).toHaveLength(23);
     expect(properties).toContain('name.givenNames');
     expect(properties).toContain('name.familyNames');
@@ -486,4 +501,88 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('image.back.ImageBase64');
     expect(properties).toContain('image.backMD5.MD5');
   });
+
+  test('Should return all Credential properties for cvc:Credential:GenericDocumentId', () => {
+    const properties = VC.getAllProperties('cvc:Credential:GenericDocumentId');
+    expect(properties).toHaveLength(30);
+    expect(properties).toContain('document.type');
+    expect(properties).toContain('document.number');
+    expect(properties).toContain('document.gender');
+    expect(properties).toContain('document.issueLocation');
+    expect(properties).toContain('document.issueAuthority');
+    expect(properties).toContain('document.issueCountry');
+    expect(properties).toContain('document.placeOfBirth');
+    expect(properties).toContain('document.name.givenNames');
+    expect(properties).toContain('document.name.familyNames');
+    expect(properties).toContain('document.name.otherNames');
+    expect(properties).toContain('document.dateOfBirth.day');
+    expect(properties).toContain('document.dateOfBirth.month');
+    expect(properties).toContain('document.dateOfBirth.year');
+    expect(properties).toContain('document.address.country');
+    expect(properties).toContain('document.address.county');
+    expect(properties).toContain('document.address.state');
+    expect(properties).toContain('document.address.street');
+    expect(properties).toContain('document.address.unit');
+    expect(properties).toContain('document.address.city');
+    expect(properties).toContain('document.address.postalCode');
+    expect(properties).toContain('document.properties.dateOfIssue.day');
+    expect(properties).toContain('document.properties.dateOfIssue.month');
+    expect(properties).toContain('document.properties.dateOfIssue.year');
+    expect(properties).toContain('document.properties.dateOfExpiry.day');
+    expect(properties).toContain('document.properties.dateOfExpiry.month');
+    expect(properties).toContain('document.properties.dateOfExpiry.year');
+    expect(properties).toContain('document.image.front.ImageBase64');
+    expect(properties).toContain('document.image.frontMD5.MD5');
+    expect(properties).toContain('document.image.back.ImageBase64');
+    expect(properties).toContain('document.image.backMD5.MD5');
+  });
+
+  test('Should return all Credential properties for cvc:Credential:Identity', () => {
+    const properties = VC.getAllProperties('cvc:Credential:Identity');
+    expect(properties).toHaveLength(6);
+    expect(properties).toContain('identity.name.givenNames');
+    expect(properties).toContain('identity.name.familyNames');
+    expect(properties).toContain('identity.name.otherNames');
+    expect(properties).toContain('identity.dateOfBirth.day');
+    expect(properties).toContain('identity.dateOfBirth.month');
+    expect(properties).toContain('identity.dateOfBirth.year');
+  });
+
+  test('Should return all Credential properties for cvc:Credential:Address', () => {
+    const properties = VC.getAllProperties('cvc:Credential:Address');
+    expect(properties).toHaveLength(7);
+    expect(properties).toContain('identity.address.country');
+    expect(properties).toContain('identity.address.county');
+    expect(properties).toContain('identity.address.state');
+    expect(properties).toContain('identity.address.street');
+    expect(properties).toContain('identity.address.unit');
+    expect(properties).toContain('identity.address.city');
+    expect(properties).toContain('identity.address.postalCode');
+  });
+
+  test('Should return all Credential properties for cvc:Credential:User', () => {
+    const properties = VC.getAllProperties('cvc:Credential:User');
+    expect(properties).toHaveLength(2);
+    expect(properties).toContain('user.id');
+    expect(properties).toContain('user.realm');
+  });
+
+  test('Should return all Credential properties for cvc:Credential:phoneNumber', () => {
+    const properties = VC.getAllProperties('cvc:Credential:phoneNumber');
+    expect(properties).toHaveLength(5);
+    expect(properties).toContain('contact.phoneNumber.country');
+    expect(properties).toContain('contact.phoneNumber.countryCode');
+    expect(properties).toContain('contact.phoneNumber.number');
+    expect(properties).toContain('contact.phoneNumber.extension');
+    expect(properties).toContain('contact.phoneNumber.lineType');
+  });
+
+  test('Should return all Credential properties for cvc:Credential:email', () => {
+    const properties = VC.getAllProperties('cvc:Credential:email');
+    expect(properties).toHaveLength(3);
+    expect(properties).toContain('contact.email.username');
+    expect(properties).toContain('contact.email.domain.name');
+    expect(properties).toContain('contact.email.domain.tld');
+  });
+
 });
