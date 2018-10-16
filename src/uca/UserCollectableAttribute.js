@@ -88,15 +88,15 @@ const getAllProperties = (identifier, pathName) => {
     }
 
     let basePropName;
-    const baseIdentifierComponentes = _.split(typeDefinition.identifier, ':');
+    const baseIdentifierComponents = _.split(typeDefinition.identifier, ':');
     if (pathName) {
-      if (_.includes(pathName, _.lowerCase(baseIdentifierComponentes[1]))) {
-        basePropName = `${pathName}.${baseIdentifierComponentes[2]}`;
+      if (_.includes(pathName, _.lowerCase(baseIdentifierComponents[1]))) {
+        basePropName = `${pathName}.${baseIdentifierComponents[2]}`;
       } else {
-        basePropName = `${pathName}.${_.lowerCase(baseIdentifierComponentes[1])}.${baseIdentifierComponentes[2]}`;
+        basePropName = `${pathName}.${_.lowerCase(baseIdentifierComponents[1])}.${baseIdentifierComponents[2]}`;
       }
     } else {
-      basePropName = `${_.lowerCase(baseIdentifierComponentes[1])}.${baseIdentifierComponentes[2]}`;
+      basePropName = `${_.lowerCase(baseIdentifierComponents[1])}.${baseIdentifierComponents[2]}`;
     }
 
     if (_.includes(['String', 'Number', 'Boolean'], `${typeDefProps.type}`)) {
@@ -114,8 +114,8 @@ const getAllProperties = (identifier, pathName) => {
     const propertieName = `${pathName}.${_.split(definition.identifier, ':')[2]}`;
     properties.push(propertieName);
   } else {
-    const identifierComponentes = _.split(identifier, ':');
-    const propertieName = `${_.lowerCase(identifierComponentes[1])}.${identifierComponentes[2]}`;
+    const identifierComponents = _.split(identifier, ':');
+    const propertieName = `${_.lowerCase(identifierComponents[1])}.${identifierComponents[2]}`;
     properties.push(propertieName);
   }
   return properties;
@@ -234,19 +234,19 @@ function UCABaseConstructor(identifier, value, version) {
   this.getGlobalCredentialItemIdentifier = () => (`claim-${this.identifier}-${this.version}`);
 
   this.getClaimRootPropertyName = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
-    return _.lowerCase(identifierComponentes[1]);
+    const identifierComponents = _.split(this.identifier, ':');
+    return _.lowerCase(identifierComponents[1]);
   };
 
   this.getClaimPropertyName = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
-    return identifierComponentes[2];
+    const identifierComponents = _.split(this.identifier, ':');
+    return identifierComponents[2];
   };
 
   this.getClaimPath = () => {
-    const identifierComponentes = _.split(this.identifier, ':');
-    const baseName = _.lowerCase(identifierComponentes[1]);
-    return `${baseName}.${identifierComponentes[2]}`;
+    const identifierComponents = _.split(this.identifier, ':');
+    const baseName = _.lowerCase(identifierComponents[1]);
+    return `${baseName}.${identifierComponents[2]}`;
   };
 
   this.getAttestableValues = () => {
@@ -305,9 +305,9 @@ function UCABaseConstructor(identifier, value, version) {
 const UCA = UCABaseConstructor;
 
 function convertIdentifierToClassName(identifier) {
-  const identifierComponentes = _.split(identifier, ':');
-  const baseName = identifierComponentes[1];
-  const detailName = _.upperFirst(_.camelCase(identifierComponentes[2]));
+  const identifierComponents = _.split(identifier, ':');
+  const baseName = identifierComponents[1];
+  const detailName = _.upperFirst(_.camelCase(identifierComponents[2]));
   return `${baseName}${detailName}`;
 }
 
