@@ -3,7 +3,7 @@ const isClaimRelated = require('../src/isClaimRelated');
 describe('isClaimRelated Tests', () => {
   it('Should validate a claim path against UCA definitions and VC definitions and succeed', (done) => {
     const uca = 'claim-cvc:Document:name-1';
-    const claim = 'name.givenNames';
+    const claim = 'document.name.givenNames';
     const credential = 'cvc:Credential:GenericDocumentId';
     const validation = isClaimRelated(claim, uca, credential);
     expect(validation).toBeTruthy();
@@ -12,7 +12,7 @@ describe('isClaimRelated Tests', () => {
 
   it('Should validate a claim path against UCA definitions and VC definitions and succeed returning false for an non existent dependency', (done) => {
     const uca = 'claim-cvc:Contact:phoneNumber-1';
-    const claim = 'phoneNumber.number';
+    const claim = 'contact.phoneNumber.number';
     const credential = 'cvc:Credential:GenericDocumentId';
     const validation = isClaimRelated(claim, uca, credential);
     expect(validation).toBeFalsy();
@@ -21,7 +21,7 @@ describe('isClaimRelated Tests', () => {
 
   it('Should fail validation of a wrong defined uca global identifier', (done) => {
     const target = () => {
-      isClaimRelated('name.givenNames', 'claim-civ:Identity:error-1', 'cvc:Credential:GenericDocumentId');
+      isClaimRelated('document.name.givenNames', 'claim-civ:Identity:error-1', 'cvc:Credential:GenericDocumentId');
     };
     expect(target).toThrow('UCA identifier does not exist');
     done();
@@ -37,7 +37,7 @@ describe('isClaimRelated Tests', () => {
 
   it('Should fail validation of a wrong defined credential parent identifier', (done) => {
     const target = () => {
-      isClaimRelated('name.givenNames', 'claim-cvc:Document:name-1', 'civ:Credential:Generic');
+      isClaimRelated('document.name.givenNames', 'claim-cvc:Document:name-1', 'civ:Credential:Generic');
     };
     expect(target).toThrow('Credential identifier does not exist');
     done();

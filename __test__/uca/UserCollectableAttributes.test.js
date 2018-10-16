@@ -304,16 +304,16 @@ describe('UCA Constructions tests', () => {
   test('Should get ALL UCA properties email', () => {
     const properties = UCA.getAllProperties('cvc:Contact:email');
     expect(properties).toHaveLength(3);
-    expect(properties).toContain('email.username');
-    expect(properties).toContain('email.domain.name');
-    expect(properties).toContain('email.domain.tld');
+    expect(properties).toContain('contact.email.username');
+    expect(properties).toContain('contact.email.domain.name');
+    expect(properties).toContain('contact.email.domain.tld');
   });
 
   test('Should get ALL UCA properties name', () => {
     const properties = UCA.getAllProperties('cvc:Identity:name');
     expect(properties).toHaveLength(3);
-    expect(properties).toContain('name.givenNames');
-    expect(properties).toContain('name.familyNames');
-    expect(properties).toContain('name.otherNames');
+    expect(properties).toContain('identity.name.givenNames');
+    expect(properties).toContain('identity.name.familyNames');
+    expect(properties).toContain('identity.name.otherNames');
   });
 });
