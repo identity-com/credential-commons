@@ -525,7 +525,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should return all Credential properties for cvc:Credential:phoneNumber', () => {
-    const properties = VC.getAllProperties('cvc:Credential:phoneNumber');
+    const properties = VC.getAllProperties('cvc:Credential:PhoneNumber');
     expect(properties).toHaveLength(5);
     expect(properties).toContain('contact.phoneNumber.country');
     expect(properties).toContain('contact.phoneNumber.countryCode');
@@ -535,7 +535,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should return all Credential properties for cvc:Credential:email', () => {
-    const properties = VC.getAllProperties('cvc:Credential:email');
+    const properties = VC.getAllProperties('cvc:Credential:Email');
     expect(properties).toHaveLength(3);
     expect(properties).toContain('contact.email.username');
     expect(properties).toContain('contact.email.domain.name');
