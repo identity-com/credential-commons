@@ -6,14 +6,14 @@
  */
 const definitions = [
   {
-    identifier: 'cvc:Credential:email',
+    identifier: 'cvc:Credential:Email',
     version: '1',
     depends: [
       'cvc:Contact:email',
     ],
   },
   {
-    identifier: 'cvc:Credential:phoneNumber',
+    identifier: 'cvc:Credential:PhoneNumber',
     version: '1',
     depends: [
       'cvc:Contact:phoneNumber',

@@ -18,7 +18,7 @@
   "module": "dist/es/index.js",
   "browser": "dist/browser/index.js",
   "scripts": {
-    "lint": "eslint ./src/**.js",
+    "lint": "eslint ./src/**.js ./__test__/**.js --max-warnings=0",
     "test": "cross-env NODE_ENV=false jest",
     "test:watch": "jest --watch",
     "check-schemas": "cross-env NODE_ENV=false jest --no-coverage __integrations__/schemas/",
@@ -34,7 +34,8 @@
     "build": "npm run build:browser && npm run build:cjs && npm run build:es",
     "postversion": "git add --all && git commit -m\"build and version $npm_package_version\" -m\"[skip ci]\" && git push",
     "pretag": "git fetch --tags",
-    "tag": "git tag v$npm_package_version && git push origin --tags"
+    "tag": "git tag v$npm_package_version && git push origin --tags",
+    "precommit": "npm run lint"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -51,6 +52,7 @@
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-no-only-tests": "^2.0.0",
     "eslint-plugin-react": "^7.10.0",
+    "husky": "^1.1.2",
     "jest": "^23.4.1",
     "jest-html-reporter": "^2.3.0",
     "request-debug": "^0.2.0",
