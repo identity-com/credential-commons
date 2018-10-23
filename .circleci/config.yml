@@ -1,4 +1,10 @@
 version: 2
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:8.11
+
 workflows:
   version: 2
   build-and-test:
@@ -47,6 +53,7 @@ jobs:
           command: npm run test
       - run: npm run lint
   deploy:
+    <<: *defaults  
     steps:
       - attach_workspace:
           at: ~/repo
