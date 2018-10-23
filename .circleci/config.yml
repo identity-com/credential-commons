@@ -29,11 +29,7 @@ workflows:
       
 jobs:
   build:
-    docker:
-      - image: circleci/node:8.11
-
-    working_directory: ~/repo
-
+    <<: *defaults
     steps:
       - checkout
 
