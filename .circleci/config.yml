@@ -4,6 +4,20 @@ workflows:
   build-and-test:
     jobs:
       - build
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+      - deploy:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       
 jobs:
   build:
@@ -32,3 +46,14 @@ jobs:
           name: run tests incl coverage
           command: npm run test
       - run: npm run lint
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Publish package
+          command: npm publish
