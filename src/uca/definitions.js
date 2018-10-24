@@ -295,6 +295,7 @@ const definitions = [
     identifier: 'cvc:Address:street',
     version: '1',
     type: 'String',
+    credentialItem: true,
   },
 
   {
