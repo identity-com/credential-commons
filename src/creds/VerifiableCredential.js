@@ -7,8 +7,8 @@ const flatten = require('flat');
 const uuidv4 = require('uuid/v4');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
-const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
+const SecureRandom = require('../SecureRandom');
 
 const anchorService = services.container.AnchorService;
 
@@ -103,19 +103,19 @@ function transformConstraint(constraints) {
 }
 
 /**
- * Transforms a list of UCAs into the signature property of the verifiable cliams
+ * Transforms a list of UCAs into the signature property of the verifiable claims
  */
-class CivicMerkleProof {
+class CvcMerkleProof {
   static get PADDING_INCREMENTS() {
     return 16;
   }
 
-  constructor(ucas, claimsPathRef) {
-    const withRandomUcas = CivicMerkleProof.padTree(ucas);
-    this.type = 'CivicMerkleProof2018';
+  constructor(ucas, claimsPathRef, seedHexString) {
+    const withRandomUcas = CvcMerkleProof.padTree(ucas, seedHexString);
+    this.type = 'CvcMerkleProof2018';
     this.merkleRoot = null;
     this.anchor = 'TBD (Civic Blockchain Attestation)';
-    this.leaves = CivicMerkleProof.getAllAttestableValue(withRandomUcas);
+    this.leaves = CvcMerkleProof.getAllAttestableValue(withRandomUcas);
     this.buildMerkleTree(claimsPathRef);
   }
 
@@ -133,13 +133,19 @@ class CivicMerkleProof {
     this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
   }
 
-  static padTree(nodes) {
+  static padTree(nodes, seedHexString) {
     const currentLength = nodes.length;
-    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS
-      : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
+    const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS ? CvcMerkleProof.PADDING_INCREMENTS
+      : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
+    let secureRandom;
+    if (seedHexString) {
+      secureRandom = new SecureRandom(seedHexString);
+    } else {
+      secureRandom = new SecureRandom();
+    }
     while (newNodes.length < targetLength) {
-      newNodes.push(new UCA('cvc:Random:node', SecureRandom.wordWith(16)));
+      newNodes.push(new UCA('cvc:Random:node', secureRandom.wordWith(16)));
     }
     return newNodes;
   }
@@ -185,15 +191,15 @@ const VERIFY_LEVELS = {
  * @param {*} ucas
  * @param {*} version
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version, seedHexString) {
   this.id = uuidv4();
   this.issuer = issuer;
-  const issuerUCA = new UCA('cvc:Meta:issuer', this.issuer);
+  const issuerUCA = new UCA('cvc:Meta:issuer', this.issuer, seedHexString);
   this.issuanceDate = (new Date()).toISOString();
-  const issuanceDateUCA = new UCA('cvc:Meta:issuanceDate', this.issuanceDate);
+  const issuanceDateUCA = new UCA('cvc:Meta:issuanceDate', this.issuanceDate, seedHexString);
   this.identifier = identifier;
   this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-  const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
+  const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null', seedHexString);
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
@@ -212,7 +218,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   if (!_.isEmpty(ucas)) {
     this.claim = new ClaimModel(ucas);
     const claimsPathRef = _.keys(flatten(this.claim, { safe: true }));
-    this.proof = new CivicMerkleProof(proofUCAs, claimsPathRef);
+    this.proof = new CvcMerkleProof(proofUCAs, claimsPathRef, seedHexString);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
@@ -236,6 +242,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
     filtered.claim = {};
     _.forEach(filtered.proof.leaves, (el) => {
+
       _.set(filtered.claim, el.claimPath, _.get(this.claim, el.claimPath));
     });
 
@@ -339,7 +346,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   };
 
   /**
-   * Verify the Credencial and return a verification level.
+   * Verify the Credential and return a verification level.
    * @return Any of VC.VERIFY_LEVELS
    */
   this.verify = (higherVerifyLevel) => {

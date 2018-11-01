@@ -137,7 +137,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
   });
 
-
   test('cred verifyProofs', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
@@ -541,5 +540,4 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('contact.email.domain.name');
     expect(properties).toContain('contact.email.domain.tld');
   });
-
 });
