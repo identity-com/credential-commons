@@ -2,7 +2,7 @@
  * A simple node HTTP services
  */
 const request = require('request-promise-native');
-// uncloment to debug requests
+// uncomment to debug requests
 // require('request-debug')(request);
 
 function HttpServiceConstructor() {

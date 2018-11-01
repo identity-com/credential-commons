@@ -6,7 +6,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
  * A simple node HTTP services
  */
 const request = require('request-promise-native');
-// uncloment to debug requests
+// uncomment to debug requests
 // require('request-debug')(request);
 
 function HttpServiceConstructor() {
