@@ -26,8 +26,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     expect(jsonSchema.properties.proof.type).toBe('object');
   });
 
-  // This is skipped because it's not possible to validate the schemas against S3 buckets for now
-  test.skip('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
+  test('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
