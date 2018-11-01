@@ -151,7 +151,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     const phoneNumberCredential = new VC('cvc:Credential:PhoneNumber', 'Civic-Identity-Verifier', null, [phoneNumberUca], '1');
 
     const filtered = phoneNumberCredential.filter(['cvc:Phone:countryCode']);
-    console.log(filtered);
     expect(filtered.claim.contact.phoneNumber.countryCode).toBeDefined();
   });
 
