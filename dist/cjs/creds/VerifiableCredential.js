@@ -11,10 +11,10 @@ const flatten = require('flat');
 const uuidv4 = require('uuid/v4');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
-const SecureRandom = require('../SecureRandom');
 const { services } = require('../services');
 
 const anchorService = services.container.AnchorService;
+const secureRandom = services.container.SecureRandom;
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
@@ -103,19 +103,19 @@ function transformConstraint(constraints) {
 }
 
 /**
- * Transforms a list of UCAs into the signature property of the verifiable cliams
+ * Transforms a list of UCAs into the signature property of the verifiable claims
  */
-class CivicMerkleProof {
+class CvcMerkleProof {
   static get PADDING_INCREMENTS() {
     return 16;
   }
 
   constructor(ucas, claimsPathRef) {
-    const withRandomUcas = CivicMerkleProof.padTree(ucas);
-    this.type = 'CivicMerkleProof2018';
+    const withRandomUcas = CvcMerkleProof.padTree(ucas);
+    this.type = 'CvcMerkleProof2018';
     this.merkleRoot = null;
     this.anchor = 'TBD (Civic Blockchain Attestation)';
-    this.leaves = CivicMerkleProof.getAllAttestableValue(withRandomUcas);
+    this.leaves = CvcMerkleProof.getAllAttestableValue(withRandomUcas);
     this.buildMerkleTree(claimsPathRef);
   }
 
@@ -135,10 +135,10 @@ class CivicMerkleProof {
 
   static padTree(nodes) {
     const currentLength = nodes.length;
-    const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
+    const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS ? CvcMerkleProof.PADDING_INCREMENTS : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
-      newNodes.push(new UCA('cvc:Random:node', SecureRandom.wordWith(16)));
+      newNodes.push(new UCA('cvc:Random:node', secureRandom.wordWith(16)));
     }
     return newNodes;
   }
@@ -213,7 +213,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   if (!_.isEmpty(ucas)) {
     this.claim = new ClaimModel(ucas);
     const claimsPathRef = _.keys(flatten(this.claim, { safe: true }));
-    this.proof = new CivicMerkleProof(proofUCAs, claimsPathRef);
+    this.proof = new CvcMerkleProof(proofUCAs, claimsPathRef);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, r => {
@@ -342,7 +342,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   };
 
   /**
-   * Verify the Credencial and return a verification level.
+   * Verify the Credential and return a verification level.
    * @return Any of VC.VERIFY_LEVELS
    */
   this.verify = higherVerifyLevel => {
@@ -384,7 +384,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   });
 
   this.isMatch = constraints => {
-
     const siftConstraints = transformConstraint(constraints);
     let result = true;
 
@@ -472,6 +471,24 @@ VerifiableCredentialBaseConstructor.fromJSON = verifiableCredentialJSON => {
   newObj.claim = _.cloneDeep(verifiableCredentialJSON.claim);
   newObj.proof = _.cloneDeep(verifiableCredentialJSON.proof);
   return newObj;
+};
+
+/**
+ * List all properties al a Verifiable Credential
+ */
+VerifiableCredentialBaseConstructor.getAllProperties = identifier => {
+  const vcDefinition = _.find(definitions, { identifier });
+  if (vcDefinition) {
+    const allProperties = [];
+    _.forEach(vcDefinition.depends, ucaIdentifier => {
+      allProperties.push(...UCA.getAllProperties(ucaIdentifier));
+    });
+    const excludesProperties = [];
+    _.forEach(vcDefinition.excludes, ucaIdentifier => {
+      excludesProperties.push(...UCA.getAllProperties(ucaIdentifier));
+    });
+    return _.difference(allProperties, excludesProperties);
+  }
 };
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;
