@@ -464,9 +464,10 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
 /**
  * Factory function that creates a new Verifiable Credential based on a JSON object
  * @param {*} verifiableCredentialJSON
+ * @param seedHexString
  */
-VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
-  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer);
+VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON, seedHexString) => {
+  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer, seedHexString);
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
   newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
