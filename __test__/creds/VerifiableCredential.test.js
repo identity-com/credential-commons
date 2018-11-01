@@ -113,6 +113,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       });
     });
   });
+
   test('Filter claims', () => {
     const civIdentityName = {
       givenNames: 'Joao',
@@ -137,6 +138,21 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
   });
 
+  // TODO enable me when CCS-514 is done
+  test.skip('Filter claims of composite UCA', () => {
+    const phoneNumber = {
+      country: 'BRZ',
+      countryCode: '+55',
+      number: '31995383635',
+      lineType: 'mobile',
+    };
+
+    const phoneNumberUca = new UCA('cvc:Contact:phoneNumber', phoneNumber);
+    const phoneNumberCredential = new VC('cvc:Credential:PhoneNumber', 'Civic-Identity-Verifier', null, [phoneNumberUca], '1');
+
+    const filtered = phoneNumberCredential.filter(['cvc:Phone:countryCode']);
+    expect(filtered.claim.contact.phoneNumber.countryCode).toBeDefined();
+  });
 
   test('cred verifyProofs', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
@@ -541,5 +557,4 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('contact.email.domain.name');
     expect(properties).toContain('contact.email.domain.tld');
   });
-
 });

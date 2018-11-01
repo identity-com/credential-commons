@@ -1,8 +1,10 @@
 const _ = require('lodash');
 const timestamp = require('unix-timestamp');
 const sjcl = require('sjcl');
-const SecureRandom = require('../SecureRandom');
 const definitions = require('./definitions');
+const { services } = require('../services');
+
+const secureRandom = services.container.SecureRandom;
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
@@ -100,23 +102,23 @@ const getAllProperties = (identifier, pathName) => {
     }
 
     if (_.includes(['String', 'Number', 'Boolean'], `${typeDefProps.type}`)) {
-      // Propertie is not an object
+      // Properties is not an object
       properties.push(`${basePropName}.${typeDefProps.name}`);
     } else {
       _.forEach(typeDefProps, (prop) => {
-        const typeSufix = _.split(prop.type, ':')[2];
-        const newBasePropName = prop.name === typeSufix ? basePropName : `${basePropName}.${prop.name}`;
+        const typeSuffix = _.split(prop.type, ':')[2];
+        const newBasePropName = prop.name === typeSuffix ? basePropName : `${basePropName}.${prop.name}`;
         const proProperties = getAllProperties(prop.type, newBasePropName);
         _.forEach(proProperties, p => properties.push(p));
       });
     }
   } else if (pathName) {
-    const propertieName = `${pathName}.${_.split(definition.identifier, ':')[2]}`;
-    properties.push(propertieName);
+    const propertiesName = `${pathName}.${_.split(definition.identifier, ':')[2]}`;
+    properties.push(propertiesName);
   } else {
     const identifierComponents = _.split(identifier, ':');
-    const propertieName = `${_.lowerCase(identifierComponents[1])}.${identifierComponents[2]}`;
-    properties.push(propertieName);
+    const propertiesName = `${_.lowerCase(identifierComponents[1])}.${identifierComponents[2]}`;
+    properties.push(propertiesName);
   }
   return properties;
 };
@@ -195,7 +197,8 @@ function UCABaseConstructor(identifier, value, version) {
       throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
     }
     this.value = value;
-    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(SecureRandom.wordWith(64)));
+
+    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
   } else if (_.isEmpty(definition.type.properties)) {
     throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
   } else {

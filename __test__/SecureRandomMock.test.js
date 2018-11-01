@@ -4,6 +4,7 @@ const SecureRandom = require('../src/SecureRandom');
 jest.mock('crypto');
 describe('Secure Random Tests', () => {
   it('should fail since we are mocking the crypto class', () => {
-    expect(() => SecureRandom.wordWith(16)).toThrow();
+    const secureRandom = new SecureRandom();
+    expect(() => secureRandom.wordWith(16)).toThrow();
   });
 });
