@@ -8,9 +8,9 @@ const uuidv4 = require('uuid/v4');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const { services } = require('../services');
-const SecureRandom = require('../SecureRandom');
 
 const anchorService = services.container.AnchorService;
+const secureRandom = services.container.SecureRandom;
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
@@ -110,8 +110,8 @@ class CvcMerkleProof {
     return 16;
   }
 
-  constructor(ucas, claimsPathRef, seedHexString) {
-    const withRandomUcas = CvcMerkleProof.padTree(ucas, seedHexString);
+  constructor(ucas, claimsPathRef) {
+    const withRandomUcas = CvcMerkleProof.padTree(ucas);
     this.type = 'CvcMerkleProof2018';
     this.merkleRoot = null;
     this.anchor = 'TBD (Civic Blockchain Attestation)';
@@ -133,17 +133,11 @@ class CvcMerkleProof {
     this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
   }
 
-  static padTree(nodes, seedHexString) {
+  static padTree(nodes) {
     const currentLength = nodes.length;
     const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS ? CvcMerkleProof.PADDING_INCREMENTS
       : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
-    let secureRandom;
-    if (seedHexString) {
-      secureRandom = new SecureRandom(seedHexString);
-    } else {
-      secureRandom = new SecureRandom();
-    }
     while (newNodes.length < targetLength) {
       newNodes.push(new UCA('cvc:Random:node', secureRandom.wordWith(16)));
     }
@@ -191,15 +185,15 @@ const VERIFY_LEVELS = {
  * @param {*} ucas
  * @param {*} version
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version, seedHexString) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
   this.id = uuidv4();
   this.issuer = issuer;
-  const issuerUCA = new UCA('cvc:Meta:issuer', this.issuer, seedHexString);
+  const issuerUCA = new UCA('cvc:Meta:issuer', this.issuer);
   this.issuanceDate = (new Date()).toISOString();
-  const issuanceDateUCA = new UCA('cvc:Meta:issuanceDate', this.issuanceDate, seedHexString);
+  const issuanceDateUCA = new UCA('cvc:Meta:issuanceDate', this.issuanceDate);
   this.identifier = identifier;
   this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-  const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null', seedHexString);
+  const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
@@ -218,7 +212,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   if (!_.isEmpty(ucas)) {
     this.claim = new ClaimModel(ucas);
     const claimsPathRef = _.keys(flatten(this.claim, { safe: true }));
-    this.proof = new CvcMerkleProof(proofUCAs, claimsPathRef, seedHexString);
+    this.proof = new CvcMerkleProof(proofUCAs, claimsPathRef);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
@@ -242,7 +236,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
     filtered.claim = {};
     _.forEach(filtered.proof.leaves, (el) => {
-
       _.set(filtered.claim, el.claimPath, _.get(this.claim, el.claimPath));
     });
 
@@ -464,10 +457,9 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
 /**
  * Factory function that creates a new Verifiable Credential based on a JSON object
  * @param {*} verifiableCredentialJSON
- * @param seedHexString
  */
-VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON, seedHexString) => {
-  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer, seedHexString);
+VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
+  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
   newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
