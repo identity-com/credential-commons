@@ -11,10 +11,11 @@ const flatten = require('flat');
 const uuidv4 = require('uuid/v4');
 const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
-const SecureRandom = require('../SecureRandom');
+
 const { services } = require('../services');
 
 const anchorService = services.container.AnchorService;
+const secureRandom = services.container.SecureRandom;
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
@@ -138,7 +139,7 @@ class CivicMerkleProof {
     const targetLength = currentLength < CivicMerkleProof.PADDING_INCREMENTS ? CivicMerkleProof.PADDING_INCREMENTS : _.ceil(currentLength / CivicMerkleProof.PADDING_INCREMENTS) * CivicMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
-      newNodes.push(new UCA('cvc:Random:node', SecureRandom.wordWith(16)));
+      newNodes.push(new UCA('cvc:Random:node', secureRandom.wordWith(16)));
     }
     return newNodes;
   }
@@ -489,6 +490,7 @@ VerifiableCredentialBaseConstructor.getAllProperties = identifier => {
     });
     return _.difference(allProperties, excludesProperties);
   }
+  return null;
 };
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;
