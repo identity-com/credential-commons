@@ -1,8 +1,10 @@
 const _ = require('lodash');
 const timestamp = require('unix-timestamp');
 const sjcl = require('sjcl');
-const SecureRandom = require('../SecureRandom');
 const definitions = require('./definitions');
+const { services } = require('../services');
+
+const secureRandom = services.container.SecureRandom;
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
@@ -195,7 +197,7 @@ function UCABaseConstructor(identifier, value, version) {
       throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
     }
     this.value = value;
-    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(SecureRandom.wordWith(64)));
+    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
   } else if (_.isEmpty(definition.type.properties)) {
     throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
   } else {
@@ -315,7 +317,7 @@ function convertIdentifierToClassName(identifier) {
 _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
   const name = convertIdentifierToClassName(def.identifier);
   const source = {};
-  const identifier = def.identifier;
+  const { identifier } = def;
 
   function UCAConstructor(value, version) {
     const self = new UCABaseConstructor(identifier, value, version);
