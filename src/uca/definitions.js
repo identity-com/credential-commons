@@ -76,7 +76,7 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'cvc:Contact:email',
+    identifier: 'cvc:Type:email',
     version: '1',
     type: {
       properties: [
@@ -90,53 +90,59 @@ const definitions = [
         },
       ],
     },
+    credentialItem: false,
+  },
+  {
+    identifier: 'cvc:Contact:email',
+    version: '1',
+    type: 'cvc:Type:email',
     credentialItem: true,
   },
   {
     identifier: 'cvc:User:id',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:User:realm',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Type:country',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: false,
   },
   {
     identifier: 'cvc:Phone:countryCode',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Phone:number',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Phone:extension',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Phone:lineType',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Contact:phoneNumber',
-    version: 1,
+    version: '1',
     type: {
       properties: [
         {
@@ -295,7 +301,6 @@ const definitions = [
     identifier: 'cvc:Address:street',
     version: '1',
     type: 'String',
-    credentialItem: true,
   },
 
   {
@@ -383,7 +388,7 @@ const definitions = [
   },
   {
     identifier: 'cvc:Identity:address',
-    version: 1,
+    version: '1',
     type: 'cvc:Type:address',
     credentialItem: true,
   },
@@ -421,7 +426,7 @@ const definitions = [
       ],
       required: ['dateOfIssue'],
     },
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'cvc:Type:s3FileBucket',
@@ -522,7 +527,6 @@ const definitions = [
         },
       ],
       required: ['front', 'frontMD5'],
-      credentialItem: true,
     },
   },
   {

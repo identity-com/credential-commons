@@ -114,7 +114,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     });
   });
 
-  test('Filter claims', () => {
+  test('Filter claims from Identity Name', () => {
     const civIdentityName = {
       givenNames: 'Joao',
       otherNames: 'Barbosa',
@@ -136,6 +136,117 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.name.givenNames).toBeDefined();
     expect(filtered.claim.identity.name.otherNames).not.toBeDefined();
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
+  });
+
+  it('Should filter claims for Email asking for cvc:Contact:email and return them on the filtered VC', () => {
+    const email = {
+      domain: {
+        tld: 'oVaPsceZ4C',
+        name: 'UTpHKFyaaB',
+      },
+      username: 'ZcMpCBQ0lE',
+    };
+
+    const emailUca = new UCA('cvc:Contact:email', email, '1');
+    const emailCredential = new VC('cvc:Credential:Email', '', null, [emailUca], '1');
+    const filtered = emailCredential.filter(['cvc:Contact:email']);
+
+    expect(filtered.claim.contact.email.domain).toBeDefined();
+    expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
+    expect(filtered.claim.contact.email.domain.name).toBe('UTpHKFyaaB');
+    expect(filtered.claim.contact.email.username).toBe('ZcMpCBQ0lE');
+  });
+
+  // TODO @jpsantosbh look at my merkle tree, my claim path there does not match my claims
+  it.skip('Should filter claims for Email asking for cvc:Contact:domain and not return the cvc:Contact:address', () => {
+    const email = {
+      domain: {
+        tld: 'oVaPsceZ4C',
+        local_part: 'UTpHKFyaaB',
+      },
+      address: 'ZcMpCBQ0lE',
+    };
+
+    const emailUca = new UCA('cvc:Contact:email', email, '1');
+    const emailCredential = new VC('cvc:Credential:email', '', null, [emailUca], '1');
+    const filtered = emailCredential.filter(['cvc:Email:domain']);
+    console.log(JSON.stringify(emailCredential, null, 2));
+    console.log(JSON.stringify(filtered, null, 2));
+    expect(filtered.claim.contact.email.domain).toBeDefined();
+    expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
+    expect(filtered.claim.contact.email.domain.local_part).toBe('UTpHKFyaaB');
+    expect(filtered.claim.contact.email.address).toBe('ZcMpCBQ0lE');
+  });
+
+  it('Should filter claims for Address asking for cvc:Type:address and return the cvc:Type:address', () => {
+    const value = {
+      country: 'X2sEB9F9W9',
+      county: 'sDlIM4Rjpo',
+      state: 'ZZEOrbenrM',
+      street: 'JkHgN5gdZ2',
+      unit: 'fo9OmPSZNe',
+      city: 'LVkRGsKqIf',
+      postalCode: '5JhmWkXBAg',
+    };
+
+    const uca = new UCA('cvc:Identity:address', value, '1');
+    const credential = new VC('cvc:Credential:Address', '', null, [uca], '1');
+    const filtered = credential.filter(['cvc:Identity:address']);
+    console.log(JSON.stringify(credential, null, 2));
+    console.log(JSON.stringify(filtered, null, 2));
+    expect(filtered.claim.identity.address).toBeDefined();
+    expect(filtered.claim.identity.address.country).toBe('X2sEB9F9W9');
+    expect(filtered.claim.identity.address.county).toBe('sDlIM4Rjpo');
+    expect(filtered.claim.identity.address.state).toBe('ZZEOrbenrM');
+    expect(filtered.claim.identity.address.street).toBe('JkHgN5gdZ2');
+    expect(filtered.claim.identity.address.unit).toBe('fo9OmPSZNe');
+    expect(filtered.claim.identity.address.city).toBe('LVkRGsKqIf');
+    expect(filtered.claim.identity.address.postalCode).toBe('5JhmWkXBAg');
+  });
+
+  it('Should filter claims for PhoneNumber asking for cvc:Contact:phoneNumber and return the full claim', () => {
+    const value = {
+      country: '1ApYikRwDl',
+      countryCode: 'U4drpB96Hk',
+      number: 'kCTGifTdom',
+      extension: 'sXZpZJTe4R',
+      lineType: 'OaguqgUaR7',
+    };
+
+    const uca = new UCA('cvc:Contact:phoneNumber', value, '1');
+    const credential = new VC('cvc:Credential:PhoneNumber', '', null, [uca], '1');
+    const filtered = credential.filter(['cvc:Contact:phoneNumber']);
+    console.log(JSON.stringify(credential, null, 2));
+    console.log(JSON.stringify(filtered, null, 2));
+    expect(filtered.claim.contact.phoneNumber).toBeDefined();
+    expect(filtered.claim.contact.phoneNumber.country).toBe('1ApYikRwDl');
+    expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');
+    expect(filtered.claim.contact.phoneNumber.extension).toBe('sXZpZJTe4R');
+    expect(filtered.claim.contact.phoneNumber.lineType).toBe('OaguqgUaR7');
+    expect(filtered.claim.contact.phoneNumber.number).toBe('kCTGifTdom');
+  });
+
+  // TODO @jpsantosbh the filtering returns the leaf right but it does not return the claims
+  it.skip('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode and return only the claim for country code', () => {
+    const value = {
+      country: '1ApYikRwDl',
+      countryCode: 'U4drpB96Hk',
+      number: 'kCTGifTdom',
+      extension: 'sXZpZJTe4R',
+      lineType: 'OaguqgUaR7',
+    };
+
+    const uca = new UCA('cvc:Contact:phoneNumber', value, '1');
+    const credential = new VC('cvc:Credential:PhoneNumber', '', null, [uca], '1');
+    const filtered = credential.filter(['cvc:Phone:countryCode']);
+    console.log(JSON.stringify(credential, null, 2));
+    console.log(JSON.stringify(filtered, null, 2));
+    expect(filtered.claim.contact.phoneNumber).toBeDefined();
+    expect(filtered.claim.contact.phoneNumber.country).toBeUndefined();
+    expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');
+    expect(filtered.claim.contact.phoneNumber.extension).toBeUndefined();
+    expect(filtered.claim.contact.phoneNumber.lineType).toBeUndefined();
+    expect(filtered.claim.contact.phoneNumber.number).toBeUndefined();
   });
 
   // TODO enable me when CCS-514 is done
