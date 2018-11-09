@@ -95,7 +95,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
-    // TODO refactor this to mock only attester.multiAttest inside this function
+
     cred.requestAnchor = jest.fn().mockImplementation(async () => {
       // mock the function or otherwise it would call the server
       const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
@@ -157,7 +157,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.contact.email.username).toBe('ZcMpCBQ0lE');
   });
 
-  // TODO @jpsantosbh look at my merkle tree, my claim path there does not match my claims
   it('Should filter claims for Email asking for cvc:Contact:domain and not return the cvc:Contact:address', () => {
     const email = {
       domain: {
@@ -191,8 +190,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const uca = new UCA('cvc:Identity:address', value, '1');
     const credential = new VC('cvc:Credential:Address', '', null, [uca], '1');
     const filtered = credential.filter(['cvc:Identity:address']);
-    console.log(JSON.stringify(credential, null, 2));
-    console.log(JSON.stringify(filtered, null, 2));
+
     expect(filtered.claim.identity.address).toBeDefined();
     expect(filtered.claim.identity.address.country).toBe('X2sEB9F9W9');
     expect(filtered.claim.identity.address.county).toBe('sDlIM4Rjpo');
@@ -236,8 +234,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const uca = new UCA('cvc:Contact:phoneNumber', value, '1');
     const credential = new VC('cvc:Credential:PhoneNumber', '', null, [uca], '1');
     const filtered = credential.filter(['cvc:PhoneNumber:countryCode']);
-    console.log(JSON.stringify(credential, null, 2));
-    console.log(JSON.stringify(filtered, null, 2));
+
     expect(filtered.claim.contact.phoneNumber).toBeDefined();
     expect(filtered.claim.contact.phoneNumber.country).toBeUndefined();
     expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');

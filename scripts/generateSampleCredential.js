@@ -20,12 +20,12 @@ const generateSampleBasicCredentials = async () => {
 
   const phoneNumberUca = new UCA('cvc:Contact:phoneNumber', phoneNumber);
 
-  const emailCredential = new VC('cvc:Credential:email', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', 315569260 /* 10y */, [emailUca], 1);
+  const emailCredential = new VC('cvc:Credential:Email', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', null, [emailUca], 1);
   const emailCredentialTemporary = await emailCredential.requestAnchor();
   const emailCredentialDefinitive = await emailCredentialTemporary.updateAnchor();
   console.log(JSON.stringify(emailCredentialDefinitive, null, 2));
 
-  const phoneNumberCredential = new VC('cvc:Credential:phoneNumber', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', 315569260 /* 10y */, [phoneNumberUca], 1);
+  const phoneNumberCredential = new VC('cvc:Credential:PhoneNumber', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', null, [phoneNumberUca], 1);
   const phoneNumberCredentialTemporary = await phoneNumberCredential.requestAnchor();
   const phoneNumberCredentialDefinitive = await phoneNumberCredentialTemporary.updateAnchor();
   console.log(JSON.stringify(phoneNumberCredentialDefinitive, null, 2));
