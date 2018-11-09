@@ -17,9 +17,9 @@ function sha256(string) {
 }
 
 function getClaimPath(identifier, claimsPathRef) {
-  const identifierComponentes = _.split(identifier, ':');
-  const baseName = _.lowerCase(identifierComponentes[1]);
-  const sufix = `${baseName}.${identifierComponentes[2]}`;
+  const identifierComponents = _.split(identifier, ':');
+  const baseName = _.camelCase(identifierComponents[1]);
+  const sufix = `${baseName}.${identifierComponents[2]}`;
   const claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
   return claimPath || sufix;
 }
@@ -39,6 +39,33 @@ function getClaimsWithFlatKeys(claims) {
     .fromPairs()
     .value();
   return flattenSortedKeysClaim;
+}
+
+
+function paths(root) {
+  const paths = [];
+  const nodes = [{
+    obj: root,
+    path: [],
+  }];
+  while (nodes.length > 0) {
+    const n = nodes.pop();
+    Object.keys(n.obj).forEach((k) => {
+      if (typeof n.obj[k] === 'object') {
+        const path = n.path.concat(k);
+        paths.push(path);
+        nodes.unshift({
+          obj: n.obj[k],
+          path,
+        });
+      }
+    });
+  }
+  const returnArray = [];
+  paths.forEach((arr) => {
+    returnArray.push(arr.join('.'));
+  });
+  return returnArray;
 }
 
 function getLeavesClaimPaths(signLeaves) {
@@ -211,8 +238,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
     this.claim = new ClaimModel(ucas);
-    const claimsPathRef = _.keys(flatten(this.claim, { safe: true }));
-    this.proof = new CvcMerkleProof(proofUCAs, claimsPathRef);
+    const claimsPathRef = paths(this.claim);
+    const deepKeys = _.keys(flatten(this.claim, { safe: true }));
+    const allClaimsPaths = claimsPathRef.concat(deepKeys);
+    this.proof = new CvcMerkleProof(proofUCAs, allClaimsPaths);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {

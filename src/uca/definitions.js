@@ -93,9 +93,15 @@ const definitions = [
     credentialItem: false,
   },
   {
-    identifier: 'cvc:Contact:email',
+    identifier: 'cvc:Email:properties',
     version: '1',
     type: 'cvc:Type:email',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:Contact:email',
+    version: '1',
+    type: 'cvc:Email:properties',
     credentialItem: true,
   },
   {
@@ -140,34 +146,71 @@ const definitions = [
     type: 'String',
     credentialItem: true,
   },
+
   {
-    identifier: 'cvc:Contact:phoneNumber',
+    identifier: 'cvc:PhoneNumber:country',
+    type: 'cvc:Type:country',
+    version: '1',
+    credentialItem: false,
+  },
+  {
+    identifier: 'cvc:PhoneNumber:countryCode',
+    type: 'cvc:Phone:countryCode',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:PhoneNumber:number',
+    type: 'cvc:Phone:number',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:PhoneNumber:extension',
+    type: 'cvc:Phone:extension',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:PhoneNumber:lineType',
+    type: 'cvc:Phone:lineType',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:Type:phoneNumber',
     version: '1',
     type: {
       properties: [
         {
           name: 'country',
-          type: 'cvc:Type:country',
+          type: 'cvc:PhoneNumber:country',
         },
         {
           name: 'countryCode',
-          type: 'cvc:Phone:countryCode',
+          type: 'cvc:PhoneNumber:countryCode',
         },
         {
           name: 'number',
-          type: 'cvc:Phone:number',
+          type: 'cvc:PhoneNumber:number',
         },
         {
           name: 'extension',
-          type: 'cvc:Phone:extension',
+          type: 'cvc:PhoneNumber:extension',
         },
         {
           name: 'lineType',
-          type: 'cvc:Phone:lineType',
+          type: 'cvc:PhoneNumber:lineType',
         },
       ],
       required: ['country', 'countryCode', 'number', 'lineType'],
     },
+    credentialItem: false,
+  },
+  {
+    identifier: 'cvc:Contact:phoneNumber',
+    version: '1',
+    type: 'cvc:Type:phoneNumber',
     credentialItem: true,
   },
   {
