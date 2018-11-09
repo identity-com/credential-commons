@@ -95,7 +95,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
-    // TODO refactor this to mock only attester.multiAttest inside this function
+
     cred.requestAnchor = jest.fn().mockImplementation(async () => {
       // mock the function or otherwise it would call the server
       const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
@@ -114,7 +114,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     });
   });
 
-  test('Filter claims', () => {
+  test('Filter claims from Identity Name', () => {
     const civIdentityName = {
       givenNames: 'Joao',
       otherNames: 'Barbosa',
@@ -138,20 +138,109 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
   });
 
-  // TODO enable me when CCS-514 is done
-  test.skip('Filter claims of composite UCA', () => {
-    const phoneNumber = {
-      country: 'BRZ',
-      countryCode: '+55',
-      number: '31995383635',
-      lineType: 'mobile',
+  it('Should filter claims for Email asking for cvc:Contact:email and return them on the filtered VC', () => {
+    const email = {
+      domain: {
+        tld: 'oVaPsceZ4C',
+        name: 'UTpHKFyaaB',
+      },
+      username: 'ZcMpCBQ0lE',
     };
 
-    const phoneNumberUca = new UCA('cvc:Contact:phoneNumber', phoneNumber);
-    const phoneNumberCredential = new VC('cvc:Credential:PhoneNumber', 'Civic-Identity-Verifier', null, [phoneNumberUca], '1');
+    const emailUca = new UCA('cvc:Contact:email', email, '1');
+    const emailCredential = new VC('cvc:Credential:Email', '', null, [emailUca], '1');
+    const filtered = emailCredential.filter(['cvc:Contact:email']);
 
-    const filtered = phoneNumberCredential.filter(['cvc:Phone:countryCode']);
-    expect(filtered.claim.contact.phoneNumber.countryCode).toBeDefined();
+    expect(filtered.claim.contact.email.domain).toBeDefined();
+    expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
+    expect(filtered.claim.contact.email.domain.name).toBe('UTpHKFyaaB');
+    expect(filtered.claim.contact.email.username).toBe('ZcMpCBQ0lE');
+  });
+
+  it('Should filter claims for Email asking for cvc:Contact:domain and not return the cvc:Contact:address', () => {
+    const email = {
+      domain: {
+        tld: 'oVaPsceZ4C',
+        name: 'UTpHKFyaaB',
+      },
+      username: 'ZcMpCBQ0lE',
+    };
+
+    const emailUca = new UCA('cvc:Contact:email', email, '1');
+    const emailCredential = new VC('cvc:Credential:Email', '', null, [emailUca], '1');
+    const filtered = emailCredential.filter(['cvc:Email:domain']);
+
+    expect(filtered.claim.contact.email.domain).toBeDefined();
+    expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
+    expect(filtered.claim.contact.email.domain.name).toBe('UTpHKFyaaB');
+    expect(filtered.claim.contact.email.username).toBeUndefined();
+  });
+
+  it('Should filter claims for Address asking for cvc:Type:address and return the cvc:Type:address', () => {
+    const value = {
+      country: 'X2sEB9F9W9',
+      county: 'sDlIM4Rjpo',
+      state: 'ZZEOrbenrM',
+      street: 'JkHgN5gdZ2',
+      unit: 'fo9OmPSZNe',
+      city: 'LVkRGsKqIf',
+      postalCode: '5JhmWkXBAg',
+    };
+
+    const uca = new UCA('cvc:Identity:address', value, '1');
+    const credential = new VC('cvc:Credential:Address', '', null, [uca], '1');
+    const filtered = credential.filter(['cvc:Identity:address']);
+
+    expect(filtered.claim.identity.address).toBeDefined();
+    expect(filtered.claim.identity.address.country).toBe('X2sEB9F9W9');
+    expect(filtered.claim.identity.address.county).toBe('sDlIM4Rjpo');
+    expect(filtered.claim.identity.address.state).toBe('ZZEOrbenrM');
+    expect(filtered.claim.identity.address.street).toBe('JkHgN5gdZ2');
+    expect(filtered.claim.identity.address.unit).toBe('fo9OmPSZNe');
+    expect(filtered.claim.identity.address.city).toBe('LVkRGsKqIf');
+    expect(filtered.claim.identity.address.postalCode).toBe('5JhmWkXBAg');
+  });
+
+  it('Should filter claims for PhoneNumber asking for cvc:Contact:phoneNumber and return the full claim', () => {
+    const value = {
+      country: '1ApYikRwDl',
+      countryCode: 'U4drpB96Hk',
+      number: 'kCTGifTdom',
+      extension: 'sXZpZJTe4R',
+      lineType: 'OaguqgUaR7',
+    };
+
+    const uca = new UCA('cvc:Contact:phoneNumber', value, '1');
+    const credential = new VC('cvc:Credential:PhoneNumber', '', null, [uca], '1');
+    const filtered = credential.filter(['cvc:Contact:phoneNumber']);
+
+    expect(filtered.claim.contact.phoneNumber).toBeDefined();
+    expect(filtered.claim.contact.phoneNumber.country).toBe('1ApYikRwDl');
+    expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');
+    expect(filtered.claim.contact.phoneNumber.extension).toBe('sXZpZJTe4R');
+    expect(filtered.claim.contact.phoneNumber.lineType).toBe('OaguqgUaR7');
+    expect(filtered.claim.contact.phoneNumber.number).toBe('kCTGifTdom');
+  });
+
+  it('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode and return only the claim for country code', () => {
+    const value = {
+      country: '1ApYikRwDl',
+      countryCode: 'U4drpB96Hk',
+      number: 'kCTGifTdom',
+      extension: 'sXZpZJTe4R',
+      lineType: 'OaguqgUaR7',
+    };
+
+    const uca = new UCA('cvc:Contact:phoneNumber', value, '1');
+    const credential = new VC('cvc:Credential:PhoneNumber', '', null, [uca], '1');
+    const filtered = credential.filter(['cvc:PhoneNumber:countryCode']);
+
+    expect(filtered.claim.contact.phoneNumber).toBeDefined();
+    expect(filtered.claim.contact.phoneNumber.country).toBeUndefined();
+    expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');
+    expect(filtered.claim.contact.phoneNumber.extension).toBeUndefined();
+    expect(filtered.claim.contact.phoneNumber.lineType).toBeUndefined();
+    expect(filtered.claim.contact.phoneNumber.number).toBeUndefined();
   });
 
   test('cred verifyProofs', () => {

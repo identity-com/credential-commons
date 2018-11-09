@@ -186,7 +186,7 @@ describe('UCA Constructions tests', () => {
     expect(attValues[0].value).toContain(':Santos');
   });
 
-  test('UCA should Construct with a complex Attestatble Value: IdentityName syntax\'s sugar', () => {
+  test('UCA should Construct with a complex Attestable Value: IdentityName syntax\'s sugar', () => {
     // eslint-disable-next-line max-len
     const aComplexAttestableValue = 'urn:givenNames:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:familyNames:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:otherNames:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
     const identifier = 'cvc:Identity:name';

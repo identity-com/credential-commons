@@ -76,7 +76,7 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'cvc:Contact:email',
+    identifier: 'cvc:Type:email',
     version: '1',
     type: {
       properties: [
@@ -90,78 +90,127 @@ const definitions = [
         },
       ],
     },
+    credentialItem: false,
+  },
+  {
+    identifier: 'cvc:Email:properties',
+    version: '1',
+    type: 'cvc:Type:email',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:Contact:email',
+    version: '1',
+    type: 'cvc:Email:properties',
     credentialItem: true,
   },
   {
     identifier: 'cvc:User:id',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:User:realm',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Type:country',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: false,
   },
   {
     identifier: 'cvc:Phone:countryCode',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Phone:number',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Phone:extension',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
     identifier: 'cvc:Phone:lineType',
-    version: 1,
+    version: '1',
     type: 'String',
     credentialItem: true,
   },
+
   {
-    identifier: 'cvc:Contact:phoneNumber',
-    version: 1,
+    identifier: 'cvc:PhoneNumber:country',
+    type: 'cvc:Type:country',
+    version: '1',
+    credentialItem: false,
+  },
+  {
+    identifier: 'cvc:PhoneNumber:countryCode',
+    type: 'cvc:Phone:countryCode',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:PhoneNumber:number',
+    type: 'cvc:Phone:number',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:PhoneNumber:extension',
+    type: 'cvc:Phone:extension',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:PhoneNumber:lineType',
+    type: 'cvc:Phone:lineType',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'cvc:Type:phoneNumber',
+    version: '1',
     type: {
       properties: [
         {
           name: 'country',
-          type: 'cvc:Type:country',
+          type: 'cvc:PhoneNumber:country',
         },
         {
           name: 'countryCode',
-          type: 'cvc:Phone:countryCode',
+          type: 'cvc:PhoneNumber:countryCode',
         },
         {
           name: 'number',
-          type: 'cvc:Phone:number',
+          type: 'cvc:PhoneNumber:number',
         },
         {
           name: 'extension',
-          type: 'cvc:Phone:extension',
+          type: 'cvc:PhoneNumber:extension',
         },
         {
           name: 'lineType',
-          type: 'cvc:Phone:lineType',
+          type: 'cvc:PhoneNumber:lineType',
         },
       ],
       required: ['country', 'countryCode', 'number', 'lineType'],
     },
+    credentialItem: false,
+  },
+  {
+    identifier: 'cvc:Contact:phoneNumber',
+    version: '1',
+    type: 'cvc:Type:phoneNumber',
     credentialItem: true,
   },
   {
@@ -295,7 +344,6 @@ const definitions = [
     identifier: 'cvc:Address:street',
     version: '1',
     type: 'String',
-    credentialItem: true,
   },
 
   {
@@ -383,7 +431,7 @@ const definitions = [
   },
   {
     identifier: 'cvc:Identity:address',
-    version: 1,
+    version: '1',
     type: 'cvc:Type:address',
     credentialItem: true,
   },
@@ -421,7 +469,7 @@ const definitions = [
       ],
       required: ['dateOfIssue'],
     },
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'cvc:Type:s3FileBucket',
@@ -522,7 +570,6 @@ const definitions = [
         },
       ],
       required: ['front', 'frontMD5'],
-      credentialItem: true,
     },
   },
   {

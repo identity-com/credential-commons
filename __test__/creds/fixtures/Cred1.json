@@ -1,36 +1,35 @@
 {
-  "id": null,
-  "issuer": "d460c90d-4032-4c29-9743-f52e0a852602",
-  "issuanceDate": "2018-10-08T19:46:22.364Z",
-  "identifier": "cvc:Credential:Identity",
-  "expirationDate": null,
+  "id": "7aed18fd-fea0-4284-b36d-7fd977588851",
+  "issuer": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD",
+  "issuanceDate": "2018-11-09T11:53:00.573Z",
+  "identifier": "cvc:Credential:Address",
+  "expirationDate": "2028-11-08T22:00:40.573Z",
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:Identity"
+    "cvc:Credential:Address"
   ],
   "claim": {
     "identity": {
-      "name": {
-        "familyNames": "Santos",
-        "givenNames": "Joao",
-        "otherNames": "Barbosa"
-      },
-      "dateOfBirth": {
-        "day": 20,
-        "month": 3,
-        "year": 1978
+      "address": {
+        "city": "Belo Horizonte",
+        "country": "Brazil",
+        "county": "Sao Bento",
+        "postalCode": "94103345",
+        "state": "Minas Gerais",
+        "street": "Alameda dos Anjos",
+        "unit": "500"
       }
     }
   },
   "proof": {
-    "type": "CivicMerkleProof2018",
-    "merkleRoot": "1fbe357dfcb0f19b0470d1017ce617bc8f3e88ff06552f425a3e2e81d6f38c10",
+    "type": "CvcMerkleProof2018",
+    "merkleRoot": "80c5b9c2c5a26ec54fe04d576fb09b7609bdff70c6cbf07be52aee34a56e0b6d",
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "cvc:Credential:Identity",
-        "data": "1fbe357dfcb0f19b0470d1017ce617bc8f3e88ff06552f425a3e2e81d6f38c10",
+        "label": "cvc:Credential:Address",
+        "data": "80c5b9c2c5a26ec54fe04d576fb09b7609bdff70c6cbf07be52aee34a56e0b6d",
         "signature": "signed:dummy"
       },
       "walletId": "none",
@@ -49,192 +48,216 @@
       "coin": "dummycoin",
       "tx": {},
       "network": "dummynet",
-      "type": "temporary",
+      "type": "permanent",
       "civicAsPrimary": false,
-      "schema": "dummy-20180201"
+      "schema": "dummy-20180201",
+      "value": {}
     },
     "leaves": [
       {
-        "identifier": "cvc:Identity:name",
-        "value": "urn:familyNames:f9cebb16c7ce72cc4cb75f49e7ca4435478be80f0a03740a97fbb508c9fe26eb:Santos|urn:givenNames:3b99f45fbd9aad638f34a40d7647293ee5c955316cf2bda31b856470efb04c49:Joao|urn:otherNames:ea17e5a9b080a9684d63983c7538fd053373f3d10245130cbedff75d82d4c714:Barbosa|",
-        "claimPath": "identity.name",
-        "targetHash": "7f576a0cfa81df08b8df1937bacfea632ab2a03f3dba4e9744c22418c0557286",
+        "identifier": "cvc:Identity:address",
+        "value": "urn:city:4610fca09d90f7a4cf47eec430cb52e183494ac2ad11976c67db45cf756d46c7:Belo Horizonte|urn:country:57ce550c4e9c22c87c27d0718dd06b352f8ce620a421f290e8a0e98548b8d123:Brazil|urn:county:1ee6b4e2cc8d621ef9b944b4f1c2ae6c3ab02f4e40e36ff0cb22d971b2b327a6:Sao Bento|urn:postalCode:75fa199ace634c4aa3cc72cb27c03970876db3e8ded0929d7c7db35d06e7f06f:94103345|urn:state:5d37218b3e4a6555a3e4cc6ea1377ff1128f552f589fde74a8e8985ce5de3406:Minas Gerais|urn:street:4d34b26ebc069002c0adc9a8a26aa7aec45a524f73424d009122c3dd87edc8c7:Alameda dos Anjos|urn:unit:4909485fb091628a0f6ce68448b98bb565e8aed43ed4d14b0fa2ab235ba18f01:500|",
+        "claimPath": "identity.address",
+        "targetHash": "4acc9b76dbf11a4c5fdcd22a69d8559cacfbcd2175ca028374a61eb8a9fc1a12",
         "node": [
           {
-            "right": "5b8d77d60a05af6dcad4c96d8e451adaaeae3e352ec20b68a5307466a5d8afbd"
+            "right": "16f0cdadc7f1f416f1ea2910f67381aeb4a506f3d2fba49ba46d0cf35c15ddb4"
           },
           {
-            "right": "cdd1ff29f8fa9248ef3d909e76faf7011a276befb631d46a9073cd61ad420446"
+            "right": "35666a13dcb35874f395651b73a43a54e08255ecee5b2e00c7f2a6f31854d37d"
           },
           {
-            "right": "7e68e0871dc4504629bcde9669c500a9d0fc6bf1aaa701efb996943320ef2d89"
+            "right": "837aff2cdecb803246656c1b71994780efb503f89fbc888bd901f00b63314032"
           },
           {
-            "right": "f0bea436f87b9b691324e18afaf800411d6d2e213d180fc2721782fb393a36f0"
+            "right": "bf104f91ffdee0f5a9fca9197203401b226ff3c3530797327e8f2a0e35b3404e"
           },
           {
-            "right": "efb0034a22c3f78c5435f0b33dfa120f9720313ced0b2defe465e087f3fe470b"
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
           }
         ]
       },
       {
-        "identifier": "cvc:Name:givenNames",
-        "value": "urn:givenNames:3b99f45fbd9aad638f34a40d7647293ee5c955316cf2bda31b856470efb04c49:Joao",
-        "claimPath": "identity.name.givenNames",
-        "targetHash": "5b8d77d60a05af6dcad4c96d8e451adaaeae3e352ec20b68a5307466a5d8afbd",
+        "identifier": "cvc:Address:city",
+        "value": "urn:city:4610fca09d90f7a4cf47eec430cb52e183494ac2ad11976c67db45cf756d46c7:Belo Horizonte",
+        "claimPath": "identity.address.city",
+        "targetHash": "16f0cdadc7f1f416f1ea2910f67381aeb4a506f3d2fba49ba46d0cf35c15ddb4",
         "node": [
           {
-            "left": "7f576a0cfa81df08b8df1937bacfea632ab2a03f3dba4e9744c22418c0557286"
+            "left": "4acc9b76dbf11a4c5fdcd22a69d8559cacfbcd2175ca028374a61eb8a9fc1a12"
           },
           {
-            "right": "cdd1ff29f8fa9248ef3d909e76faf7011a276befb631d46a9073cd61ad420446"
+            "right": "35666a13dcb35874f395651b73a43a54e08255ecee5b2e00c7f2a6f31854d37d"
           },
           {
-            "right": "7e68e0871dc4504629bcde9669c500a9d0fc6bf1aaa701efb996943320ef2d89"
+            "right": "837aff2cdecb803246656c1b71994780efb503f89fbc888bd901f00b63314032"
           },
           {
-            "right": "f0bea436f87b9b691324e18afaf800411d6d2e213d180fc2721782fb393a36f0"
+            "right": "bf104f91ffdee0f5a9fca9197203401b226ff3c3530797327e8f2a0e35b3404e"
           },
           {
-            "right": "efb0034a22c3f78c5435f0b33dfa120f9720313ced0b2defe465e087f3fe470b"
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
           }
         ]
       },
       {
-        "identifier": "cvc:Name:otherNames",
-        "value": "urn:otherNames:ea17e5a9b080a9684d63983c7538fd053373f3d10245130cbedff75d82d4c714:Barbosa",
-        "claimPath": "identity.name.otherNames",
-        "targetHash": "b013a25bcbb6d1fafe0ac5d07dcca6964686869463a31d3adc5baceaa0538d29",
+        "identifier": "cvc:Address:postalCode",
+        "value": "urn:postalCode:75fa199ace634c4aa3cc72cb27c03970876db3e8ded0929d7c7db35d06e7f06f:94103345",
+        "claimPath": "identity.address.postalCode",
+        "targetHash": "3dcb2a83a00830f82c2e6e48d0e4fc3dec9e52710e67048704c1855ddfe5bc19",
         "node": [
           {
-            "right": "5fdafb2f464e4798e8a46d04e70ddf210960e7717ed343cf205367f89318bab3"
+            "right": "bf0318e6046e251d3bed57e96acbec1b7b284903ae749b0eb855fd1db665221d"
           },
           {
-            "left": "191255794cb6b5314f416cfaf7f86bc9ab01fffe2c94c4852faa9169faeaaf48"
+            "left": "ea04449a92d2f885810ffd08e6c98730bf5ae42d0be2032c52b01617fe4d41cd"
           },
           {
-            "right": "7e68e0871dc4504629bcde9669c500a9d0fc6bf1aaa701efb996943320ef2d89"
+            "right": "837aff2cdecb803246656c1b71994780efb503f89fbc888bd901f00b63314032"
           },
           {
-            "right": "f0bea436f87b9b691324e18afaf800411d6d2e213d180fc2721782fb393a36f0"
+            "right": "bf104f91ffdee0f5a9fca9197203401b226ff3c3530797327e8f2a0e35b3404e"
           },
           {
-            "right": "efb0034a22c3f78c5435f0b33dfa120f9720313ced0b2defe465e087f3fe470b"
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
           }
         ]
       },
       {
-        "identifier": "cvc:Name:familyNames",
-        "value": "urn:familyNames:f9cebb16c7ce72cc4cb75f49e7ca4435478be80f0a03740a97fbb508c9fe26eb:Santos",
-        "claimPath": "identity.name.familyNames",
-        "targetHash": "5fdafb2f464e4798e8a46d04e70ddf210960e7717ed343cf205367f89318bab3",
+        "identifier": "cvc:Address:state",
+        "value": "urn:state:5d37218b3e4a6555a3e4cc6ea1377ff1128f552f589fde74a8e8985ce5de3406:Minas Gerais",
+        "claimPath": "identity.address.state",
+        "targetHash": "bf0318e6046e251d3bed57e96acbec1b7b284903ae749b0eb855fd1db665221d",
         "node": [
           {
-            "left": "b013a25bcbb6d1fafe0ac5d07dcca6964686869463a31d3adc5baceaa0538d29"
+            "left": "3dcb2a83a00830f82c2e6e48d0e4fc3dec9e52710e67048704c1855ddfe5bc19"
           },
           {
-            "left": "191255794cb6b5314f416cfaf7f86bc9ab01fffe2c94c4852faa9169faeaaf48"
+            "left": "ea04449a92d2f885810ffd08e6c98730bf5ae42d0be2032c52b01617fe4d41cd"
           },
           {
-            "right": "7e68e0871dc4504629bcde9669c500a9d0fc6bf1aaa701efb996943320ef2d89"
+            "right": "837aff2cdecb803246656c1b71994780efb503f89fbc888bd901f00b63314032"
           },
           {
-            "right": "f0bea436f87b9b691324e18afaf800411d6d2e213d180fc2721782fb393a36f0"
+            "right": "bf104f91ffdee0f5a9fca9197203401b226ff3c3530797327e8f2a0e35b3404e"
           },
           {
-            "right": "efb0034a22c3f78c5435f0b33dfa120f9720313ced0b2defe465e087f3fe470b"
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
           }
         ]
       },
       {
-        "identifier": "cvc:Identity:dateOfBirth",
-        "value": "urn:day:37721c821560995d992f9f6a7859f0da13a7c06908e298ece50c1f84cd16669f:00000020|urn:month:2c5a20c2f6a1cb6c74001646eecd2015bfcde98a20d9006483a2aad3d4714a3e:00000003|urn:year:7e189630ad86951dc1160624c161f1f6227f83d926233629e4a8da2d2386ae9d:00001978|",
-        "claimPath": "identity.dateOfBirth",
-        "targetHash": "93f1faaa5af8b5f9db24f660940d5fe975d71f6d29d0ee2857b47e2cef7f11e8",
+        "identifier": "cvc:Address:county",
+        "value": "urn:county:1ee6b4e2cc8d621ef9b944b4f1c2ae6c3ab02f4e40e36ff0cb22d971b2b327a6:Sao Bento",
+        "claimPath": "identity.address.county",
+        "targetHash": "feee2f6cf9e1fa2f934b4866a3a0a7fe1e45f6c2427cbb1f06ffc055b99403c8",
         "node": [
           {
-            "right": "45b52663fcffbc0ef018979179d16dab408b3183a64ebf534ab109b7fe594a48"
+            "right": "96b43a3335d98774f50ac5bf99d4eae245391ceedabd2cbc60122d1b78108fbd"
           },
           {
-            "right": "b213a284c598763254471aac74326af69c13355404356f794c3606f0c8d85b9c"
+            "right": "73330237f48728f51e78a054f3363e7d26af8397b49a37b3fefe3aecd59f0da9"
           },
           {
-            "left": "f89530e2b7e3e5e243674f1fe0ced3d4e660b4b3d9d2f78dc74afe7aa2069e8b"
+            "left": "87de50eaa9e7ed6fb0f5c1fbd4c936fb9aa4b9db2a0c145d85af1dcf3abb4ec7"
           },
           {
-            "right": "f0bea436f87b9b691324e18afaf800411d6d2e213d180fc2721782fb393a36f0"
+            "right": "bf104f91ffdee0f5a9fca9197203401b226ff3c3530797327e8f2a0e35b3404e"
           },
           {
-            "right": "efb0034a22c3f78c5435f0b33dfa120f9720313ced0b2defe465e087f3fe470b"
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Address:country",
+        "value": "urn:country:57ce550c4e9c22c87c27d0718dd06b352f8ce620a421f290e8a0e98548b8d123:Brazil",
+        "claimPath": "identity.address.country",
+        "targetHash": "96b43a3335d98774f50ac5bf99d4eae245391ceedabd2cbc60122d1b78108fbd",
+        "node": [
+          {
+            "left": "feee2f6cf9e1fa2f934b4866a3a0a7fe1e45f6c2427cbb1f06ffc055b99403c8"
+          },
+          {
+            "right": "73330237f48728f51e78a054f3363e7d26af8397b49a37b3fefe3aecd59f0da9"
+          },
+          {
+            "left": "87de50eaa9e7ed6fb0f5c1fbd4c936fb9aa4b9db2a0c145d85af1dcf3abb4ec7"
+          },
+          {
+            "right": "bf104f91ffdee0f5a9fca9197203401b226ff3c3530797327e8f2a0e35b3404e"
+          },
+          {
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
           }
         ]
       },
       {
         "identifier": "cvc:Meta:issuer",
-        "value": "urn:issuer:769197d3d0e416dd621d75d9d0449ab30e2f501dea364cc792552df0b6e8ec05:d460c90d-4032-4c29-9743-f52e0a852602",
+        "value": "urn:issuer:12c457205d6e8a6280a40973b24d695ff001928701bdef9b7ce28ae8e04f601a:did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD",
         "claimPath": "meta.issuer",
-        "targetHash": "45b52663fcffbc0ef018979179d16dab408b3183a64ebf534ab109b7fe594a48",
+        "targetHash": "7f6bc456ef8565d9cbc2b1bf82aa6bb7e5e529fef3fa20604c985a977d99e41e",
         "node": [
           {
-            "left": "93f1faaa5af8b5f9db24f660940d5fe975d71f6d29d0ee2857b47e2cef7f11e8"
+            "right": "1540ae30302488a2c93a47c2e1d22cfcd427aec4026f46bb608a91451fcd13ef"
           },
           {
-            "right": "b213a284c598763254471aac74326af69c13355404356f794c3606f0c8d85b9c"
+            "left": "ce7abdc8d23c3b4826686d7e9026f84326c7ba48be099fb977a0255753bd7162"
           },
           {
-            "left": "f89530e2b7e3e5e243674f1fe0ced3d4e660b4b3d9d2f78dc74afe7aa2069e8b"
+            "left": "87de50eaa9e7ed6fb0f5c1fbd4c936fb9aa4b9db2a0c145d85af1dcf3abb4ec7"
           },
           {
-            "right": "f0bea436f87b9b691324e18afaf800411d6d2e213d180fc2721782fb393a36f0"
+            "right": "bf104f91ffdee0f5a9fca9197203401b226ff3c3530797327e8f2a0e35b3404e"
           },
           {
-            "right": "efb0034a22c3f78c5435f0b33dfa120f9720313ced0b2defe465e087f3fe470b"
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
           }
         ]
       },
       {
         "identifier": "cvc:Meta:issuanceDate",
-        "value": "urn:issuanceDate:dbeeebc31ea7f7371540a75479ee265dab9db6a291ae406acdf80d227a49056c:2018-10-08T19:46:22.364Z",
+        "value": "urn:issuanceDate:18c0a6ca5486728c83cb37edceadfe155df6238da0e8f8fd1218e8d5d0009a9b:2018-11-09T11:53:00.573Z",
         "claimPath": "meta.issuanceDate",
-        "targetHash": "1702fc187d05ee760f13e143370e09298e6bd44ad0db9c8025053839b50f7968",
+        "targetHash": "1540ae30302488a2c93a47c2e1d22cfcd427aec4026f46bb608a91451fcd13ef",
         "node": [
           {
-            "right": "3319c5ed870611c4dcd9baf2f5da3c6bc77437edcaa5721283528b231892c56d"
+            "left": "7f6bc456ef8565d9cbc2b1bf82aa6bb7e5e529fef3fa20604c985a977d99e41e"
           },
           {
-            "left": "5396bfaf8f82259a40a4b50723d1ae0c3332ea89f064dafc2a03c8d3a5650bf1"
+            "left": "ce7abdc8d23c3b4826686d7e9026f84326c7ba48be099fb977a0255753bd7162"
           },
           {
-            "left": "f89530e2b7e3e5e243674f1fe0ced3d4e660b4b3d9d2f78dc74afe7aa2069e8b"
+            "left": "87de50eaa9e7ed6fb0f5c1fbd4c936fb9aa4b9db2a0c145d85af1dcf3abb4ec7"
           },
           {
-            "right": "f0bea436f87b9b691324e18afaf800411d6d2e213d180fc2721782fb393a36f0"
+            "right": "bf104f91ffdee0f5a9fca9197203401b226ff3c3530797327e8f2a0e35b3404e"
           },
           {
-            "right": "efb0034a22c3f78c5435f0b33dfa120f9720313ced0b2defe465e087f3fe470b"
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
           }
         ]
       },
       {
         "identifier": "cvc:Meta:expirationDate",
-        "value": "urn:expirationDate:beb8164634c2a861f122a17b553ec8a35dbf1bbf8b07b921dbc752d28b12b73a:null",
+        "value": "urn:expirationDate:f491f2804ee674d7aa5a1dcfe66092212521df6ec8da2c304e632f7be0890c87:2028-11-08T22:00:40.573Z",
         "claimPath": "meta.expirationDate",
-        "targetHash": "3319c5ed870611c4dcd9baf2f5da3c6bc77437edcaa5721283528b231892c56d",
+        "targetHash": "dc65033949b2fe0f1e78a3ee1e3573c6afa6df35d70e8155cf7cbf641fb1d30c",
         "node": [
           {
-            "left": "1702fc187d05ee760f13e143370e09298e6bd44ad0db9c8025053839b50f7968"
+            "right": "df00d54a110f076cccc8aabf138fd2b67ba3817b6e14d00848847986a6d4a0df"
           },
           {
-            "left": "5396bfaf8f82259a40a4b50723d1ae0c3332ea89f064dafc2a03c8d3a5650bf1"
+            "right": "d1ff213a8c12eb2b6e1b47df9f071f1559d971bbff30ee059becbf703c94e0b2"
           },
           {
-            "left": "f89530e2b7e3e5e243674f1fe0ced3d4e660b4b3d9d2f78dc74afe7aa2069e8b"
+            "right": "7f77910e3d0f01d98cbf55963bd37938851276d8bc46aaf38694981901ec3e5a"
           },
           {
-            "right": "f0bea436f87b9b691324e18afaf800411d6d2e213d180fc2721782fb393a36f0"
+            "left": "fe56a7da962c0de5c4c470c2df5966ad997dacedfc4ba30e1f5fac54314247a3"
           },
           {
-            "right": "efb0034a22c3f78c5435f0b33dfa120f9720313ced0b2defe465e087f3fe470b"
+            "right": "822f4fd8ed856f54741163a19f67b55a0b470af2bb91a1b2defa01c3f9e10127"
           }
         ]
       }
