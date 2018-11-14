@@ -6,7 +6,8 @@ const credentialDefinitions = require('../../src/creds/definitions');
 const ucaDefinitions = require('../../src/uca/definitions');
 
 const fixturesPath = '__integrations__/fixtures';
-// testings is done only on the test bucket, since we only release to production on manual CircleCI flow
+// testings is done only on the test bucket,
+// since we only release to production on manual CircleCI flow
 // check process env for S3 SChema URL or fallback to an fixed one
 const s3BucketUrl = process.env.S3_PUBLIC_SCHEMA_URL ? process.env.S3_PUBLIC_SCHEMA_URL : 'http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com';
 
@@ -36,7 +37,9 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       }
     };
     const promises = [];
-    credentialDefinitions.forEach((credentialDefinition) => { promises.push(validateSchemaJestStep(credentialDefinition)); });
+    credentialDefinitions.forEach((credentialDefinition) => {
+      promises.push(validateSchemaJestStep(credentialDefinition));
+    });
     Promise.all(promises).then((values) => {
       values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
@@ -71,7 +74,9 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       }
     };
     const promises = [];
-    credentialDefinitions.forEach((credentialDefinition) => { promises.push(validateSchemaJestStep(credentialDefinition)); });
+    credentialDefinitions.forEach((credentialDefinition) => {
+      promises.push(validateSchemaJestStep(credentialDefinition));
+    });
     Promise.all(promises).then((values) => {
       values.forEach(isValid => expect(isValid).toBeFalsy());
       done();

@@ -1,4 +1,6 @@
-// do not put these tests on the same file as config.test.js or else jest will fail coverage (describe.beforeEach scope not working)
+// do not put these tests on the same file as config.test.js or else jest will fail coverage
+// (describe.beforeEach scope not working)
+
 describe('Test process platform', () => {
   beforeEach(() => {
     this.originalPlatform = process.platform;

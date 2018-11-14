@@ -30,7 +30,9 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-        const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+        const ucaDefinition = ucaDefinitions.find(ucaDef => (
+          ucaDef.identifier === ucaDefinitionIdentifier
+        ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
         let value = ucaJson;
         if (Object.keys(ucaJson).length === 1) {
@@ -53,7 +55,9 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       return isValid;
     };
     const promises = [];
-    credentialDefinitions.forEach((credentialDefinition) => { promises.push(validateSchemaJestStep(credentialDefinition)); });
+    credentialDefinitions.forEach((credentialDefinition) => {
+      promises.push(validateSchemaJestStep(credentialDefinition));
+    });
     Promise.all(promises).then((values) => {
       values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
@@ -62,10 +66,14 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
   it('Should change the VC Json data and fail against AJV', () => {
     const identifier = 'cvc:Credential:Identity';
-    const credentialDefinition = credentialDefinitions.find(credsDef => credsDef.identifier === identifier);
+    const credentialDefinition = credentialDefinitions.find(credsDef => (
+      credsDef.identifier === identifier
+    ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaDefinition = ucaDefinitions.find(ucaDef => (
+        ucaDef.identifier === ucaDefinitionIdentifier
+      ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
@@ -74,7 +82,8 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
+    const issuer = `jest:test:${uuidv1()}`;
+    const credential = new VC(credentialDefinition.identifier, issuer, null, ucaArray, 1);
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
@@ -87,10 +96,14 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
   it('Should add an property to the root of the json and fail against AJV additionalProperties', () => {
     const identifier = 'cvc:Credential:Identity';
-    const credentialDefinition = credentialDefinitions.find(credsDef => credsDef.identifier === identifier);
+    const credentialDefinition = credentialDefinitions.find(credsDef => (
+      credsDef.identifier === identifier
+    ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaDefinition = ucaDefinitions.find(ucaDef => (
+        ucaDef.identifier === ucaDefinitionIdentifier
+      ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
