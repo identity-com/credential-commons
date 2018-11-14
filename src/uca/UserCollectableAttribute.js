@@ -318,7 +318,7 @@ function convertIdentifierToClassName(identifier) {
 _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
   const name = convertIdentifierToClassName(def.identifier);
   const source = {};
-  const identifier = def.identifier;
+  const { identifier } = def;
 
   function UCAConstructor(value, version) {
     const self = new UCABaseConstructor(identifier, value, version);

@@ -1,6 +1,4 @@
-const _ = require('lodash');
 const UCA = require('../../src/uca/UserCollectableAttribute');
-const definitions = require('../../src/uca/definitions');
 
 describe('UCA Constructions tests', () => {
   test('UCA construction should fails', () => {
@@ -246,7 +244,7 @@ describe('UCA Constructions tests', () => {
 
   test('Construct a cvc:Identity.name without one the last property value', () => {
     const identifier = 'cvc:Identity:name';
-    const attestationValue = 'urn:givenNames:9619312ef69e2b417edc1e48f2be8f844f2c3b6b04707060fc9052dff1551c9d:Joao|urn:otherNames:5280dfb5bfcf80469156b68807f280c0db8bf3f8ea4653b41d4c61996cd75afd:Barbosa|';
+    const attestationValue = 'urn:givenNames:9619312ef69e2b417edc1e48f2be8f844f2c3b6b04707060fc9052dff1551c9d:Joao|urn:otherNames:5280dfb5bfcf80469156b68807f280c0db8bf3f8ea4653b41d4c61996cd75afd:Barbosa|'; // eslint-disable-line
     const v = new UCA(identifier, { attestableValue: attestationValue });
     expect(v).toBeDefined();
     expect(v.last).toBeUndefined();

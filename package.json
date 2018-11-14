@@ -17,7 +17,7 @@
   "module": "dist/es/index.js",
   "browser": "dist/browser/index.js",
   "scripts": {
-    "lint": "eslint ./src/**.js ./__test__/**.js --max-warnings=0",
+    "lint": "eslint ./src/**/*.js ./__test__/**/*.js --max-warnings=0",
     "test": "cross-env NODE_ENV=false jest",
     "test:watch": "jest --watch",
     "check-schemas": "cross-env NODE_ENV=false jest --no-coverage __integrations__/schemas/",

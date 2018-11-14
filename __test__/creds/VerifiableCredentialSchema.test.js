@@ -34,7 +34,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
         let value = ucaJson;
         if (Object.keys(ucaJson).length === 1) {
-          value = Object.values(ucaJson)[0];
+          [value] = Object.values(ucaJson);
         }
         const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
         ucaArray.push(dependentUca);
@@ -69,7 +69,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
-        value = Object.values(ucaJson)[0];
+        [value] = Object.values(ucaJson);
       }
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
@@ -94,7 +94,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
-        value = Object.values(ucaJson)[0];
+        [value] = Object.values(ucaJson);
       }
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);

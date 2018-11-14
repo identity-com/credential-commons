@@ -43,7 +43,7 @@ function getClaimsWithFlatKeys(claims) {
 
 
 function paths(root) {
-  const paths = [];
+  const pathList = [];
   const nodes = [{
     obj: root,
     path: [],
@@ -53,7 +53,7 @@ function paths(root) {
     Object.keys(n.obj).forEach((k) => {
       if (typeof n.obj[k] === 'object') {
         const path = n.path.concat(k);
-        paths.push(path);
+        pathList.push(path);
         nodes.unshift({
           obj: n.obj[k],
           path,
@@ -62,7 +62,7 @@ function paths(root) {
     });
   }
   const returnArray = [];
-  paths.forEach((arr) => {
+  pathList.forEach((arr) => {
     returnArray.push(arr.join('.'));
   });
   return returnArray;
@@ -505,6 +505,7 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
  */
 VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
   const vcDefinition = _.find(definitions, { identifier });
+  let properties;
   if (vcDefinition) {
     const allProperties = [];
     _.forEach(vcDefinition.depends, (ucaIdentifier) => {
@@ -514,8 +515,9 @@ VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
     _.forEach(vcDefinition.excludes, (ucaIdentifier) => {
       excludesProperties.push(...UCA.getAllProperties(ucaIdentifier));
     });
-    return _.difference(allProperties, excludesProperties);
+    properties = _.difference(allProperties, excludesProperties);
   }
+  return properties;
 };
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;

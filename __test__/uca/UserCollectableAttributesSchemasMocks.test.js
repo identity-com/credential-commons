@@ -1,10 +1,10 @@
+const Ajv = require('ajv');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const ucaMockDefinitions = require('../../src/uca/__mocks__/definitions');
 
 jest.mock('../../src/uca/definitions');
 
 const UCA = require('../../src/uca/UserCollectableAttribute');
-const Ajv = require('ajv');
 
 /**
  * Jest is really a painful when it comes to mocking require.
@@ -29,4 +29,3 @@ describe('UCA Json Sample Date Construction tests', () => {
     done();
   });
 });
-

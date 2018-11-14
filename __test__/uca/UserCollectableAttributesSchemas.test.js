@@ -1,5 +1,4 @@
 const Ajv = require('ajv');
-const fs = require('fs');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const definitions = require('../../src/uca/definitions');
 const UCA = require('../../src/uca/UserCollectableAttribute');
