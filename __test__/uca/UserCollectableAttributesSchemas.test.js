@@ -21,7 +21,8 @@ describe('UCA Json Sample Date Construction tests', () => {
     done();
   });
 
-  it('Should generate Sample Data from all UCA, create the json schema and use AJV to validate both the data and the json schema against each other', async (done) => {
+  it('Should generate Sample Data from all UCA, create the json schema and use AJV to '
+    + ' validate both the data and the json schema against each other', async (done) => {
     definitions.forEach((definition) => {
       const json = SchemaGenerator.buildSampleJson(definition);
       const jsonSchema = SchemaGenerator.process(definition, json);

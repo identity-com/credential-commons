@@ -148,7 +148,7 @@ describe('UCA Constructions tests', () => {
   });
 
   test('UCA should Construct with a simple Attestatble Value', () => {
-    const aSingleAttestationValue = 'urn:givenNames:873b59b3c4faa0c63e6ec788041291f36b915357cffaaf6c39661b2a94783d19:Joao';
+    const aSingleAttestationValue = 'urn:givenNames:873b59b3c4faa0c63e6ec788041291f36b915357cffaaf6c39661b2a94783d19:Joao'; // eslint-disable-line
     const v = new UCA.NameGivenNames({ attestableValue: aSingleAttestationValue });
     expect(v).toBeDefined();
     const attValues = v.getAttestableValues();
@@ -172,7 +172,7 @@ describe('UCA Constructions tests', () => {
 
   test('UCA should Construct with a complex Attestatble Value: cvc:Identity:name', () => {
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 'urn:givenNames:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:familyNames:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:otherNames:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
+    const aComplexAttestableValue = 'urn:givenNames:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:familyNames:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:otherNames:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|'; // eslint-disable-line
     const v = new UCA.IdentityName({ attestableValue: aComplexAttestableValue });
     expect(v).toBeDefined();
     const attValues = v.getAttestableValues();
@@ -186,7 +186,7 @@ describe('UCA Constructions tests', () => {
 
   test('UCA should Construct with a complex Attestable Value: IdentityName syntax\'s sugar', () => {
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 'urn:givenNames:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:familyNames:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:otherNames:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
+    const aComplexAttestableValue = 'urn:givenNames:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:familyNames:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:otherNames:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|'; // eslint-disable-line
     const identifier = 'cvc:Identity:name';
     const v = new UCA(identifier, { attestableValue: aComplexAttestableValue });
     expect(v).toBeDefined();
@@ -203,7 +203,7 @@ describe('UCA Constructions tests', () => {
   test('UCA should Construct with a complex Attestatble Value: cvc:Identity:dateOfBirth', () => {
     const identifier = 'cvc:Identity:dateOfBirth';
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 'urn:day:bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49:00000020|urn:month:0ff6a4dc3b4e7a0b2cfb3a9f0479dc89d9757736d7e46e31ddb3dc53a9179b56:00000003|urn:year:ec4fcd9bad1839c052d0a23a9fba92eaf35d457e83ae50ea902bf3b5c3b490ad:00001978|';
+    const aComplexAttestableValue = 'urn:day:bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49:00000020|urn:month:0ff6a4dc3b4e7a0b2cfb3a9f0479dc89d9757736d7e46e31ddb3dc53a9179b56:00000003|urn:year:ec4fcd9bad1839c052d0a23a9fba92eaf35d457e83ae50ea902bf3b5c3b490ad:00001978|'; // eslint-disable-line
 
     const v = new UCA(identifier, { attestableValue: aComplexAttestableValue });
     const attestableValue = v.getAttestableValue();
@@ -232,7 +232,7 @@ describe('UCA Constructions tests', () => {
 
   test('Construct a cvc:Meta:expirationDate as a Attestable Value', () => {
     const identifier = 'cvc:Meta:expirationDate';
-    const anAttestationValue = 'urn:expirationDate:9dabdd37eca1bc98bcc725d66c77f10707fa9f3292752a31ad9dd94d17557e81:2018-06-20T13:51:18.640Z';
+    const anAttestationValue = 'urn:expirationDate:9dabdd37eca1bc98bcc725d66c77f10707fa9f3292752a31ad9dd94d17557e81:2018-06-20T13:51:18.640Z'; // eslint-disable-line
     const v = new UCA(identifier, { attestableValue: anAttestationValue });
     expect(v).toBeDefined();
     const attValues = v.getAttestableValues();

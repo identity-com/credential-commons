@@ -10,5 +10,6 @@
         "no-only-tests"
     ],
     "rules": {
+        "max-len": ["warn", 120]
     }
 }

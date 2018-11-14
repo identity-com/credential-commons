@@ -224,14 +224,16 @@ function UCABaseConstructor(identifier, value, version) {
 
   this.getAttestableValue = () => {
     // all UCA properties they have the form of :propertyName or :something.propertyName
-    const startIndexForPropertyName = this.identifier.includes('.') ? this.identifier.lastIndexOf('.') : this.identifier.lastIndexOf(':');
+    const startIndexForPropertyName = this.identifier.includes('.')
+      ? this.identifier.lastIndexOf('.') : this.identifier.lastIndexOf(':');
     const propertyName = this.identifier.substring(startIndexForPropertyName + 1);
     // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
     switch (this.type) {
       case 'String':
         return `urn:${propertyName}:${this.salt}:${this.value}`;
       case 'Number':
-        return `urn:${propertyName}:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`; // TODO @jpsantosbh why did you pad this value?
+        // TODO @jpsantosbh why did you pad this value?
+        return `urn:${propertyName}:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`;
       case 'Boolean':
         return `urn:${propertyName}:${this.salt}:${this.value}`;
       default:

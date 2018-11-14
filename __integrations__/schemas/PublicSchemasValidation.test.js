@@ -9,7 +9,9 @@ const fixturesPath = '__integrations__/fixtures';
 // testings is done only on the test bucket,
 // since we only release to production on manual CircleCI flow
 // check process env for S3 SChema URL or fallback to an fixed one
-const s3BucketUrl = process.env.S3_PUBLIC_SCHEMA_URL ? process.env.S3_PUBLIC_SCHEMA_URL : 'http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com';
+const s3BucketUrl = process.env.S3_PUBLIC_SCHEMA_URL
+  ? process.env.S3_PUBLIC_SCHEMA_URL
+  : 'http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com';
 
 describe.skip('Public Schemas Integration Test Suite', () => {
   it('Should succeed validation from the from the correct json file in Credential folder', async (done) => {
@@ -18,7 +20,9 @@ describe.skip('Public Schemas Integration Test Suite', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const jsonFolderVersion = `${credentialDefinition.version}`;
       // the file name is the last part of the identifier
-      const jsonFileName = credentialDefinition.identifier.substring(credentialDefinition.identifier.lastIndexOf(':') + 1);
+      const jsonFileName = credentialDefinition.identifier.substring(
+        credentialDefinition.identifier.lastIndexOf(':') + 1,
+      );
       // all fixtures are json
       const jsonFile = `${jsonFileName}.json`;
       // read the generated json
@@ -54,7 +58,9 @@ describe.skip('Public Schemas Integration Test Suite', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const jsonFolderVersion = `${credentialDefinition.version}`;
       // the file name is the last part of the identifier
-      const jsonFileName = credentialDefinition.identifier.substring(credentialDefinition.identifier.lastIndexOf(':') + 1);
+      const jsonFileName = credentialDefinition.identifier.substring(
+        credentialDefinition.identifier.lastIndexOf(':') + 1,
+      );
       // all fixtures are json
       const jsonFile = `${jsonFileName}.json`;
       // read the generated json

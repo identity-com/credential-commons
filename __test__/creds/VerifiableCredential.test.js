@@ -38,7 +38,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   // This test was skiped cause in the current definitions we don't have this case any more
-  test.skip('should validate new defined credentials with the obligatory Meta:expirationDate UCA with null value', () => {
+  test.skip('should validate new defined credentials with the required Meta:expirationDate UCA with null value', () => {
     const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
@@ -222,7 +222,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.contact.phoneNumber.number).toBe('kCTGifTdom');
   });
 
-  it('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode and return only the claim for country code', () => {
+  it('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode '
+    + 'and return only the claim for country code', () => {
     const value = {
       country: '1ApYikRwDl',
       countryCode: 'U4drpB96Hk',
@@ -251,7 +252,8 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
 
-  test('cred.verify(): with a valid cred without expirationDate, should return at least VERIFY_LEVELS.PROOFS level', () => {
+  test('cred.verify(): with a valid cred without expirationDate, '
+    + 'should return at least VERIFY_LEVELS.PROOFS level', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
