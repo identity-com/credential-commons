@@ -3,7 +3,8 @@ const ucaDefinitions = require('./uca/definitions');
 const vcDefinitions = require('./creds/definitions');
 const UCA = require('./uca/UserCollectableAttribute');
 /**
- * Validate an claim path against it's parent UCA, and the parent UCA against the dependencies of an Credential
+ * Validate an claim path against it's parent UCA, and the parent UCA against the
+ * dependencies of an Credential
  * @param claim path, eg: name.first
  * @param uca the global identifier for the UCA/Claim, eg: claim-civ:Identity:name-1
  * @param credential the parent identifier, eg: civ:Credential:GenericId
@@ -22,7 +23,9 @@ function isClaimRelated(claim, uca, credential) {
     if (_.includes(ucaProperties, claim)) {
       // we now have the composite uca, the uca for the claim property, they both are correct
       // we need to check now the UCA is inside the dependencies of the credential refered as parent
-      const credentialDefinition = vcDefinitions.find(definition => definition.identifier === credential);
+      const credentialDefinition = vcDefinitions.find(definition => (
+        definition.identifier === credential
+      ));
       if (credentialDefinition) {
         return _.includes(credentialDefinition.depends, ucaIdentifier);
       }

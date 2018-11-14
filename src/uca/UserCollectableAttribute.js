@@ -34,9 +34,9 @@ function isValid(value, type, definition) {
         && (definition.maximumLength ? value.length <= definition.minimumLength : true);
     case 'Number':
       return ((!_.isNil(definition.minimum)
-        && definition.exclusiveMinimum ? value > definition.minimum : value >= definition.minimum) || _.isNil(definition.minimum))
+        && definition.exclusiveMinimum ? value > definition.minimum : value >= definition.minimum) || _.isNil(definition.minimum)) // eslint-disable-line
         && ((!_.isNil(definition.maximum)
-        && definition.exclusiveMaximum ? value < definition.maximum : value <= definition.maximum) || _.isNil(definition.maximum));
+        && definition.exclusiveMaximum ? value < definition.maximum : value <= definition.maximum) || _.isNil(definition.maximum)); // eslint-disable-line
     case 'Boolean':
       return _.isBoolean(value);
     default:
@@ -164,7 +164,9 @@ function UCABaseConstructor(identifier, value, version) {
 
 
   this.identifier = identifier;
-  const definition = version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier });
+  const definition = version
+    ? _.find(definitions, { identifier, version })
+    : _.find(definitions, { identifier });
   this.version = version || definition.version;
 
   this.type = getTypeName(definition);
@@ -184,8 +186,12 @@ function UCABaseConstructor(identifier, value, version) {
       for (let i = 0; i < parsedAttestableValue.length; i += 1) {
         const { propertyName } = parsedAttestableValue[i];
         // we have stored only the property name on the urn, so we have to find the UCA definition
-        const filteredIdentifier = definition.type.properties.find(property => property.type.endsWith(propertyName)).type;
-        ucaValue[propertyName] = new UCABaseConstructor(filteredIdentifier, { attestableValue: parsedAttestableValue[i].stringValue });
+        const filteredIdentifier = definition.type.properties.find(property => (
+          property.type.endsWith(propertyName)
+        )).type;
+        ucaValue[propertyName] = new UCABaseConstructor(
+          filteredIdentifier, { attestableValue: parsedAttestableValue[i].stringValue },
+        );
       }
       // console.log(ucaValue);
       this.value = ucaValue;
@@ -202,7 +208,9 @@ function UCABaseConstructor(identifier, value, version) {
   } else if (_.isEmpty(definition.type.properties)) {
     throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
   } else {
-    const hasRequireds = _.reduce(definition.type.required, (has, required) => value[required] && has, true);
+    const hasRequireds = _.reduce(
+      definition.type.required, (has, required) => value[required] && has, true,
+    );
     if (!hasRequireds) {
       throw new Error(`Missing required fields to ${identifier}`);
     }
@@ -216,14 +224,16 @@ function UCABaseConstructor(identifier, value, version) {
 
   this.getAttestableValue = () => {
     // all UCA properties they have the form of :propertyName or :something.propertyName
-    const startIndexForPropertyName = this.identifier.includes('.') ? this.identifier.lastIndexOf('.') : this.identifier.lastIndexOf(':');
+    const startIndexForPropertyName = this.identifier.includes('.')
+      ? this.identifier.lastIndexOf('.') : this.identifier.lastIndexOf(':');
     const propertyName = this.identifier.substring(startIndexForPropertyName + 1);
     // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
     switch (this.type) {
       case 'String':
         return `urn:${propertyName}:${this.salt}:${this.value}`;
       case 'Number':
-        return `urn:${propertyName}:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`; // TODO @jpsantosbh why did you pad this value?
+        // TODO @jpsantosbh why did you pad this value?
+        return `urn:${propertyName}:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`;
       case 'Boolean':
         return `urn:${propertyName}:${this.salt}:${this.value}`;
       default:
@@ -318,7 +328,7 @@ function convertIdentifierToClassName(identifier) {
 _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
   const name = convertIdentifierToClassName(def.identifier);
   const source = {};
-  const identifier = def.identifier;
+  const { identifier } = def;
 
   function UCAConstructor(value, version) {
     const self = new UCABaseConstructor(identifier, value, version);
