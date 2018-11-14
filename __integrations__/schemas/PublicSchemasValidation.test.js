@@ -84,7 +84,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
     // iterate all over the credential's definitions
     const validateSchemaJestStep = async (definition) => {
       const jsonFolderVersion = `${definition.version}`;
-      const identifier = definition.identifier;
+      const { identifier } = definition;
       const typeFolder = identifier.substring(identifier.indexOf(':') + 1, identifier.lastIndexOf(':'));
       const jsonFolder = `${fixturesPath}/correct/${typeFolder}`;
       // the file name is the last part of the identifier

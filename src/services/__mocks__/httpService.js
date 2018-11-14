@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 const _ = require('lodash');
 const logger = require('../../logger');
 
@@ -69,7 +71,7 @@ function HttpServiceConstructor() {
 
 logger.debug('Using Mock HTTP Service');
 const http = new HttpServiceConstructor();
-http.request('/status').then(console.log);
+http.request('/status').then(console.log); // eslint-disable-line
 logger.debug(`HTTP Service instance ${JSON.stringify(http, null, 2)}`);
 
 module.exports = http;
