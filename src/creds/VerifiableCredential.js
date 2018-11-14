@@ -9,8 +9,11 @@ const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const { services } = require('../services');
 
-const anchorService = services.container.AnchorService;
 const secureRandom = services.container.SecureRandom;
+
+function getAnchorService() {
+  return services.container.AnchorService;
+}
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
@@ -292,7 +295,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     // TODO @jpsantosbh please check this line, the anchor here is the label on chainauth that will
     // create an cold wallet, if the name equals in the same time, we get an double spending
     // TODO this could be the ID of the VC
-    const anchor = await anchorService.anchor(this.identifier, this.proof.merkleRoot, options);
+    const anchor = await getAnchorService().anchor(this.identifier, this.proof.merkleRoot, options);
     this.proof.anchor = anchor;
     return this;
   };
@@ -302,7 +305,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * already confirmed on the blockchain.
    */
   this.updateAnchor = async () => {
-    const anchor = await anchorService.update(this.proof.anchor);
+    const anchor = await getAnchorService().update(this.proof.anchor);
     this.proof.anchor = anchor;
     return this;
   };
@@ -401,25 +404,25 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This method checks if the signature matches for the root of the Merkle Tree
    * @return true or false for the validation
    */
-  this.verifySignature = async () => anchorService.verifySignature(this.proof);
+  this.verifySignature = async () => getAnchorService().verifySignature(this.proof);
 
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
-  this.verifyAttestation = async () => anchorService.verifyAttestation(this.proof);
+  this.verifyAttestation = async () => getAnchorService().verifyAttestation(this.proof);
 
   /**
    * This method will revoke the attestation on the chain
    * @returns {Promise<Promise<*>|void>}
    */
-  this.revokeAttestation = async () => anchorService.revokeAttestation(this.proof);
+  this.revokeAttestation = async () => getAnchorService().revokeAttestation(this.proof);
 
   /**
    * This method will check on the chain the balance of the transaction and if it's still unspent,
    * than it's not revoked
    * @returns {Promise<Promise<*>|void>}
    */
-  this.isRevoked = async () => anchorService.isRevoked(this.proof);
+  this.isRevoked = async () => getAnchorService().isRevoked(this.proof);
 
   this.isMatch = (constraints) => {
     const siftConstraints = transformConstraint(constraints);
