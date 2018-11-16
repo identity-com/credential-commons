@@ -46,7 +46,7 @@ function getClaimsWithFlatKeys(claims) {
 
 
 function paths(root) {
-  const pathList = [];
+  const pathsArray = [];
   const nodes = [{
     obj: root,
     path: [],
@@ -56,7 +56,7 @@ function paths(root) {
     Object.keys(n.obj).forEach((k) => {
       if (typeof n.obj[k] === 'object') {
         const path = n.path.concat(k);
-        pathList.push(path);
+        pathsArray.push(path);
         nodes.unshift({
           obj: n.obj[k],
           path,
@@ -65,7 +65,7 @@ function paths(root) {
     });
   }
   const returnArray = [];
-  pathList.forEach((arr) => {
+  pathsArray.forEach((arr) => {
     returnArray.push(arr.join('.'));
   });
   return returnArray;
@@ -75,8 +75,7 @@ function getLeavesClaimPaths(signLeaves) {
   return _.map(signLeaves, 'claimPath');
 }
 
-function verifyLeave(leave, merkleTools, claims, signature,
-  invalidValues, invalidHashs, invalidProofs) {
+function verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs) {
   // 1. verify valid targetHashs
   // 1.1 "leave.value" should be equal claim values
   const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
@@ -89,9 +88,7 @@ function verifyLeave(leave, merkleTools, claims, signature,
     const claimValue = _.get(claims, leave.claimPath);
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
-      const ucaType = _.get(ucaValueValue[k], 'type');
-      // number values are padded on the attestation value
-      const expectedClaimValue = ucaType === 'Number' ? _.padStart(claimValue[k], 8, '0') : claimValue[k];
+      const expectedClaimValue = claimValue[k];
       if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
         invalidValues.push(claimValue[k]);
       }
@@ -106,9 +103,7 @@ function verifyLeave(leave, merkleTools, claims, signature,
   if (hash !== leave.targetHash) invalidHashs.push(leave.targetHash);
 
   // 2. Validate targetHashs + proofs with merkleRoot
-  const isValidProof = merkleTools.validateProof(
-    leave.node, leave.targetHash, signature.merkleRoot,
-  );
+  const isValidProof = merkleTools.validateProof(leave.node, leave.targetHash, signature.merkleRoot);
   if (!isValidProof) invalidProofs.push(leave.targetHash);
 }
 
@@ -168,9 +163,8 @@ class CvcMerkleProof {
 
   static padTree(nodes) {
     const currentLength = nodes.length;
-    const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS
-      ? CvcMerkleProof.PADDING_INCREMENTS
-      : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS; // eslint-disable-line
+    const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS ? CvcMerkleProof.PADDING_INCREMENTS
+      : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
     while (newNodes.length < targetLength) {
       newNodes.push(new UCA('cvc:Random:node', secureRandom.wordWith(16)));
@@ -213,8 +207,7 @@ const VERIFY_LEVELS = {
 };
 
 /**
- * Creates a new Verifiable Credential based on an well-known identifier
- * and it's claims dependencies
+ * Creates a new Verifiable Credential based on an well-known identifier and it's claims dependencies
  * @param {*} identifier
  * @param {*} issuer
  * @param {*} ucas
@@ -230,18 +223,15 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
   const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
 
-  const proofUCAs = expiryUCA
-    ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA)
+  const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA)
     : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
   if (!_.includes(validIdentifiers(), identifier)) {
     throw new Error(`${identifier} is not defined`);
   }
 
-  const definition = version
-    ? _.find(definitions, { identifier, version: `${version}` })
+  const definition = version ? _.find(definitions, { identifier, version: `${version}` })
     : _.find(definitions, { identifier });
-
   if (!definition) {
     throw new Error(`Credential definition for ${identifier} v${version} not found`);
   }
@@ -256,9 +246,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     const allClaimsPaths = claimsPathRef.concat(deepKeys);
     this.proof = new CvcMerkleProof(proofUCAs, allClaimsPaths);
     if (!_.isEmpty(definition.excludes)) {
-      const removed = _.remove(this.proof.leaves, el => (
-        _.includes(definition.excludes, el.identifier)
-      ));
+      const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
         _.unset(this.claim, r.claimPath);
       });
@@ -292,9 +280,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @param {*} options
    */
   this.requestAnchor = async (options) => {
-    // TODO @jpsantosbh please check this line, the anchor here is the label on chainauth that will
-    // create an cold wallet, if the name equals in the same time, we get an double spending
-    // TODO this could be the ID of the VC
     const anchor = await getAnchorService().anchor(this.identifier, this.proof.merkleRoot, options);
     this.proof.anchor = anchor;
     return this;
@@ -345,9 +330,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         invalidClaim.push(claimKey);
       } else {
         const leave = signLeaves[leaveIdx];
-        verifyLeave(
-          leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs,
-        );
+        verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs);
       }
     });
 
@@ -361,9 +344,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         },
       };
       const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
-      verifyLeave(
-        expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs,
-      );
+      verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
       const totalLengthAfter = invalidValues.length + invalidHashs.length + invalidProofs.length;
       if (totalLengthAfter === totalLengthBefore) {
         // expiry has always to be string formatted date or null value
@@ -394,9 +375,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.verify = (higherVerifyLevel) => {
     const hVerifyLevel = higherVerifyLevel || VERIFY_LEVELS.PROOFS;
     let verifiedlevel = VERIFY_LEVELS.INVALID;
-    if (hVerifyLevel >= VERIFY_LEVELS.PROOFS && this.verifyProofs()) {
-      verifiedlevel = VERIFY_LEVELS.PROOFS;
-    }
+    if (hVerifyLevel >= VERIFY_LEVELS.PROOFS && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
     return verifiedlevel;
   };
 
@@ -418,8 +397,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.revokeAttestation = async () => getAnchorService().revokeAttestation(this.proof);
 
   /**
-   * This method will check on the chain the balance of the transaction and if it's still unspent,
-   * than it's not revoked
+   * This method will check on the chain the balance of the transaction and if it's still unspent, than it's not revoked
    * @returns {Promise<Promise<*>|void>}
    */
   this.isRevoked = async () => getAnchorService().isRevoked(this.proof);
@@ -483,8 +461,7 @@ function transformMetaConstraint(constraintsMeta) {
 
 /**
  * isMatchCredentialMeta
- * @param {*} credentialMeta A Object contains only VC meta fields.
- * Other object keys will be ignored.
+ * @param {*} credentialMeta A Object continais only VC meta fields. Other object keys will be ignored.
  * @param {*} constraintsMeta Example:
  * // constraints.meta = {
  * //   "credential": "credential-civ:Credential:CivicBasic-1",
@@ -512,9 +489,8 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
  * @param {*} verifiableCredentialJSON
  */
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
-  const newObj = new VerifiableCredentialBaseConstructor(
-    verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer,
-  );
+  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier,
+    verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
   newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
@@ -531,7 +507,6 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
  */
 VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
   const vcDefinition = _.find(definitions, { identifier });
-  let properties;
   if (vcDefinition) {
     const allProperties = [];
     _.forEach(vcDefinition.depends, (ucaIdentifier) => {
@@ -541,9 +516,9 @@ VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
     _.forEach(vcDefinition.excludes, (ucaIdentifier) => {
       excludesProperties.push(...UCA.getAllProperties(ucaIdentifier));
     });
-    properties = _.difference(allProperties, excludesProperties);
+    return _.difference(allProperties, excludesProperties);
   }
-  return properties;
+  return null;
 };
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;

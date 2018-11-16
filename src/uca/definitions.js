@@ -425,7 +425,7 @@ const definitions = [
   },
   {
     identifier: 'cvc:Document:address',
-    version: 1,
+    version: '1',
     type: 'cvc:Type:address',
     credentialItem: true,
   },
@@ -456,6 +456,7 @@ const definitions = [
   {
     identifier: 'cvc:Document:properties',
     version: '1',
+    attestable: true,
     type: {
       properties: [
         {
@@ -548,25 +549,46 @@ const definitions = [
     },
   },
   {
+    identifier: 'cvc:Document:front',
+    version: '1',
+    type: 'cvc:Type:ImageBase64',
+  },
+  {
+    identifier: 'cvc:Document:frontMD5',
+    version: '1',
+    type: 'cvc:Type:MD5',
+  },
+  {
+    identifier: 'cvc:Document:back',
+    version: '1',
+    type: 'cvc:Type:ImageBase64',
+  },
+  {
+    identifier: 'cvc:Document:backMD5',
+    version: '1',
+    type: 'cvc:Type:MD5',
+  },
+  {
     identifier: 'cvc:Document:image',
     version: '1',
+    attestable: true,
     type: {
       properties: [
         {
           name: 'front',
-          type: 'cvc:Type:ImageBase64',
+          type: 'cvc:Document:front',
         },
         {
           name: 'frontMD5',
-          type: 'cvc:Type:MD5',
+          type: 'cvc:Document:frontMD5',
         },
         {
           name: 'back',
-          type: 'cvc:Type:ImageBase64',
+          type: 'cvc:Document:back',
         },
         {
           name: 'backMD5',
-          type: 'cvc:Type:MD5',
+          type: 'cvc:Document:backMD5',
         },
       ],
       required: ['front', 'frontMD5'],
