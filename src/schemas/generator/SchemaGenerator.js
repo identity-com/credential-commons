@@ -161,14 +161,18 @@ const generateRandomNumberValueWithRange = (definition) => {
   if (definition !== null) {
     /*
      * 6.2.5. exclusiveMinimum
-     * The value of "exclusiveMinimum" MUST be number, representing an exclusive lower limit for a numeric instance.
-     * If the instance is a number, then the instance is valid only if it has a value strictly greater than (not equal to) "exclusiveMinimum".
+     * The value of "exclusiveMinimum" MUST be number, representing an exclusive
+     * lower limit for a numeric instance. If the instance is a number, then the
+     * instance is valid only if it has a value strictly greater than (not equal
+     * to) "exclusiveMinimum".
      */
     const exclusiveMinVariance = definition.exclusiveMinimum ? 1 : 0;
     /*
      * 6.2.3. exclusiveMaximum
-     * The value of "exclusiveMaximum" MUST be number, representing an exclusive upper limit for a numeric instance.
-     * If the instance is a number, then the instance is valid only if it has a value strictly less than (not equal to) "exclusiveMaximum".
+     * The value of "exclusiveMaximum" MUST be number, representing an exclusive
+     * upper limit for a numeric instance. If the instance is a number, then the
+     * instance is valid only if it has a value strictly less than (not equal to)
+     * "exclusiveMaximum".
      */
     const exclusiveMaxVariance = definition.exclusiveMaximum ? -1 : 0;
     if (typeof definition.minimum !== 'undefined' && definition.minimum !== null
@@ -180,7 +184,9 @@ const generateRandomNumberValueWithRange = (definition) => {
       genRandomNumber = definition.minimum + (Math.random() * definition.maximum);
     } else if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
       if (Number.isInteger(definition.minimum)) {
-        genRandomNumber = Math.floor(definition.minimum + exclusiveMinVariance + (Math.random() * 100));
+        genRandomNumber = Math.floor(
+          definition.minimum + exclusiveMinVariance + (Math.random() * 100),
+        );
       }
       genRandomNumber = definition.minimum + (Math.random() * 100);
     } else if (typeof definition.maximum !== 'undefined' && definition.maximum !== null) {

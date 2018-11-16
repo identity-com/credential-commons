@@ -1,7 +1,8 @@
 const isClaimRelated = require('../src/isClaimRelated');
 
 describe('isClaimRelated Tests', () => {
-  it('Should validate a claim path against UCA definitions and VC definitions and succeed', (done) => {
+  it('Should validate a claim path against UCA definitions '
+    + 'and VC definitions and succeed', (done) => {
     const uca = 'claim-cvc:Document:name-1';
     const claim = 'document.name.givenNames';
     const credential = 'cvc:Credential:GenericDocumentId';
@@ -10,7 +11,8 @@ describe('isClaimRelated Tests', () => {
     done();
   });
 
-  it('Should validate a claim path against UCA definitions and VC definitions and succeed returning false for an non existent dependency', (done) => {
+  it('Should validate a claim path against UCA definitions and VC definitions and '
+    + 'succeed returning false for an non existent dependency', (done) => {
     const uca = 'claim-cvc:Contact:phoneNumber-1';
     const claim = 'contact.phoneNumber.number';
     const credential = 'cvc:Credential:GenericDocumentId';
