@@ -215,7 +215,7 @@ function UCABaseConstructor(identifier, value, version) {
       case 'String':
         return `urn:${propertyName}:${this.salt}:${this.value}`;
       case 'Number':
-        return `urn:${propertyName}:${this.salt}:${_.padStart(this.value.toString(), 8, '0')}`; // TODO @jpsantosbh why did you pad this value?
+        return `urn:${propertyName}:${this.salt}:${this.value}`;
       case 'Boolean':
         return `urn:${propertyName}:${this.salt}:${this.value}`;
       default:

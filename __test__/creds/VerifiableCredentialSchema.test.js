@@ -28,6 +28,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
   test('Should validate the generated VC against it\'s generated schema looping the definitions', async (done) => {
     const validateSchemaJestStep = async (credentialDefinition) => {
+      console.log(credentialDefinition.identifier + '----------------------');
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
         const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
@@ -37,6 +38,8 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
           value = Object.values(ucaJson)[0];
         }
         const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
+        //console.log(`const ${ucaDefinition.identifier.substring(ucaDefinition.identifier.lastIndexOf(':')+1)}Value = ${JSON.stringify(value, null, 2)};`);
+        //console.log(`const ${ucaDefinition.identifier.substring(ucaDefinition.identifier.lastIndexOf(':')+1)} = new UCA('${ucaDefinition.identifier}', ${ucaDefinition.identifier.substring(ucaDefinition.identifier.lastIndexOf(':')+1)}Value, 1);`)
         ucaArray.push(dependentUca);
       });
       const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
@@ -51,6 +54,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
       return isValid;
+      console.log('------------------------------------------------------');
     };
     const promises = [];
     credentialDefinitions.forEach((credentialDefinition) => { promises.push(validateSchemaJestStep(credentialDefinition)); });

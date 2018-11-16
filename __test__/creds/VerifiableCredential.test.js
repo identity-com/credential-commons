@@ -3,6 +3,9 @@ const fs = require('fs');
 const uuidv4 = require('uuid/v4');
 const UCA = require('../../src/uca/UserCollectableAttribute');
 const VC = require('../../src/creds/VerifiableCredential');
+const credentialDefinitions = require('../../src/creds/definitions');
+const ucaDefinitions = require('../../src/uca/definitions');
+const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 
 jest.setTimeout(150000);
 
@@ -130,7 +133,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     const dobUca = new UCA('cvc:Identity:dateOfBirth', civIdentityDateOfBirth);
 
-    const simpleIdentity = new VC('cvc:Credential:Identity', 'Civic-Identity-Verifier', null, [nameUca, dobUca], '1');
+    const simpleIdentity = new VC('cvc:Credential:Identity', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', null, [nameUca, dobUca], '1');
 
     const filtered = simpleIdentity.filter(['cvc:Name:givenNames']);
     expect(filtered.claim.identity.name.givenNames).toBeDefined();
@@ -150,7 +153,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     const emailUca = new UCA('cvc:Contact:email', email, '1');
     const emailCredential = new VC('cvc:Credential:Email', '', null, [emailUca], '1');
     const filtered = emailCredential.filter(['cvc:Contact:email']);
-
     expect(filtered.claim.contact.email.domain).toBeDefined();
     expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
     expect(filtered.claim.contact.email.domain.name).toBe('UTpHKFyaaB');
@@ -222,6 +224,70 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.contact.phoneNumber.number).toBe('kCTGifTdom');
   });
 
+  it('Should filter claims for GenericDocumentId asking for cvc:Identity:dateOfBirth and return nothing', () => {
+    const typeValue = 'fq6gOJR2rr';
+    const type = new UCA('cvc:Document:type', typeValue, '1');
+    const numberValue = '3bj1LUg9yG';
+    const number = new UCA('cvc:Document:number', numberValue, '1');
+    const nameValue = {
+      givenNames: 'e8qhs4Iak1',
+      familyNames: '4h8sLtEfav',
+      otherNames: 'bDTn4stMpX',
+    };
+    const name = new UCA('cvc:Document:name', nameValue, '1');
+    const genderValue = 'jFtCBFceQI';
+    const gender = new UCA('cvc:Document:gender', genderValue, '1');
+    const issueLocationValue = 'OZbhzBU8ng';
+    const issueLocation = new UCA('cvc:Document:issueLocation', issueLocationValue, '1');
+    const issueAuthorityValue = 'BO2xblNSVK';
+    const issueAuthority = new UCA('cvc:Document:issueAuthority', issueAuthorityValue, '1');
+    const issueCountryValue = 'p4dNUeAKtI';
+    const issueCountry = new UCA('cvc:Document:issueCountry', issueCountryValue, '1');
+    const placeOfBirthValue = 'r4hIHbyLru';
+    const placeOfBirth = new UCA('cvc:Document:placeOfBirth', placeOfBirthValue, '1');
+    const dateOfBirthValue = {
+      day: 23.55661112087767,
+      month: 2.3719586174881204,
+      year: 1973.1235577195403,
+    };
+    const dateOfBirth = new UCA('cvc:Document:dateOfBirth', dateOfBirthValue, '1');
+    const addressValue = {
+      country: 'IH4aiXuEoo',
+      county: 'akKjaQehNK',
+      state: 'IQB7oLhSnS',
+      street: '52Os5zJgkh',
+      unit: '3dGDkhEHxW',
+      city: 'WU9GJ0R9be',
+      postalCode: 'ci1DMuz16W',
+    };
+    const address = new UCA('cvc:Document:address', addressValue, '1');
+    const propertiesValue = {
+      dateOfIssue: {
+        day: 18.414766065177673,
+        month: 6.9617705136467425,
+        year: 1928.4150248655972,
+      },
+      dateOfExpiry: {
+        day: 8.552112724932464,
+        month: 0.8142652052451673,
+        year: 1957.6252772045032,
+      },
+    };
+    const properties = new UCA('cvc:Document:properties', propertiesValue, '1');
+    const imageValue = {
+      front: '9NMgeFErNd',
+      frontMD5: 'zgOvmWXruS',
+      back: 'uPrJKO3cbq',
+      backMD5: '0yr9zkdApo',
+    };
+    const image = new UCA('cvc:Document:image', imageValue, '1');
+    const credential = new VC('cvc:Credential:GenericDocumentId', '', null, [type, number, name, gender, issueAuthority,
+      issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1');
+    const filtered = credential.filter(['cvc:Identity:dateOfBirth']);
+
+    expect(filtered.claim.document).toBeUndefined();
+  });
+
   it('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode and return only the claim for country code', () => {
     const value = {
       country: '1ApYikRwDl',
@@ -243,13 +309,123 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.contact.phoneNumber.number).toBeUndefined();
   });
 
-  test('cred verifyProofs', () => {
-    const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
+  it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
+    const typeValue = 'fq6gOJR2rr';
+    const type = new UCA('cvc:Document:type', typeValue, '1');
+    const numberValue = '3bj1LUg9yG';
+    const number = new UCA('cvc:Document:number', numberValue, '1');
+    const nameValue = {
+      givenNames: 'e8qhs4Iak1',
+      familyNames: '4h8sLtEfav',
+      otherNames: 'bDTn4stMpX',
+    };
+    const name = new UCA('cvc:Document:name', nameValue, '1');
+    const genderValue = 'jFtCBFceQI';
+    const gender = new UCA('cvc:Document:gender', genderValue, '1');
+    const issueLocationValue = 'OZbhzBU8ng';
+    const issueLocation = new UCA('cvc:Document:issueLocation', issueLocationValue, '1');
+    const issueAuthorityValue = 'BO2xblNSVK';
+    const issueAuthority = new UCA('cvc:Document:issueAuthority', issueAuthorityValue, '1');
+    const issueCountryValue = 'p4dNUeAKtI';
+    const issueCountry = new UCA('cvc:Document:issueCountry', issueCountryValue, '1');
+    const placeOfBirthValue = 'r4hIHbyLru';
+    const placeOfBirth = new UCA('cvc:Document:placeOfBirth', placeOfBirthValue, '1');
+    const dateOfBirthValue = {
+      day: 23,
+      month: 2,
+      year: 1973,
+    };
+    const dateOfBirth = new UCA('cvc:Document:dateOfBirth', dateOfBirthValue, '1');
+    const addressValue = {
+      country: 'IH4aiXuEoo',
+      county: 'akKjaQehNK',
+      state: 'IQB7oLhSnS',
+      street: '52Os5zJgkh',
+      unit: '3dGDkhEHxW',
+      city: 'WU9GJ0R9be',
+      postalCode: 'ci1DMuz16W',
+    };
+    const address = new UCA('cvc:Document:address', addressValue, '1');
+    const propertiesValue = {
+      dateOfIssue: {
+        day: 18,
+        month: 6,
+        year: 1928,
+      },
+      dateOfExpiry: {
+        day: 8,
+        month: 1,
+        year: 1957,
+      },
+    };
+    const properties = new UCA('cvc:Document:properties', propertiesValue, '1');
+    const imageValue = {
+      front: '9NMgeFErNd',
+      frontMD5: 'zgOvmWXruS',
+      back: 'uPrJKO3cbq',
+      backMD5: '0yr9zkdApo',
+    };
+    const image = new UCA('cvc:Document:image', imageValue, '1');
+    const credential = new VC('cvc:Credential:GenericDocumentId', '', null, [type, number, name, gender, issueAuthority,
+      issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1');
+    const filtered = credential.filter(['cvc:Document:type']);
+
+    expect(filtered.claim.document.type).toBe('fq6gOJR2rr');
+  });
+
+  it('Should verify an VC of type Email', () => {
+    const credJSon = require('./fixtures/Email.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
     expect(cred.verifyProofs()).toBeTruthy();
   });
 
+  it('Should verify an VC of type Address', () => {
+    const credJSon = require('./fixtures/Address.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeTruthy();
+  });
+
+  it('Should verify an VC of type Identity', () => {
+    const credJSon = require('./fixtures/Identity.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeTruthy();
+  });
+
+  it('Should verify an VC of type GenericDocumentId', () => {
+    const ucaArray = [];
+    const credentialDefinition = credentialDefinitions.find(definition => definition.identifier === 'cvc:Credential:GenericDocumentId');
+    credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
+      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
+      let value = ucaJson;
+      if (Object.keys(ucaJson).length === 1) {
+        value = Object.values(ucaJson)[0];
+      }
+      const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
+      ucaArray.push(dependentUca);
+    });
+    const credential = new VC(credentialDefinition.identifier, 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', null, ucaArray, 1);
+
+    expect(credential).toBeDefined();
+    expect(credential.verifyProofs()).toBeTruthy();
+  });
+
+  it('Should verify an VC of type PhoneNumber', () => {
+    const credJSon = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeTruthy();
+  });
+
+  it('Should verify an VC of type User', () => {
+    const credJSon = require('./fixtures/User.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeTruthy();
+  });
 
   test('cred.verify(): with a valid cred without expirationDate, should return at least VERIFY_LEVELS.PROOFS level', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
@@ -593,10 +769,10 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('document.properties.dateOfExpiry.day');
     expect(properties).toContain('document.properties.dateOfExpiry.month');
     expect(properties).toContain('document.properties.dateOfExpiry.year');
-    expect(properties).toContain('document.image.front.ImageBase64');
-    expect(properties).toContain('document.image.frontMD5.MD5');
-    expect(properties).toContain('document.image.back.ImageBase64');
-    expect(properties).toContain('document.image.backMD5.MD5');
+    expect(properties).toContain('document.image.front');
+    expect(properties).toContain('document.image.frontMD5');
+    expect(properties).toContain('document.image.back');
+    expect(properties).toContain('document.image.backMD5');
   });
 
   it('Should return all Credential properties for cvc:Credential:Identity', () => {

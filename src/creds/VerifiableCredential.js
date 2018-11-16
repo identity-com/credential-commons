@@ -85,9 +85,7 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
     const claimValue = _.get(claims, leave.claimPath);
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
-      const ucaType = _.get(ucaValueValue[k], 'type');
-      // number values are padded on the attestation value
-      const expectedClaimValue = ucaType === 'Number' ? _.padStart(claimValue[k], 8, '0') : claimValue[k];
+      const expectedClaimValue = claimValue[k];
       if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
         invalidValues.push(claimValue[k]);
       }
@@ -277,8 +275,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @param {*} options
    */
   this.requestAnchor = async (options) => {
-    // TODO @jpsantosbh please check this line, the anchor here is the label on chainauth that will create an cold wallet, if the name equals in the same time, we get an double spending
-    // TODO this could be the ID of the VC
     const anchor = await anchorService.anchor(this.identifier, this.proof.merkleRoot, options);
     this.proof.anchor = anchor;
     return this;

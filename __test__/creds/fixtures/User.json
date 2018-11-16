@@ -1,0 +1,152 @@
+{
+  "id": "ec5c174d-202f-49f5-9968-d753ddf0ffe6",
+  "issuer": "jest:test:fe0a0dc0-e8b0-11e8-8a40-7fe4d191eb47",
+  "issuanceDate": "2018-11-15T08:32:30.876Z",
+  "identifier": "cvc:Credential:User",
+  "expirationDate": null,
+  "version": "1",
+  "type": [
+    "Credential",
+    "cvc:Credential:User"
+  ],
+  "claim": {
+    "user": {
+      "id": "y1slnvT1Iw",
+      "realm": "hZ84CfnWcX"
+    }
+  },
+  "proof": {
+    "type": "CvcMerkleProof2018",
+    "merkleRoot": "9721a8fceb8d3677518d9478cdf29f61e8c653c2c1a2716b43bc7d82b568bde7",
+    "anchor": {
+      "subject": {
+        "pub": "xpub:dummy",
+        "label": "cvc:Credential:User",
+        "data": "9721a8fceb8d3677518d9478cdf29f61e8c653c2c1a2716b43bc7d82b568bde7",
+        "signature": "signed:dummy"
+      },
+      "walletId": "none",
+      "cosigners": [
+        {
+          "pub": "xpub:dummy"
+        },
+        {
+          "pub": "xpub:dummy"
+        }
+      ],
+      "authority": {
+        "pub": "xpub:dummy",
+        "path": "/"
+      },
+      "coin": "dummycoin",
+      "tx": {},
+      "network": "dummynet",
+      "type": "permanent",
+      "civicAsPrimary": false,
+      "schema": "dummy-20180201",
+      "value": {}
+    },
+    "leaves": [
+      {
+        "identifier": "cvc:User:id",
+        "value": "urn:id:a7490e814b3347b708fd2f61a538eee1409e7abe7b350fcb045b68d2dce1c204:y1slnvT1Iw|",
+        "claimPath": "user.id",
+        "targetHash": "c708a66238f60a7102d2a4e1892d0e2ece79416408d7e958c2a4cf24399f3b04",
+        "node": [
+          {
+            "right": "1bb3ba9da37d69c8a88cb949a81c146890e051a7a291a5d846fe6a00980d9682"
+          },
+          {
+            "right": "74b3324d84c42e878119c038a5dc98813f4994bad6ab179f2ea82d750f532eb4"
+          },
+          {
+            "right": "c096f2e3abb8034107e732ef44a70d2085082be334e13e20889a057d51bc471a"
+          },
+          {
+            "right": "a228a0af8f88a492f20309835e23aa9c9f2ecbd360985909b5131c212f01a52e"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:User:realm",
+        "value": "urn:realm:95ce95326f0feb77237d05c6fa470f8ebed400ee7842bffcfb5dc31889396765:hZ84CfnWcX|",
+        "claimPath": "user.realm",
+        "targetHash": "1bb3ba9da37d69c8a88cb949a81c146890e051a7a291a5d846fe6a00980d9682",
+        "node": [
+          {
+            "left": "c708a66238f60a7102d2a4e1892d0e2ece79416408d7e958c2a4cf24399f3b04"
+          },
+          {
+            "right": "74b3324d84c42e878119c038a5dc98813f4994bad6ab179f2ea82d750f532eb4"
+          },
+          {
+            "right": "c096f2e3abb8034107e732ef44a70d2085082be334e13e20889a057d51bc471a"
+          },
+          {
+            "right": "a228a0af8f88a492f20309835e23aa9c9f2ecbd360985909b5131c212f01a52e"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuer",
+        "value": "urn:issuer:80a86e368a550b3d88de9505681a5a3222f330b69d1fbfa406e8e0b15ad284d6:jest:test:fe0a0dc0-e8b0-11e8-8a40-7fe4d191eb47|",
+        "claimPath": "meta.issuer",
+        "targetHash": "2730655bb332de449782a0f9e7a51d1fd70c6a5cb8f5aaa6140dc3584992d578",
+        "node": [
+          {
+            "right": "51010a17ad901a66679034076744e30167c118c6e6762d4b092bbf9b97c55567"
+          },
+          {
+            "left": "9598b789a384b9387daaeaaff1f7a21dc184ba44df8f4f729a97ad8ce6a4c1e4"
+          },
+          {
+            "right": "c096f2e3abb8034107e732ef44a70d2085082be334e13e20889a057d51bc471a"
+          },
+          {
+            "right": "a228a0af8f88a492f20309835e23aa9c9f2ecbd360985909b5131c212f01a52e"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuanceDate",
+        "value": "urn:issuanceDate:8ca19782999808b4c6cebed6800fb00c5687e87aac61df4133af6146411eb2aa:2018-11-15T08:32:30.876Z|",
+        "claimPath": "meta.issuanceDate",
+        "targetHash": "51010a17ad901a66679034076744e30167c118c6e6762d4b092bbf9b97c55567",
+        "node": [
+          {
+            "left": "2730655bb332de449782a0f9e7a51d1fd70c6a5cb8f5aaa6140dc3584992d578"
+          },
+          {
+            "left": "9598b789a384b9387daaeaaff1f7a21dc184ba44df8f4f729a97ad8ce6a4c1e4"
+          },
+          {
+            "right": "c096f2e3abb8034107e732ef44a70d2085082be334e13e20889a057d51bc471a"
+          },
+          {
+            "right": "a228a0af8f88a492f20309835e23aa9c9f2ecbd360985909b5131c212f01a52e"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:expirationDate",
+        "value": "urn:expirationDate:c436fa39443039366aa45b1bc4b96184ec59850174bc1f01a22b6a95447d96e5:null|",
+        "claimPath": "meta.expirationDate",
+        "targetHash": "62786ff71bff7d6513901423e1a07517f0540d37980776767215f6a36e90e12f",
+        "node": [
+          {
+            "right": "f4236edc123c20c1f31b058abbb237f274d3b07b0dd5c5ad6ac9273134e422be"
+          },
+          {
+            "right": "ea567396a72f031b403ee13726e891bddfb98134b3390ec18e14162851f7aa33"
+          },
+          {
+            "left": "b7b44c7eaca386c06e77651454151876b8b175fd2ddc9dc9c17f5266b85c78be"
+          },
+          {
+            "right": "a228a0af8f88a492f20309835e23aa9c9f2ecbd360985909b5131c212f01a52e"
+          }
+        ]
+      }
+    ]
+  }
+}

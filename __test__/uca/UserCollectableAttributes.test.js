@@ -174,7 +174,7 @@ describe('UCA Constructions tests', () => {
 
   test('UCA should Construct with a complex Attestatble Value: cvc:Identity:name', () => {
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 'urn:givenNames:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:familyNames:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:otherNames:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
+    const aComplexAttestableValue = 'urn:name.familyNames:c443e0a97a2df34573f910927e25c58e597e211152dfb650e6210facacc1a065:Santos|urn:name.givenNames:f14ab211784a3b3d2f20d423847a775ad56c3be8104a51aa084f0c94756d953b:Joao|urn:name.otherNames:09a31dab0a537ac5330a07df63effd9d2f55e91845956b58119843835f7dd9ed:Barbosa|';
     const v = new UCA.IdentityName({ attestableValue: aComplexAttestableValue });
     expect(v).toBeDefined();
     const attValues = v.getAttestableValues();
@@ -188,7 +188,7 @@ describe('UCA Constructions tests', () => {
 
   test('UCA should Construct with a complex Attestable Value: IdentityName syntax\'s sugar', () => {
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 'urn:givenNames:0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de:Joao|urn:familyNames:2211b059eaece64918755075026cebd230e5c18ef883f5e68a196815804d2de3:Santos|urn:otherNames:1eab775b23947b2685ba1ecf5ec9333e3210b3aaaee40ce6dc1fc95ef2d6177e:Barbosa|';
+    const aComplexAttestableValue = 'urn:name.familyNames:c443e0a97a2df34573f910927e25c58e597e211152dfb650e6210facacc1a065:Santos|urn:name.givenNames:f14ab211784a3b3d2f20d423847a775ad56c3be8104a51aa084f0c94756d953b:Joao|urn:name.otherNames:09a31dab0a537ac5330a07df63effd9d2f55e91845956b58119843835f7dd9ed:Barbosa|';
     const identifier = 'cvc:Identity:name';
     const v = new UCA(identifier, { attestableValue: aComplexAttestableValue });
     expect(v).toBeDefined();
@@ -196,7 +196,7 @@ describe('UCA Constructions tests', () => {
     expect(attValues).toHaveLength(4);
     expect(attValues[0].identifier).toBe(identifier);
     expect(attValues[0].value).toContain('urn:');
-    expect(attValues[0].value).toContain('0b5cbce9f91d64fc413bdc892017324a0cc1e4614e874056ed16cd8e08ac02de');
+    expect(attValues[0].value).toContain('c443e0a97a2df34573f910927e25c58e597e211152dfb650e6210facacc1a065');
     expect(attValues[0].value).toContain(':Joao');
     expect(attValues[0].value).toContain(':Barbosa');
     expect(attValues[0].value).toContain(':Santos');
@@ -205,7 +205,7 @@ describe('UCA Constructions tests', () => {
   test('UCA should Construct with a complex Attestatble Value: cvc:Identity:dateOfBirth', () => {
     const identifier = 'cvc:Identity:dateOfBirth';
     // eslint-disable-next-line max-len
-    const aComplexAttestableValue = 'urn:day:bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49:00000020|urn:month:0ff6a4dc3b4e7a0b2cfb3a9f0479dc89d9757736d7e46e31ddb3dc53a9179b56:00000003|urn:year:ec4fcd9bad1839c052d0a23a9fba92eaf35d457e83ae50ea902bf3b5c3b490ad:00001978|';
+    const aComplexAttestableValue = 'urn:dateOfBirth.day:576cdcffe0efe478a711b2955b66efbd9c03bef0791aaccc01eaf84d707bb9c6:00000020|urn:dateOfBirth.month:ccbdeed0346e7ea075b0273c5b9fd075d2dcb899d5516688be3a02d1016e1d7f:00000003|urn:dateOfBirth.year:ef71aaef649aa76254abdfe9661ed9f14ebae5139a959baa462c0ac0629f32fc:00001978|';
 
     const v = new UCA(identifier, { attestableValue: aComplexAttestableValue });
     const attestableValue = v.getAttestableValue();
@@ -214,7 +214,7 @@ describe('UCA Constructions tests', () => {
     expect(attValues).toHaveLength(1);
     expect(attValues[0].identifier).toBe(identifier);
     expect(attValues[0].value).toContain('urn:');
-    expect(attValues[0].value).toContain(':bdc52df4b0149beb3d67720e82bfd20e86d31e951bd66daeed8a87f3a998de49');
+    expect(attValues[0].value).toContain(':576cdcffe0efe478a711b2955b66efbd9c03bef0791aaccc01eaf84d707bb9c6');
     expect(attValues[0].value).toContain(':00000020');
     expect(attValues[0].value).toContain(':00000003');
     expect(attValues[0].value).toContain(':00001978');
@@ -246,7 +246,8 @@ describe('UCA Constructions tests', () => {
 
   test('Construct a cvc:Identity.name without one the last property value', () => {
     const identifier = 'cvc:Identity:name';
-    const attestationValue = 'urn:givenNames:9619312ef69e2b417edc1e48f2be8f844f2c3b6b04707060fc9052dff1551c9d:Joao|urn:otherNames:5280dfb5bfcf80469156b68807f280c0db8bf3f8ea4653b41d4c61996cd75afd:Barbosa|';
+    // eslint-disable-next-line max-len
+    const attestationValue = 'urn:name.familyNames:50f50f97af7e3c9ebf3ad8df4852ea29a8227a49feb8db071fc06d69b3717608:Santos|urn:name.givenNames:84b0b0bcc790cfea08d6268a42aaac708b6ff843754d126eb21257ed4787639f:Joao|';
     const v = new UCA(identifier, { attestableValue: attestationValue });
     expect(v).toBeDefined();
     expect(v.last).toBeUndefined();
