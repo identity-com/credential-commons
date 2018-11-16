@@ -34,9 +34,11 @@ function isValid(value, type, definition) {
         && (definition.maximumLength ? value.length <= definition.minimumLength : true);
     case 'Number':
       return ((!_.isNil(definition.minimum)
-        && definition.exclusiveMinimum ? value > definition.minimum : value >= definition.minimum) || _.isNil(definition.minimum))
+        && definition.exclusiveMinimum ? value > definition.minimum : value >= definition.minimum)
+        || _.isNil(definition.minimum))
         && ((!_.isNil(definition.maximum)
-        && definition.exclusiveMaximum ? value < definition.maximum : value <= definition.maximum) || _.isNil(definition.maximum));
+          && definition.exclusiveMaximum ? value < definition.maximum : value <= definition.maximum)
+          || _.isNil(definition.maximum));
     case 'Boolean':
       return _.isBoolean(value);
     default:
@@ -75,21 +77,17 @@ const resolveType = (definition) => {
 };
 
 const findDefinitionByAttestableValue = (attestableValuePropertyName, rootDefinition) => {
-  try {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const property of rootDefinition.type.properties) {
-      const resolvedDefinition = _.find(definitions, { identifier: property.type });
-      if (!resolvedDefinition.type.properties && property.name === attestableValuePropertyName) {
-        return property.type;
-      }
-      if (resolvedDefinition.type.properties) {
-        return findDefinitionByAttestableValue(attestableValuePropertyName, resolvedDefinition);
-      }
+  // eslint-disable-next-line no-restricted-syntax
+  for (const property of rootDefinition.type.properties) {
+    const resolvedDefinition = _.find(definitions, { identifier: property.type });
+    if (!resolvedDefinition.type.properties && property.name === attestableValuePropertyName) {
+      return property.type;
     }
-    return null;
-  } catch (e) {
-    console.log(e);
+    if (resolvedDefinition.type.properties) {
+      return findDefinitionByAttestableValue(attestableValuePropertyName, resolvedDefinition);
+    }
   }
+  return null;
 };
 
 const getAllProperties = (identifier, pathName) => {
@@ -214,7 +212,8 @@ function UCABaseConstructor(identifier, value, version) {
           // this must have an claim path with no recursive definition
           filteredIdentifier = findDefinitionByAttestableValue(ucaPropertyName, definition);
         }
-        ucaValue[propertyName] = new UCABaseConstructor(filteredIdentifier, { attestableValue: parsedAttestableValue[i].stringValue });
+        ucaValue[propertyName] = new UCABaseConstructor(filteredIdentifier,
+          { attestableValue: parsedAttestableValue[i].stringValue });
       }
       // console.log(ucaValue);
       this.value = ucaValue;
@@ -259,7 +258,8 @@ function UCABaseConstructor(identifier, value, version) {
       case 'Boolean':
         return `urn:${propertyName}:${this.salt}:${this.value}|`;
       default:
-        return _.reduce(_.sortBy(_.keys(this.value)), (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
+        return _.reduce(_.sortBy(_.keys(this.value)),
+          (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
     }
   };
 
@@ -350,12 +350,13 @@ function convertIdentifierToClassName(identifier) {
 _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
   const name = convertIdentifierToClassName(def.identifier);
   const source = {};
-  const identifier = def.identifier;
+  const { identifier } = def;
 
   function UCAConstructor(value, version) {
     const self = new UCABaseConstructor(identifier, value, version);
     return self;
   }
+
   source[name] = UCAConstructor;
   _.mixin(UCA, source);
 });

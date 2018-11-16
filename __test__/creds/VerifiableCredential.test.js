@@ -40,8 +40,9 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.proof.leaves).toHaveLength(8);
   });
 
-  // This test was skiped cause in the current definitions we don't have this case any more
-  test.skip('should validate new defined credentials with the obligatory Meta:expirationDate UCA with null value', () => {
+  // This test was skipped cause in the current definitions we don't have this case any more
+  test.skip('should validate new defined credentials with the obligatory Meta:expirationDate UCA with'
+    + ' null value', () => {
     const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
@@ -132,8 +133,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     const nameUca = new UCA.IdentityName(civIdentityName);
 
     const dobUca = new UCA('cvc:Identity:dateOfBirth', civIdentityDateOfBirth);
-
-    const simpleIdentity = new VC('cvc:Credential:Identity', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', null, [nameUca, dobUca], '1');
+    const simpleIdentity = new VC('cvc:Credential:Identity', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      null, [nameUca, dobUca], '1');
 
     const filtered = simpleIdentity.filter(['cvc:Name:givenNames']);
     expect(filtered.claim.identity.name.givenNames).toBeDefined();
@@ -288,7 +289,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.document).toBeUndefined();
   });
 
-  it('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode and return only the claim for country code', () => {
+  it('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode and return only the'
+    + ' claim for country code', () => {
     const value = {
       country: '1ApYikRwDl',
       countryCode: 'U4drpB96Hk',
@@ -396,18 +398,20 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should verify an VC of type GenericDocumentId', () => {
     const ucaArray = [];
-    const credentialDefinition = credentialDefinitions.find(definition => definition.identifier === 'cvc:Credential:GenericDocumentId');
+    const credentialDefinition = credentialDefinitions.find(definition => definition.identifier
+      === 'cvc:Credential:GenericDocumentId');
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
       const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
-        value = Object.values(ucaJson)[0];
+        [value] = Object.values(ucaJson);
       }
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
-    const credential = new VC(credentialDefinition.identifier, 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', null, ucaArray, 1);
+    const credential = new VC(credentialDefinition.identifier, 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      null, ucaArray, 1);
 
     expect(credential).toBeDefined();
     expect(credential.verifyProofs()).toBeTruthy();
@@ -427,7 +431,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.verifyProofs()).toBeTruthy();
   });
 
-  test('cred.verify(): with a valid cred without expirationDate, should return at least VERIFY_LEVELS.PROOFS level', () => {
+  test('cred.verify(): with a valid cred without expirationDate, should return at least'
+    + ' VERIFY_LEVELS.PROOFS level', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();

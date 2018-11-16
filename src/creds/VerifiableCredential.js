@@ -43,7 +43,7 @@ function getClaimsWithFlatKeys(claims) {
 
 
 function paths(root) {
-  const paths = [];
+  const pathsArray = [];
   const nodes = [{
     obj: root,
     path: [],
@@ -53,7 +53,7 @@ function paths(root) {
     Object.keys(n.obj).forEach((k) => {
       if (typeof n.obj[k] === 'object') {
         const path = n.path.concat(k);
-        paths.push(path);
+        pathsArray.push(path);
         nodes.unshift({
           obj: n.obj[k],
           path,
@@ -62,7 +62,7 @@ function paths(root) {
     });
   }
   const returnArray = [];
-  paths.forEach((arr) => {
+  pathsArray.forEach((arr) => {
     returnArray.push(arr.join('.'));
   });
   return returnArray;
@@ -220,13 +220,15 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
   const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
 
-  const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA) : _.concat(ucas, issuerUCA, issuanceDateUCA);
+  const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA)
+    : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
   if (!_.includes(validIdentifiers(), identifier)) {
     throw new Error(`${identifier} is not defined`);
   }
 
-  const definition = version ? _.find(definitions, { identifier, version: `${version}` }) : _.find(definitions, { identifier });
+  const definition = version ? _.find(definitions, { identifier, version: `${version}` })
+    : _.find(definitions, { identifier });
   if (!definition) {
     throw new Error(`Credential definition for ${identifier} v${version} not found`);
   }
@@ -484,7 +486,8 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
  * @param {*} verifiableCredentialJSON
  */
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
-  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier, verifiableCredentialJSON.issuer);
+  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier,
+    verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
   newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
@@ -512,6 +515,7 @@ VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
     });
     return _.difference(allProperties, excludesProperties);
   }
+  return null;
 };
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;

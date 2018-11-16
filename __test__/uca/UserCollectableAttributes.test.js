@@ -1,6 +1,4 @@
-const _ = require('lodash');
 const UCA = require('../../src/uca/UserCollectableAttribute');
-const definitions = require('../../src/uca/definitions');
 
 describe('UCA Constructions tests', () => {
   test('UCA construction should fails', () => {
@@ -34,6 +32,7 @@ describe('UCA Constructions tests', () => {
     const value = {
       familyNames: 'santos',
     };
+
     function createUCA() {
       return new UCA(identifier, value);
     }
@@ -48,6 +47,7 @@ describe('UCA Constructions tests', () => {
       month: 13,
       year: 1978,
     };
+
     function createUCA() {
       return new UCA(identifier, value);
     }
@@ -62,6 +62,7 @@ describe('UCA Constructions tests', () => {
       month: 13,
       year: 1978,
     };
+
     function createUCA() {
       return new UCA(identifier, value);
     }
@@ -76,6 +77,7 @@ describe('UCA Constructions tests', () => {
       month: 3,
       year: -1,
     };
+
     function createUCA() {
       return new UCA(identifier, value);
     }
@@ -150,6 +152,7 @@ describe('UCA Constructions tests', () => {
   });
 
   test('UCA should Construct with a simple Attestatble Value', () => {
+    // eslint-disable-next-line max-len
     const aSingleAttestationValue = 'urn:givenNames:873b59b3c4faa0c63e6ec788041291f36b915357cffaaf6c39661b2a94783d19:Joao';
     const v = new UCA.NameGivenNames({ attestableValue: aSingleAttestationValue });
     expect(v).toBeDefined();
@@ -234,6 +237,7 @@ describe('UCA Constructions tests', () => {
 
   test('Construct a cvc:Meta:expirationDate as a Attestable Value', () => {
     const identifier = 'cvc:Meta:expirationDate';
+    // eslint-disable-next-line max-len
     const anAttestationValue = 'urn:expirationDate:9dabdd37eca1bc98bcc725d66c77f10707fa9f3292752a31ad9dd94d17557e81:2018-06-20T13:51:18.640Z';
     const v = new UCA(identifier, { attestableValue: anAttestationValue });
     expect(v).toBeDefined();
