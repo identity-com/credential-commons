@@ -2,8 +2,8 @@
 
 /**
  * Abstract Anchor/Attestation service
- * 
- * @param {*} impl 
+ *
+ * @param {*} impl
  */
 function Anchor(impl) {
   this.impl = impl;

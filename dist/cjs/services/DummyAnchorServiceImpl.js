@@ -2,6 +2,8 @@
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
+/* eslint no-unused-vars: ["error", { "args": "none" }] */
+
 /**
  * Current Anchor/Attester service
  *
@@ -94,18 +96,14 @@ function DummyAnchorServiceImpl(config, http) {
     };
   })();
 
-  this.verifySignature = signature => {
-    return true;
-  };
+  this.verifySignature = signature => true;
 
   /**
    * This method checks if the subject signature matches the pub key
    * @param subject a json with label, data, signature, pub
    * @returns {*} true or false for the validation
    */
-  this.verifySubjectSignature = subject => {
-    return true;
-  };
+  this.verifySubjectSignature = subject => true;
 
   /**
    * This method checks that the attestation / anchor exists on the BC
@@ -131,9 +129,7 @@ function DummyAnchorServiceImpl(config, http) {
     };
   })();
 
-  this.isRevoked = signature => {
-    return signature.revoked ? signature.revoked : false;
-  };
+  this.isRevoked = signature => signature.revoked ? signature.revoked : false;
 
   return this;
 }

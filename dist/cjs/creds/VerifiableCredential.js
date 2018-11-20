@@ -13,17 +13,20 @@ const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const { services } = require('../services');
 
-const anchorService = services.container.AnchorService;
 const secureRandom = services.container.SecureRandom;
+
+function getAnchorService() {
+  return services.container.AnchorService;
+}
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
 }
 
 function getClaimPath(identifier, claimsPathRef) {
-  const identifierComponentes = _.split(identifier, ':');
-  const baseName = _.lowerCase(identifierComponentes[1]);
-  const sufix = `${baseName}.${identifierComponentes[2]}`;
+  const identifierComponents = _.split(identifier, ':');
+  const baseName = _.camelCase(identifierComponents[1]);
+  const sufix = `${baseName}.${identifierComponents[2]}`;
   const claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
   return claimPath || sufix;
 }
@@ -39,6 +42,32 @@ function getClaimsWithFlatKeys(claims) {
   const flattenClaim = _.merge({}, flattenDepth3, flattenDepth2);
   const flattenSortedKeysClaim = _(flattenClaim).toPairs().sortBy(0).fromPairs().value();
   return flattenSortedKeysClaim;
+}
+
+function paths(root) {
+  const pathsArray = [];
+  const nodes = [{
+    obj: root,
+    path: []
+  }];
+  while (nodes.length > 0) {
+    const n = nodes.pop();
+    Object.keys(n.obj).forEach(k => {
+      if (typeof n.obj[k] === 'object') {
+        const path = n.path.concat(k);
+        pathsArray.push(path);
+        nodes.unshift({
+          obj: n.obj[k],
+          path
+        });
+      }
+    });
+  }
+  const returnArray = [];
+  pathsArray.forEach(arr => {
+    returnArray.push(arr.join('.'));
+  });
+  return returnArray;
 }
 
 function getLeavesClaimPaths(signLeaves) {
@@ -58,9 +87,7 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
     const claimValue = _.get(claims, leave.claimPath);
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, k => {
-      const ucaType = _.get(ucaValueValue[k], 'type');
-      // number values are padded on the attestation value
-      const expectedClaimValue = ucaType === 'Number' ? _.padStart(claimValue[k], 8, '0') : claimValue[k];
+      const expectedClaimValue = claimValue[k];
       if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
         invalidValues.push(claimValue[k]);
       }
@@ -212,8 +239,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
     this.claim = new ClaimModel(ucas);
-    const claimsPathRef = _.keys(flatten(this.claim, { safe: true }));
-    this.proof = new CvcMerkleProof(proofUCAs, claimsPathRef);
+    const claimsPathRef = paths(this.claim);
+    const deepKeys = _.keys(flatten(this.claim, { safe: true }));
+    const allClaimsPaths = claimsPathRef.concat(deepKeys);
+    this.proof = new CvcMerkleProof(proofUCAs, allClaimsPaths);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, r => {
@@ -250,9 +279,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.requestAnchor = (() => {
     var _ref = _asyncToGenerator(function* (options) {
-      // TODO @jpsantosbh please check this line, the anchor here is the label on chainauth that will create an cold wallet, if the name equals in the same time, we get an double spending
-      // TODO this could be the ID of the VC
-      const anchor = yield anchorService.anchor(_this.identifier, _this.proof.merkleRoot, options);
+      const anchor = yield getAnchorService().anchor(_this.identifier, _this.proof.merkleRoot, options);
       _this.proof.anchor = anchor;
       return _this;
     });
@@ -267,7 +294,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * already confirmed on the blockchain.
    */
   this.updateAnchor = _asyncToGenerator(function* () {
-    const anchor = yield anchorService.update(_this.proof.anchor);
+    const anchor = yield getAnchorService().update(_this.proof.anchor);
     _this.proof.anchor = anchor;
     return _this;
   });
@@ -357,14 +384,14 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @return true or false for the validation
    */
   this.verifySignature = _asyncToGenerator(function* () {
-    return anchorService.verifySignature(_this.proof);
+    return getAnchorService().verifySignature(_this.proof);
   });
 
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
   this.verifyAttestation = _asyncToGenerator(function* () {
-    return anchorService.verifyAttestation(_this.proof);
+    return getAnchorService().verifyAttestation(_this.proof);
   });
 
   /**
@@ -372,7 +399,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @returns {Promise<Promise<*>|void>}
    */
   this.revokeAttestation = _asyncToGenerator(function* () {
-    return anchorService.revokeAttestation(_this.proof);
+    return getAnchorService().revokeAttestation(_this.proof);
   });
 
   /**
@@ -380,7 +407,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @returns {Promise<Promise<*>|void>}
    */
   this.isRevoked = _asyncToGenerator(function* () {
-    return anchorService.isRevoked(_this.proof);
+    return getAnchorService().isRevoked(_this.proof);
   });
 
   this.isMatch = constraints => {
@@ -489,6 +516,7 @@ VerifiableCredentialBaseConstructor.getAllProperties = identifier => {
     });
     return _.difference(allProperties, excludesProperties);
   }
+  return null;
 };
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;

@@ -1,5 +1,7 @@
-const logger = require('../../logger');
+/* eslint-disable max-len */
+
 const _ = require('lodash');
+const logger = require('../../logger');
 
 function HttpServiceConstructor() {
   this.name = 'mockHttp';
@@ -9,10 +11,12 @@ function HttpServiceConstructor() {
     _.assign(params, options);
     const responses = [{
       path: '/registry',
-      response: { clientID: '6e0ce9b31eb13064a194c1482ed3d9d330f22df6fb4cbcc0dbebf3169dc2325b',
+      response: {
+        clientID: '6e0ce9b31eb13064a194c1482ed3d9d330f22df6fb4cbcc0dbebf3169dc2325b',
         xpub: '0469919359510a703516503299c77ef0e00f18255a32db19a3e69636e203f25f29be24b685df9f8a70548751f53a2e4c235ec0fbdc82d0783bd30e315ebfd6bd1e',
         cas: '{"iv":"TEtgZuJdyJFkgcuHoBC52w==","v":1,"iter":10000,"ks":128,"ts":64,"mode":"gcm","adata":"","cipher":"aes","salt":"SA0z5h6IlfA=","ct":"8h6ys3fD31HsWH3s5rrbF6o54ekJf6owhSJBW6FBIhkftJWSWVWVEt0u0FJFqhCqPaEl+DMM6olH9fAcB7bD7i2DRPjLYiC+"}',
-        sak: {} }
+        sak: {}
+      }
     }, {
       path: '/jwt',
       response: { jwt: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJqdGkiOiIyYzdlNjQ4YS1hNDhmLTQxNTgtOGZmMS02MTY0YzM5OWNlNDMiLCJpYXQiOjE1Mjg4MjE1ODUuNDM0LCJleHAiOjE1Mjg4MjE3NjUuNDM0LCJpc3MiOiJodHRwczovL2FwaS5jaXZpYy5jb20vand0IiwiYXVkIjoiQXR0ZXN0ZXJTZXJ2aWNlIiwic3ViIjoiYzhhNjRhODE4NWRlMzNkMTlkZTgwMjFmYmUyMjhkMmE1YTc3YzExMTdkYjc1NDJlZDE0ODM1NGNiZjdkNGVmMSIsImRhdGEiOnsibWV0aG9kIjoiUE9TVCIsInBhdGgiOiJodHRwczovL2Rldi5hcGkuY2l2aWMuY29tL3JlcXVlc3QtYXR0ZXN0YXRpb24tdGJjaC9yZXF1ZXN0QXR0ZXN0YXRpb24ifX0.2Rp8XLTLvzu51raTQRpce8kIiilsMeiPZeWAsuNv5n7hFZGl-ce-fx9DgxsZ0OTaIUgo8frbiGmHjQh0WlUG7A' }
@@ -58,7 +62,7 @@ function HttpServiceConstructor() {
 
 logger.debug('Using Mock HTTP Service');
 const http = new HttpServiceConstructor();
-http.request('/status').then(console.log);
+http.request('/status').then(console.log); // eslint-disable-line
 logger.debug(`HTTP Service instance ${JSON.stringify(http, null, 2)}`);
 
 module.exports = http;

@@ -63,7 +63,7 @@ const definitions = [{
   type: 'cvc:Type:domain',
   credentialItem: true
 }, {
-  identifier: 'cvc:Contact:email',
+  identifier: 'cvc:Type:email',
   version: '1',
   type: {
     properties: [{
@@ -74,64 +74,104 @@ const definitions = [{
       type: 'cvc:Email:domain'
     }]
   },
+  credentialItem: false
+}, {
+  identifier: 'cvc:Email:properties',
+  version: '1',
+  type: 'cvc:Type:email',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Contact:email',
+  version: '1',
+  type: 'cvc:Email:properties',
   credentialItem: true
 }, {
   identifier: 'cvc:User:id',
-  version: 1,
+  version: '1',
   type: 'String',
   credentialItem: true
 }, {
   identifier: 'cvc:User:realm',
-  version: 1,
+  version: '1',
   type: 'String',
   credentialItem: true
 }, {
   identifier: 'cvc:Type:country',
-  version: 1,
+  version: '1',
   type: 'String',
   credentialItem: false
 }, {
   identifier: 'cvc:Phone:countryCode',
-  version: 1,
+  version: '1',
   type: 'String',
   credentialItem: true
 }, {
   identifier: 'cvc:Phone:number',
-  version: 1,
+  version: '1',
   type: 'String',
   credentialItem: true
 }, {
   identifier: 'cvc:Phone:extension',
-  version: 1,
+  version: '1',
   type: 'String',
   credentialItem: true
 }, {
   identifier: 'cvc:Phone:lineType',
-  version: 1,
+  version: '1',
   type: 'String',
   credentialItem: true
 }, {
-  identifier: 'cvc:Contact:phoneNumber',
-  version: 1,
+  identifier: 'cvc:PhoneNumber:country',
+  type: 'cvc:Type:country',
+  version: '1',
+  credentialItem: false
+}, {
+  identifier: 'cvc:PhoneNumber:countryCode',
+  type: 'cvc:Phone:countryCode',
+  version: '1',
+  credentialItem: true
+}, {
+  identifier: 'cvc:PhoneNumber:number',
+  type: 'cvc:Phone:number',
+  version: '1',
+  credentialItem: true
+}, {
+  identifier: 'cvc:PhoneNumber:extension',
+  type: 'cvc:Phone:extension',
+  version: '1',
+  credentialItem: true
+}, {
+  identifier: 'cvc:PhoneNumber:lineType',
+  type: 'cvc:Phone:lineType',
+  version: '1',
+  credentialItem: true
+}, {
+  identifier: 'cvc:Type:phoneNumber',
+  version: '1',
   type: {
     properties: [{
       name: 'country',
-      type: 'cvc:Type:country'
+      type: 'cvc:PhoneNumber:country'
     }, {
       name: 'countryCode',
-      type: 'cvc:Phone:countryCode'
+      type: 'cvc:PhoneNumber:countryCode'
     }, {
       name: 'number',
-      type: 'cvc:Phone:number'
+      type: 'cvc:PhoneNumber:number'
     }, {
       name: 'extension',
-      type: 'cvc:Phone:extension'
+      type: 'cvc:PhoneNumber:extension'
     }, {
       name: 'lineType',
-      type: 'cvc:Phone:lineType'
+      type: 'cvc:PhoneNumber:lineType'
     }],
     required: ['country', 'countryCode', 'number', 'lineType']
   },
+  credentialItem: false
+}, {
+  identifier: 'cvc:Contact:phoneNumber',
+  version: '1',
+  type: 'cvc:Type:phoneNumber',
   credentialItem: true
 }, {
   identifier: 'cvc:Name:givenNames',
@@ -242,8 +282,7 @@ const definitions = [{
 }, {
   identifier: 'cvc:Address:street',
   version: '1',
-  type: 'String',
-  credentialItem: true
+  type: 'String'
 }, {
   identifier: 'cvc:Address:unit',
   version: '1',
@@ -304,12 +343,12 @@ const definitions = [{
   credentialItem: false
 }, {
   identifier: 'cvc:Document:address',
-  version: 1,
+  version: '1',
   type: 'cvc:Type:address',
   credentialItem: true
 }, {
   identifier: 'cvc:Identity:address',
-  version: 1,
+  version: '1',
   type: 'cvc:Type:address',
   credentialItem: true
 }, {
@@ -330,6 +369,7 @@ const definitions = [{
 }, {
   identifier: 'cvc:Document:properties',
   version: '1',
+  attestable: true,
   type: {
     properties: [{
       name: 'dateOfIssue',
@@ -340,7 +380,7 @@ const definitions = [{
     }],
     required: ['dateOfIssue']
   },
-  credentialItem: true
+  credentialItem: false
 }, {
   identifier: 'cvc:Type:s3FileBucket',
   version: '1',
@@ -401,24 +441,40 @@ const definitions = [{
     required: ['type', 'face', 'reference']
   }
 }, {
+  identifier: 'cvc:Document:front',
+  version: '1',
+  type: 'cvc:Type:ImageBase64'
+}, {
+  identifier: 'cvc:Document:frontMD5',
+  version: '1',
+  type: 'cvc:Type:MD5'
+}, {
+  identifier: 'cvc:Document:back',
+  version: '1',
+  type: 'cvc:Type:ImageBase64'
+}, {
+  identifier: 'cvc:Document:backMD5',
+  version: '1',
+  type: 'cvc:Type:MD5'
+}, {
   identifier: 'cvc:Document:image',
   version: '1',
+  attestable: true,
   type: {
     properties: [{
       name: 'front',
-      type: 'cvc:Type:ImageBase64'
+      type: 'cvc:Document:front'
     }, {
       name: 'frontMD5',
-      type: 'cvc:Type:MD5'
+      type: 'cvc:Document:frontMD5'
     }, {
       name: 'back',
-      type: 'cvc:Type:ImageBase64'
+      type: 'cvc:Document:back'
     }, {
       name: 'backMD5',
-      type: 'cvc:Type:MD5'
+      type: 'cvc:Document:backMD5'
     }],
-    required: ['front', 'frontMD5'],
-    credentialItem: true
+    required: ['front', 'frontMD5']
   }
 }, {
   identifier: 'cvc:Document:type',

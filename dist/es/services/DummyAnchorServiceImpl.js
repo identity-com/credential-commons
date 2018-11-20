@@ -1,3 +1,5 @@
+/* eslint no-unused-vars: ["error", { "args": "none" }] */
+
 /**
  * Current Anchor/Attester service
  *
@@ -68,34 +70,26 @@ function DummyAnchorServiceImpl(config, http) {
     return Promise.resolve(tempAnchor);
   };
 
-  this.verifySignature = signature => {
-    return true;
-  };
+  this.verifySignature = signature => true;
 
   /**
    * This method checks if the subject signature matches the pub key
    * @param subject a json with label, data, signature, pub
    * @returns {*} true or false for the validation
    */
-  this.verifySubjectSignature = subject => {
-    return true;
-  };
+  this.verifySubjectSignature = subject => true;
 
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
-  this.verifyAttestation = async signature => {
-    return true;
-  };
+  this.verifyAttestation = async signature => true;
 
   this.revokeAttestation = async signature => {
     signature.revoked = true; // eslint-disable-line
     return Promise.resolve(signature);
   };
 
-  this.isRevoked = signature => {
-    return signature.revoked ? signature.revoked : false;
-  };
+  this.isRevoked = signature => signature.revoked ? signature.revoked : false;
 
   return this;
 }

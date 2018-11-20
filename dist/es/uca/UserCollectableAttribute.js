@@ -40,7 +40,7 @@ function isValid(value, type, definition) {
 }
 
 /**
- * extract the expected Type name for the value when constructin an UCA
+ * extract the expected Type name for the value when constructing an UCA
  * @param {*} definition
  */
 const getTypeName = definition => {
@@ -67,6 +67,20 @@ const resolveType = definition => {
 
   const refDefinition = _.find(definitions, { identifier: definition.type });
   return resolveType(refDefinition);
+};
+
+const findDefinitionByAttestableValue = (attestableValuePropertyName, rootDefinition) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const property of rootDefinition.type.properties) {
+    const resolvedDefinition = _.find(definitions, { identifier: property.type });
+    if (!resolvedDefinition.type.properties && property.name === attestableValuePropertyName) {
+      return property.type;
+    }
+    if (resolvedDefinition.type.properties) {
+      return findDefinitionByAttestableValue(attestableValuePropertyName, resolvedDefinition);
+    }
+  }
+  return null;
 };
 
 const getAllProperties = (identifier, pathName) => {
@@ -123,7 +137,7 @@ const isAttestableValue = value => value && value.attestableValue;
 const parseAttestableValue = value => {
   const values = [];
   const splitPipes = _.split(value.attestableValue, '|');
-  const attestableValueRegex = /^urn:(\w*):(\w*):([\w|\W]*)/;
+  const attestableValueRegex = /^urn:(\w+(?:\.\w+)*):(\w+):(.+)/;
   _.each(splitPipes, stringValue => {
     const match = attestableValueRegex.exec(stringValue);
     if (match && match.length === 4) {
@@ -176,7 +190,18 @@ function UCABaseConstructor(identifier, value, version) {
       for (let i = 0; i < parsedAttestableValue.length; i += 1) {
         const { propertyName } = parsedAttestableValue[i];
         // we have stored only the property name on the urn, so we have to find the UCA definition
-        const filteredIdentifier = definition.type.properties.find(property => property.type.endsWith(propertyName)).type;
+        const splitPropertyName = propertyName.split('.');
+        // this property is used to check if the recursion tree has more than an depth
+        const ucaNamespace = splitPropertyName[splitPropertyName.length - 2];
+        const ucaNamespacePascal = ucaNamespace.substring(0, 1).toUpperCase() + ucaNamespace.substring(1);
+        const ucaPropertyName = splitPropertyName[splitPropertyName.length - 1];
+        let filteredIdentifier = `cvc:${ucaNamespacePascal}:${ucaPropertyName}`;
+        // test if definition exists
+        const filteredDefinition = definitions.find(def => def.identifier === filteredIdentifier);
+        if (!filteredDefinition) {
+          // this must have an claim path with no recursive definition
+          filteredIdentifier = findDefinitionByAttestableValue(ucaPropertyName, definition);
+        }
         ucaValue[propertyName] = new UCABaseConstructor(filteredIdentifier, { attestableValue: parsedAttestableValue[i].stringValue });
       }
       // console.log(ucaValue);
@@ -206,20 +231,23 @@ function UCABaseConstructor(identifier, value, version) {
     this.value = ucaValue;
   }
 
-  this.getAttestableValue = () => {
+  this.getAttestableValue = path => {
     // all UCA properties they have the form of :propertyName or :something.propertyName
-    const startIndexForPropertyName = this.identifier.includes('.') ? this.identifier.lastIndexOf('.') : this.identifier.lastIndexOf(':');
-    const propertyName = this.identifier.substring(startIndexForPropertyName + 1);
+    const startIndexForPropertyName = this.identifier.lastIndexOf(':');
+    let propertyName = this.identifier.substring(startIndexForPropertyName + 1);
+    if (path) {
+      propertyName = `${path}.${propertyName}`;
+    }
     // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
     switch (this.type) {
       case 'String':
-        return `urn:${propertyName}:${this.salt}:${this.value}`;
+        return `urn:${propertyName}:${this.salt}:${this.value}|`;
       case 'Number':
-        return `urn:${propertyName}:${this.salt}:${this.value}`;
+        return `urn:${propertyName}:${this.salt}:${this.value}|`;
       case 'Boolean':
-        return `urn:${propertyName}:${this.salt}:${this.value}`;
+        return `urn:${propertyName}:${this.salt}:${this.value}|`;
       default:
-        return _.reduce(_.sortBy(_.keys(this.value)), (s, k) => `${s}${this.value[k].getAttestableValue()}|`, '');
+        return _.reduce(_.sortBy(_.keys(this.value)), (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
     }
   };
 
@@ -310,12 +338,13 @@ function convertIdentifierToClassName(identifier) {
 _.forEach(_.filter(definitions, d => d.credentialItem), def => {
   const name = convertIdentifierToClassName(def.identifier);
   const source = {};
-  const identifier = def.identifier;
+  const { identifier } = def;
 
   function UCAConstructor(value, version) {
     const self = new UCABaseConstructor(identifier, value, version);
     return self;
   }
+
   source[name] = UCAConstructor;
   _.mixin(UCA, source);
 });

@@ -3,7 +3,6 @@
  */
 const Bottle = require('bottlejs');
 const { CurrentCivicAnchor } = require('./DummyAnchorServiceImpl.js');
-const AnchorService = require('./anchorService');
 const logger = require('../logger');
 const HttpServiceConstructor = require('./httpService');
 const config = require('./config');
@@ -43,13 +42,6 @@ services.service('Http', HttpServiceConstructor);
 
 services.service('SecureRandom', SecureRandom);
 
-services.service('CivicAnchor', CurrentCivicAnchor, 'Config', 'Http');
-
-services.factory('AnchorService', container => {
-  // Here we can execute logic to replace the implementation
-  const civicAnchor = container.CivicAnchor;
-  logger.debug('Registering AnchorService with Civic implementation');
-  return new AnchorService(civicAnchor);
-});
+services.service('AnchorService', CurrentCivicAnchor, 'Config', 'Http');
 
 module.exports = { services, initServices };
