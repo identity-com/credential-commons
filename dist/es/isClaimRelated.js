@@ -3,7 +3,8 @@ const ucaDefinitions = require('./uca/definitions');
 const vcDefinitions = require('./creds/definitions');
 const UCA = require('./uca/UserCollectableAttribute');
 /**
- * Validate an claim path against it's parent UCA, and the parent UCA against the dependencies of an Credential
+ * Validate an claim path against it's parent UCA, and the parent UCA against the
+ * dependencies of an Credential
  * @param claim path, eg: name.first
  * @param uca the global identifier for the UCA/Claim, eg: claim-civ:Identity:name-1
  * @param credential the parent identifier, eg: civ:Credential:GenericId

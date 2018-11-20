@@ -51,6 +51,7 @@ jobs:
           name: run tests incl coverage
           command: npm run test
       - run: npm run lint
+      - run: npm run build
 
       - persist_to_workspace:
           root: ~/repo
