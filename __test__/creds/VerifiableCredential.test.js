@@ -396,6 +396,13 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.verifyProofs()).toBeTruthy();
   });
 
+  it('Should verify an VC of type GenericDocumentId and doing VC.fromJSON', () => {
+    const credJSon = require('./fixtures/GenericDocumentId.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeTruthy();
+  });
+
   it('Should verify an VC of type GenericDocumentId', () => {
     const ucaArray = [];
     const credentialDefinition = credentialDefinitions.find(definition => definition.identifier
@@ -412,7 +419,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     });
     const credential = new VC(credentialDefinition.identifier, 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
       null, ucaArray, 1);
-
     expect(credential).toBeDefined();
     expect(credential.verifyProofs()).toBeTruthy();
   });

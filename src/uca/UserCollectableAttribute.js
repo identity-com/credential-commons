@@ -80,6 +80,7 @@ const findDefinitionByAttestableValue = (attestableValuePropertyName, rootDefini
   // eslint-disable-next-line no-restricted-syntax
   for (const property of rootDefinition.type.properties) {
     const resolvedDefinition = _.find(definitions, { identifier: property.type });
+    resolvedDefinition.type = resolveType(resolvedDefinition);
     if (!resolvedDefinition.type.properties && property.name === attestableValuePropertyName) {
       return property.type;
     }
