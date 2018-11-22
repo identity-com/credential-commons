@@ -15,7 +15,15 @@ workflows:
       - build:
           filters:
             tags:
-              only: /^v.*/
+              only: /^v\d+\.\d+\.\d+-rc.*$/
+            branches:
+              ignore: /.*/
+      - release_rc:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+-rc.*$/
             branches:
               ignore: /.*/
       - deploy:
@@ -24,7 +32,7 @@ workflows:
             - build
           filters:
             tags:
-              only: /^v.*/
+              only: /^v\d+\.\d+\.\d+$/
             branches:
               ignore: /.*/
       
@@ -56,6 +64,42 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
+
+  release_rc:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      # # Download and cache dependencies
+      # - restore_cache:
+      #     keys:
+      #     - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run: sudo npm install -g npm
+      - run: npm ci
+
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+
+      - run:
+          name: git config
+          command: |
+            git config credential.helper 'cache --timeout=120'
+            git config user.email "no-reply@civic.com"
+            git config user.name "CI Deployer"
+            git config --global push.default simple
+            git branch --set-upstream-to origin/$CIRCLE_BRANCH
+
+      - run:
+          name: version
+          command: npm version patch --git-tag-version false
+
+      - run:
+          name: tag
+          command: npm run tag  
   deploy:
     <<: *defaults  
     steps:
