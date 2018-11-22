@@ -13,8 +13,6 @@ const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const { services } = require('../services');
 
-const secureRandom = services.container.SecureRandom;
-
 function getAnchorService() {
   return services.container.AnchorService;
 }
@@ -164,6 +162,7 @@ class CvcMerkleProof {
     const currentLength = nodes.length;
     const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS ? CvcMerkleProof.PADDING_INCREMENTS : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
+    const secureRandom = services.container.SecureRandom;
     while (newNodes.length < targetLength) {
       newNodes.push(new UCA('cvc:Random:node', secureRandom.wordWith(16)));
     }

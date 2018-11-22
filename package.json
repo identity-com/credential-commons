@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "0.2.27",
+  "version": "0.2.28",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",

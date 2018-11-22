@@ -6,8 +6,6 @@ const sjcl = require('sjcl');
 const definitions = require('./definitions');
 const { services } = require('../services');
 
-const secureRandom = services.container.SecureRandom;
-
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
 /**
@@ -75,6 +73,7 @@ const findDefinitionByAttestableValue = (attestableValuePropertyName, rootDefini
   // eslint-disable-next-line no-restricted-syntax
   for (const property of rootDefinition.type.properties) {
     const resolvedDefinition = _.find(definitions, { identifier: property.type });
+    resolvedDefinition.type = resolveType(resolvedDefinition);
     if (!resolvedDefinition.type.properties && property.name === attestableValuePropertyName) {
       return property.type;
     }
@@ -166,6 +165,7 @@ const parseAttestableValue = value => {
 function UCABaseConstructor(identifier, value, version) {
   this.timestamp = null;
   this.id = null;
+  this.secureRandom = services.container.SecureRandom;
 
   if (!_.includes(validIdentifiers, identifier)) {
     throw new Error(`${identifier} is not defined`);
@@ -217,7 +217,7 @@ function UCABaseConstructor(identifier, value, version) {
     }
     this.value = value;
 
-    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
+    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(this.secureRandom.wordWith(64)));
   } else if (_.isEmpty(definition.type.properties)) {
     throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
   } else {
