@@ -4,10 +4,6 @@ const sjcl = require('sjcl');
 const definitions = require('./definitions');
 const { services } = require('../services');
 
-function getSecureRandom() {
-  return services.container.SecureRandom;
-}
-
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
 /**
@@ -229,7 +225,8 @@ function UCABaseConstructor(identifier, value, version) {
     }
     this.value = value;
 
-    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(getSecureRandom().wordWith(64)));
+    const secureRandom = services.container.SecureRandom;
+    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
   } else if (_.isEmpty(definition.type.properties)) {
     throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
   } else {

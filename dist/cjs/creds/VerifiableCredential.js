@@ -13,12 +13,6 @@ const definitions = require('./definitions');
 const UCA = require('../uca/UserCollectableAttribute');
 const { services } = require('../services');
 
-const secureRandom = services.container.SecureRandom;
-
-function getAnchorService() {
-  return services.container.AnchorService;
-}
-
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
 }
@@ -164,6 +158,7 @@ class CvcMerkleProof {
     const currentLength = nodes.length;
     const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS ? CvcMerkleProof.PADDING_INCREMENTS : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS;
     const newNodes = _.clone(nodes);
+    const secureRandom = services.container.SecureRandom;
     while (newNodes.length < targetLength) {
       newNodes.push(new UCA('cvc:Random:node', secureRandom.wordWith(16)));
     }
@@ -279,7 +274,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.requestAnchor = (() => {
     var _ref = _asyncToGenerator(function* (options) {
-      const anchor = yield getAnchorService().anchor(_this.identifier, _this.proof.merkleRoot, options);
+      const anchorService = services.container.AnchorService;
+      const anchor = yield anchorService.anchor(_this.identifier, _this.proof.merkleRoot, options);
       _this.proof.anchor = anchor;
       return _this;
     });
@@ -294,7 +290,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * already confirmed on the blockchain.
    */
   this.updateAnchor = _asyncToGenerator(function* () {
-    const anchor = yield getAnchorService().update(_this.proof.anchor);
+    const anchorService = services.container.AnchorService;
+    const anchor = yield anchorService.update(_this.proof.anchor);
     _this.proof.anchor = anchor;
     return _this;
   });
@@ -384,14 +381,14 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @return true or false for the validation
    */
   this.verifySignature = _asyncToGenerator(function* () {
-    return getAnchorService().verifySignature(_this.proof);
+    return services.container.AnchorService.verifySignature(_this.proof);
   });
 
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
   this.verifyAttestation = _asyncToGenerator(function* () {
-    return getAnchorService().verifyAttestation(_this.proof);
+    return services.container.AnchorService.verifyAttestation(_this.proof);
   });
 
   /**
@@ -399,7 +396,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @returns {Promise<Promise<*>|void>}
    */
   this.revokeAttestation = _asyncToGenerator(function* () {
-    return getAnchorService().revokeAttestation(_this.proof);
+    return services.container.AnchorService.revokeAttestation(_this.proof);
   });
 
   /**
@@ -407,7 +404,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @returns {Promise<Promise<*>|void>}
    */
   this.isRevoked = _asyncToGenerator(function* () {
-    return getAnchorService().isRevoked(_this.proof);
+    return services.container.AnchorService.isRevoked(_this.proof);
   });
 
   this.isMatch = constraints => {

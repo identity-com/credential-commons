@@ -40,7 +40,7 @@ services.factory('Config', () => config);
 logger.info('Registering request-promise-native as Http service implementation.');
 services.service('Http', HttpServiceConstructor);
 
-services.service('SecureRandom', SecureRandom);
+services.factory('SecureRandom', () => new SecureRandom());
 
 services.service('AnchorService', CurrentCivicAnchor, 'Config', 'Http');
 
