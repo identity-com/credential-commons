@@ -71,18 +71,8 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
-      # # Download and cache dependencies
-      # - restore_cache:
-      #     keys:
-      #     - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-
       - run: sudo npm install -g npm
       - run: npm ci
-
-      # - save_cache:
-      #     paths:
-      #       - node_modules
-      #     key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
 
       - run:
           name: git config
