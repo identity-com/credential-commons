@@ -172,7 +172,6 @@ const parseAttestableValue = (value) => {
 function UCABaseConstructor(identifier, value, version) {
   this.timestamp = null;
   this.id = null;
-  this.secureRandom = services.container.SecureRandom;
 
   if (!_.includes(validIdentifiers, identifier)) {
     throw new Error(`${identifier} is not defined`);
@@ -226,7 +225,8 @@ function UCABaseConstructor(identifier, value, version) {
     }
     this.value = value;
 
-    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(this.secureRandom.wordWith(64)));
+    const secureRandom = services.container.SecureRandom;
+    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
   } else if (_.isEmpty(definition.type.properties)) {
     throw new Error(`${JSON.stringify(value)} is not valid for ${identifier}`);
   } else {
