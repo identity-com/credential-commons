@@ -7,6 +7,7 @@ defaults: &defaults
 
 workflows:
   version: 2
+  
   build-and-test:
     jobs:
       - build
@@ -30,11 +31,11 @@ workflows:
   deploy-npm:
     jobs:
       - build:
-        filters:
-          tags:
-            only: /^v\d+\.\d+\.\d+$/
-          branches:
-            ignore: /.*/
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
       - deploy:
           context: Production
           requires:
