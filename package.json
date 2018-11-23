@@ -34,7 +34,7 @@
     "build": "npm run build:browser && npm run build:cjs && npm run build:es",
     "postversion": "git add --all && git commit -m\"build and version $npm_package_version\" -m\"[skip ci]\" && git push",
     "pretag": "git fetch --tags",
-    "tag": "git tag v$npm_package_version && git push origin --tags",
+    "tag": "git tag v$npm_package_version && git push --tags origin master",
     "precommit": "npm run lint"
   },
   "devDependencies": {
