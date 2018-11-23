@@ -19,6 +19,7 @@ workflows:
             branches:
               ignore: /.*/
       - release_rc:
+          context: Production
           requires:
             - build
           filters:
@@ -81,7 +82,7 @@ jobs:
             git config user.email "no-reply@civic.com"
             git config user.name "CI Deployer"
             git config --global push.default simple
-            git branch --set-upstream-to origin/$CIRCLE_BRANCH
+            git branch --set-upstream-to origin/master
 
       - run:
           name: version
