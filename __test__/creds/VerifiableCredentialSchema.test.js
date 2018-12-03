@@ -1,11 +1,10 @@
 const Ajv = require('ajv');
 
 const uuidv1 = require('uuid/v1');
-const UCA = require('../../src/uca/UserCollectableAttribute');
+const { UserCollectableAttribute: UCA, definitions } = require('@identity.com/uca');
 const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');
-const ucaDefinitions = require('../../src/uca/definitions');
 
 jest.setTimeout(1500000);
 
@@ -30,7 +29,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-        const ucaDefinition = ucaDefinitions.find(ucaDef => (
+        const ucaDefinition = definitions.find(ucaDef => (
           ucaDef.identifier === ucaDefinitionIdentifier
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -71,7 +70,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = ucaDefinitions.find(ucaDef => (
+      const ucaDefinition = definitions.find(ucaDef => (
         ucaDef.identifier === ucaDefinitionIdentifier
       ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -101,7 +100,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = ucaDefinitions.find(ucaDef => (
+      const ucaDefinition = definitions.find(ucaDef => (
         ucaDef.identifier === ucaDefinitionIdentifier
       ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);

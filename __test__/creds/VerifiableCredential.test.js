@@ -1,10 +1,9 @@
 const _ = require('lodash');
 const fs = require('fs');
 const uuidv4 = require('uuid/v4');
-const UCA = require('../../src/uca/UserCollectableAttribute');
+const { UserCollectableAttribute: UCA, definitions } = require('@identity.com/uca');
 const VC = require('../../src/creds/VerifiableCredential');
 const credentialDefinitions = require('../../src/creds/definitions');
-const ucaDefinitions = require('../../src/uca/definitions');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 
 jest.setTimeout(150000);
@@ -408,7 +407,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const credentialDefinition = credentialDefinitions.find(definition => definition.identifier
       === 'cvc:Credential:GenericDocumentId');
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {

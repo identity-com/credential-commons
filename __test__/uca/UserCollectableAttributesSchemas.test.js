@@ -1,7 +1,6 @@
 const Ajv = require('ajv');
+const { UserCollectableAttribute: UCA, definitions } = require('@identity.com/uca');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
-const definitions = require('../../src/uca/definitions');
-const UCA = require('../../src/uca/UserCollectableAttribute');
 
 describe('UCA Json Sample Date Construction tests', () => {
   it('Should generate UCA JSON Sample Data from all coded identifiers and succeed', async (done) => {

@@ -1,9 +1,9 @@
 const Ajv = require('ajv');
 const fs = require('fs');
 const fetch = require('node-fetch');
+const { definitions } = require('@identity.com/uca');
 
 const credentialDefinitions = require('../../src/creds/definitions');
-const ucaDefinitions = require('../../src/uca/definitions');
 
 const fixturesPath = '__integrations__/fixtures';
 // testings is done only on the test bucket,
@@ -118,7 +118,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       }
     };
     const promises = [];
-    ucaDefinitions.forEach((definition) => { promises.push(validateSchemaJestStep(definition)); });
+    definitions.forEach((definition) => { promises.push(validateSchemaJestStep(definition)); });
     Promise.all(promises).then((values) => {
       values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
@@ -154,7 +154,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       }
     };
     const promises = [];
-    ucaDefinitions.forEach((definition) => {
+    definitions.forEach((definition) => {
       try {
         promises.push(validateSchemaJestStep(definition));
       } catch (err) {

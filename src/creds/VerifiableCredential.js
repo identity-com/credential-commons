@@ -5,8 +5,8 @@ const sjcl = require('sjcl');
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
 const uuidv4 = require('uuid/v4');
+const { UserCollectableAttribute: UCA } = require('@identity.com/uca');
 const definitions = require('./definitions');
-const UCA = require('../uca/UserCollectableAttribute');
 const { services } = require('../services');
 
 function sha256(string) {

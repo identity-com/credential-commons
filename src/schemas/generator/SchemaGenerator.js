@@ -2,8 +2,7 @@
 const randomString = require('randomstring');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
-const UCA = require('../../uca/UserCollectableAttribute');
-const ucaDefinitions = require('../../uca/definitions');
+const { UserCollectableAttribute, definitions } = require('@identity.com/uca');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
@@ -39,13 +38,13 @@ const processObject = (object, outputParam, parentKey) => {
     }
   }
   // it must be 4 here, we start the json of the VC with root
-  // then it's claim, then all standardize UCA are type:name
+  // then it's claim, then all standardize UserCollectableAttribute are type:name
   if (parentKey.includes('claim') && parentKey.split('.').length === 4) {
     // with the json key of the claim
     const baseUcaName = parentKey.substring('root.claim.'.length);
     const typeName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1)).replace('.', ':');
     // regenerate uca
-    const refDefinition = ucaDefinitions.find(def => def.identifier.includes(typeName));
+    const refDefinition = definitions.find(def => def.identifier.includes(typeName));
     // get it's required definitions
     output.required = refDefinition.type.required;
   }
@@ -68,7 +67,7 @@ const processArray = (array, outputParam) => {
  * then an json schema from that data. That way you do not need to
  * create sample or mocks json from Credentials
  *
- * @param definition UCA/VC definition
+ * @param definition UserCollectableAttribute/VC definition
  * @param json generated json
  * @returns {{$schema: string}} expected json schema to validate this data
  */
@@ -89,7 +88,7 @@ const process = (definition, json) => {
     output.type = processOutput.type;
     output.properties = processOutput.properties;
   }
-  // for simple UCA get json schema properties
+  // for simple UserCollectableAttribute get json schema properties
   if (typeof definition !== 'undefined' && definition !== null) {
     if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
       if (definition.exclusiveMinimum) {
@@ -114,9 +113,9 @@ const process = (definition, json) => {
 
 /**
  * Build a sample json from an definition identifier
- * Recursively make the UCA from nested properties and UCA references
+ * Recursively make the UserCollectableAttribute from nested properties and UserCollectableAttribute references
  *
- * @param definition receive an UCA and build an sample json from it's properties
+ * @param definition receive an UserCollectableAttribute and build an sample json from it's properties
  * @returns {{$schema: string}}
  */
 const buildSampleJson = (definition) => {
@@ -131,7 +130,7 @@ const buildSampleJson = (definition) => {
  */
 const makeJsonRecursion = (ucaDefinition) => {
   let output = {};
-  const typeName = UCA.getTypeName(ucaDefinition);
+  const typeName = UserCollectableAttribute.getTypeName(ucaDefinition);
   if (typeof ucaDefinition.type === 'object' && ucaDefinition.type.properties !== undefined) { // array of properties
     ucaDefinition.type.properties.forEach((property) => {
       output[property.name] = generateRandomValueForType(property.type);
@@ -151,7 +150,7 @@ const makeJsonRecursion = (ucaDefinition) => {
 
 /**
  * This method is an auxiliary method to allow random values to easy create
- * json schemas from JSON values generated from UCA/VC
+ * json schemas from JSON values generated from UserCollectableAttribute/VC
  *
  * @param definition
  * @returns {number}
@@ -203,9 +202,9 @@ const generateRandomValueForType = (typeName) => {
   let refDefinition = null;
   let resolvedTypeName = typeName;
   if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
-    refDefinition = ucaDefinitions.find(def => def.identifier === typeName);
+    refDefinition = definitions.find(def => def.identifier === typeName);
     if (refDefinition !== null) {
-      resolvedTypeName = UCA.resolveType(refDefinition);
+      resolvedTypeName = UserCollectableAttribute.resolveType(refDefinition);
     }
   }
   // generate sample data
