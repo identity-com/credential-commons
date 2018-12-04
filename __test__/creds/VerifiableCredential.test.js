@@ -430,13 +430,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.verifyProofs()).toBeTruthy();
   });
 
-  it('Should verify an VC of type User', () => {
-    const credJSon = require('./fixtures/User.json'); // eslint-disable-line
-    const cred = VC.fromJSON(credJSon);
-    expect(cred).toBeDefined();
-    expect(cred.verifyProofs()).toBeTruthy();
-  });
-
   test('cred.verify(): with a valid cred without expirationDate, should return at least'
     + ' VERIFY_LEVELS.PROOFS level', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
@@ -807,13 +800,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('identity.address.unit');
     expect(properties).toContain('identity.address.city');
     expect(properties).toContain('identity.address.postalCode');
-  });
-
-  it('Should return all Credential properties for cvc:Credential:User', () => {
-    const properties = VC.getAllProperties('cvc:Credential:User');
-    expect(properties).toHaveLength(2);
-    expect(properties).toContain('user.id');
-    expect(properties).toContain('user.realm');
   });
 
   it('Should return all Credential properties for cvc:Credential:phoneNumber', () => {

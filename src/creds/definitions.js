@@ -20,14 +20,6 @@ const definitions = [
     ],
   },
   {
-    identifier: 'cvc:Credential:User',
-    version: '1',
-    depends: [
-      'cvc:User:id',
-      'cvc:User:realm',
-    ],
-  },
-  {
     identifier: 'cvc:Credential:GenericDocumentId',
     version: '1',
     depends: [
