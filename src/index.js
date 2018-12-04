@@ -1,4 +1,4 @@
-const { UserCollectableAttribute } = require('@identity.com/uca');
+const { Claim } = require('./claim/Claim');
 const VC = require('./creds/VerifiableCredential');
 const { initServices, services } = require('./services/index');
 const isValidGlobalIdentifier = require('./isValidGlobalIdentifier');
@@ -9,7 +9,7 @@ const isClaimRelated = require('./isClaimRelated');
  * @constructor
  */
 function CredentialCommons() {
-  this.UCA = UserCollectableAttribute;
+  this.UCA = Claim;
   this.VC = VC;
   this.init = initServices;
   this.isValidGlobalIdentifier = isValidGlobalIdentifier;

@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
 const { UserCollectableAttribute } = require('@identity.com/uca');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
-const ucaMockDefinitions = require('../../src/uca/__mocks__/definitions');
+const ucaMockDefinitions = require('../../src/claim/__mocks__/definitions');
 
 jest.mock('@identity.com/uca');
 

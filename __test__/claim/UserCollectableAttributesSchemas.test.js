@@ -1,5 +1,5 @@
 const Ajv = require('ajv');
-const { UserCollectableAttribute: UCA, definitions } = require('@identity.com/uca');
+const { Claim: UCA, definitions } = require('../../src/claim/Claim');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 
 describe('UCA Json Sample Date Construction tests', () => {

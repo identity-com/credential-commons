@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { definitions, UserCollectableAttribute } = require('@identity.com/uca');
+const { definitions, Claim } = require('./claim/Claim');
 const vcDefinitions = require('./creds/definitions');
 /**
  * Validate an claim path against it's parent UserCollectableAttribute, and the parent UCA against the
@@ -16,7 +16,7 @@ function isClaimRelated(claim, uca, credential) {
   const ucaDefinition = definitions.find(definition => definition.identifier === ucaIdentifier);
   // does the UCA exist?
   if (ucaDefinition) {
-    const ucaProperties = UserCollectableAttribute.getAllProperties(ucaIdentifier);
+    const ucaProperties = Claim.getAllProperties(ucaIdentifier);
 
     // does the claim exists in the UCA?
     if (_.includes(ucaProperties, claim)) {

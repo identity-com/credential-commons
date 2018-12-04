@@ -5,7 +5,7 @@ const sjcl = require('sjcl');
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
 const uuidv4 = require('uuid/v4');
-const { UserCollectableAttribute: UCA } = require('@identity.com/uca');
+const { Claim: UCA } = require('../claim/Claim');
 const definitions = require('./definitions');
 const { services } = require('../services');
 
