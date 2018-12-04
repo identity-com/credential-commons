@@ -2,6 +2,10 @@
 
 *Warning:* this still is a working in progress and is not ready for usage yet. Please feel free to explore the code but don't integrate yet. We expect API changes before the 1st release.
 
+[![CircleCI](https://circleci.com/gh/identity-com/credential-commons.svg?style=svg)](https://circleci.com/gh/identity-com/credential-commons)
+[![NPM](https://img.shields.io/npm/v/%40identity.com/credential-commons.svg)](https://www.npmjs.com/package/@identity.com/credential-commons)
+
+
 ## Summary
 
 This Javascript Library provides functionality around Verifiable Credentials (VC), a W3C standard. Enables Validators to issue, Credential Wallets to verify, filter and Requesters to verify credentials.
@@ -42,8 +46,7 @@ This Javascript Library provides functionality around Verifiable Credentials (VC
       
 - [Node.js](https://nodejs.org/en/)
 - SJCL library with ECC binary. Please refer how to build with support after the `npm i` here: https://github.com/bitwiseshiftleft/sjcl/wiki/Getting-Started
-
-a. Decrypt the XPrv
+- Decrypt the XPrv
 
 ```
 git clone git@github.com:masonicGIT/sjcl-cli.git
@@ -51,6 +54,22 @@ cd sjcl-cli
 npm install
 node src/index.js decrypt
 ```
+
+## Installation 
+Credential commons is an open-source library that has its binary package published on NPM.
+Projects that depend on credential-commons must install the dependency following this way:
+`npm install --save @identity.com/credential-commons`
+
+All versions follow SemVer (https://semver.org/)
+
+## Commands
+
+- `npm run lint` - run an ESLint check
+- `npm run coverage` - run code coverage and generate report in the `coverage` folder
+- `npm test` - run all tests
+- `npm run test:watch` - run all tests in watch mode
+- `npm run generate-schema` - run the CLI command and generate all schemas
+
 
 ## Configuration
 
@@ -118,7 +137,19 @@ npm run export-definitions
 
 Example
 ```
-const name = new UCA('civ:Type:address', {
+const name = new UCA('cvc:Identity:address', {
+    street: 'Alameda dos Anjos',
+    unit: '102',
+    city: 'Belo Horizonte',
+    zipCode: '94103345',
+    state: 'Minas Gerais',
+    county: 'Sao Bento',
+    country: 'Brazil',
+}, '1');
+```
+Or use the shorthand
+```
+const name = new UCA.IdentityAddress({
     street: 'Alameda dos Anjos',
     unit: '102',
     city: 'Belo Horizonte',
@@ -127,18 +158,6 @@ const name = new UCA('civ:Type:address', {
     county: 'Sao Bento',
     country: 'Brazil',
 });
-```
-Or use the shorthand
-```
-const name = new UCA.TypeAddress({
-    street: 'Alameda dos Anjos',
-    unit: '102',
-    city: 'Belo Horizonte',
-    zipCode: '94103345',
-    state: 'Minas Gerais',
-    county: 'Sao Bento',
-    country: 'Brazil',
-})
 ```
 
 **values** can be:
@@ -159,7 +178,7 @@ const name = new UCA.TypeAddress({
 {
   "attestableValue": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|"
 }
-```
+```z
 
 JSON String
  
@@ -168,12 +187,12 @@ JSON String
   "id": null,
   "issuer": "did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
   "issuanceDate": "2018-09-25T21:51:56.511Z",
-  "identifier": "civ:Credential:Address",
+  "identifier": "cvc:Credential:Address",
   "expirationDate": "+132017-07-11T05:51:56.512Z",
   "version": "1",
   "type": [
     "Credential",
-    "civ:Credential:Address"
+    "cvc:Credential:Address"
   ],
   "claim": {
     "type": {
@@ -194,7 +213,7 @@ JSON String
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "civ:Credential:Address",
+        "label": "cvc:Credential:Address",
         "data": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
         "signature": "signed:dummy"
       },
@@ -221,7 +240,7 @@ JSON String
     },
     "leaves": [
       {
-        "identifier": "civ:Type:address",
+        "identifier": "cvc:Identity:address",
         "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
         "claimPath": "type.address",
         "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
@@ -241,7 +260,7 @@ JSON String
         ]
       },
       {
-        "identifier": "civ:Meta:issuer",
+        "identifier": "cvc:Meta:issuer",
         "value": "urn:issuer:a68ed1b5f92ee8ce1e142b232dcb4ca0e2733f51f9893383e6adc3c53887e2fd:did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
         "claimPath": "meta.issuer",
         "targetHash": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482",
@@ -261,7 +280,7 @@ JSON String
         ]
       },
       {
-        "identifier": "civ:Meta:issuanceDate",
+        "identifier": "cvc:Meta:issuanceDate",
         "value": "urn:issuanceDate:c3b9798fe98020b041b4bd20027eee5c2895ff47b3fb0c5a4e8d1d061ae2733d:2018-09-25T21:51:56.511Z",
         "claimPath": "meta.issuanceDate",
         "targetHash": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08",
@@ -281,7 +300,7 @@ JSON String
         ]
       },
       {
-        "identifier": "civ:Meta:expirationDate",
+        "identifier": "cvc:Meta:expirationDate",
         "value": "urn:expirationDate:7388ed27d10476f47cd9c68a732a9b9eccfd44598cdcb2f785f5131c33991f5b:+132017-07-11T05:51:56.512Z",
         "claimPath": "meta.expirationDate",
         "targetHash": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312",
@@ -330,7 +349,7 @@ To construct a new VC you need first to get instances of all UCA dependencies
 ```
 const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
 const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-const cred = new VC('civ:cred:Test', 'jest:test', [name, dob]);
+const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
 ```
 
 ##### anchoring VerifiableCredential instances with the constructor
@@ -338,7 +357,7 @@ To construct a new VC you need first to get instances of all UCA dependencies
 ```
 const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
 const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-const cred = new VC('civ:cred:Test', 'jest:test', [name, dob]);
+const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
 cred.requestAnchor().then(() => {
   //The original instance is updated
 })
@@ -349,7 +368,7 @@ To construct a new VC you need first to get instances of all UCA dependencies
 ```
 const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
 const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-const cred = new VC('civ:cred:Test', 'jest:test', [name, dob]);
+const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
 cred.updateAnchor().then(() => {
   //The original instance is updated
 })
@@ -361,12 +380,12 @@ cred.updateAnchor().then(() => {
   "id": null,
   "issuer": "did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
   "issuanceDate": "2018-09-25T21:51:56.511Z",
-  "identifier": "civ:Credential:Address",
+  "identifier": "cvc:Credential:Address",
   "expirationDate": "+132017-07-11T05:51:56.512Z",
   "version": "1",
   "type": [
     "Credential",
-    "civ:Credential:Address"
+    "cvc:Credential:Address"
   ],
   "claim": {
     "type": {
@@ -387,7 +406,7 @@ cred.updateAnchor().then(() => {
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "civ:Credential:Address",
+        "label": "cvc:Credential:Address",
         "data": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
         "signature": "signed:dummy"
       },
@@ -414,7 +433,7 @@ cred.updateAnchor().then(() => {
     },
     "leaves": [
       {
-        "identifier": "civ:Type:address",
+        "identifier": "cvc:Identity:address",
         "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
         "claimPath": "type.address",
         "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
@@ -434,7 +453,7 @@ cred.updateAnchor().then(() => {
         ]
       },
       {
-        "identifier": "civ:Meta:issuer",
+        "identifier": "cvc:Meta:issuer",
         "value": "urn:issuer:a68ed1b5f92ee8ce1e142b232dcb4ca0e2733f51f9893383e6adc3c53887e2fd:did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
         "claimPath": "meta.issuer",
         "targetHash": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482",
@@ -454,7 +473,7 @@ cred.updateAnchor().then(() => {
         ]
       },
       {
-        "identifier": "civ:Meta:issuanceDate",
+        "identifier": "cvc:Meta:issuanceDate",
         "value": "urn:issuanceDate:c3b9798fe98020b041b4bd20027eee5c2895ff47b3fb0c5a4e8d1d061ae2733d:2018-09-25T21:51:56.511Z",
         "claimPath": "meta.issuanceDate",
         "targetHash": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08",
@@ -474,7 +493,7 @@ cred.updateAnchor().then(() => {
         ]
       },
       {
-        "identifier": "civ:Meta:expirationDate",
+        "identifier": "cvc:Meta:expirationDate",
         "value": "urn:expirationDate:7388ed27d10476f47cd9c68a732a9b9eccfd44598cdcb2f785f5131c33991f5b:+132017-07-11T05:51:56.512Z",
         "claimPath": "meta.expirationDate",
         "targetHash": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312",
@@ -536,7 +555,7 @@ A identifier like this:
 
 Example
 ```javascript
-const name = new UCA('civ:Identity:name', {
+const name = new UCA('cvc:Identity:name', {
   first: 'Joao', 
   middle: 'Barbosa', 
   last: 'Santos'
@@ -559,7 +578,7 @@ The schema generator will generate an json schema like this:
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "civ:Identity:name.first",
+  "title": "cvc:Identity:name.first",
   "type": "object",
   "properties": {
     "first": {
@@ -586,45 +605,6 @@ The schema generator will generate an json schema like this:
 -If an identifier has a pattern it must be an Javascript Regex, the generated value will generate the random value using this
 
 -Additional properties are not enabled by default
-
-## Commands
-
-- `npm run lint` - run an ESLint check
-- `npm run coverage` - run code coverage and generate report in the `coverage` folder
-- `npm test` - run all tests
-- `npm run test:watch` - run all tests in watch mode
-- `npm run generate-schema` - run the CLI command and generate all schemas
-
-
-## Integration with CCS Libraries 
-CCS Libraries can be integrated with projects by pointing out on package.json to the latest repo.
-
-For now all libraries are released only on GitHub tags.
-
-For Civic Developers on Node 8 or superior add this dependency to package.json
-
-"credential-common-js": "github:identity-com/credential-commons-js"
-
-This will install the latest version of the default branch on github (currently that branch is develop, but as soon as we release to production it should change to master).
-
-You can also add via npm install with the command:
-
-```bash npm install identity-com/credential-commons-js```
-
-When the project is released to NPM Release the command will be only:
-
-```bash npm install credential-commons-js```
-
-```json
-
-"credential-commons-js": "github:identity-com/credential-commons-js#vX.Y.Z",
-
-```
-
-This will get the specific version tagged on github.
-
-All versions here follow SemVer (https://semver.org/)
-Don't forget to add the version on your package.json, or else it will always get the latest from GitHub default branch.
 
 ## ES5 and ES6 definitions
 
