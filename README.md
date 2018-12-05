@@ -13,7 +13,8 @@ This Javascript Library provides functionality around Verifiable Credentials (VC
 ## Contents
 
 - [Prerequisites](#prerequisites)
-- [Installation ](#installation)
+- [Installation](#installation)
+- [Commands](#commands)
 - [Configuration](#configuration)
   * [Etc Config File /etc/civic/config](#etc-config-file--etc-civic-config)
   * [User Config File ~/.civic/config](#user-config-file---civic-config)

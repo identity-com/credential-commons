@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const uuidv4 = require('uuid/v4');
-const { UserCollectableAttribute: UCA, definitions } = require('@identity.com/uca');
+const { Claim: UCA, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const credentialDefinitions = require('../../src/creds/definitions');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');

@@ -1,5 +1,5 @@
 const uuidv4 = require('uuid/v4');
-const { UserCollectableAttribute: UCA } = require('@identity.com/uca');
+const { Claim: UCA } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 
 jest.setTimeout(200000);

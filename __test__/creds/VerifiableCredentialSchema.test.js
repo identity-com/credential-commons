@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
 
 const uuidv1 = require('uuid/v1');
-const { UserCollectableAttribute: UCA, definitions } = require('@identity.com/uca');
+const { Claim: UCA, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');

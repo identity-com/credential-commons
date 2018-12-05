@@ -2,7 +2,7 @@
 const randomString = require('randomstring');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
-const { UserCollectableAttribute, definitions } = require('@identity.com/uca');
+const { Claim, definitions } = require('../../claim/Claim');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
@@ -38,7 +38,7 @@ const processObject = (object, outputParam, parentKey) => {
     }
   }
   // it must be 4 here, we start the json of the VC with root
-  // then it's claim, then all standardize UserCollectableAttribute are type:name
+  // then it's claim, then all standardize Claim are type:name
   if (parentKey.includes('claim') && parentKey.split('.').length === 4) {
     // with the json key of the claim
     const baseUcaName = parentKey.substring('root.claim.'.length);
@@ -67,7 +67,7 @@ const processArray = (array, outputParam) => {
  * then an json schema from that data. That way you do not need to
  * create sample or mocks json from Credentials
  *
- * @param definition UserCollectableAttribute/VC definition
+ * @param definition Claim/VC definition
  * @param json generated json
  * @returns {{$schema: string}} expected json schema to validate this data
  */
@@ -88,7 +88,7 @@ const process = (definition, json) => {
     output.type = processOutput.type;
     output.properties = processOutput.properties;
   }
-  // for simple UserCollectableAttribute get json schema properties
+  // for simple Claim get json schema properties
   if (typeof definition !== 'undefined' && definition !== null) {
     if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
       if (definition.exclusiveMinimum) {
@@ -113,9 +113,9 @@ const process = (definition, json) => {
 
 /**
  * Build a sample json from an definition identifier
- * Recursively make the UserCollectableAttribute from nested properties and UserCollectableAttribute references
+ * Recursively make the Claim from nested properties and Claim references
  *
- * @param definition receive an UserCollectableAttribute and build an sample json from it's properties
+ * @param definition receive an Claim and build an sample json from it's properties
  * @returns {{$schema: string}}
  */
 const buildSampleJson = (definition) => {
@@ -130,7 +130,7 @@ const buildSampleJson = (definition) => {
  */
 const makeJsonRecursion = (ucaDefinition) => {
   let output = {};
-  const typeName = UserCollectableAttribute.getTypeName(ucaDefinition);
+  const typeName = Claim.getTypeName(ucaDefinition);
   if (typeof ucaDefinition.type === 'object' && ucaDefinition.type.properties !== undefined) { // array of properties
     ucaDefinition.type.properties.forEach((property) => {
       output[property.name] = generateRandomValueForType(property.type);
@@ -150,7 +150,7 @@ const makeJsonRecursion = (ucaDefinition) => {
 
 /**
  * This method is an auxiliary method to allow random values to easy create
- * json schemas from JSON values generated from UserCollectableAttribute/VC
+ * json schemas from JSON values generated from Claim/VC
  *
  * @param definition
  * @returns {number}
@@ -204,7 +204,7 @@ const generateRandomValueForType = (typeName) => {
   if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
     refDefinition = definitions.find(def => def.identifier === typeName);
     if (refDefinition !== null) {
-      resolvedTypeName = UserCollectableAttribute.resolveType(refDefinition);
+      resolvedTypeName = Claim.resolveType(refDefinition);
     }
   }
   // generate sample data
