@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { definitions, Claim } = require('./claim/Claim');
 const vcDefinitions = require('./creds/definitions');
 /**
- * Validate an claim path against it's parent UserCollectableAttribute, and the parent UCA against the
+ * Validate an claim path against it's parent UserCollectableAttribute, and the parent Claim against the
  * dependencies of an Credential
  * @param claim path, eg: name.first
  * @param uca the global identifier for the UCA/Claim, eg: claim-civ:Identity:name-1
@@ -18,7 +18,7 @@ function isClaimRelated(claim, uca, credential) {
   if (ucaDefinition) {
     const ucaProperties = Claim.getAllProperties(ucaIdentifier);
 
-    // does the claim exists in the UCA?
+    // does the claim exists in the Claim?
     if (_.includes(ucaProperties, claim)) {
       // we now have the composite uca, the uca for the claim property, they both are correct
       // we need to check now the UCA is inside the dependencies of the credential refered as parent
