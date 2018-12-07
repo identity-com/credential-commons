@@ -22,4 +22,26 @@ describe('Module Entry Point Tests', () => {
     expect(UCA).toBeDefined();
     expect(VC).toBeDefined();
   });
+
+  it('Should initialize with custom SecureRandom', () => {
+    const confMock = {
+      sipSecurityService: '',
+      attestationService: '',
+      clientConfig: {
+        id: '',
+        signingKeys: {
+          hexpub: '',
+          hexsec: '',
+        },
+      },
+      passphrase: '',
+      keychain: { prv: '' },
+    };
+
+    const myCustomSecureRandom = function MyCustomSecureRandom() {};
+
+    CredentialCommons.init(confMock, httpMock, myCustomSecureRandom);
+    expect(UCA).toBeDefined();
+    expect(VC).toBeDefined();
+  });
 });

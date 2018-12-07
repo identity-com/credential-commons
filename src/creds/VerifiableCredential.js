@@ -500,7 +500,7 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
 };
 
 /**
- * List all properties al a Verifiable Credential
+ * List all properties of a Verifiable Credential
  */
 VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
   const vcDefinition = _.find(definitions, { identifier });

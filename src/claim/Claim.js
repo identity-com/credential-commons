@@ -56,11 +56,6 @@ class Claim extends UserCollectableAttribute {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  createNew(identifier, value, version) {
-    return new Claim(identifier, value, version);
-  }
-
   static parseAttestableValue(value) {
     const values = [];
     const splitPipes = _.split(value.attestableValue, '|');
@@ -107,17 +102,11 @@ class Claim extends UserCollectableAttribute {
     }
 
     // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
-    switch (this.type) {
-      case 'String':
-        return `urn:${propertyName}:${this.salt}:${this.value}|`;
-      case 'Number':
-        return `urn:${propertyName}:${this.salt}:${this.value}|`;
-      case 'Boolean':
-        return `urn:${propertyName}:${this.salt}:${this.value}|`;
-      default:
-        return _.reduce(_.sortBy(_.keys(this.value)),
-          (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
+    if (['String', 'Number', 'Boolean'].indexOf(this.type) >= 0) {
+      return `urn:${propertyName}:${this.salt}:${this.value}|`;
     }
+    return _.reduce(_.sortBy(_.keys(this.value)),
+      (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
   }
 
   /**
