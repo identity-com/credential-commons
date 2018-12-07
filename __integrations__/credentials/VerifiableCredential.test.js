@@ -1,5 +1,5 @@
 const uuidv4 = require('uuid/v4');
-const { Claim: UCA } = require('../../src/claim/Claim');
+const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 
 jest.setTimeout(200000);
@@ -7,8 +7,8 @@ jest.setTimeout(200000);
 // DO NOT FORGET TO CONFIGURE THE BITGO WALLET
 describe('Integration Tests for Verifiable Credentials', () => {
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], 1);
     return cred.requestAnchor().then((updated) => {
       expect(updated.proof.anchor.type).toBe('temporary');
@@ -19,8 +19,8 @@ describe('Integration Tests for Verifiable Credentials', () => {
     });
   });
   it('should refresh an temporary anchoring with an permanent one', async (done) => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], 1);
     return cred.requestAnchor().then((updated) => {
       expect(updated.proof.anchor).toBeDefined();
@@ -33,8 +33,8 @@ describe('Integration Tests for Verifiable Credentials', () => {
     });
   });
   it('should revoke the permanent anchor and succed verification', async (done) => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], 1);
     await cred.requestAnchor();
     await cred.updateAnchor();

@@ -9,7 +9,7 @@ const isClaimRelated = require('./isClaimRelated');
  * @constructor
  */
 function CredentialCommons() {
-  this.UCA = Claim;
+  this.Claim = Claim;
   this.VC = VC;
   this.init = initServices;
   this.isValidGlobalIdentifier = isValidGlobalIdentifier;
