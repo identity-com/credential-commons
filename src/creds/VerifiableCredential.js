@@ -5,8 +5,8 @@ const sjcl = require('sjcl');
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
 const uuidv4 = require('uuid/v4');
+const { Claim } = require('../claim/Claim');
 const definitions = require('./definitions');
-const UCA = require('../uca/UserCollectableAttribute');
 const { services } = require('../services');
 
 function sha256(string) {
@@ -72,7 +72,7 @@ function getLeavesClaimPaths(signLeaves) {
 function verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs) {
   // 1. verify valid targetHashs
   // 1.1 "leave.value" should be equal claim values
-  const ucaValue = new UCA(leave.identifier, { attestableValue: leave.value });
+  const ucaValue = new Claim(leave.identifier, { attestableValue: leave.value });
   if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
     if (ucaValue.value !== _.get(claims, leave.claimPath)) {
       invalidValues.push(leave.value);
@@ -162,7 +162,7 @@ class CvcMerkleProof {
     const newNodes = _.clone(nodes);
     const secureRandom = services.container.SecureRandom;
     while (newNodes.length < targetLength) {
-      newNodes.push(new UCA('cvc:Random:node', secureRandom.wordWith(16)));
+      newNodes.push(new Claim('cvc:Random:node', secureRandom.wordWith(16)));
     }
     return newNodes;
   }
@@ -211,12 +211,12 @@ const VERIFY_LEVELS = {
 function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
   this.id = uuidv4();
   this.issuer = issuer;
-  const issuerUCA = new UCA('cvc:Meta:issuer', this.issuer);
+  const issuerUCA = new Claim('cvc:Meta:issuer', this.issuer);
   this.issuanceDate = (new Date()).toISOString();
-  const issuanceDateUCA = new UCA('cvc:Meta:issuanceDate', this.issuanceDate);
+  const issuanceDateUCA = new Claim('cvc:Meta:issuanceDate', this.issuanceDate);
   this.identifier = identifier;
   this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-  const expiryUCA = new UCA('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
+  const expiryUCA = new Claim('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA)
     : _.concat(ucas, issuerUCA, issuanceDateUCA);
@@ -500,18 +500,18 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
 };
 
 /**
- * List all properties al a Verifiable Credential
+ * List all properties of a Verifiable Credential
  */
 VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
   const vcDefinition = _.find(definitions, { identifier });
   if (vcDefinition) {
     const allProperties = [];
     _.forEach(vcDefinition.depends, (ucaIdentifier) => {
-      allProperties.push(...UCA.getAllProperties(ucaIdentifier));
+      allProperties.push(...Claim.getAllProperties(ucaIdentifier));
     });
     const excludesProperties = [];
     _.forEach(vcDefinition.excludes, (ucaIdentifier) => {
-      excludesProperties.push(...UCA.getAllProperties(ucaIdentifier));
+      excludesProperties.push(...Claim.getAllProperties(ucaIdentifier));
     });
     return _.difference(allProperties, excludesProperties);
   }

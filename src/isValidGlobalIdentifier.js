@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const ucaDefinitions = require('./uca/definitions');
+const { definitions } = require('@identity.com/uca');
 const vcDefinitions = require('./creds/definitions');
 
-const validUCAIdentifiers = _.map(ucaDefinitions, d => d.identifier);
+const validUCAIdentifiers = _.map(definitions, d => d.identifier);
 const validVCIdentifiers = _.map(vcDefinitions, d => d.identifier);
 const validPrefixes = ['claim', 'credential'];
 

@@ -13,6 +13,8 @@ This Javascript Library provides functionality around Verifiable Credentials (VC
 ## Contents
 
 - [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Commands](#commands)
 - [Configuration](#configuration)
   * [Etc Config File /etc/civic/config](#etc-config-file--etc-civic-config)
   * [User Config File ~/.civic/config](#user-config-file---civic-config)
@@ -178,7 +180,7 @@ const name = new UCA.IdentityAddress({
 {
   "attestableValue": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|"
 }
-```z
+```
 
 JSON String
  
@@ -547,7 +549,7 @@ VERIFY_LEVELS = {
 
 ## Schema Generator
 
-The json schema generator will get an previous definition and build a sample JSON (with random values).
+The json schema generator will get a previous definition and build a sample JSON (with random values).
 
 On top of the sample data and combining the identifier properties it will infer an JSON Schema for validating the data.
 
@@ -691,14 +693,12 @@ This is used on this library on src/services/config.js
 
 ## Releases
 
-For now the default branch is "develop" as this is an WIP library.
+The release process is fully automated and started by Civic members when it's created a tag on Github following the pattern vX.X.X-rcX. E.g.: v0.2.29-rc1.
 
-Releases will only be triggered from successfully tested "master" branches once we go live.
+After the creation of the tag, Circle Ci will trigger a job to:
 
-The pattern should be to add to the circleci workflow.
-
-All releases are tagged on github and won't follow lodash pattern, that release a tag and source for each transpilation.
-
-[npm]: https://img.shields.io/badge/npm-5.3.0-blue.svg
-[npm-url]: https://npmjs.com/
-
+build source files
+run unit tests
+increase version number on package.json
+create the stable version tag dropping the 'rc' suffix. E.g: v0.2.29
+deploy the binary file to NPM

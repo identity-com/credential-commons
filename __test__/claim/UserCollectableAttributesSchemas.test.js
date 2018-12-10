@@ -1,7 +1,6 @@
 const Ajv = require('ajv');
+const { Claim, definitions } = require('../../src/claim/Claim');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
-const definitions = require('../../src/uca/definitions');
-const UCA = require('../../src/uca/UserCollectableAttribute');
 
 describe('UCA Json Sample Date Construction tests', () => {
   it('Should generate UCA JSON Sample Data from all coded identifiers and succeed', async (done) => {
@@ -42,7 +41,7 @@ describe('UCA Json Sample Date Construction tests', () => {
       otherNames: 'Paulo',
       familyNames: 'Santos',
     };
-    const uca = new UCA(identifier, value);
+    const uca = new Claim(identifier, value);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
@@ -64,7 +63,7 @@ describe('UCA Json Sample Date Construction tests', () => {
       otherNames: 'Paulo',
       familyNames: 'Santos',
     };
-    const uca = new UCA(identifier, value);
+    const uca = new Claim(identifier, value);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
@@ -81,7 +80,7 @@ describe('UCA Json Sample Date Construction tests', () => {
 
   it('Should change the type of Number to Boolean and fail AJV validation', async (done) => {
     const identifier = 'cvc:Type:day';
-    const uca = new UCA(identifier, 1);
+    const uca = new Claim(identifier, 1);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);

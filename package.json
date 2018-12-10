@@ -21,6 +21,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "cross-env NODE_ENV=false jest",
     "test:watch": "jest --watch",
+    "check": "npm run lint && npm run test",
     "check-schemas": "cross-env NODE_ENV=false jest --no-coverage __integrations__/schemas/",
     "generate-schemas": "cross-env NODE_ENV=test node scripts/generateSchemas.js",
     "publish-schemas": "node scripts/publishSchemas.js && aws s3 cp ./dist/schemas/public/ $S3_BUCKET_SCHEMA_URL --recursive --acl public-read",
@@ -59,6 +60,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
+    "@identity.com/uca": "^0.0.2",
     "ajv": "^6.5.0",
     "babel-runtime": "^6.26.0",
     "bluebird": "^3.5.1",

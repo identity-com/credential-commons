@@ -1,11 +1,10 @@
 const Ajv = require('ajv');
 
 const uuidv1 = require('uuid/v1');
-const UCA = require('../../src/uca/UserCollectableAttribute');
+const { Claim, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');
-const ucaDefinitions = require('../../src/uca/definitions');
 
 jest.setTimeout(1500000);
 
@@ -14,8 +13,8 @@ jest.setTimeout(1500000);
  */
 describe('VerifiableCredentials SchemaGenerator validation', () => {
   it('Should validate the VC Schema generation against a single well known definition', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 1, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 1, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', 'jest:test', null, [name, dob], 1);
     const jsonString = JSON.stringify(cred, null, 2);
     const generatedJson = JSON.parse(jsonString);
@@ -30,7 +29,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-        const ucaDefinition = ucaDefinitions.find(ucaDef => (
+        const ucaDefinition = definitions.find(ucaDef => (
           ucaDef.identifier === ucaDefinitionIdentifier
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -38,7 +37,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         if (Object.keys(ucaJson).length === 1) {
           [value] = Object.values(ucaJson);
         }
-        const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
+        const dependentUca = new Claim(ucaDefinition.identifier, value, ucaDefinition.version);
         ucaArray.push(dependentUca);
       });
       const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
@@ -71,7 +70,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = ucaDefinitions.find(ucaDef => (
+      const ucaDefinition = definitions.find(ucaDef => (
         ucaDef.identifier === ucaDefinitionIdentifier
       ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -79,7 +78,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       if (Object.keys(ucaJson).length === 1) {
         [value] = Object.values(ucaJson);
       }
-      const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
+      const dependentUca = new Claim(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
     const issuer = `jest:test:${uuidv1()}`;
@@ -101,7 +100,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = ucaDefinitions.find(ucaDef => (
+      const ucaDefinition = definitions.find(ucaDef => (
         ucaDef.identifier === ucaDefinitionIdentifier
       ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -109,7 +108,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       if (Object.keys(ucaJson).length === 1) {
         [value] = Object.values(ucaJson);
       }
-      const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
+      const dependentUca = new Claim(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
     const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);

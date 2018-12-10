@@ -1,10 +1,9 @@
 const _ = require('lodash');
 const fs = require('fs');
 const uuidv4 = require('uuid/v4');
-const UCA = require('../../src/uca/UserCollectableAttribute');
+const { Claim, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const credentialDefinitions = require('../../src/creds/definitions');
-const ucaDefinitions = require('../../src/uca/definitions');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 
 jest.setTimeout(150000);
@@ -12,23 +11,23 @@ jest.setTimeout(150000);
 describe('Unit tests for Verifiable Credentials', () => {
   test('Dont construct undefined Credentials', () => {
     function createCredential() {
-      const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-      const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+      const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+      const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
       return new VC('cvc:cred:Test', uuidv4(), null, [name, dob], '1');
     }
     expect(createCredential).toThrowError('cvc:cred:Test is not defined');
   });
   test('Dont construct Credentials with wrong version', () => {
     function createCredential() {
-      const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-      const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+      const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+      const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
       return new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '2');
     }
     expect(createCredential).toThrowError('Credential definition for cvc:Credential:Identity v2 not found');
   });
   test('New Defined Credentials', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred).toBeDefined();
     expect(cred.claim.identity.name.givenNames).toBe('Joao');
@@ -43,8 +42,8 @@ describe('Unit tests for Verifiable Credentials', () => {
   // This test was skipped cause in the current definitions we don't have this case any more
   test.skip('should validate new defined credentials with the obligatory Meta:expirationDate UCA with'
     + ' null value', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred).toBeDefined();
     expect(cred.claim.identity.name.givenNames).toBe('Joao');
@@ -60,8 +59,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.proof.leaves).toHaveLength(7);
   });
   test('New Expirable Credentials', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), '-1d', [name, dob], '1');
     expect(cred).toBeDefined();
     expect(cred.claim.identity.name.givenNames).toBe('Joao');
@@ -77,15 +76,15 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.proof.leaves).toHaveLength(8);
   });
   test('New Defined Credentials return the incorrect global Credential Identifier', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred.getGlobalCredentialItemIdentifier()).toBe('credential-cvc:Credential:Identity-1');
   });
 
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), '-1d', [name, dob], '1');
     return cred.requestAnchor().then((updated) => {
       expect(updated.proof.anchor.type).toBe('temporary');
@@ -96,8 +95,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     });
   });
   it('should refresh an temporary anchoring with an permanent one', async (done) => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
 
     cred.requestAnchor = jest.fn().mockImplementation(async () => {
@@ -130,9 +129,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       month: 3,
       year: 1978,
     };
-    const nameUca = new UCA.IdentityName(civIdentityName);
+    const nameUca = new Claim.IdentityName(civIdentityName);
 
-    const dobUca = new UCA('cvc:Identity:dateOfBirth', civIdentityDateOfBirth);
+    const dobUca = new Claim('cvc:Identity:dateOfBirth', civIdentityDateOfBirth);
     const simpleIdentity = new VC('cvc:Credential:Identity', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
       null, [nameUca, dobUca], '1');
 
@@ -151,7 +150,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       username: 'ZcMpCBQ0lE',
     };
 
-    const emailUca = new UCA('cvc:Contact:email', email, '1');
+    const emailUca = new Claim('cvc:Contact:email', email, '1');
     const emailCredential = new VC('cvc:Credential:Email', '', null, [emailUca], '1');
     const filtered = emailCredential.filter(['cvc:Contact:email']);
     expect(filtered.claim.contact.email.domain).toBeDefined();
@@ -169,7 +168,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       username: 'ZcMpCBQ0lE',
     };
 
-    const emailUca = new UCA('cvc:Contact:email', email, '1');
+    const emailUca = new Claim('cvc:Contact:email', email, '1');
     const emailCredential = new VC('cvc:Credential:Email', '', null, [emailUca], '1');
     const filtered = emailCredential.filter(['cvc:Email:domain']);
 
@@ -190,7 +189,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       postalCode: '5JhmWkXBAg',
     };
 
-    const uca = new UCA('cvc:Identity:address', value, '1');
+    const uca = new Claim('cvc:Identity:address', value, '1');
     const credential = new VC('cvc:Credential:Address', '', null, [uca], '1');
     const filtered = credential.filter(['cvc:Identity:address']);
 
@@ -213,7 +212,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       lineType: 'OaguqgUaR7',
     };
 
-    const uca = new UCA('cvc:Contact:phoneNumber', value, '1');
+    const uca = new Claim('cvc:Contact:phoneNumber', value, '1');
     const credential = new VC('cvc:Credential:PhoneNumber', '', null, [uca], '1');
     const filtered = credential.filter(['cvc:Contact:phoneNumber']);
 
@@ -227,31 +226,31 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should filter claims for GenericDocumentId asking for cvc:Identity:dateOfBirth and return nothing', () => {
     const typeValue = 'fq6gOJR2rr';
-    const type = new UCA('cvc:Document:type', typeValue, '1');
+    const type = new Claim('cvc:Document:type', typeValue, '1');
     const numberValue = '3bj1LUg9yG';
-    const number = new UCA('cvc:Document:number', numberValue, '1');
+    const number = new Claim('cvc:Document:number', numberValue, '1');
     const nameValue = {
       givenNames: 'e8qhs4Iak1',
       familyNames: '4h8sLtEfav',
       otherNames: 'bDTn4stMpX',
     };
-    const name = new UCA('cvc:Document:name', nameValue, '1');
+    const name = new Claim('cvc:Document:name', nameValue, '1');
     const genderValue = 'jFtCBFceQI';
-    const gender = new UCA('cvc:Document:gender', genderValue, '1');
+    const gender = new Claim('cvc:Document:gender', genderValue, '1');
     const issueLocationValue = 'OZbhzBU8ng';
-    const issueLocation = new UCA('cvc:Document:issueLocation', issueLocationValue, '1');
+    const issueLocation = new Claim('cvc:Document:issueLocation', issueLocationValue, '1');
     const issueAuthorityValue = 'BO2xblNSVK';
-    const issueAuthority = new UCA('cvc:Document:issueAuthority', issueAuthorityValue, '1');
+    const issueAuthority = new Claim('cvc:Document:issueAuthority', issueAuthorityValue, '1');
     const issueCountryValue = 'p4dNUeAKtI';
-    const issueCountry = new UCA('cvc:Document:issueCountry', issueCountryValue, '1');
+    const issueCountry = new Claim('cvc:Document:issueCountry', issueCountryValue, '1');
     const placeOfBirthValue = 'r4hIHbyLru';
-    const placeOfBirth = new UCA('cvc:Document:placeOfBirth', placeOfBirthValue, '1');
+    const placeOfBirth = new Claim('cvc:Document:placeOfBirth', placeOfBirthValue, '1');
     const dateOfBirthValue = {
       day: 23.55661112087767,
       month: 2.3719586174881204,
       year: 1973.1235577195403,
     };
-    const dateOfBirth = new UCA('cvc:Document:dateOfBirth', dateOfBirthValue, '1');
+    const dateOfBirth = new Claim('cvc:Document:dateOfBirth', dateOfBirthValue, '1');
     const addressValue = {
       country: 'IH4aiXuEoo',
       county: 'akKjaQehNK',
@@ -261,7 +260,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       city: 'WU9GJ0R9be',
       postalCode: 'ci1DMuz16W',
     };
-    const address = new UCA('cvc:Document:address', addressValue, '1');
+    const address = new Claim('cvc:Document:address', addressValue, '1');
     const propertiesValue = {
       dateOfIssue: {
         day: 18.414766065177673,
@@ -274,14 +273,14 @@ describe('Unit tests for Verifiable Credentials', () => {
         year: 1957.6252772045032,
       },
     };
-    const properties = new UCA('cvc:Document:properties', propertiesValue, '1');
+    const properties = new Claim('cvc:Document:properties', propertiesValue, '1');
     const imageValue = {
       front: '9NMgeFErNd',
       frontMD5: 'zgOvmWXruS',
       back: 'uPrJKO3cbq',
       backMD5: '0yr9zkdApo',
     };
-    const image = new UCA('cvc:Document:image', imageValue, '1');
+    const image = new Claim('cvc:Document:image', imageValue, '1');
     const credential = new VC('cvc:Credential:GenericDocumentId', '', null, [type, number, name, gender, issueAuthority,
       issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1');
     const filtered = credential.filter(['cvc:Identity:dateOfBirth']);
@@ -299,7 +298,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       lineType: 'OaguqgUaR7',
     };
 
-    const uca = new UCA('cvc:Contact:phoneNumber', value, '1');
+    const uca = new Claim('cvc:Contact:phoneNumber', value, '1');
     const credential = new VC('cvc:Credential:PhoneNumber', '', null, [uca], '1');
     const filtered = credential.filter(['cvc:PhoneNumber:countryCode']);
 
@@ -313,31 +312,31 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
     const typeValue = 'fq6gOJR2rr';
-    const type = new UCA('cvc:Document:type', typeValue, '1');
+    const type = new Claim('cvc:Document:type', typeValue, '1');
     const numberValue = '3bj1LUg9yG';
-    const number = new UCA('cvc:Document:number', numberValue, '1');
+    const number = new Claim('cvc:Document:number', numberValue, '1');
     const nameValue = {
       givenNames: 'e8qhs4Iak1',
       familyNames: '4h8sLtEfav',
       otherNames: 'bDTn4stMpX',
     };
-    const name = new UCA('cvc:Document:name', nameValue, '1');
+    const name = new Claim('cvc:Document:name', nameValue, '1');
     const genderValue = 'jFtCBFceQI';
-    const gender = new UCA('cvc:Document:gender', genderValue, '1');
+    const gender = new Claim('cvc:Document:gender', genderValue, '1');
     const issueLocationValue = 'OZbhzBU8ng';
-    const issueLocation = new UCA('cvc:Document:issueLocation', issueLocationValue, '1');
+    const issueLocation = new Claim('cvc:Document:issueLocation', issueLocationValue, '1');
     const issueAuthorityValue = 'BO2xblNSVK';
-    const issueAuthority = new UCA('cvc:Document:issueAuthority', issueAuthorityValue, '1');
+    const issueAuthority = new Claim('cvc:Document:issueAuthority', issueAuthorityValue, '1');
     const issueCountryValue = 'p4dNUeAKtI';
-    const issueCountry = new UCA('cvc:Document:issueCountry', issueCountryValue, '1');
+    const issueCountry = new Claim('cvc:Document:issueCountry', issueCountryValue, '1');
     const placeOfBirthValue = 'r4hIHbyLru';
-    const placeOfBirth = new UCA('cvc:Document:placeOfBirth', placeOfBirthValue, '1');
+    const placeOfBirth = new Claim('cvc:Document:placeOfBirth', placeOfBirthValue, '1');
     const dateOfBirthValue = {
       day: 23,
       month: 2,
       year: 1973,
     };
-    const dateOfBirth = new UCA('cvc:Document:dateOfBirth', dateOfBirthValue, '1');
+    const dateOfBirth = new Claim('cvc:Document:dateOfBirth', dateOfBirthValue, '1');
     const addressValue = {
       country: 'IH4aiXuEoo',
       county: 'akKjaQehNK',
@@ -347,7 +346,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       city: 'WU9GJ0R9be',
       postalCode: 'ci1DMuz16W',
     };
-    const address = new UCA('cvc:Document:address', addressValue, '1');
+    const address = new Claim('cvc:Document:address', addressValue, '1');
     const propertiesValue = {
       dateOfIssue: {
         day: 18,
@@ -360,14 +359,14 @@ describe('Unit tests for Verifiable Credentials', () => {
         year: 1957,
       },
     };
-    const properties = new UCA('cvc:Document:properties', propertiesValue, '1');
+    const properties = new Claim('cvc:Document:properties', propertiesValue, '1');
     const imageValue = {
       front: '9NMgeFErNd',
       frontMD5: 'zgOvmWXruS',
       back: 'uPrJKO3cbq',
       backMD5: '0yr9zkdApo',
     };
-    const image = new UCA('cvc:Document:image', imageValue, '1');
+    const image = new Claim('cvc:Document:image', imageValue, '1');
     const credential = new VC('cvc:Credential:GenericDocumentId', '', null, [type, number, name, gender, issueAuthority,
       issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1');
     const filtered = credential.filter(['cvc:Document:type']);
@@ -408,13 +407,13 @@ describe('Unit tests for Verifiable Credentials', () => {
     const credentialDefinition = credentialDefinitions.find(definition => definition.identifier
       === 'cvc:Credential:GenericDocumentId');
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
         [value] = Object.values(ucaJson);
       }
-      const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
+      const dependentUca = new Claim(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
     const credential = new VC(credentialDefinition.identifier, 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
@@ -538,8 +537,8 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should revoke the permanent anchor and succed verification', async (done) => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     await cred.requestAnchor();
     await cred.updateAnchor();
@@ -564,8 +563,8 @@ describe('Unit tests for Verifiable Credentials', () => {
 
 
   it('Should match with one constraint', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
@@ -575,8 +574,8 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should match with two constraint', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
@@ -587,8 +586,8 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should match with gt constraint', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
@@ -598,8 +597,8 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should not match', () => {
-    const name = new UCA.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
