@@ -28,7 +28,7 @@ describe('isGlobalIdentifier Tests', () => {
   test('claim-cvc:Name:givenNames-1 is valid', () => {
     expect(isGlobalIdentifier('claim-cvc:Name:givenNames-1')).toBeTruthy();
   });
-  test('credential-cvc:Credential:Identity-1 is valid', () => {
-    expect(isGlobalIdentifier('credential-cvc:Credential:Identity-1')).toBeTruthy();
+  test('credential-cvc:Identity-v1 is valid', () => {
+    expect(isGlobalIdentifier('credential-cvc:Identity-v1')).toBeTruthy();
   });
 });

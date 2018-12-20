@@ -2,12 +2,12 @@
   "id": "e3dc1ceb-3899-454f-a80c-52c97a0cc9d8",
   "issuer": "jest:test:fe07c3d0-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.862Z",
-  "identifier": "cvc:Credential:Email",
+  "identifier": "credential-cvc:Email-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:Email"
+    "credential-cvc:Email-v1"
   ],
   "claim": {
     "contact": {
@@ -26,7 +26,7 @@
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "cvc:Credential:Email",
+        "label": "credential-cvc:Email-v1",
         "data": "03e9bccbf5109b7b70154eddd95b089a24896d0a6b46f52549d8471febd83a3d",
         "signature": "signed:dummy"
       },

@@ -6,21 +6,21 @@
  */
 const definitions = [
   {
-    identifier: 'cvc:Credential:Email',
+    identifier: 'credential-cvc:Email-v1',
     version: '1',
     depends: [
       'cvc:Contact:email',
     ],
   },
   {
-    identifier: 'cvc:Credential:PhoneNumber',
+    identifier: 'credential-cvc:PhoneNumber-v1',
     version: '1',
     depends: [
       'cvc:Contact:phoneNumber',
     ],
   },
   {
-    identifier: 'cvc:Credential:GenericDocumentId',
+    identifier: 'credential-cvc:GenericDocumentId-v1',
     version: '1',
     depends: [
       'cvc:Document:type',
@@ -38,14 +38,14 @@ const definitions = [
     ],
   },
   {
-    identifier: 'cvc:Credential:Address',
+    identifier: 'credential-cvc:Address-v1',
     version: '1',
     depends: [
       'cvc:Identity:address',
     ],
   },
   {
-    identifier: 'cvc:Credential:Identity',
+    identifier: 'credential-cvc:Identity-v1',
     version: '1',
     depends: [
       'cvc:Identity:name',

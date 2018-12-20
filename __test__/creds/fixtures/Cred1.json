@@ -2,12 +2,12 @@
   "id": "3636227c-5adf-4135-b81c-6dd1da53fd67",
   "issuer": "",
   "issuanceDate": "2018-11-13T18:54:11.665Z",
-  "identifier": "cvc:Credential:Email",
+  "identifier": "credential-cvc:Email-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:Email"
+    "credential-cvc:Email-v1"
   ],
   "claim": {
     "contact": {

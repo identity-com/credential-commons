@@ -2,12 +2,12 @@
   "id": null,
   "issuer": "d460c90d-4032-4c29-9743-f52e0a852602",
   "issuanceDate": "2018-10-08T19:46:22.364Z",
-  "identifier": "cvc:Credential:Identity",
+  "identifier": "credential-cvc:Identity-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:Identity"
+    "credential-cvc:Identity-v1"
   ],
   "claim": {
     "identity": {
@@ -29,7 +29,7 @@
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "cvc:Credential:Identity",
+        "label": "credential-cvc:Identity-v1",
         "data": "1fbe357dfcb0f19b0470d1017ce617bc8f3e88ff06552f425a3e2e81d6f38c10",
         "signature": "signed:dummy"
       },

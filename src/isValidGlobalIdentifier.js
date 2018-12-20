@@ -24,7 +24,7 @@ function isValidGlobalIdentifier(identifier) {
       }
       return true;
     case 'credential':
-      if (!_.includes(validVCIdentifiers, splited[1])) {
+      if (!_.includes(validVCIdentifiers, splited[1]) && !_.includes(validVCIdentifiers, identifier)) {
         throw new Error(`${identifier} is not valid`);
       }
       return true;

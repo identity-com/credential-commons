@@ -2,12 +2,12 @@
   "id": "7e984bcc-602a-478f-adaa-5a586e4abae6",
   "issuer": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD",
   "issuanceDate": "2018-11-20T20:41:59.861Z",
-  "identifier": "cvc:Credential:GenericDocumentId",
+  "identifier": "credential-cvc:GenericDocumentId-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:GenericDocumentId"
+    "credential-cvc:GenericDocumentId-v1"
   ],
   "claim": {
     "document": {

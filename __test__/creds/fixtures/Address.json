@@ -2,12 +2,12 @@
   "id": "7704ddf0-6226-4b2b-9146-d36083c7b01d",
   "issuer": "jest:test:fe0c0990-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.890Z",
-  "identifier": "cvc:Credential:Address",
+  "identifier": "credential-cvc:Address-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:Address"
+    "credential-cvc:Address-v1"
   ],
   "claim": {
     "identity": {
@@ -28,7 +28,7 @@
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "cvc:Credential:Address",
+        "label": "credential-cvc:Address-v1",
         "data": "65825b6e759d96ed442aff3879fad771e4542a6bf129170fa28ad28725ae3193",
         "signature": "signed:dummy"
       },
