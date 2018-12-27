@@ -53,7 +53,7 @@
     },
     "leaves": [
       {
-        "identifier": "cvc:Contact:email",
+        "identifier": "claim-cvc:contact.email-v1",
         "value": "urn:email.domain.name:d8ca1591c2526a1b03e8ab9be02f32036c112b1b347e3cd7ae6bf5079ab249a2:X6gQFO3QYg|urn:email.domain.tld:58f18dc6fe5a24b3626fbd9a03548864dc380114a17f346f0d97d3b9cb0700d5:PSsiuGIgez|urn:email.username:3e19732ba77e798b6b85f55e3d5321e58108c758b865614a60b3198fb10c0d69:b6J7B5pCWo|",
         "claimPath": "contact.email",
         "targetHash": "1952a3a7260b286d1251f40db511d9b5cf78960a414791c96ac6437b2968a190",
@@ -76,7 +76,7 @@
         ]
       },
       {
-        "identifier": "cvc:Email:domain",
+        "identifier": "claim-cvc:email.domain-v1",
         "value": "urn:domain.name:d8ca1591c2526a1b03e8ab9be02f32036c112b1b347e3cd7ae6bf5079ab249a2:X6gQFO3QYg|urn:domain.tld:58f18dc6fe5a24b3626fbd9a03548864dc380114a17f346f0d97d3b9cb0700d5:PSsiuGIgez|",
         "claimPath": "contact.email.domain",
         "targetHash": "5478af59d9d5633434dbcac0c4d98d65c3c23dd80fb008081aabd5c95ea40642",

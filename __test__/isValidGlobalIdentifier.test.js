@@ -25,8 +25,8 @@ describe('isGlobalIdentifier Tests', () => {
     }
     expect(target).toThrow('credential-civ:Credential:CivicBasico-1 is not valid');
   });
-  test('claim-cvc:Name:givenNames-1 is valid', () => {
-    expect(isGlobalIdentifier('claim-cvc:Name:givenNames-1')).toBeTruthy();
+  test('claim-cvc:name.givenNames-v1 is valid', () => {
+    expect(isGlobalIdentifier('claim-cvc:name.givenNames-v1')).toBeTruthy();
   });
   test('credential-cvc:Identity-v1 is valid', () => {
     expect(isGlobalIdentifier('credential-cvc:Identity-v1')).toBeTruthy();

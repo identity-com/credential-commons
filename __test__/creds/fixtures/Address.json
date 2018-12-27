@@ -55,7 +55,7 @@
     },
     "leaves": [
       {
-        "identifier": "cvc:Identity:address",
+        "identifier": "claim-cvc:Identity.address-v1",
         "value": "urn:address.city:0c22195bc8be13f690253e7a7d77850d6f3a2028593da99fdc87e23c8f7ad716:raSl8SUpYZ|urn:address.country:e3a8e92030c324a07c0a431f523d6311d55ec834dfe55c78a7c60f004d716ef1:mqVSbDJF7I|urn:address.county:40fbe881d6164e044d13e2bb1d5b8aa46141cdd97844c2167657d91d189c223b:Lm2OhnTyw3|urn:address.postalCode:85b81d9ce80e246f700d474ff6f3a51af21635633759754b8a527a79513365f4:IZfp7BVc84|urn:address.state:fdc1115c610e69f08c46bce846a72b71bf9c73488b92d4713a6c4c85f6cee773:C6vHYVzv2R|urn:address.street:939212e16f1e6ac159f97376d7015c962d23e0dea37eb447f3669246a122220e:MVJWImdrGv|urn:address.unit:e21c62cdfb0b874f104d3b6ed00ded1bef86a918aeee5446f63c7f7f6c3953ef:6kP9kdNgHF|",
         "claimPath": "identity.address",
         "targetHash": "6b8a901936f75dc4f27d12d81d3703e4d4b0199b275fce4cf339d80c06e00184",
@@ -78,7 +78,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:country",
+        "identifier": "claim-cvc:Address.county-v1",
         "value": "urn:country:e3a8e92030c324a07c0a431f523d6311d55ec834dfe55c78a7c60f004d716ef1:mqVSbDJF7I|",
         "claimPath": "identity.address.country",
         "targetHash": "4ad22678ea5865cf00e123357a06599943fb3c5fffc1f5aeb9881c902306b95d",
@@ -101,7 +101,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:county",
+        "identifier": "claim-cvc:Address.county-v1",
         "value": "urn:county:40fbe881d6164e044d13e2bb1d5b8aa46141cdd97844c2167657d91d189c223b:Lm2OhnTyw3|",
         "claimPath": "identity.address.county",
         "targetHash": "03cf7915076dac2f500b5bb730738ee7c20c4fba93d4b3cdda7baf37aa6ccdfe",
@@ -124,7 +124,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:state",
+        "identifier": "claim-cvc:Address.state-v1",
         "value": "urn:state:fdc1115c610e69f08c46bce846a72b71bf9c73488b92d4713a6c4c85f6cee773:C6vHYVzv2R|",
         "claimPath": "identity.address.state",
         "targetHash": "30e3acf8512a5243caeabfadbdb72eec1332660e6af75e52070084eec445960f",
@@ -147,7 +147,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:city",
+        "identifier": "claim-cvc:Address.city-v1",
         "value": "urn:city:0c22195bc8be13f690253e7a7d77850d6f3a2028593da99fdc87e23c8f7ad716:raSl8SUpYZ|",
         "claimPath": "identity.address.city",
         "targetHash": "9ccfc097a9ef2124a3b2cf1ae6ff71dd17a9adf8213adf90649594eba0e9a824",
@@ -170,7 +170,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:postalCode",
+        "identifier": "claim-cvc:Address.postalCode-v1",
         "value": "urn:postalCode:85b81d9ce80e246f700d474ff6f3a51af21635633759754b8a527a79513365f4:IZfp7BVc84|",
         "claimPath": "identity.address.postalCode",
         "targetHash": "1682744ff5a27fe7ef17086acb9d3d3d1fd4bb297d322e198027706a4432a672",

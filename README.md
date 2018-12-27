@@ -139,7 +139,7 @@ npm run export-definitions
 
 Example
 ```
-const name = new UCA('cvc:Identity:address', {
+const name = new UCA('claim-cvc:Identity.address-v1', {
     street: 'Alameda dos Anjos',
     unit: '102',
     city: 'Belo Horizonte',
@@ -242,7 +242,7 @@ JSON String
     },
     "leaves": [
       {
-        "identifier": "cvc:Identity:address",
+        "identifier": "claim-cvc:Identity.address-v1",
         "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
         "claimPath": "type.address",
         "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
@@ -435,7 +435,7 @@ cred.updateAnchor().then(() => {
     },
     "leaves": [
       {
-        "identifier": "cvc:Identity:address",
+        "identifier": "claim-cvc:Identity.address-v1",
         "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
         "claimPath": "type.address",
         "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
@@ -557,7 +557,7 @@ A identifier like this:
 
 Example
 ```javascript
-const name = new UCA('cvc:Identity:name', {
+const name = new UCA('claim-cvc:Identity.name-v1', {
   first: 'Joao', 
   middle: 'Barbosa', 
   last: 'Santos'
@@ -580,7 +580,7 @@ The schema generator will generate an json schema like this:
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "cvc:Identity:name.first",
+  "title": "claim-cvc:Identity.name-v1.first",
   "type": "object",
   "properties": {
     "first": {

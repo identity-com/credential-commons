@@ -9,7 +9,7 @@ const generateSampleBasicCredentials = async () => {
       tld: 'com',
     },
   };
-  const emailUca = new UCA('cvc:Contact:email', email);
+  const emailUca = new UCA('claim-cvc:contact.email-v1', email);
 
   const phoneNumber = {
     country: 'BR',
@@ -18,7 +18,7 @@ const generateSampleBasicCredentials = async () => {
     lineType: 'mobile',
   };
 
-  const phoneNumberUca = new UCA('cvc:Contact:phoneNumber', phoneNumber);
+  const phoneNumberUca = new UCA('claim-cvc:contact.phoneNumber-v1', phoneNumber);
 
   const emailCredential = new VC('cvc:Credential:Email', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', null, [emailUca], 1);
   const emailCredentialTemporary = await emailCredential.requestAnchor();
@@ -41,7 +41,7 @@ const generateSampleAddress = async () => {
     county: 'Sao Bento',
     country: 'Brazil',
   };
-  const addressUca = new UCA('cvc:Identity:address', address);
+  const addressUca = new UCA('claim-cvc:Identity.address-v1', address);
   const civicAddress = new VC('cvc:Credential:Address', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', 315569260 /* 10y */, [addressUca], 1);
   civicAddress.requestAnchor().then((updatedCredential) => {
     updatedCredential.updateAnchor().then((definitive) => {

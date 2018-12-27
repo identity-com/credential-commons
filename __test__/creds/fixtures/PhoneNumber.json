@@ -2,12 +2,12 @@
   "id": "c409433d-53a0-413b-ab36-cf223ef11261",
   "issuer": "jest:test:fe097180-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.872Z",
-  "identifier": "credential-cvc:PhoneNumber-v1",
+  "identifier": "claim-cvc:contact.phoneNumber-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "credential-cvc:PhoneNumber-v1"
+    "claim-cvc:contact.phoneNumber-v1"
   ],
   "claim": {
     "contact": {
@@ -26,7 +26,7 @@
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "credential-cvc:PhoneNumber-v1",
+        "label": "claim-cvc:contact.phoneNumber-v1",
         "data": "724ae5eef62ff52a72f21b613ab05024b4d52bc3c6dc64c64af242c670e85fff",
         "signature": "signed:dummy"
       },
@@ -53,7 +53,7 @@
     },
     "leaves": [
       {
-        "identifier": "cvc:Contact:phoneNumber",
+        "identifier": "claim-cvc:contact.phoneNumber-v1",
         "value": "urn:phoneNumber.country:9a27746e2c234c14d80874f647ed69f491e5e19f4aee6c89f0cc8105747c2dcb:Y1kbIF49uq|urn:phoneNumber.countryCode:932d51a15a2e3079f3922d4ee77a7bb763ddda6515a790b4b79bb7c0dda8a4fd:LN0V7AMZ1R|urn:phoneNumber.extension:e22172ed0cece05274bab12d0944270c54c88203d205aae62ea3cf81fecf35c9:MNPIrwwpt4|urn:phoneNumber.lineType:65b327d40d8a19cae121a278d1fcb5dd9f89019c2eaf27544dc751c5f1bb4e2c:pmu0Mibtod|urn:phoneNumber.number:4fa664bf00f78628a95750172c4460d427cb66314504dd24dacd1e37cb560a22:PPWP1gUyxx|",
         "claimPath": "contact.phoneNumber",
         "targetHash": "ed75e2a2456b606010f54fc5a946e3c43d06eb2b3b6580ed180b927bcdd23342",
@@ -76,7 +76,7 @@
         ]
       },
       {
-        "identifier": "cvc:PhoneNumber:countryCode",
+        "identifier": "claim-cvc:phoneNumber.countryCode-v1",
         "value": "urn:countryCode:932d51a15a2e3079f3922d4ee77a7bb763ddda6515a790b4b79bb7c0dda8a4fd:LN0V7AMZ1R|",
         "claimPath": "contact.phoneNumber.countryCode",
         "targetHash": "fa1c0349205f0afac38aa71fcab8ffc9314a05f06d17579ef5293340f21f4afd",
@@ -99,7 +99,7 @@
         ]
       },
       {
-        "identifier": "cvc:PhoneNumber:number",
+        "identifier": "claim-cvc:phoneNumber.number-v1",
         "value": "urn:number:4fa664bf00f78628a95750172c4460d427cb66314504dd24dacd1e37cb560a22:PPWP1gUyxx|",
         "claimPath": "contact.phoneNumber.number",
         "targetHash": "7926d2d136e715d11cf39e1200542733f6808bd93eff9eadd2f3b811c4367372",
@@ -122,7 +122,7 @@
         ]
       },
       {
-        "identifier": "cvc:PhoneNumber:extension",
+        "identifier": "claim-cvc:phoneNumber.extension-v1",
         "value": "urn:extension:e22172ed0cece05274bab12d0944270c54c88203d205aae62ea3cf81fecf35c9:MNPIrwwpt4|",
         "claimPath": "contact.phoneNumber.extension",
         "targetHash": "ae91bfc54716606456a96f3d2c4ca8c1467b295cad5fe5f37fc960c804ea292d",
@@ -145,7 +145,7 @@
         ]
       },
       {
-        "identifier": "cvc:PhoneNumber:lineType",
+        "identifier": "claim-cvc:phoneNumber.lineType-v1",
         "value": "urn:lineType:65b327d40d8a19cae121a278d1fcb5dd9f89019c2eaf27544dc751c5f1bb4e2c:pmu0Mibtod|",
         "claimPath": "contact.phoneNumber.lineType",
         "targetHash": "43b6ae3e8cab63b818106d18fafeed21eeb3c95018a0a4ddd630148c5bf7e357",

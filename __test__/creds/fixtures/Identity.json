@@ -56,7 +56,7 @@
     },
     "leaves": [
       {
-        "identifier": "cvc:Identity:name",
+        "identifier": "claim-cvc:Identity.name-v1",
         "value": "urn:name.familyNames:b9aaf1b43b90a6636909e884977ea4e853dcc794098a7d9016094057aa0ecbbd:sWYglHZ6Ry|urn:name.givenNames:65b4fd7d6d2e99b9108c68f0d0a239a0aa6ecaa50658f2705788a9965ca3f7cf:1otj7GaELc|urn:name.otherNames:75d5ffd2e6466e5a6b6497cda5a9118676af7df99c8e00a4870b1af1adb9b451:0QpdyidiaF|",
         "claimPath": "identity.name",
         "targetHash": "741c9b32c0e46c7335ee6bfea3819e6df80cb49f48fe87132574a39ed8910ba2",
@@ -79,7 +79,7 @@
         ]
       },
       {
-        "identifier": "cvc:Name:givenNames",
+        "identifier": "claim-cvc:name.givenNames-v1",
         "value": "urn:givenNames:65b4fd7d6d2e99b9108c68f0d0a239a0aa6ecaa50658f2705788a9965ca3f7cf:1otj7GaELc|",
         "claimPath": "identity.name.givenNames",
         "targetHash": "325c544bc8d3e303473da4cf8b9a9edb86838a3897da8f5af961ec1536e88af0",
@@ -102,7 +102,7 @@
         ]
       },
       {
-        "identifier": "cvc:Name:familyNames",
+        "identifier": "claim-cvc:name.familyNames-v1",
         "value": "urn:familyNames:b9aaf1b43b90a6636909e884977ea4e853dcc794098a7d9016094057aa0ecbbd:sWYglHZ6Ry|",
         "claimPath": "identity.name.familyNames",
         "targetHash": "2e1a69df77b5abbbc0c30b1eb73a010ec5b15826417119ce001504efe16fdc52",
@@ -125,7 +125,7 @@
         ]
       },
       {
-        "identifier": "cvc:Name:otherNames",
+        "identifier": "claim-cvc:name.otherNames-v1",
         "value": "urn:otherNames:75d5ffd2e6466e5a6b6497cda5a9118676af7df99c8e00a4870b1af1adb9b451:0QpdyidiaF|",
         "claimPath": "identity.name.otherNames",
         "targetHash": "cee7323edd25b8d6f329854eb4b81c7eeace99609eea28db528f626da3a5ba85",
@@ -148,7 +148,7 @@
         ]
       },
       {
-        "identifier": "cvc:Identity:dateOfBirth",
+        "identifier": "claim-cvc:Identity.dateOfBirth-v1",
         "value": "urn:dateOfBirth.day:fa11c23cdf7383160eaea4d9407ecce905d447ba9e7f29b1ea779c35fe3c304b:2.138220070139745|urn:dateOfBirth.month:5f5d7db849b9929a4c1691b7f3e4a0a61a77a5719bb199e3d07ee57d448cb62e:9.54655376259586|urn:dateOfBirth.year:2a07dbbde111ac2a9a62f92ad22ba9a7aa418446ae2c5cad03e5d689ff8e72bd:1947.6347555235777|",
         "claimPath": "identity.dateOfBirth",
         "targetHash": "028ab3dc56ff0bf8a421b666968a24efb8360283d35e5fa572f22eb399b266d8",

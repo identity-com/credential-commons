@@ -134,17 +134,17 @@ describe('Unit tests for Verifiable Credentials', () => {
     };
     const nameUca = new Claim.IdentityName(civIdentityName);
 
-    const dobUca = new Claim('cvc:Identity:dateOfBirth', civIdentityDateOfBirth);
+    const dobUca = new Claim('claim-cvc:Identity.dateOfBirth-v1', civIdentityDateOfBirth);
     const simpleIdentity = new VC('credential-cvc:Identity-v1', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
       null, [nameUca, dobUca], '1');
 
-    const filtered = simpleIdentity.filter(['cvc:Name:givenNames']);
+    const filtered = simpleIdentity.filter(['claim-cvc:name.givenNames-v1']);
     expect(filtered.claim.identity.name.givenNames).toBeDefined();
     expect(filtered.claim.identity.name.otherNames).not.toBeDefined();
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
   });
 
-  it('Should filter claims for Email asking for cvc:Contact:email and return them on the filtered VC', () => {
+  it('Should filter claims for Email asking for claim-cvc:contact.email-v1 and return them on the filtered VC', () => {
     const email = {
       domain: {
         tld: 'oVaPsceZ4C',
@@ -153,9 +153,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       username: 'ZcMpCBQ0lE',
     };
 
-    const emailUca = new Claim('cvc:Contact:email', email, '1');
+    const emailUca = new Claim('claim-cvc:contact.email-v1', email, '1');
     const emailCredential = new VC('credential-cvc:Email-v1', '', null, [emailUca], '1');
-    const filtered = emailCredential.filter(['cvc:Contact:email']);
+    const filtered = emailCredential.filter(['claim-cvc:contact.email-v1']);
     expect(filtered.claim.contact.email.domain).toBeDefined();
     expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
     expect(filtered.claim.contact.email.domain.name).toBe('UTpHKFyaaB');
@@ -171,9 +171,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       username: 'ZcMpCBQ0lE',
     };
 
-    const emailUca = new Claim('cvc:Contact:email', email, '1');
+    const emailUca = new Claim('claim-cvc:contact.email-v1', email, '1');
     const emailCredential = new VC('credential-cvc:Email-v1', '', null, [emailUca], '1');
-    const filtered = emailCredential.filter(['cvc:Email:domain']);
+    const filtered = emailCredential.filter(['claim-cvc:email.domain-v1']);
 
     expect(filtered.claim.contact.email.domain).toBeDefined();
     expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
@@ -192,9 +192,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       postalCode: '5JhmWkXBAg',
     };
 
-    const uca = new Claim('cvc:Identity:address', value, '1');
+    const uca = new Claim('claim-cvc:Identity.address-v1', value, '1');
     const credential = new VC('credential-cvc:Address-v1', '', null, [uca], '1');
-    const filtered = credential.filter(['cvc:Identity:address']);
+    const filtered = credential.filter(['claim-cvc:Identity.address-v1']);
 
     expect(filtered.claim.identity.address).toBeDefined();
     expect(filtered.claim.identity.address.country).toBe('X2sEB9F9W9');
@@ -206,92 +206,94 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.address.postalCode).toBe('5JhmWkXBAg');
   });
 
-  it('Should filter claims for PhoneNumber asking for cvc:Contact:phoneNumber and return the full claim', () => {
-    const value = {
-      country: '1ApYikRwDl',
-      countryCode: 'U4drpB96Hk',
-      number: 'kCTGifTdom',
-      extension: 'sXZpZJTe4R',
-      lineType: 'OaguqgUaR7',
-    };
+  it('Should filter claims for PhoneNumber asking for claim-cvc:contact.phoneNumber-v1 and return the full claim',
+    () => {
+      const value = {
+        country: '1ApYikRwDl',
+        countryCode: 'U4drpB96Hk',
+        number: 'kCTGifTdom',
+        extension: 'sXZpZJTe4R',
+        lineType: 'OaguqgUaR7',
+      };
 
-    const uca = new Claim('cvc:Contact:phoneNumber', value, '1');
-    const credential = new VC('credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
-    const filtered = credential.filter(['cvc:Contact:phoneNumber']);
+      const uca = new Claim('claim-cvc:contact.phoneNumber-v1', value, '1');
+      const credential = new VC('claim-cvc:contact.phoneNumber-v1', '', null, [uca], '1');
+      const filtered = credential.filter(['claim-cvc:contact.phoneNumber-v1']);
 
-    expect(filtered.claim.contact.phoneNumber).toBeDefined();
-    expect(filtered.claim.contact.phoneNumber.country).toBe('1ApYikRwDl');
-    expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');
-    expect(filtered.claim.contact.phoneNumber.extension).toBe('sXZpZJTe4R');
-    expect(filtered.claim.contact.phoneNumber.lineType).toBe('OaguqgUaR7');
-    expect(filtered.claim.contact.phoneNumber.number).toBe('kCTGifTdom');
-  });
+      expect(filtered.claim.contact.phoneNumber).toBeDefined();
+      expect(filtered.claim.contact.phoneNumber.country).toBe('1ApYikRwDl');
+      expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');
+      expect(filtered.claim.contact.phoneNumber.extension).toBe('sXZpZJTe4R');
+      expect(filtered.claim.contact.phoneNumber.lineType).toBe('OaguqgUaR7');
+      expect(filtered.claim.contact.phoneNumber.number).toBe('kCTGifTdom');
+    });
 
-  it('Should filter claims for GenericDocumentId asking for cvc:Identity:dateOfBirth and return nothing', () => {
-    const typeValue = 'fq6gOJR2rr';
-    const type = new Claim('cvc:Document:type', typeValue, '1');
-    const numberValue = '3bj1LUg9yG';
-    const number = new Claim('cvc:Document:number', numberValue, '1');
-    const nameValue = {
-      givenNames: 'e8qhs4Iak1',
-      familyNames: '4h8sLtEfav',
-      otherNames: 'bDTn4stMpX',
-    };
-    const name = new Claim('cvc:Document:name', nameValue, '1');
-    const genderValue = 'jFtCBFceQI';
-    const gender = new Claim('cvc:Document:gender', genderValue, '1');
-    const issueLocationValue = 'OZbhzBU8ng';
-    const issueLocation = new Claim('cvc:Document:issueLocation', issueLocationValue, '1');
-    const issueAuthorityValue = 'BO2xblNSVK';
-    const issueAuthority = new Claim('cvc:Document:issueAuthority', issueAuthorityValue, '1');
-    const issueCountryValue = 'p4dNUeAKtI';
-    const issueCountry = new Claim('cvc:Document:issueCountry', issueCountryValue, '1');
-    const placeOfBirthValue = 'r4hIHbyLru';
-    const placeOfBirth = new Claim('cvc:Document:placeOfBirth', placeOfBirthValue, '1');
-    const dateOfBirthValue = {
-      day: 23.55661112087767,
-      month: 2.3719586174881204,
-      year: 1973.1235577195403,
-    };
-    const dateOfBirth = new Claim('cvc:Document:dateOfBirth', dateOfBirthValue, '1');
-    const addressValue = {
-      country: 'IH4aiXuEoo',
-      county: 'akKjaQehNK',
-      state: 'IQB7oLhSnS',
-      street: '52Os5zJgkh',
-      unit: '3dGDkhEHxW',
-      city: 'WU9GJ0R9be',
-      postalCode: 'ci1DMuz16W',
-    };
-    const address = new Claim('cvc:Document:address', addressValue, '1');
-    const propertiesValue = {
-      dateOfIssue: {
-        day: 18.414766065177673,
-        month: 6.9617705136467425,
-        year: 1928.4150248655972,
-      },
-      dateOfExpiry: {
-        day: 8.552112724932464,
-        month: 0.8142652052451673,
-        year: 1957.6252772045032,
-      },
-    };
-    const properties = new Claim('cvc:Document:properties', propertiesValue, '1');
-    const imageValue = {
-      front: '9NMgeFErNd',
-      frontMD5: 'zgOvmWXruS',
-      back: 'uPrJKO3cbq',
-      backMD5: '0yr9zkdApo',
-    };
-    const image = new Claim('cvc:Document:image', imageValue, '1');
-    const credential = new VC(
-      'credential-cvc:GenericDocumentId-v1', '', null, [type, number, name, gender, issueAuthority,
-        issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1',
-    );
-    const filtered = credential.filter(['cvc:Identity:dateOfBirth']);
+  it('Should filter claims for GenericDocumentId asking for claim-cvc:Identity.dateOfBirth-v1 and return nothing',
+    () => {
+      const typeValue = 'fq6gOJR2rr';
+      const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
+      const numberValue = '3bj1LUg9yG';
+      const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
+      const nameValue = {
+        givenNames: 'e8qhs4Iak1',
+        familyNames: '4h8sLtEfav',
+        otherNames: 'bDTn4stMpX',
+      };
+      const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
+      const genderValue = 'jFtCBFceQI';
+      const gender = new Claim('claim-cvc:Document.gender-v1', genderValue, '1');
+      const issueLocationValue = 'OZbhzBU8ng';
+      const issueLocation = new Claim('claim-cvc:Document.issueLocation-v1', issueLocationValue, '1');
+      const issueAuthorityValue = 'BO2xblNSVK';
+      const issueAuthority = new Claim('claim-cvc:Document.issueAuthority-v1', issueAuthorityValue, '1');
+      const issueCountryValue = 'p4dNUeAKtI';
+      const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', issueCountryValue, '1');
+      const placeOfBirthValue = 'r4hIHbyLru';
+      const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue, '1');
+      const dateOfBirthValue = {
+        day: 23.55661112087767,
+        month: 2.3719586174881204,
+        year: 1973.1235577195403,
+      };
+      const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+      const addressValue = {
+        country: 'IH4aiXuEoo',
+        county: 'akKjaQehNK',
+        state: 'IQB7oLhSnS',
+        street: '52Os5zJgkh',
+        unit: '3dGDkhEHxW',
+        city: 'WU9GJ0R9be',
+        postalCode: 'ci1DMuz16W',
+      };
+      const address = new Claim('claim-cvc:Document.address-v1', addressValue, '1');
+      const propertiesValue = {
+        dateOfIssue: {
+          day: 18.414766065177673,
+          month: 6.9617705136467425,
+          year: 1928.4150248655972,
+        },
+        dateOfExpiry: {
+          day: 8.552112724932464,
+          month: 0.8142652052451673,
+          year: 1957.6252772045032,
+        },
+      };
+      const properties = new Claim('cvc:Document:properties', propertiesValue, '1');
+      const imageValue = {
+        front: '9NMgeFErNd',
+        frontMD5: 'zgOvmWXruS',
+        back: 'uPrJKO3cbq',
+        backMD5: '0yr9zkdApo',
+      };
+      const image = new Claim('cvc:Document:image', imageValue, '1');
+      const credential = new VC(
+        'credential-cvc:GenericDocumentId-v1', '', null, [type, number, name, gender, issueAuthority,
+          issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1',
+      );
+      const filtered = credential.filter(['claim-cvc:Identity.dateOfBirth-v1']);
 
-    expect(filtered.claim.document).toBeUndefined();
-  });
+      expect(filtered.claim.document).toBeUndefined();
+    });
 
   it('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode and return only the'
     + ' claim for country code', () => {
@@ -303,9 +305,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       lineType: 'OaguqgUaR7',
     };
 
-    const uca = new Claim('cvc:Contact:phoneNumber', value, '1');
-    const credential = new VC('credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
-    const filtered = credential.filter(['cvc:PhoneNumber:countryCode']);
+    const uca = new Claim('claim-cvc:contact.phoneNumber-v1', value, '1');
+    const credential = new VC('claim-cvc:contact.phoneNumber-v1', '', null, [uca], '1');
+    const filtered = credential.filter(['claim-cvc:phoneNumber.countryCode-v1']);
 
     expect(filtered.claim.contact.phoneNumber).toBeDefined();
     expect(filtered.claim.contact.phoneNumber.country).toBeUndefined();
@@ -317,31 +319,31 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
     const typeValue = 'fq6gOJR2rr';
-    const type = new Claim('cvc:Document:type', typeValue, '1');
+    const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
     const numberValue = '3bj1LUg9yG';
-    const number = new Claim('cvc:Document:number', numberValue, '1');
+    const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
     const nameValue = {
       givenNames: 'e8qhs4Iak1',
       familyNames: '4h8sLtEfav',
       otherNames: 'bDTn4stMpX',
     };
-    const name = new Claim('cvc:Document:name', nameValue, '1');
+    const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
     const genderValue = 'jFtCBFceQI';
-    const gender = new Claim('cvc:Document:gender', genderValue, '1');
+    const gender = new Claim('claim-cvc:Document.gender-v1', genderValue, '1');
     const issueLocationValue = 'OZbhzBU8ng';
-    const issueLocation = new Claim('cvc:Document:issueLocation', issueLocationValue, '1');
+    const issueLocation = new Claim('claim-cvc:Document.issueLocation-v1', issueLocationValue, '1');
     const issueAuthorityValue = 'BO2xblNSVK';
-    const issueAuthority = new Claim('cvc:Document:issueAuthority', issueAuthorityValue, '1');
+    const issueAuthority = new Claim('claim-cvc:Document.issueAuthority-v1', issueAuthorityValue, '1');
     const issueCountryValue = 'p4dNUeAKtI';
-    const issueCountry = new Claim('cvc:Document:issueCountry', issueCountryValue, '1');
+    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', issueCountryValue, '1');
     const placeOfBirthValue = 'r4hIHbyLru';
-    const placeOfBirth = new Claim('cvc:Document:placeOfBirth', placeOfBirthValue, '1');
+    const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue, '1');
     const dateOfBirthValue = {
       day: 23,
       month: 2,
       year: 1973,
     };
-    const dateOfBirth = new Claim('cvc:Document:dateOfBirth', dateOfBirthValue, '1');
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
     const addressValue = {
       country: 'IH4aiXuEoo',
       county: 'akKjaQehNK',
@@ -351,7 +353,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       city: 'WU9GJ0R9be',
       postalCode: 'ci1DMuz16W',
     };
-    const address = new Claim('cvc:Document:address', addressValue, '1');
+    const address = new Claim('claim-cvc:Document.address-v1', addressValue, '1');
     const propertiesValue = {
       dateOfIssue: {
         day: 18,
@@ -376,7 +378,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       'credential-cvc:GenericDocumentId-v1', '', null, [type, number, name, gender, issueAuthority,
         issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1',
     );
-    const filtered = credential.filter(['cvc:Document:type']);
+    const filtered = credential.filter(['claim-cvc:Document.type-v1']);
 
     expect(filtered.claim.document.type).toBe('fq6gOJR2rr');
   });
@@ -808,8 +810,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('identity.address.postalCode');
   });
 
-  it('Should return all Credential properties for credential-cvc:PhoneNumber-v1', () => {
-    const properties = VC.getAllProperties('credential-cvc:PhoneNumber-v1');
+  it('Should return all Credential properties for claim-cvc:contact.phoneNumber-v1', () => {
+    const properties = VC.getAllProperties('claim-cvc:contact.phoneNumber-v1');
     expect(properties).toHaveLength(5);
     expect(properties).toContain('contact.phoneNumber.country');
     expect(properties).toContain('contact.phoneNumber.countryCode');

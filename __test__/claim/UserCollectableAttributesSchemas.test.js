@@ -35,7 +35,7 @@ describe('UCA Json Sample Date Construction tests', () => {
   });
 
   it('Should change the type of String to Boolean and fail AJV validation', async (done) => {
-    const identifier = 'cvc:Identity:name';
+    const identifier = 'claim-cvc:Identity.name-v1';
     const value = {
       givenNames: 'Joao',
       otherNames: 'Paulo',
@@ -57,7 +57,7 @@ describe('UCA Json Sample Date Construction tests', () => {
   });
 
   it('Should change the type of String to Number and fail AJV validation', async (done) => {
-    const identifier = 'cvc:Identity:name';
+    const identifier = 'claim-cvc:Identity.name-v1';
     const value = {
       givenNames: 'Joao',
       otherNames: 'Paulo',
