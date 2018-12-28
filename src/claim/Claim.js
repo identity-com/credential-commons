@@ -77,7 +77,7 @@ class Claim extends UserCollectableAttribute {
   }
 
   static resolveType(definition) {
-    UserCollectableAttribute.resolveType(definition, definitions);
+    return UserCollectableAttribute.resolveType(definition, definitions);
   }
 
   static parseAttestableValue(value) {
@@ -119,8 +119,8 @@ class Claim extends UserCollectableAttribute {
 
   getAttestableValue(path) {
     // all UCA properties they have the form of :propertyName or :something.propertyName
-    const startIndexForPropertyName = this.identifier.lastIndexOf(':');
-    let propertyName = this.identifier.substring(startIndexForPropertyName + 1);
+    const { identifierComponents } = getBaseIdentifiers(this.identifier);
+    let propertyName = identifierComponents[2];
     if (path) {
       propertyName = `${path}.${propertyName}`;
     }
@@ -141,18 +141,22 @@ class Claim extends UserCollectableAttribute {
   }
 
   getClaimRootPropertyName() {
-    const identifierComponents = _.split(this.identifier, ':');
-    return _.lowerCase(identifierComponents[1]);
+    const { identifierComponents } = getBaseIdentifiers(this.identifier);
+    return _.toLower(identifierComponents[1]);
   }
 
   getClaimPropertyName() {
-    const identifierComponents = _.split(this.identifier, ':');
+    const { identifierComponents } = getBaseIdentifiers(this.identifier);
     return identifierComponents[2];
   }
 
   getClaimPath() {
-    const { identifierComponents } = getBaseIdentifiers(this.identifier);
-    const baseName = _.lowerCase(identifierComponents[1]);
+    return Claim.getPath(this.identifier);
+  }
+
+  static getPath(identifier) {
+    const { identifierComponents } = getBaseIdentifiers(identifier);
+    const baseName = _.camelCase(identifierComponents[1]);
     return `${baseName}.${identifierComponents[2]}`;
   }
 
@@ -269,4 +273,4 @@ function mixinIdentifiers(UCA) {
   return UCA;
 }
 
-module.exports = { Claim: mixinIdentifiers(Claim), definitions };
+module.exports = { Claim: mixinIdentifiers(Claim), definitions, getBaseIdentifiers };

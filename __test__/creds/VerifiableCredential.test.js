@@ -304,7 +304,6 @@ describe('Unit tests for Verifiable Credentials', () => {
       extension: 'sXZpZJTe4R',
       lineType: 'OaguqgUaR7',
     };
-
     const uca = new Claim('claim-cvc:contact.phoneNumber-v1', value, '1');
     const credential = new VC('claim-cvc:contact.phoneNumber-v1', '', null, [uca], '1');
     const filtered = credential.filter(['claim-cvc:phoneNumber.countryCode-v1']);

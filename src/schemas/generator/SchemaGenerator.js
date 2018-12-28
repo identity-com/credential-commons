@@ -2,15 +2,11 @@
 const randomString = require('randomstring');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
-const { Claim, definitions } = require('../../claim/Claim');
+const { Claim, definitions, getBaseIdentifiers } = require('../../claim/Claim');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
-const getPropertyNameFromDefinition = (definition) => {
-  const substrIndex = definition.identifier.lastIndexOf('.') > -1 ? definition.identifier.lastIndexOf('.') + 1
-    : definition.identifier.lastIndexOf(':') + 1;
-  return definition.identifier.substring(substrIndex);
-};
+const getPropertyNameFromDefinition = definition => getBaseIdentifiers(definition.identifier).identifierComponents[2];
 
 const getPropertyType = value => Type.string(value).toLowerCase();
 
@@ -42,9 +38,18 @@ const processObject = (object, outputParam, parentKey) => {
   if (parentKey.includes('claim') && parentKey.split('.').length === 4) {
     // with the json key of the claim
     const baseUcaName = parentKey.substring('root.claim.'.length);
-    const typeName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1)).replace('.', ':');
+    let typeName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1)).replace('.', ':');
     // regenerate uca
-    const refDefinition = definitions.find(def => def.identifier.includes(typeName));
+    let refDefinition = definitions.find(def => def.identifier.includes(typeName));
+    if (refDefinition == null) {
+      const baseName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1));
+      typeName = `claim-cvc:${baseName}-v1`;
+      refDefinition = definitions.find(def => def.identifier.includes(typeName));
+    }
+    if (refDefinition == null) {
+      typeName = `claim-cvc:${baseUcaName}-v1`;
+      refDefinition = definitions.find(def => def.identifier.includes(typeName));
+    }
     // get it's required definitions
     output.required = refDefinition.type.required;
   }
