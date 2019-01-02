@@ -251,20 +251,20 @@ describe('Claim Constructions tests', () => {
     expect(properties).toContain('identity.name.otherNames');
   });
 
-  // test('Claim with attestable value must constructed and parsed', () => {
-  //   const identifier = 'claim-cvc:Address.country-v1';
-  //   const attestableValue = {
-  //     country: 'DE',
-  //     state: 'Berlin',
-  //     county: 'Berlin',
-  //     city: 'Berlin',
-  //     postalCode: '15123',
-  //     street: 'Ruthllardstr',
-  //     unit: '12',
-  //     attestableValue: 'Mocked:asdkmalsdqasd',
-  //   };
-  //   const uca = new Claim(identifier, attestableValue);
-  //   expect(uca).toBeDefined();
-  //   expect(uca.value).toBeDefined();
-  // });
+  test('Claim with attestable value must constructed and parsed', () => {
+    const identifier = 'claim-cvc:Address.country-v1';
+    const attestableValue = {
+      country: 'DE',
+      state: 'Berlin',
+      county: 'Berlin',
+      city: 'Berlin',
+      postalCode: '15123',
+      street: 'Ruthllardstr',
+      unit: '12',
+      attestableValue: 'Mocked:asdkmalsdqasd',
+    };
+    const uca = new Claim(identifier, attestableValue);
+    expect(uca).toBeDefined();
+    expect(uca.value).toBeDefined();
+  });
 });

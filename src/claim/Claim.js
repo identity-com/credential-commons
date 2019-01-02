@@ -66,7 +66,6 @@ class Claim extends UserCollectableAttribute {
         ucaValue[propertyName] = new Claim(filteredIdentifier,
           { attestableValue: parsedAttestableValue[i].stringValue });
       }
-      // console.log(ucaValue);
       this.value = ucaValue;
     }
   }
@@ -248,10 +247,9 @@ class Claim extends UserCollectableAttribute {
 }
 
 function convertIdentifierToClassName(identifier) {
-  const identifierRegex = /claim-cvc:(.*)\.(.*)-v\d*/;
-  const matches = identifierRegex.exec(identifier);
-  const baseName = matches[1];
-  const detailName = _.upperFirst(_.camelCase(matches[2]));
+  const { identifierComponents } = getBaseIdentifiers(identifier);
+  const baseName = identifierComponents[1];
+  const detailName = _.upperFirst(_.camelCase(identifierComponents[2]));
   return `${baseName}${detailName}`;
 }
 
