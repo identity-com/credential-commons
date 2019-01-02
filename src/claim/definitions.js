@@ -4,103 +4,103 @@ const { definitions: ucaDefinitions } = require('@identity.com/uca');
 // ######################################### DEFINITIONS ###########################################
 const definitions = [
   {
-    identifier: 'claim-cvc:email.domain-v1',
+    identifier: 'claim-cvc:Email.domain-v1',
     version: '1',
     type: 'cvc:Type:domain',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:email.properties-v1',
+    identifier: 'claim-cvc:Email.properties-v1',
     version: '1',
-    type: 'cvc:Type:email',
+    type: 'claim-cvc:Type.email-v1',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:contact.email-v1',
+    identifier: 'claim-cvc:Contact.email-v1',
     version: '1',
-    type: 'claim-cvc:email.properties-v1',
+    type: 'claim-cvc:Email.properties-v1',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:user.id-v1',
-    version: '1',
-    type: 'String',
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:user.realm-v1',
+    identifier: 'claim-cvc:User.id-v1',
     version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:phone.countryCode-v1',
+    identifier: 'claim-cvc:User.realm-v1',
     version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:phone.number-v1',
+    identifier: 'claim-cvc:Phone.countryCode-v1',
     version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:phone.extension-v1',
+    identifier: 'claim-cvc:Phone.number-v1',
     version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:phone.lineType-v1',
+    identifier: 'claim-cvc:Phone.extension-v1',
     version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:phoneNumber.countryCode-v1',
-    type: 'claim-cvc:phone.countryCode-v1',
-    version: '1',
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:phoneNumber.number-v1',
-    type: 'claim-cvc:phone.number-v1',
-    version: '1',
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:phoneNumber.extension-v1',
-    type: 'claim-cvc:phone.extension-v1',
-    version: '1',
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:phoneNumber.lineType-v1',
-    type: 'claim-cvc:phone.lineType-v1',
-    version: '1',
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:contact.phoneNumber-v1',
-    version: '1',
-    type: 'cvc:Type:phoneNumber',
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:name.givenNames-v1',
+    identifier: 'claim-cvc:Phone.lineType-v1',
     version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:name.familyNames-v1',
+    identifier: 'claim-cvc:PhoneNumber.countryCode-v1',
+    type: 'claim-cvc:Phone.countryCode-v1',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:PhoneNumber.number-v1',
+    type: 'claim-cvc:Phone.number-v1',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:PhoneNumber.extension-v1',
+    type: 'claim-cvc:Phone.extension-v1',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:PhoneNumber.lineType-v1',
+    type: 'claim-cvc:Phone.lineType-v1',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Contact.phoneNumber-v1',
+    version: '1',
+    type: 'claim-cvc:Type.phoneNumber-v1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Name.givenNames-v1',
     version: '1',
     type: 'String',
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:name.otherNames-v1',
+    identifier: 'claim-cvc:Name.familyNames-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Name.otherNames-v1',
     version: '1',
     type: 'String',
     credentialItem: true,
@@ -112,31 +112,31 @@ const definitions = [
       properties: [
         {
           name: 'givenNames',
-          type: 'claim-cvc:name.givenNames-v1',
+          type: 'claim-cvc:Name.givenNames-v1',
         },
         {
           name: 'familyNames',
-          type: 'claim-cvc:name.familyNames-v1',
+          type: 'claim-cvc:Name.familyNames-v1',
         },
         {
           name: 'otherNames',
-          type: 'claim-cvc:name.otherNames-v1',
+          type: 'claim-cvc:Name.otherNames-v1',
         },
       ],
       required: ['givenNames'],
     },
-    credentialItem: false,
+    credentialItem: true,
   },
   {
     identifier: 'claim-cvc:Document.name-v1',
     version: '1',
-    type: 'cvc:Type:Name',
+    type: 'claim-cvc:Type.Name-v1',
     credentialItem: true,
   },
   {
     identifier: 'claim-cvc:Identity.name-v1',
     version: '1',
-    type: 'cvc:Type:Name',
+    type: 'claim-cvc:Type.Name-v1',
     credentialItem: true,
   },
   {
@@ -186,13 +186,13 @@ const definitions = [
   {
     identifier: 'claim-cvc:Document.address-v1',
     version: '1',
-    type: 'cvc:Type:address',
+    type: 'claim-cvc:Type.address-v1',
     credentialItem: true,
   },
   {
     identifier: 'claim-cvc:Identity.address-v1',
     version: '1',
-    type: 'cvc:Type:address',
+    type: 'claim-cvc:Type.address-v1',
     credentialItem: true,
   },
   {
@@ -250,104 +250,89 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'cvc:Meta:issuer',
-    description: 'Credential Issuer',
-    version: '1',
-    type: 'String',
-    attestable: true,
-  },
-  {
-    identifier: 'cvc:Meta:issuanceDate',
-    description: 'Credential date of issuance',
-    version: '1',
-    type: 'String',
-    attestable: true,
-  },
-  {
-    identifier: 'cvc:Meta:expirationDate',
-    description: 'Credential expiration data',
-    version: '1',
-    type: 'String',
-    attestable: true,
-  },
-  {
-    identifier: 'cvc:Random:node',
-    description: 'a random node on the merkleTree, ',
-    version: '1',
-    type: 'String',
-    attestable: true,
-  },
-  {
-    identifier: 'cvc:Type:email',
+    identifier: 'claim-cvc:Type.email-v1',
     version: '1',
     type: {
       properties: [
         {
           name: 'username',
-          type: 'cvc:Email:username',
+          type: 'claim-cvc:Email.username-v1',
         },
         {
           name: 'domain',
-          type: 'claim-cvc:email.domain-v1',
+          type: 'claim-cvc:Email.domain-v1',
         },
       ],
     },
-    credentialItem: false,
+    credentialItem: true,
   },
   {
-    identifier: 'cvc:Type:phoneNumber',
+    identifier: 'claim-cvc:Email.username-v1',
+    description: 'also known as email user',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.phoneNumber-v1',
     version: '1',
     type: {
       properties: [
         {
           name: 'country',
-          type: 'cvc:PhoneNumber:country',
+          type: 'claim-cvc:PhoneNumber.country-v1',
         },
         {
           name: 'countryCode',
-          type: 'claim-cvc:phoneNumber.countryCode-v1',
+          type: 'claim-cvc:PhoneNumber.countryCode-v1',
         },
         {
           name: 'number',
-          type: 'claim-cvc:phoneNumber.number-v1',
+          type: 'claim-cvc:PhoneNumber.number-v1',
         },
         {
           name: 'extension',
-          type: 'claim-cvc:phoneNumber.extension-v1',
+          type: 'claim-cvc:PhoneNumber.extension-v1',
         },
         {
           name: 'lineType',
-          type: 'claim-cvc:phoneNumber.lineType-v1',
+          type: 'claim-cvc:PhoneNumber.lineType-v1',
         },
       ],
       required: ['country', 'countryCode', 'number', 'lineType'],
     },
-    credentialItem: false,
+    credentialItem: true,
   },
   {
-    identifier: 'cvc:Type:Name',
+    identifier: 'claim-cvc:PhoneNumber.country-v1',
+    type: 'cvc:Type:country',
+    version: '1',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.Name-v1',
     version: '1',
     type: {
       properties: [
         {
           name: 'givenNames',
-          type: 'claim-cvc:name.givenNames-v1',
+          type: 'claim-cvc:Name.givenNames-v1',
         },
         {
           name: 'familyNames',
-          type: 'claim-cvc:name.familyNames-v1',
+          type: 'claim-cvc:Name.familyNames-v1',
         },
         {
           name: 'otherNames',
-          type: 'claim-cvc:name.otherNames-v1',
+          type: 'claim-cvc:Name.otherNames-v1',
         },
       ],
       required: ['givenNames'],
     },
-    credentialItem: false,
+    credentialItem: true,
   },
   {
-    identifier: 'cvc:Type:address',
+    identifier: 'claim-cvc:Type.address-v1',
     version: '1',
     type: {
       properties: [
@@ -365,11 +350,11 @@ const definitions = [
         },
         {
           name: 'street',
-          type: 'cvc:Address:street',
+          type: 'claim-cvc:Address.street-v1',
         },
         {
           name: 'unit',
-          type: 'cvc:Address:unit',
+          type: 'claim-cvc:Address.unit-v1',
         },
         {
           name: 'city',
@@ -382,10 +367,22 @@ const definitions = [
       ],
       required: ['street', 'unit', 'city', 'state', 'country'],
     },
-    credentialItem: false,
+    credentialItem: true,
   },
   {
-    identifier: 'cvc:Document:properties',
+    identifier: 'claim-cvc:Address.street-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Address.unit-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Document.properties-v1',
     version: '1',
     attestable: true,
     type: {
@@ -401,10 +398,10 @@ const definitions = [
       ],
       required: ['dateOfIssue'],
     },
-    credentialItem: false,
+    credentialItem: true,
   },
   {
-    identifier: 'cvc:Type:S3DocumentImageRef',
+    identifier: 'claim-cvc:Type.S3DocumentImageRef-v1',
     version: '1',
     type: {
       properties: [
@@ -414,7 +411,7 @@ const definitions = [
         },
         {
           name: 'face',
-          type: 'cvc:Type:DocumentFace',
+          type: 'claim-cvc:Type.DocumentFace-v1',
         },
         {
           name: 'reference',
@@ -423,6 +420,12 @@ const definitions = [
       ],
       required: ['type', 'face', 'reference'],
     },
+  },
+  {
+    identifier: 'claim-cvc:Type.DocumentFace-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
   },
 ];
 

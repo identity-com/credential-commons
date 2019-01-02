@@ -9,14 +9,14 @@ const definitions = [
     identifier: 'credential-cvc:Email-v1',
     version: '1',
     depends: [
-      'claim-cvc:contact.email-v1',
+      'claim-cvc:Contact.email-v1',
     ],
   },
   {
-    identifier: 'claim-cvc:contact.phoneNumber-v1',
+    identifier: 'claim-cvc:Contact.phoneNumber-v1',
     version: '1',
     depends: [
-      'claim-cvc:contact.phoneNumber-v1',
+      'claim-cvc:Contact.phoneNumber-v1',
     ],
   },
   {
@@ -33,7 +33,7 @@ const definitions = [
       'claim-cvc:Document.placeOfBirth-v1',
       'claim-cvc:Document.dateOfBirth-v1',
       'claim-cvc:Document.address-v1',
-      'cvc:Document:properties',
+      'claim-cvc:Document.properties-v1',
       'cvc:Document:image',
     ],
   },

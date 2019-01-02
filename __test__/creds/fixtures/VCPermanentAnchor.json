@@ -78,7 +78,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.givenNames-v1",
+        "identifier": "claim-cvc:Name.givenNames-v1",
         "value": "urn:givenNames:3b99f45fbd9aad638f34a40d7647293ee5c955316cf2bda31b856470efb04c49:Joao",
         "claimPath": "identity.name.givenNames",
         "targetHash": "5b8d77d60a05af6dcad4c96d8e451adaaeae3e352ec20b68a5307466a5d8afbd",
@@ -101,7 +101,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.otherNames-v1",
+        "identifier": "claim-cvc:Name.otherNames-v1",
         "value": "urn:otherNames:ea17e5a9b080a9684d63983c7538fd053373f3d10245130cbedff75d82d4c714:Barbosa",
         "claimPath": "identity.name.otherNames",
         "targetHash": "b013a25bcbb6d1fafe0ac5d07dcca6964686869463a31d3adc5baceaa0538d29",
@@ -124,7 +124,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.familyNames-v1",
+        "identifier": "claim-cvc:Name.familyNames-v1",
         "value": "urn:familyNames:f9cebb16c7ce72cc4cb75f49e7ca4435478be80f0a03740a97fbb508c9fe26eb:Santos",
         "claimPath": "identity.name.familyNames",
         "targetHash": "5fdafb2f464e4798e8a46d04e70ddf210960e7717ed343cf205367f89318bab3",

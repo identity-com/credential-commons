@@ -138,13 +138,13 @@ describe('Unit tests for Verifiable Credentials', () => {
     const simpleIdentity = new VC('credential-cvc:Identity-v1', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
       null, [nameUca, dobUca], '1');
 
-    const filtered = simpleIdentity.filter(['claim-cvc:name.givenNames-v1']);
+    const filtered = simpleIdentity.filter(['claim-cvc:Name.givenNames-v1']);
     expect(filtered.claim.identity.name.givenNames).toBeDefined();
     expect(filtered.claim.identity.name.otherNames).not.toBeDefined();
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
   });
 
-  it('Should filter claims for Email asking for claim-cvc:contact.email-v1 and return them on the filtered VC', () => {
+  it('Should filter claims for Email asking for claim-cvc:Contact.email-v1 and return them on the filtered VC', () => {
     const email = {
       domain: {
         tld: 'oVaPsceZ4C',
@@ -153,9 +153,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       username: 'ZcMpCBQ0lE',
     };
 
-    const emailUca = new Claim('claim-cvc:contact.email-v1', email, '1');
+    const emailUca = new Claim('claim-cvc:Contact.email-v1', email, '1');
     const emailCredential = new VC('credential-cvc:Email-v1', '', null, [emailUca], '1');
-    const filtered = emailCredential.filter(['claim-cvc:contact.email-v1']);
+    const filtered = emailCredential.filter(['claim-cvc:Contact.email-v1']);
     expect(filtered.claim.contact.email.domain).toBeDefined();
     expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
     expect(filtered.claim.contact.email.domain.name).toBe('UTpHKFyaaB');
@@ -171,9 +171,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       username: 'ZcMpCBQ0lE',
     };
 
-    const emailUca = new Claim('claim-cvc:contact.email-v1', email, '1');
+    const emailUca = new Claim('claim-cvc:Contact.email-v1', email, '1');
     const emailCredential = new VC('credential-cvc:Email-v1', '', null, [emailUca], '1');
-    const filtered = emailCredential.filter(['claim-cvc:email.domain-v1']);
+    const filtered = emailCredential.filter(['claim-cvc:Email.domain-v1']);
 
     expect(filtered.claim.contact.email.domain).toBeDefined();
     expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
@@ -181,7 +181,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.contact.email.username).toBeUndefined();
   });
 
-  it('Should filter claims for Address asking for cvc:Type:address and return the cvc:Type:address', () => {
+  it('Should filter claims for Address asking for claim-cvc:Type.address-v1'
+      + 'and return the claim-cvc:Type.address-v1', () => {
     const value = {
       country: 'X2sEB9F9W9',
       county: 'sDlIM4Rjpo',
@@ -206,7 +207,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.address.postalCode).toBe('5JhmWkXBAg');
   });
 
-  it('Should filter claims for PhoneNumber asking for claim-cvc:contact.phoneNumber-v1 and return the full claim',
+  it('Should filter claims for PhoneNumber asking for claim-cvc:Contact.phoneNumber-v1 and return the full claim',
     () => {
       const value = {
         country: '1ApYikRwDl',
@@ -216,9 +217,9 @@ describe('Unit tests for Verifiable Credentials', () => {
         lineType: 'OaguqgUaR7',
       };
 
-      const uca = new Claim('claim-cvc:contact.phoneNumber-v1', value, '1');
-      const credential = new VC('claim-cvc:contact.phoneNumber-v1', '', null, [uca], '1');
-      const filtered = credential.filter(['claim-cvc:contact.phoneNumber-v1']);
+      const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value, '1');
+      const credential = new VC('claim-cvc:Contact.phoneNumber-v1', '', null, [uca], '1');
+      const filtered = credential.filter(['claim-cvc:Contact.phoneNumber-v1']);
 
       expect(filtered.claim.contact.phoneNumber).toBeDefined();
       expect(filtered.claim.contact.phoneNumber.country).toBe('1ApYikRwDl');
@@ -278,7 +279,7 @@ describe('Unit tests for Verifiable Credentials', () => {
           year: 1957.6252772045032,
         },
       };
-      const properties = new Claim('cvc:Document:properties', propertiesValue, '1');
+      const properties = new Claim('claim-cvc:Document.properties-v1', propertiesValue, '1');
       const imageValue = {
         front: '9NMgeFErNd',
         frontMD5: 'zgOvmWXruS',
@@ -304,9 +305,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       extension: 'sXZpZJTe4R',
       lineType: 'OaguqgUaR7',
     };
-    const uca = new Claim('claim-cvc:contact.phoneNumber-v1', value, '1');
-    const credential = new VC('claim-cvc:contact.phoneNumber-v1', '', null, [uca], '1');
-    const filtered = credential.filter(['claim-cvc:phoneNumber.countryCode-v1']);
+    const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value, '1');
+    const credential = new VC('claim-cvc:Contact.phoneNumber-v1', '', null, [uca], '1');
+    const filtered = credential.filter(['claim-cvc:PhoneNumber.countryCode-v1']);
 
     expect(filtered.claim.contact.phoneNumber).toBeDefined();
     expect(filtered.claim.contact.phoneNumber.country).toBeUndefined();
@@ -365,7 +366,7 @@ describe('Unit tests for Verifiable Credentials', () => {
         year: 1957,
       },
     };
-    const properties = new Claim('cvc:Document:properties', propertiesValue, '1');
+    const properties = new Claim('claim-cvc:Document.properties-v1', propertiesValue, '1');
     const imageValue = {
       front: '9NMgeFErNd',
       frontMD5: 'zgOvmWXruS',
@@ -809,8 +810,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('identity.address.postalCode');
   });
 
-  it('Should return all Credential properties for claim-cvc:contact.phoneNumber-v1', () => {
-    const properties = VC.getAllProperties('claim-cvc:contact.phoneNumber-v1');
+  it('Should return all Credential properties for claim-cvc:Contact.phoneNumber-v1', () => {
+    const properties = VC.getAllProperties('claim-cvc:Contact.phoneNumber-v1');
     expect(properties).toHaveLength(5);
     expect(properties).toContain('contact.phoneNumber.country');
     expect(properties).toContain('contact.phoneNumber.countryCode');

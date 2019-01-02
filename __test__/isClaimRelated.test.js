@@ -13,7 +13,7 @@ describe('isClaimRelated Tests', () => {
 
   it('Should validate a claim path against UCA definitions and VC definitions and '
     + 'succeed returning false for an non existent dependency', (done) => {
-    const uca = 'claim-claim-cvc:contact.phoneNumber-v1-1';
+    const uca = 'claim-claim-cvc:Contact.phoneNumber-v1-1';
     const claim = 'contact.phoneNumber.number';
     const credential = 'credential-cvc:GenericDocumentId-v1';
     const validation = isClaimRelated(claim, uca, credential);

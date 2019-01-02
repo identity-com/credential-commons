@@ -10,12 +10,12 @@ describe('Claim Constructions tests', () => {
   });
 
   test('Claim construction should succeed', () => {
-    const v = new Claim('claim-cvc:name.givenNames-v1', 'joao');
+    const v = new Claim('claim-cvc:Name.givenNames-v1', 'joao');
     expect(v).toBeDefined();
   });
 
   test('Claim should have identifier', () => {
-    const identifier = 'claim-cvc:name.givenNames-v1';
+    const identifier = 'claim-cvc:Name.givenNames-v1';
     const v = new Claim(identifier, 'joao');
     expect(v).toBeDefined();
     expect(v.identifier).toEqual(identifier);
@@ -185,8 +185,8 @@ describe('Claim Constructions tests', () => {
     expect(v.getGlobalCredentialItemIdentifier()).toBe(`claim-${identifier}-1`);
   });
 
-  test('Construct a claim-cvc:contact.email-v1 Claim', () => {
-    const identifier = 'claim-cvc:contact.email-v1';
+  test('Construct a claim-cvc:Contact.email-v1 Claim', () => {
+    const identifier = 'claim-cvc:Contact.email-v1';
     const email = new Claim(identifier, { username: 'joao', domain: { name: 'civic', tld: 'com' } });
     const plain = email.getPlainValue();
     expect(plain.username).toBe('joao');
@@ -195,8 +195,8 @@ describe('Claim Constructions tests', () => {
     expect(plain.domain.tld).toBe('com');
   });
 
-  test('Construct a claim-cvc:contact.phoneNumber-v1', () => {
-    const identifier = 'claim-cvc:contact.phoneNumber-v1';
+  test('Construct a claim-cvc:Contact.phoneNumber-v1', () => {
+    const identifier = 'claim-cvc:Contact.phoneNumber-v1';
     const phone = new Claim(identifier, {
       country: 'DE',
       countryCode: '49',
@@ -212,8 +212,8 @@ describe('Claim Constructions tests', () => {
     expect(plain.lineType).toBe('mobile');
   });
 
-  test('Construct cvc:Type:address', () => {
-    const identifier = 'cvc:Type:address';
+  test('Construct claim-cvc:Type.address-v1', () => {
+    const identifier = 'claim-cvc:Type.address-v1';
     const address = new Claim(identifier, {
       country: 'DE',
       state: 'Berlin',
@@ -236,7 +236,7 @@ describe('Claim Constructions tests', () => {
   });
 
   test('Should get ALL Claim properties email', () => {
-    const properties = Claim.getAllProperties('claim-cvc:contact.email-v1');
+    const properties = Claim.getAllProperties('claim-cvc:Contact.email-v1');
     expect(properties).toHaveLength(3);
     expect(properties).toContain('contact.email.username');
     expect(properties).toContain('contact.email.domain.name');

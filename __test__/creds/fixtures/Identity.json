@@ -79,7 +79,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.givenNames-v1",
+        "identifier": "claim-cvc:Name.givenNames-v1",
         "value": "urn:givenNames:65b4fd7d6d2e99b9108c68f0d0a239a0aa6ecaa50658f2705788a9965ca3f7cf:1otj7GaELc|",
         "claimPath": "identity.name.givenNames",
         "targetHash": "325c544bc8d3e303473da4cf8b9a9edb86838a3897da8f5af961ec1536e88af0",
@@ -102,7 +102,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.familyNames-v1",
+        "identifier": "claim-cvc:Name.familyNames-v1",
         "value": "urn:familyNames:b9aaf1b43b90a6636909e884977ea4e853dcc794098a7d9016094057aa0ecbbd:sWYglHZ6Ry|",
         "claimPath": "identity.name.familyNames",
         "targetHash": "2e1a69df77b5abbbc0c30b1eb73a010ec5b15826417119ce001504efe16fdc52",
@@ -125,7 +125,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.otherNames-v1",
+        "identifier": "claim-cvc:Name.otherNames-v1",
         "value": "urn:otherNames:75d5ffd2e6466e5a6b6497cda5a9118676af7df99c8e00a4870b1af1adb9b451:0QpdyidiaF|",
         "claimPath": "identity.name.otherNames",
         "targetHash": "cee7323edd25b8d6f329854eb4b81c7eeace99609eea28db528f626da3a5ba85",

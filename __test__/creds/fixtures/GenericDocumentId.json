@@ -132,7 +132,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.givenNames-v1",
+        "identifier": "claim-cvc:Name.givenNames-v1",
         "value": "urn:givenNames:5bef2387e1e897fb64de2ba5c20607f704b57056939bd4258a6ddf762b5a6c7d:xVIkPSoKlw|",
         "claimPath": "document.name.givenNames",
         "targetHash": "736ce485a7c50a89b1863e8dc7f24c0e2cf9bc63950408e9a539d427137d57ee",
@@ -155,7 +155,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.familyNames-v1",
+        "identifier": "claim-cvc:Name.familyNames-v1",
         "value": "urn:familyNames:ae24dd60b8a4259d478d725efd12900c8b83a6c36f7b0090b8f81a51567c44c6:o74I3q0Udy|",
         "claimPath": "document.name.familyNames",
         "targetHash": "e909ecb6288af6f60261756ed591fb8e0dbfe8a23f8b17c596bfee3dbf88b1ff",
@@ -178,7 +178,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:name.otherNames-v1",
+        "identifier": "claim-cvc:Name.otherNames-v1",
         "value": "urn:otherNames:1f7b6a70eba5550a47664e85286ab2fda0d9dee99908da0a88234860b29b5d7e:90Dov8xBgR|",
         "claimPath": "document.name.otherNames",
         "targetHash": "fa12c4aee6b4c9a7892d98c95f1c0341043c481f6dd1484497e6aa2b4d4fd1cf",
@@ -477,7 +477,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:properties",
+        "identifier": "claim-cvc:Document.properties-v1",
         "value": "urn:properties.dateOfExpiry.day:36e953f09aa82006bf6d440f9254e1624c4671ae2f2239dc159185095cf7ede1:9.14320914518909|urn:properties.dateOfExpiry.month:d7613bf86aab2145bc437be871499497773257670b53059992ccbb1abf534cf3:0.7636856996725372|urn:properties.dateOfExpiry.year:bc2415865fb397d1c7ab321b1289d7b366faab01cce1332c5c1ae71eab5ffc6d:1956.942523652118|urn:properties.dateOfIssue.day:4e1cbadfa735adbe2ab85bc1543020a4cd25dd25834abcf41a66bb52337448e4:11.923255701048788|urn:properties.dateOfIssue.month:a35de497883832af0b19a2c0475d1269143611167c2d5f1054005190d2eb58fa:12.215323364578072|urn:properties.dateOfIssue.year:32084189d4aee0cabda3d31840b3b4b48024912c491d8bd82acf7019ea9dd9de:1982.8838709090696|",
         "claimPath": "document.properties",
         "targetHash": "998c8c996d42d7ae04447b110274a68bdf1c234a0b0f6bc6d6bff3ff4c43f4c6",
