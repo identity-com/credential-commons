@@ -207,7 +207,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.address.postalCode).toBe('5JhmWkXBAg');
   });
 
-  it('Should filter claims for PhoneNumber asking for claim-cvc:Contact.phoneNumber-v1 and return the full claim',
+  it('Should filter claims for PhoneNumber asking for credential-cvc:PhoneNumber-v1 and return the full claim',
     () => {
       const value = {
         country: '1ApYikRwDl',
@@ -218,7 +218,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       };
 
       const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value, '1');
-      const credential = new VC('claim-cvc:Contact.phoneNumber-v1', '', null, [uca], '1');
+      const credential = new VC('credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
       const filtered = credential.filter(['claim-cvc:Contact.phoneNumber-v1']);
 
       expect(filtered.claim.contact.phoneNumber).toBeDefined();
@@ -306,7 +306,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       lineType: 'OaguqgUaR7',
     };
     const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value, '1');
-    const credential = new VC('claim-cvc:Contact.phoneNumber-v1', '', null, [uca], '1');
+    const credential = new VC('credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
     const filtered = credential.filter(['claim-cvc:PhoneNumber.countryCode-v1']);
 
     expect(filtered.claim.contact.phoneNumber).toBeDefined();
@@ -810,8 +810,8 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('identity.address.postalCode');
   });
 
-  it('Should return all Credential properties for claim-cvc:Contact.phoneNumber-v1', () => {
-    const properties = VC.getAllProperties('claim-cvc:Contact.phoneNumber-v1');
+  it('Should return all Credential properties for credential-cvc:PhoneNumber-v1', () => {
+    const properties = VC.getAllProperties('credential-cvc:PhoneNumber-v1');
     expect(properties).toHaveLength(5);
     expect(properties).toContain('contact.phoneNumber.country');
     expect(properties).toContain('contact.phoneNumber.countryCode');

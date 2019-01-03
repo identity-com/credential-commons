@@ -13,7 +13,7 @@ const definitions = [
     ],
   },
   {
-    identifier: 'claim-cvc:Contact.phoneNumber-v1',
+    identifier: 'credential-cvc:PhoneNumber-v1',
     version: '1',
     depends: [
       'claim-cvc:Contact.phoneNumber-v1',

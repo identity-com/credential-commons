@@ -2,12 +2,12 @@
   "id": "c409433d-53a0-413b-ab36-cf223ef11261",
   "issuer": "jest:test:fe097180-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.872Z",
-  "identifier": "claim-cvc:Contact.phoneNumber-v1",
+  "identifier": "credential-cvc:PhoneNumber-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "claim-cvc:Contact.phoneNumber-v1"
+    "credential-cvc:PhoneNumber-v1"
   ],
   "claim": {
     "contact": {
@@ -26,7 +26,7 @@
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "claim-cvc:Contact.phoneNumber-v1",
+        "label": "credential-cvc:PhoneNumber-v1",
         "data": "724ae5eef62ff52a72f21b613ab05024b4d52bc3c6dc64c64af242c670e85fff",
         "signature": "signed:dummy"
       },
