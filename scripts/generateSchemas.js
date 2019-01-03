@@ -114,6 +114,8 @@ const generate = async () => {
       await generateUcaSchemas();
     } else if (selectedOption.value === 'credentials') {
       await generateCredentialSchemas();
+    } else {
+      await generateBoth();
     }
   } else {
     await generateBoth();
