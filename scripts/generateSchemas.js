@@ -2,7 +2,7 @@
 const ucaDefinitions = require('../src/claim/definitions');
 const credentialDefinitions = require('../src/creds/definitions');
 const schemaGenerator = require('../src/schemas/generator/SchemaGenerator');
-const UCA = require('@identity.com/uca');
+const { Claim: UCA, getBaseIdentifiers } = require('../src/claim/Claim');
 const VC = require('../src/creds/VerifiableCredential');
 const chalk = require('chalk');
 const clear = require('clear');
@@ -43,13 +43,13 @@ const generateUcaSchemas = async () => {
     console.log(json);
     const jsonSchema = schemaGenerator.process(definition, json);
     console.log(jsonSchema);
-    const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
+    const { identifierComponents: fileName } = getBaseIdentifiers(definition.identifier);
     const jsonFolderVersion = `${definition.version}`;
     const folderPath = `${GENERATION_FOLDER}/uca/${jsonFolderVersion}`;
     if (!fs.existsSync(folderPath)) {
       shell.mkdir('-p', folderPath);
     }
-    const filePath = `${fileName}${SCHEMA_FILE_EXTENSION}`;
+    const filePath = `${fileName[2]}${SCHEMA_FILE_EXTENSION}`;
     const fullPath = `${folderPath}/${filePath}`;
     fs.writeFile(fullPath, JSON.stringify(jsonSchema, null, 2), (err) => {
       if (err) throw err;
@@ -120,5 +120,6 @@ const generate = async () => {
   }
 };
 
+debugger;
 generate();
 
