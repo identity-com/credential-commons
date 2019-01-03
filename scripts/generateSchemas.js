@@ -43,7 +43,7 @@ const generateUcaSchemas = async () => {
     console.log(json);
     const jsonSchema = schemaGenerator.process(definition, json);
     console.log(jsonSchema);
-    const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1).replace(/-v.*$/, '');
+    const fileName = definition.identifier.replace(/-v.*$/, '');
     const jsonFolderVersion = `${definition.version}`;
     const folderPath = `${GENERATION_FOLDER}/uca/${jsonFolderVersion}`;
     if (!fs.existsSync(folderPath)) {
@@ -82,7 +82,7 @@ const generateCredentialSchemas = async () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = schemaGenerator.process(credential, generatedJson);
     const jsonFolderVersion = `${definition.version}`;
-    const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
+    const fileName = definition.identifier.replace(/-v.*$/, '');
     const folderPath = `${GENERATION_FOLDER}/credentials/${jsonFolderVersion}`;
     if (!fs.existsSync(folderPath)) {
       shell.mkdir('-p', folderPath);
