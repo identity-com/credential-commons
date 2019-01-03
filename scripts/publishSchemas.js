@@ -23,8 +23,8 @@ const publishUcaSchemas = () => {
           const schema = JSON.parse(schemaContent);
           console.log(schema.title);
           const schemaTitleSplit = schema.title.split(':');
-          const targetDir = schemaTitleSplit[1];
-          const targetFile = schemaTitleSplit[2];
+          const targetDir = 'claim';
+          const targetFile = file;
           if (!fs.existsSync(`${PUBLISH_DIR}/${targetDir}/${folder}`)) {
             shell.mkdir('-p', `${PUBLISH_DIR}/${targetDir}/${folder}`);
           }
@@ -47,9 +47,9 @@ const publishCredentialSchemas = () => {
           const schemaContent = fs.readFileSync(`${CREDENTIALS_DIR}/${folder}/${file}`, 'UTF-8');
           const schema = JSON.parse(schemaContent);
           console.log(schema.title);
-          const titleSplit = _.split(schema.title, ':');
+          const titleSplit = _.split(schema.title, '-');
           const targetDir = titleSplit[1];
-          const targetFile = _.split(schema.title, ':')[2];
+          const targetFile = file;
           if (!fs.existsSync(`${PUBLISH_DIR}/${targetDir}/${folder}/`)) {
             shell.mkdir('-p', `${PUBLISH_DIR}/${targetDir}/${folder}/`);
           }
