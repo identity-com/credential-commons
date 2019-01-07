@@ -252,9 +252,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       const placeOfBirthValue = 'r4hIHbyLru';
       const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue, '1');
       const dateOfBirthValue = {
-        day: 23.55661112087767,
-        month: 2.3719586174881204,
-        year: 1973.1235577195403,
+        day: 23,
+        month: 2,
+        year: 1973,
       };
       const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
       const addressValue = {
@@ -269,14 +269,14 @@ describe('Unit tests for Verifiable Credentials', () => {
       const address = new Claim('claim-cvc:Document.address-v1', addressValue, '1');
       const propertiesValue = {
         dateOfIssue: {
-          day: 18.414766065177673,
-          month: 6.9617705136467425,
-          year: 1928.4150248655972,
+          day: 18,
+          month: 6,
+          year: 1928,
         },
         dateOfExpiry: {
-          day: 8.552112724932464,
-          month: 0.8142652052451673,
-          year: 1957.6252772045032,
+          day: 8,
+          month: 1,
+          year: 1957,
         },
       };
       const properties = new Claim('claim-cvc:Document.properties-v1', propertiesValue, '1');

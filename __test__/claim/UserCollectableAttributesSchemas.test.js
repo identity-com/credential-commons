@@ -34,6 +34,150 @@ describe('UCA Json Sample Date Construction tests', () => {
     done();
   });
 
+  it('Should NOT validate with AJV a value lower than minimum', async (done) => {
+    const definition = {
+      identifier: 'cvc:Type:myCustomType',
+      version: '1',
+      type: 'Number',
+      minimum: 1,
+    };
+
+    const json = SchemaGenerator.buildSampleJson(definition, true);
+    const jsonSchema = SchemaGenerator.process(definition, json);
+    expect(jsonSchema.title).toEqual(definition.identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate({ myCustomType: 0 });
+    expect(isValid).toBeFalsy();
+    done();
+  });
+
+  it('Should validate with AJV a value equals than minimum', async (done) => {
+    const definition = {
+      identifier: 'cvc:Type:myCustomType',
+      version: '1',
+      type: 'Number',
+      minimum: 1,
+    };
+
+    const json = SchemaGenerator.buildSampleJson(definition, true);
+    const jsonSchema = SchemaGenerator.process(definition, json);
+    expect(jsonSchema.title).toEqual(definition.identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate({ myCustomType: 1 });
+    expect(isValid).toBeTruthy();
+    done();
+  });
+
+  it('Should NOT validate with AJV a value equals than exclusiveMinimum', async (done) => {
+    const definition = {
+      identifier: 'cvc:Type:myCustomType',
+      version: '1',
+      type: 'Number',
+      exclusiveMinimum: 1,
+    };
+
+    const json = SchemaGenerator.buildSampleJson(definition, true);
+    const jsonSchema = SchemaGenerator.process(definition, json);
+    expect(jsonSchema.title).toEqual(definition.identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate({ myCustomType: 1 });
+    expect(isValid).toBeFalsy();
+    done();
+  });
+
+  it('Should validate with AJV a value higher than exclusiveMinimum', async (done) => {
+    const definition = {
+      identifier: 'cvc:Type:myCustomType',
+      version: '1',
+      type: 'Number',
+      exclusiveMinimum: 1,
+    };
+
+    const json = SchemaGenerator.buildSampleJson(definition, true);
+    const jsonSchema = SchemaGenerator.process(definition, json);
+    expect(jsonSchema.title).toEqual(definition.identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate({ myCustomType: 2 });
+    expect(isValid).toBeTruthy();
+    done();
+  });
+
+  it('Should validate with AJV a value lower than maximum', async (done) => {
+    const definition = {
+      identifier: 'cvc:Type:myCustomType',
+      version: '1',
+      type: 'Number',
+      maximum: 1,
+    };
+
+    const json = SchemaGenerator.buildSampleJson(definition, true);
+    const jsonSchema = SchemaGenerator.process(definition, json);
+    expect(jsonSchema.title).toEqual(definition.identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate({ myCustomType: 0 });
+    expect(isValid).toBeTruthy();
+    done();
+  });
+
+  it('Should validate with AJV a value equals than maximum', async (done) => {
+    const definition = {
+      identifier: 'cvc:Type:myCustomType',
+      version: '1',
+      type: 'Number',
+      maximum: 1,
+    };
+
+    const json = SchemaGenerator.buildSampleJson(definition, true);
+    const jsonSchema = SchemaGenerator.process(definition, json);
+    expect(jsonSchema.title).toEqual(definition.identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate({ myCustomType: 1 });
+    expect(isValid).toBeTruthy();
+    done();
+  });
+
+  it('Should NOT validate with AJV a value higher than maximum', async (done) => {
+    const definition = {
+      identifier: 'cvc:Type:myCustomType',
+      version: '1',
+      type: 'Number',
+      maximum: 1,
+    };
+
+    const json = SchemaGenerator.buildSampleJson(definition, true);
+    const jsonSchema = SchemaGenerator.process(definition, json);
+    expect(jsonSchema.title).toEqual(definition.identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate({ myCustomType: 2 });
+    expect(isValid).toBeFalsy();
+    done();
+  });
+
+  it('Should NOT validate with AJV a value equals exclusiveMaximum', async (done) => {
+    const definition = {
+      identifier: 'cvc:Type:myCustomType',
+      version: '1',
+      type: 'Number',
+      exclusiveMaximum: 1,
+    };
+
+    const json = SchemaGenerator.buildSampleJson(definition, true);
+    const jsonSchema = SchemaGenerator.process(definition, json);
+    expect(jsonSchema.title).toEqual(definition.identifier);
+    const ajv = new Ajv();
+    const validate = ajv.compile(jsonSchema);
+    const isValid = validate({ myCustomType: 1 });
+    expect(isValid).toBeFalsy();
+    done();
+  });
+
   it('Should change the type of String to Boolean and fail AJV validation', async (done) => {
     const identifier = 'claim-cvc:Identity.name-v1';
     const value = {

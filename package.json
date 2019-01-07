@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "@identity.com/uca": "git+https://github.com/identity-com/uca.git#feature/CCS-697_credential-items-identifiers",
-    "ajv": "^6.5.0",
+    "ajv": "^6.6.2",
     "babel-runtime": "^6.26.0",
     "bluebird": "^3.5.1",
     "bottlejs": "^1.7.1",

@@ -24,13 +24,13 @@ const publishUcaSchemas = () => {
           console.log(schema.title);
           const schemaTitleSplit = schema.title.split(':');
           const targetDir = 'claim';
-          const targetFile = file;
+          const targetFile = file.replace("claim-", '').replace(/-v.*$/, '').replace('.json', '');
           if (!fs.existsSync(`${PUBLISH_DIR}/${targetDir}/${folder}`)) {
             shell.mkdir('-p', `${PUBLISH_DIR}/${targetDir}/${folder}`);
           }
           fs.copyFileSync(`${UCA_DIR}/${folder}/${file}`, `${PUBLISH_DIR}/${targetDir}/${folder}/${targetFile}.json`);
           indexContent.push({
-            name: `${targetDir}/${folder}/${targetFile}`, link: `./${targetDir}/${folder}/${targetFile}.json`,
+            name: `${targetDir}/${folder}/${targetFile.replace('.schema','')}`, link: `./${targetDir}/${folder}/${targetFile}.json`,
           });
         });
       });
@@ -48,14 +48,14 @@ const publishCredentialSchemas = () => {
           const schema = JSON.parse(schemaContent);
           console.log(schema.title);
           const titleSplit = _.split(schema.title, '-');
-          const targetDir = titleSplit[1];
-          const targetFile = file;
-          if (!fs.existsSync(`${PUBLISH_DIR}/${targetDir}/${folder}/`)) {
-            shell.mkdir('-p', `${PUBLISH_DIR}/${targetDir}/${folder}/`);
+          const targetDir = titleSplit[1].replace(/-v.*$/, '').replace("credential-", '').replace('.json', '');
+          const targetFile = file.replace("credential-", '').replace(/-v.*$/, '').replace('.json', '');
+          if (!fs.existsSync(`${PUBLISH_DIR}/credential/${folder}/`)) {
+            shell.mkdir('-p', `${PUBLISH_DIR}/credential/${folder}/`);
           }
-          fs.copyFileSync(`${CREDENTIALS_DIR}/${folder}/${file}`, `${PUBLISH_DIR}/${targetDir}/${folder}/${targetFile}.json`);
+          fs.copyFileSync(`${CREDENTIALS_DIR}/${folder}/${file}`, `${PUBLISH_DIR}/credential/${folder}/${targetFile}.json`);
           indexContent.push({
-            name: `${targetDir}/${folder}/${targetFile}`, link: `./${targetDir}/${folder}/${targetFile}.json`,
+            name: `credential/${folder}/${targetFile.replace('.schema','')}`, link: `./credential/${folder}/${targetFile}.json`,
           });
         });
       });

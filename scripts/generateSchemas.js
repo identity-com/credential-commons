@@ -39,7 +39,7 @@ const askOptions = () => {
  */
 const generateUcaSchemas = async () => {
   ucaDefinitions.forEach((definition) => {
-    const json = schemaGenerator.buildSampleJson(definition);
+    const json = schemaGenerator.buildSampleJson(definition, true);
     console.log(json);
     const jsonSchema = schemaGenerator.process(definition, json);
     console.log(jsonSchema);
@@ -67,7 +67,7 @@ const generateCredentialSchemas = async () => {
     const ucaArray = [];
     definition.depends.forEach((ucaDefinitionIdentifier) => {
       const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
-      const ucaJson = schemaGenerator.buildSampleJson(ucaDefinition);
+      const ucaJson = schemaGenerator.buildSampleJson(ucaDefinition, true);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
         value = Object.values(ucaJson)[0];
@@ -122,6 +122,5 @@ const generate = async () => {
   }
 };
 
-debugger;
 generate();
 
