@@ -17,7 +17,7 @@ jest.mock('@identity.com/uca');
 describe('UserCollectableAttribute Json Sample Date Construction tests', () => {
   it('Testing boolean types on the UserCollectableAttribute', async (done) => {
     const definition = ucaMockDefinitions.find(def => def.identifier === 'civ:Mock:booleans');
-    const json = SchemaGenerator.buildSampleJson(definition);
+    const json = SchemaGenerator.buildSampleJson(definition, true);
     const sampleUca = new Claim(definition.identifier, json.booleans);
     expect(sampleUca).toBeDefined();
     const jsonSchema = SchemaGenerator.process(definition, json);

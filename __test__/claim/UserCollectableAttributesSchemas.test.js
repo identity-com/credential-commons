@@ -13,7 +13,7 @@ describe('UCA Json Sample Date Construction tests', () => {
 
   it('Should generate Sample Data from all UCA and then create the json schema', async (done) => {
     definitions.forEach((definition) => {
-      const json = SchemaGenerator.buildSampleJson(definition);
+      const json = SchemaGenerator.buildSampleJson(definition, true);
       const jsonSchema = SchemaGenerator.process(definition, json);
       expect(jsonSchema.title).toEqual(definition.identifier);
     });
@@ -23,7 +23,7 @@ describe('UCA Json Sample Date Construction tests', () => {
   it('Should generate Sample Data from all UCA, create the json schema and use AJV to '
     + ' validate both the data and the json schema against each other', async (done) => {
     definitions.forEach((definition) => {
-      const json = SchemaGenerator.buildSampleJson(definition);
+      const json = SchemaGenerator.buildSampleJson(definition, true);
       const jsonSchema = SchemaGenerator.process(definition, json);
       expect(jsonSchema.title).toEqual(definition.identifier);
       const ajv = new Ajv();
