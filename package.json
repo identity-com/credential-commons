@@ -60,7 +60,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@identity.com/uca": "git+https://github.com/identity-com/uca.git#feature/CCS-697_credential-items-identifiers",
+    "@identity.com/uca": "^0.0.4",
     "ajv": "^6.6.2",
     "babel-runtime": "^6.26.0",
     "bluebird": "^3.5.1",
