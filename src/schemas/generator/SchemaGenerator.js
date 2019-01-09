@@ -2,6 +2,7 @@
 const randomString = require('randomstring');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
+const { UserCollectableAttribute: UCA, definitions: ucaDefinitions } = require('@identity.com/uca');
 const { Claim, definitions, getBaseIdentifiers } = require('../../claim/Claim');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -199,8 +200,13 @@ const generateRandomValueForType = (definition, includeDefinitions = false) => {
   let resolvedTypeName = typeName;
   if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
     refDefinition = definitions.find(def => def.identifier === typeName);
-    if (refDefinition !== null) {
+    if (refDefinition != null) {
       resolvedTypeName = Claim.resolveType(refDefinition);
+    } else {
+      refDefinition = ucaDefinitions.find(def => def.identifier === typeName);
+      if (refDefinition !== null) {
+        resolvedTypeName = UCA.resolveType(refDefinition);
+      }
     }
   }
   // generate sample data

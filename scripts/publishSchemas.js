@@ -4,6 +4,7 @@ const shell = require('shelljs');
 
 const CREDENTIALS_DIR = 'dist/schemas/credentials';
 const UCA_DIR = 'dist/schemas/uca';
+const CLAIM_DIR = 'dist/schemas/claim';
 const PUBLISH_DIR = 'dist/schemas/public';
 
 
@@ -13,22 +14,23 @@ if (!fs.existsSync(PUBLISH_DIR)) {
 
 const indexContent = [];
 
-const publishUcaSchemas = () => {
-  fs.readdir(UCA_DIR, (err, versionFolders) => {
+const publishSchemas = (dir, type) => {
+  fs.readdir(dir, (err, versionFolders) => {
     _.forEach(versionFolders, (folder) => {
-      fs.readdir(`${UCA_DIR}/${folder}`, (err2, files) => {
+      fs.readdir(`${dir}/${folder}`, (err2, files) => {
         _.forEach(files, (file) => {
           console.log(file);
-          const schemaContent = fs.readFileSync(`${UCA_DIR}/${folder}/${file}`, 'UTF-8');
+          const schemaContent = fs.readFileSync(`${dir}/${folder}/${file}`, 'UTF-8');
           const schema = JSON.parse(schemaContent);
           console.log(schema.title);
           const schemaTitleSplit = schema.title.split(':');
-          const targetDir = 'claim';
-          const targetFile = file.replace("claim-", '').replace(/-v.*$/, '').replace('.json', '');
+          let targetDir = type;
+          
+          const targetFile = file.replace(`${type}-`, '').replace(/-v.*$/, '').replace('.json', '');
           if (!fs.existsSync(`${PUBLISH_DIR}/${targetDir}/${folder}`)) {
             shell.mkdir('-p', `${PUBLISH_DIR}/${targetDir}/${folder}`);
           }
-          fs.copyFileSync(`${UCA_DIR}/${folder}/${file}`, `${PUBLISH_DIR}/${targetDir}/${folder}/${targetFile}.json`);
+          fs.copyFileSync(`${dir}/${folder}/${file}`, `${PUBLISH_DIR}/${targetDir}/${folder}/${targetFile}.json`);
           indexContent.push({
             name: `${targetDir}/${folder}/${targetFile.replace('.schema','')}`, link: `./${targetDir}/${folder}/${targetFile}.json`,
           });
@@ -36,6 +38,14 @@ const publishUcaSchemas = () => {
       });
     });
   });
+};
+
+const publishClaimSchemas = () => {
+  publishSchemas(CLAIM_DIR, 'claim');
+};
+
+const publishUcaSchemas = () => {
+  publishSchemas(UCA_DIR, 'uca');
 };
 
 const publishCredentialSchemas = () => {
@@ -83,6 +93,7 @@ const makeIndexFile = () => {
 
 const publish = () => {
   publishCredentialSchemas();
+  publishClaimSchemas();
   publishUcaSchemas();
 };
 
