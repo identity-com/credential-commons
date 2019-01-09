@@ -65,17 +65,36 @@ const generateUcaSchemas = async () => {
 const generateCredentialSchemas = async () => {
   credentialDefinitions.forEach(async (definition) => {
     const ucaArray = [];
+    const jsonValueDefinitions = {};
+
     definition.depends.forEach((ucaDefinitionIdentifier) => {
       const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
-      const ucaJson = schemaGenerator.buildSampleJson(ucaDefinition);
+      const ucaJson = schemaGenerator.buildSampleJson(ucaDefinition, true);
+      const copyUcaWithDefinitions = JSON.parse(JSON.stringify(ucaJson));
+      const { identifierComponents } = getBaseIdentifiers(ucaDefinitionIdentifier);
+      delete ucaJson.definition;
+
+      Object.keys(ucaJson).forEach((prop) => {
+        delete ucaJson[prop].definition;
+      });
+
+      jsonValueDefinitions
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
         value = Object.values(ucaJson)[0];
       }
+      jsonValueDefinitions[identifierComponents[2]] = copyUcaWithDefinitions;
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
     const credential = new VC(definition.identifier, 'jest:test', null, ucaArray);
+
+    definition.depends.forEach((ucaDefinitionIdentifier) => {
+      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const { identifierComponents } = getBaseIdentifiers(ucaDefinitionIdentifier);
+      credential.claim[identifierComponents[1].toLowerCase()][identifierComponents[2]] = jsonValueDefinitions[identifierComponents[2]];
+    });
+
     await credential.requestAnchor();
     await credential.updateAnchor();
     const jsonString = JSON.stringify(credential, null, 2);
