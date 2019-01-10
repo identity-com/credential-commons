@@ -152,7 +152,7 @@ const makeJsonRecursion = (ucaDefinition, includeDefinitions = false) => {
   } else { // a direct reference to a composite type
     output = generateRandomValueForType(ucaDefinition, includeDefinitions);
   }
-  if (includeDefinitions) {
+  if (includeDefinitions && output.definition == null) {
     output.definition = ucaDefinition;
   }
   return output;
