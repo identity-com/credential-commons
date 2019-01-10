@@ -256,7 +256,7 @@ const definitions = [
       properties: [
         {
           name: 'username',
-          type: 'claim-cvc:Email.username-v1',
+          type: 'cvc:Email:username',
         },
         {
           name: 'domain',
@@ -264,13 +264,6 @@ const definitions = [
         },
       ],
     },
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:Email.username-v1',
-    description: 'also known as email user',
-    version: '1',
-    type: 'String',
     credentialItem: true,
   },
   {
