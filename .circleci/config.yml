@@ -16,7 +16,7 @@ workflows:
       - build:
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+-rc.*$/
+              only: /^v\d+\.\d+\.\d+-release.*$/
             branches:
               ignore: /.*/
       - release_rc:
@@ -25,7 +25,7 @@ workflows:
             - build
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+-rc.*$/
+              only: /^v\d+\.\d+\.\d+-release.*$/
             branches:
               ignore: /.*/
   deploy-npm:
@@ -108,12 +108,8 @@ jobs:
             git config --global push.default simple
 
       - run:
-          name: version
-          command: npm version patch --git-tag-version false
-
-      - run:
           name: tag
-          command: npm run tag  
+          command: npm run tag
   deploy:
     <<: *defaults  
     steps:
