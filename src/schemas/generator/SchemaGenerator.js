@@ -96,7 +96,7 @@ const process = (definition, json) => {
   const object = json;
   const title = definition.identifier;
   let processOutput;
-  let output = {
+  const output = {
     $schema: DRAFT,
   };
   output.title = title;
@@ -109,8 +109,6 @@ const process = (definition, json) => {
     output.type = processOutput.type;
     output.properties = processOutput.properties;
   }
-
-  output = addMinimumMaximum(definition, output);
 
   // never allow additionalProperties
   output.additionalProperties = false;
