@@ -1,3 +1,4 @@
+const { UserCollectableAttribute } = require('@identity.com/uca');
 const { Claim } = require('../../src/claim/Claim');
 
 describe('Claim Constructions tests', () => {
@@ -266,5 +267,28 @@ describe('Claim Constructions tests', () => {
     const uca = new Claim(identifier, attestableValue);
     expect(uca).toBeDefined();
     expect(uca.value).toBeDefined();
+  });
+
+  test('Transforming UCA to Claim', () => {
+    const identifier = 'cvc:Identity:dateOfBirth';
+    const value = {
+      day: 20,
+      month: 12,
+      year: 1978,
+    };
+
+    const dateOfBirthUCA = new UserCollectableAttribute(identifier, value);
+    expect(dateOfBirthUCA).toBeDefined();
+    expect(dateOfBirthUCA.value).toBeDefined();
+    expect(dateOfBirthUCA.value.day).toBeDefined();
+    expect(dateOfBirthUCA.value.day.value).toBe(20);
+
+    // converting UCA to Claim
+    const dateOfBirthClaim = new Claim(identifier, dateOfBirthUCA.getPlainValue());
+
+    expect(dateOfBirthClaim).toBeDefined();
+    expect(dateOfBirthClaim.value).toBeDefined();
+    expect(dateOfBirthClaim.value.day).toBeDefined();
+    expect(dateOfBirthClaim.value.day.value).toBe(20);
   });
 });

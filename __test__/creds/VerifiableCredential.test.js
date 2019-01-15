@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
+const uuidv1 = require('uuid/v1');
 const uuidv4 = require('uuid/v4');
 const { Claim, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
@@ -142,6 +143,9 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.name.givenNames).toBeDefined();
     expect(filtered.claim.identity.name.otherNames).not.toBeDefined();
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
+
+    const emptyFiltered = simpleIdentity.filter([]);
+    expect(emptyFiltered.claim).toEqual({});
   });
 
   it('Should filter claims for Email asking for claim-cvc:Contact.email-v1 and return them on the filtered VC', () => {
@@ -826,5 +830,38 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('contact.email.username');
     expect(properties).toContain('contact.email.domain.name');
     expect(properties).toContain('contact.email.domain.tld');
+  });
+
+  it('Should generate each VC and test the empty filtering', async (done) => {
+    const validateSchemaJestStep = async (credentialDefinition) => {
+      const ucaArray = [];
+      credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
+        const ucaDefinition = definitions.find(ucaDef => (
+          ucaDef.identifier === ucaDefinitionIdentifier
+        ));
+        const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
+        let value = ucaJson;
+        if (Object.keys(ucaJson).length === 1) {
+          [value] = Object.values(ucaJson);
+        }
+        const dependentUca = new Claim(ucaDefinition.identifier, value, ucaDefinition.version);
+        ucaArray.push(dependentUca);
+      });
+      const credential = new VC(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
+
+      await credential.requestAnchor();
+      await credential.updateAnchor();
+
+      const filteredCredential = credential.filter([]);
+      return Object.keys(filteredCredential.claim).length === 0;
+    };
+    const promises = [];
+    credentialDefinitions.forEach((credentialDefinition) => {
+      promises.push(validateSchemaJestStep(credentialDefinition));
+    });
+    Promise.all(promises).then((values) => {
+      values.forEach(isValid => expect(isValid).toBeTruthy());
+      done();
+    });
   });
 });
