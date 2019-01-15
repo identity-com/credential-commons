@@ -139,7 +139,7 @@ npm run export-definitions
 
 Example
 ```
-const name = new UCA('cvc:Identity:address', {
+const name = new UCA('claim-cvc:Identity.address-v1', {
     street: 'Alameda dos Anjos',
     unit: '102',
     city: 'Belo Horizonte',
@@ -242,7 +242,7 @@ JSON String
     },
     "leaves": [
       {
-        "identifier": "cvc:Identity:address",
+        "identifier": "claim-cvc:Identity.address-v1",
         "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
         "claimPath": "type.address",
         "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
@@ -376,6 +376,28 @@ cred.updateAnchor().then(() => {
 })
 ```
 
+#### Granting the Credential Usage(for single user) from the owner
+Since the Verifiable Credential is an immutable structure that is anchored on a immutable database(blockchain),
+someone can ask. "What if someone else gets a copy of the VC and tries to use that as if is the owner of it latter?"
+To prevent that to happen is important that the owner always grant the usage of the credential *for a single time only*.
+And the entity that is receiving the VC has always to verify if the credential is granted for that specific request.
+
+The library provide ways to do both.
+
+##### Grating
+```js
+cred.grantUsageFor(requestorId, requestId)
+```
+this updates the credential with a `proof.grantted` section. where: 
+```js
+grantted = hex_encoded(sign(SHA256(`${cred.proof.anchor.subject.label}${cred.proof.anchor.subject}${requestorId}${requestId}`)))
+````
+ 
+##### Verify if is Granted
+````js
+cred.verify(targetLevel=(VERIFY_LEVELS.GRANTTED | VERIFY_LEVELS.BLOCKCHAIN), requestorId=null, requestId=null)
+````
+
 ##### Verifiable Credential Sample
 ```
 {
@@ -435,7 +457,7 @@ cred.updateAnchor().then(() => {
     },
     "leaves": [
       {
-        "identifier": "cvc:Identity:address",
+        "identifier": "claim-cvc:Identity.address-v1",
         "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
         "claimPath": "type.address",
         "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
@@ -537,13 +559,14 @@ const credJSon = require('./ACred.json');
 const cred = VC.fromJSON(credJSon);
 const verifiedLevel = cred.verify();
 ```
-The `.verify()` method return the hiest level verified, follow the `VC.VERIFY_LEVELS` constant:
+The `.verify(targetLevel=1, requestorId=null, requestId=null)` method return the hiest level verified, follow the `VC.VERIFY_LEVELS` constant:
 ```
 VERIFY_LEVELS = {
   INVALID: -1, // Credential structure and/or signature proofs is not valid, or credential is expired
   PROOFS: 0, // Credential structure and/or signature proofs are valid, including the expiry
-  ANCHOR: 1, // Anchor struture is valid
-  BLOCKCHAIN: 2, // Attestation was validated on blockchain
+  ANCHOR: 1, // Attestation Anchor struture is valid
+  GRANTTED: 2, // Check if the owner grantted the usage for the specific request
+  BLOCKCHAIN: 3, // Attestation was validated on blockchain
 };
 ```
 
@@ -557,7 +580,7 @@ A identifier like this:
 
 Example
 ```javascript
-const name = new UCA('cvc:Identity:name', {
+const name = new UCA('claim-cvc:Identity.name-v1', {
   first: 'Joao', 
   middle: 'Barbosa', 
   last: 'Santos'
@@ -580,7 +603,7 @@ The schema generator will generate an json schema like this:
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "cvc:Identity:name.first",
+  "title": "claim-cvc:Identity.name-v1.first",
   "type": "object",
   "properties": {
     "first": {
@@ -693,12 +716,12 @@ This is used on this library on src/services/config.js
 
 ## Releases
 
-The release process is fully automated and started by Civic members when it's created a tag on Github following the pattern vX.X.X-releaseX. E.g.: v0.2.29-release1.
+The release process is fully automated and started by Civic members when it's created a tag on Github following the pattern vX.X.X-rcX. E.g.: v0.2.29-rc1.
 
 After the creation of the tag, Circle Ci will trigger a job to:
 
 build source files
 run unit tests
 increase version number on package.json
-create the stable version tag dropping the 'release' suffix. E.g: v0.2.29
+create the stable version tag dropping the 'rc' suffix. E.g: v0.2.29
 deploy the binary file to NPM
