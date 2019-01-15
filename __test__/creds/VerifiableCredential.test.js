@@ -142,7 +142,9 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
 
     const emptyFiltered = simpleIdentity.filter([]);
+    const verifyStatus = emptyFiltered.verify();
     expect(emptyFiltered.claim).toEqual({});
+    expect(verifyStatus).toBe(0);
   });
 
   it('Should filter claims for Email asking for cvc:Contact:email and return them on the filtered VC', () => {
@@ -290,6 +292,11 @@ describe('Unit tests for Verifiable Credentials', () => {
     const filtered = credential.filter(['cvc:Identity:dateOfBirth']);
 
     expect(filtered.claim.document).toBeUndefined();
+
+    const emptyFiltered = credential.filter([]);
+    const verifyStatus = emptyFiltered.verify();
+    expect(emptyFiltered.claim).toEqual({});
+    expect(verifyStatus).toBe(0);
   });
 
   it('Should filter claims for PhoneNumber asking for cvc:Phone:countryCode and return only the'
