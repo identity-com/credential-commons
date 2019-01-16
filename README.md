@@ -716,12 +716,13 @@ This is used on this library on src/services/config.js
 
 ## Releases
 
-The release process is fully automated and started by Civic members when it's created a tag on Github following the pattern vX.X.X-rcX. E.g.: v0.2.29-rc1.
+The release process is fully automated and started by Civic members when it's created a tag on Github following the pattern ^release\\..*$. E.g.: `release.1`.
 
 After the creation of the tag, Circle Ci will trigger a job to:
 
 build source files
 run unit tests
 increase version number on package.json
-create the stable version tag dropping the 'rc' suffix. E.g: v0.2.29
+create the stable version and tag it. E.g: v0.2.29
+remove the release.N tag
 deploy the binary file to NPM

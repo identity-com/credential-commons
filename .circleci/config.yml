@@ -16,16 +16,16 @@ workflows:
       - build:
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+-release.*$/
+              only: /^release\..*$/
             branches:
               ignore: /.*/
-      - release_rc:
+      - release:
           context: Production
           requires:
             - build
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+-release.*$/
+              only: /^release\..*$/
             branches:
               ignore: /.*/
   deploy-npm:
@@ -75,8 +75,11 @@ jobs:
           root: ~/repo
           paths: .
 
-  release_rc:
+  release:
     <<: *defaults
+    environment:
+      HUB_ARTIFACT_VERSION: 2.5.1
+      HUB_ARTIFACT: hub-linux-amd64-2.5.1
     steps:
       - checkout
 
@@ -86,6 +89,10 @@ jobs:
           - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
 
       - run: sudo npm install -g npm
+      - run: |
+          sh ./.circleci/install_hub.sh
+          mkdir ~/.config/ && echo -e "github.com:\n- user: civictechuser\n  oauth_token: $GITHUB_API_KEY\n  protocol: https\n" > ~/.config/hub
+
       - run: npm ci
 
       - save_cache:
@@ -108,8 +115,15 @@ jobs:
             git config --global push.default simple
 
       - run:
-          name: tag
-          command: npm run tag
+          name: create-release
+          command: npm run release:create
+
+      - run:
+          name: delete-release-tag
+          command: git push --delete origin $CIRCLE_TAG
+
+      - run: |
+          hub release delete $CIRCLE_TAG
   deploy:
     <<: *defaults  
     steps:
