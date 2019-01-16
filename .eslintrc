@@ -10,6 +10,7 @@
         "no-only-tests"
     ],
     "rules": {
-        "max-len": ["warn", 120]
+        "max-len": ["warn", 120],
+        "class-methods-use-this": "off"
     }
 }
