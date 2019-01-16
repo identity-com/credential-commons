@@ -388,14 +388,14 @@ The library provide ways to do both.
 ```js
 cred.grantUsageFor(requestorId, requestId)
 ```
-this updates the credential with a `proof.grantted` section. where: 
+this updates the credential with a `granted` section. where: 
 ```js
-grantted = hex_encoded(sign(SHA256(`${cred.proof.anchor.subject.label}${cred.proof.anchor.subject}${requestorId}${requestId}`)))
+granted = hex_encoded(sign(SHA256(`${cred.proof.anchor.subject.label}${cred.proof.anchor.subject}${requestorId}${requestId}`)))
 ````
  
 ##### Verify if is Granted
 ````js
-cred.verify(targetLevel=(VERIFY_LEVELS.GRANTTED | VERIFY_LEVELS.BLOCKCHAIN), requestorId=null, requestId=null)
+cred.verify(targetLevel=(VERIFY_LEVELS.GRANTED | VERIFY_LEVELS.BLOCKCHAIN), requestorId=null, requestId=null)
 ````
 
 ##### Verifiable Credential Sample
@@ -565,7 +565,7 @@ VERIFY_LEVELS = {
   INVALID: -1, // Credential structure and/or signature proofs is not valid, or credential is expired
   PROOFS: 0, // Credential structure and/or signature proofs are valid, including the expiry
   ANCHOR: 1, // Attestation Anchor struture is valid
-  GRANTTED: 2, // Check if the owner grantted the usage for the specific request
+  GRANTED: 2, // Check if the owner granted the usage for the specific request
   BLOCKCHAIN: 3, // Attestation was validated on blockchain
 };
 ```
