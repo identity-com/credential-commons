@@ -20,13 +20,13 @@ This Javascript Library provides functionality around Verifiable Credentials (VC
   * [User Config File ~/.civic/config](#user-config-file---civic-config)
 - [Features](#features)
   * [User Collectable Attributes](#user-collectable-attributes)
-    + [Defining new UCA](#defining-new-uca)
-    + [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services)
-    + [Using a UCA in javascript (with this library)](#using-a-uca-in-javascript--with-this-library-)
-      - [creating UCA instances with the constructor](#creating-uca-instances-with-the-constructor)
+    + [Defining new Claim](#defining-new-claim)
+    + [Exporting Claim to the Claim Registry Services](#exporting-claim-to-the-claim-registry-services)
+    + [Using a Claim in javascript (with this library)](#using-a-claim-in-javascript--with-this-library-)
+      - [creating Claim instances with the constructor](#creating-claim-instances-with-the-constructor)
   * [Credentials](#credentials)
-    + [Defining new UCA](#defining-new-uca-1)
-    + [Exporting UCA to the UCA Registry Services](#exporting-uca-to-the-uca-registry-services-1)
+    + [Defining new Claim](#defining-new-claim-1)
+    + [Exporting Claim to the Claim Registry Services](#exporting-claim-to-the-claim-registry-services-1)
     + [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
       - [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
       - [anchoring VerifiableCredential instances with the constructor](#anchoring-verifiablecredential-instances-with-the-constructor)
@@ -117,29 +117,29 @@ If you are not sure how to get those informations, see the tutorial down below.
 
 ### User Collectable Attributes
 
-A "User Collectable Attribute" is **a unit of user-related data** (attribute or knowledge) with a specific identifier that can be captured from the user normally during mobile app. A UCA once verified can be part of a Credential as Claim with the same identifier.
+A "User Collectable Attribute" is **a unit of user-related data** (attribute or knowledge) with a specific identifier that can be captured from the user normally during mobile app. A Claim once verified can be part of a Credential as Claim with the same identifier.
 
-#### Defining new UCA
+#### Defining new Claim
 
 Just add a new definition entry with the [format](http://) on the definitions [file](http://)
 
-#### Exporting UCA to the UCA Registry Services
+#### Exporting Claim to the Claim Registry Services
 
-UCA definitions are packed inside this library but also are available for public consumption at the [UCA Registry](http://) to export new defined UCAs just run:
+Claim definitions are packed inside this library but also are available for public consumption at the [Claim Registry](http://) to export new defined Claims just run:
 
 ```
 npm run export-definitions 
 ```  
 
-#### Using a UCA in javascript (with this library)
+#### Using a Claim in javascript (with this library)
 
-##### creating UCA instances with the constructor
+##### creating Claim instances with the constructor
 
-`UCA(identifier, value, version)`
+`Claim(identifier, value, version)`
 
 Example
 ```
-const name = new UCA('claim-cvc:Identity.address-v1', {
+const name = new Claim('claim-cvc:Identity.address-v1', {
     street: 'Alameda dos Anjos',
     unit: '102',
     city: 'Belo Horizonte',
@@ -151,7 +151,7 @@ const name = new UCA('claim-cvc:Identity.address-v1', {
 ```
 Or use the shorthand
 ```
-const name = new UCA.IdentityAddress({
+const name = new Claim.IdentityAddress({
     street: 'Alameda dos Anjos',
     unit: '102',
     city: 'Belo Horizonte',
@@ -331,11 +331,11 @@ JSON String
 
 A Credential with an associated Proof. Every consumer of a verifiable Credentials must be able to verify those independently. Holders of Credentials (aka Mobile Phones) are creating "Verifiable Credentials" for Inspectors (aka Requesters).
 
-#### Defining new UCA
+#### Defining new Claim
 
 Just add a new definition entry with the [format](http://) on the definitions [file](http://)
 
-#### Exporting UCA to the UCA Registry Services
+#### Exporting Claim to the Claim Registry Services
 
 Credentials definitions are packed inside this library but also are available for public consumption at the [Credential Registry](http://) to export new defined Credentials
  
@@ -347,18 +347,18 @@ npm run export-definitions
 
 ##### creating VerifiableCredential instances with the constructor
 
-To construct a new VC you need first to get instances of all UCA dependencies
+To construct a new VC you need first to get instances of all Claim dependencies
 ```
-const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
 const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
 ```
 
 ##### anchoring VerifiableCredential instances with the constructor
-To construct a new VC you need first to get instances of all UCA dependencies
+To construct a new VC you need first to get instances of all Claim dependencies
 ```
-const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
 const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
 cred.requestAnchor().then(() => {
   //The original instance is updated
@@ -366,10 +366,10 @@ cred.requestAnchor().then(() => {
 ```
 
 ##### refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor
-To construct a new VC you need first to get instances of all UCA dependencies
+To construct a new VC you need first to get instances of all Claim dependencies
 ```
-const name = new UCA.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-const dob = new UCA.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
 const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
 cred.updateAnchor().then(() => {
   //The original instance is updated
@@ -557,7 +557,7 @@ A identifier like this:
 
 Example
 ```javascript
-const name = new UCA('claim-cvc:Identity.name-v1', {
+const name = new Claim('claim-cvc:Identity.name-v1', {
   first: 'Joao', 
   middle: 'Barbosa', 
   last: 'Santos'
