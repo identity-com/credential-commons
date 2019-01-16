@@ -10,15 +10,9 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:Email.properties-v1',
-    version: '1',
-    type: 'claim-cvc:Type.email-v1',
-    credentialItem: true,
-  },
-  {
     identifier: 'claim-cvc:Contact.email-v1',
     version: '1',
-    type: 'claim-cvc:Email.properties-v1',
+    type: 'claim-cvc:Type.email-v1',
     credentialItem: true,
   },
   {
@@ -214,9 +208,14 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:Document.type-v1',
+    identifier: 'claim-cvc:Document.enum-v1',
     version: '1',
     type: 'String',
+  },
+  {
+    identifier: 'claim-cvc:Document.type-v1',
+    version: '1',
+    type: 'claim-cvc:Document.enum-v1',
     credentialItem: true,
   },
   {
@@ -391,33 +390,6 @@ const definitions = [
       ],
       required: ['dateOfIssue'],
     },
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:Type.S3DocumentImageRef-v1',
-    version: '1',
-    type: {
-      properties: [
-        {
-          name: 'type',
-          type: 'claim-cvc:Document.type-v1',
-        },
-        {
-          name: 'face',
-          type: 'claim-cvc:Type.DocumentFace-v1',
-        },
-        {
-          name: 'reference',
-          type: 'cvc:Type:S3FileRef',
-        },
-      ],
-      required: ['type', 'face', 'reference'],
-    },
-  },
-  {
-    identifier: 'claim-cvc:Type.DocumentFace-v1',
-    version: '1',
-    type: 'String',
     credentialItem: true,
   },
 ];

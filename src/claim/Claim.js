@@ -18,10 +18,25 @@ function getBaseIdentifiers(identifier) {
   return { identifierComponents, isNewIdentifier };
 }
 
+function adaptIdentifierIfNeeded(identifier) {
+  const { isNewIdentifier, identifierComponents } = getBaseIdentifiers(identifier);
+
+  if (!isNewIdentifier && !_.find(definitions, { identifier })) {
+    const newIdentifier = `claim-cvc:${identifierComponents[1]}.${identifierComponents[2]}-v1`;
+    const foundNewIdentifier = _.find(definitions, { identifier: newIdentifier });
+    if (foundNewIdentifier) {
+      return newIdentifier;
+    }
+    throw new Error(`${identifier} is not defined`);
+  }
+  return identifier;
+}
+
 class Claim extends UserCollectableAttribute {
   constructor(identifier, value, version) {
-    super(identifier, value, version, definitions);
-    this.initialize(identifier, value, version);
+    const currentIdentifier = adaptIdentifierIfNeeded(identifier);
+    super(currentIdentifier, value, version, definitions);
+    this.initialize(currentIdentifier, value, version);
   }
 
   initialize(identifier, value, version) {

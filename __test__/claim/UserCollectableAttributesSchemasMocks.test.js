@@ -1,10 +1,9 @@
+jest.mock('../../src/claim/definitions');
+
 const Ajv = require('ajv');
 const { Claim } = require('../../src/claim/Claim');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const ucaMockDefinitions = require('../../src/claim/__mocks__/definitions');
-
-jest.mock('@identity.com/uca');
-
 
 /**
  * Jest is really a painful when it comes to mocking require.
