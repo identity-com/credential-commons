@@ -33,10 +33,10 @@
     "build:browser:clean": "rimraf dist/prebrowser",
     "build:browser": "npm run build:browser:before && npm run build:browser:after && npm run build:browser:clean",
     "build": "npm run build:browser && npm run build:cjs && npm run build:es",
-    "postversion": "git checkout master && git add --all && git commit -m\"build and version $npm_package_version\" -m\"[skip ci]\" && git push origin master",
     "pretag": "git fetch --tags",
     "tag": "git tag v$npm_package_version && git push --tags origin master",
-    "precommit": "npm run lint"
+    "precommit": "npm run lint",
+    "release:create": "hub release create -m v$npm_package_version v$npm_package_version"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
