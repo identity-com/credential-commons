@@ -15,7 +15,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
   it('Should validate the VC Schema generation against a single well known definition', () => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 1, year: 1978 });
-    const cred = new VC('cvc:Credential:Identity', 'jest:test', null, [name, dob], 1);
+    const cred = new VC('credential-cvc:Identity-v1', 'jest:test-v1', null, [name, dob], 1);
     const jsonString = JSON.stringify(cred, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(cred, generatedJson);
@@ -44,7 +44,6 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
       await credential.requestAnchor();
       await credential.updateAnchor();
-
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
@@ -64,7 +63,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
   });
 
   it('Should change the VC Json data and fail against AJV', () => {
-    const identifier = 'cvc:Credential:Identity';
+    const identifier = 'credential-cvc:Identity-v1';
     const credentialDefinition = credentialDefinitions.find(credsDef => (
       credsDef.identifier === identifier
     ));
@@ -94,7 +93,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
   });
 
   it('Should add an property to the root of the json and fail against AJV additionalProperties', () => {
-    const identifier = 'cvc:Credential:Identity';
+    const identifier = 'credential-cvc:Identity-v1';
     const credentialDefinition = credentialDefinitions.find(credsDef => (
       credsDef.identifier === identifier
     ));

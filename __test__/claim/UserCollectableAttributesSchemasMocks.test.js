@@ -1,10 +1,9 @@
+jest.mock('../../src/claim/definitions');
+
 const Ajv = require('ajv');
 const { Claim } = require('../../src/claim/Claim');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const ucaMockDefinitions = require('../../src/claim/__mocks__/definitions');
-
-jest.mock('@identity.com/uca');
-
 
 /**
  * Jest is really a painful when it comes to mocking require.
@@ -17,7 +16,7 @@ jest.mock('@identity.com/uca');
 describe('UserCollectableAttribute Json Sample Date Construction tests', () => {
   it('Testing boolean types on the UserCollectableAttribute', async (done) => {
     const definition = ucaMockDefinitions.find(def => def.identifier === 'civ:Mock:booleans');
-    const json = SchemaGenerator.buildSampleJson(definition);
+    const json = SchemaGenerator.buildSampleJson(definition, true);
     const sampleUca = new Claim(definition.identifier, json.booleans);
     expect(sampleUca).toBeDefined();
     const jsonSchema = SchemaGenerator.process(definition, json);

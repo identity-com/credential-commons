@@ -14,9 +14,7 @@ function sha256(string) {
 }
 
 function getClaimPath(identifier, claimsPathRef) {
-  const identifierComponents = _.split(identifier, ':');
-  const baseName = _.camelCase(identifierComponents[1]);
-  const sufix = `${baseName}.${identifierComponents[2]}`;
+  const sufix = Claim.getPath(identifier);
   const claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
   return claimPath || sufix;
 }

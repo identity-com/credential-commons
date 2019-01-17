@@ -2,7 +2,7 @@
   "id": null,
   "issuer": "jest:test",
   "issuanceDate": "2018-06-19T21:52:47.512Z",
-  "identifier": "civ:Credential:TestWithExcludes",
+  "identifier": "credential-cvc:TestWithExcludes-v1",
   "expirationDate": "2028-06-19T08:04:47.512Z",
   "version": 1,
   "type": [

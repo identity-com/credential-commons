@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-const ucaDefinitions = require('../src/uca/definitions');
+const ucaDefinitions = require('../src/claim/definitions');
 const credentialDefinitions = require('../src/creds/definitions');
 const schemaGenerator = require('../src/schemas/generator/SchemaGenerator');
-const UCA = require('../src/uca/UserCollectableAttribute');
+const { Claim: UCA, getBaseIdentifiers } = require('../src/claim/Claim');
 const VC = require('../src/creds/VerifiableCredential');
 const chalk = require('chalk');
 const clear = require('clear');
@@ -39,11 +39,11 @@ const askOptions = () => {
  */
 const generateUcaSchemas = async () => {
   ucaDefinitions.forEach((definition) => {
-    const json = schemaGenerator.buildSampleJson(definition);
+    const json = schemaGenerator.buildSampleJson(definition, true);
     console.log(json);
     const jsonSchema = schemaGenerator.process(definition, json);
     console.log(jsonSchema);
-    const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
+    const fileName = definition.identifier.replace(/-v.*$/, '');
     const jsonFolderVersion = `${definition.version}`;
     const folderPath = `${GENERATION_FOLDER}/uca/${jsonFolderVersion}`;
     if (!fs.existsSync(folderPath)) {
@@ -65,24 +65,43 @@ const generateUcaSchemas = async () => {
 const generateCredentialSchemas = async () => {
   credentialDefinitions.forEach(async (definition) => {
     const ucaArray = [];
+    const jsonValueDefinitions = {};
+
     definition.depends.forEach((ucaDefinitionIdentifier) => {
       const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
-      const ucaJson = schemaGenerator.buildSampleJson(ucaDefinition);
+      const ucaJson = schemaGenerator.buildSampleJson(ucaDefinition, true);
+      const copyUcaWithDefinitions = JSON.parse(JSON.stringify(ucaJson));
+      const { identifierComponents } = getBaseIdentifiers(ucaDefinitionIdentifier);
+      delete ucaJson.definition;
+
+      Object.keys(ucaJson).forEach((prop) => {
+        delete ucaJson[prop].definition;
+      });
+
+      jsonValueDefinitions
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
         value = Object.values(ucaJson)[0];
       }
+      jsonValueDefinitions[identifierComponents[2]] = copyUcaWithDefinitions;
       const dependentUca = new UCA(ucaDefinition.identifier, value, ucaDefinition.version);
       ucaArray.push(dependentUca);
     });
     const credential = new VC(definition.identifier, 'jest:test', null, ucaArray);
+
+    definition.depends.forEach((ucaDefinitionIdentifier) => {
+      const ucaDefinition = ucaDefinitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const { identifierComponents } = getBaseIdentifiers(ucaDefinitionIdentifier);
+      credential.claim[identifierComponents[1].toLowerCase()][identifierComponents[2]] = jsonValueDefinitions[identifierComponents[2]];
+    });
+
     await credential.requestAnchor();
     await credential.updateAnchor();
     const jsonString = JSON.stringify(credential, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = schemaGenerator.process(credential, generatedJson);
     const jsonFolderVersion = `${definition.version}`;
-    const fileName = definition.identifier.substring(definition.identifier.lastIndexOf(':') + 1);
+    const fileName = definition.identifier.replace(/-v.*$/, '');
     const folderPath = `${GENERATION_FOLDER}/credentials/${jsonFolderVersion}`;
     if (!fs.existsSync(folderPath)) {
       shell.mkdir('-p', folderPath);
@@ -114,6 +133,8 @@ const generate = async () => {
       await generateUcaSchemas();
     } else if (selectedOption.value === 'credentials') {
       await generateCredentialSchemas();
+    } else {
+      await generateBoth();
     }
   } else {
     await generateBoth();
