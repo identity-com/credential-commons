@@ -2,29 +2,30 @@
 const randomString = require('randomstring');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
-const { Claim, definitions } = require('../../claim/Claim');
+const { Claim, definitions, getBaseIdentifiers } = require('../../claim/Claim');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
-const getPropertyNameFromDefinition = (definition) => {
-  const substrIndex = definition.identifier.lastIndexOf('.') > -1 ? definition.identifier.lastIndexOf('.') + 1
-    : definition.identifier.lastIndexOf(':') + 1;
-  return definition.identifier.substring(substrIndex);
-};
+const getPropertyNameFromDefinition = definition => getBaseIdentifiers(definition.identifier).identifierComponents[2];
 
 const getPropertyType = value => Type.string(value).toLowerCase();
 
 const processObject = (object, outputParam, parentKey) => {
-  let output = outputParam;
-  output = output || {};
-  output.type = getPropertyType(object);
+  const output = outputParam || {};
+  const objectProperties = object;
+  const { definition } = objectProperties;
+  delete objectProperties.definition;
+
+  output.type = getPropertyType(objectProperties);
   output.properties = output.properties || {};
-  const keys = Object.entries(object);
+  const keys = Object.entries(objectProperties);
+
   // too much debate on this eslint
   // https://github.com/airbnb/javascript/issues/1122
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of keys) {
     // we have to get the required array from the definitions properties
+
     const type = getPropertyType(value);
     if (type === 'object') {
       output.properties[key] = processObject(value, output.properties[key], `${parentKey}.${key}`);
@@ -35,6 +36,17 @@ const processObject = (object, outputParam, parentKey) => {
     } else {
       output.properties[key] = {};
       output.properties[key].type = type === 'null' ? ['null', 'string'] : type;
+      if (definition && definition.type.properties) {
+        let propType = definition.type.properties.find(prop => prop.name === key);
+        // simple composite, one depth level civ:Identity.name for example
+        if (propType && propType.type.includes(':')) {
+          propType = definitions.find(def => def.identifier === propType.type);
+        }
+
+        output.properties[key] = addMinimumMaximum(propType, output.properties[key]);
+      } else {
+        output.properties[key] = addMinimumMaximum(definition, output.properties[key]);
+      }
     }
   }
   // it must be 4 here, we start the json of the VC with root
@@ -42,9 +54,18 @@ const processObject = (object, outputParam, parentKey) => {
   if (parentKey.includes('claim') && parentKey.split('.').length === 4) {
     // with the json key of the claim
     const baseUcaName = parentKey.substring('root.claim.'.length);
-    const typeName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1)).replace('.', ':');
+    let typeName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1)).replace('.', ':');
     // regenerate uca
-    const refDefinition = definitions.find(def => def.identifier.includes(typeName));
+    let refDefinition = definitions.find(def => def.identifier.includes(typeName));
+    if (refDefinition == null) {
+      const baseName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1));
+      typeName = `claim-cvc:${baseName}-v1`;
+      refDefinition = definitions.find(def => def.identifier.includes(typeName));
+    }
+    if (refDefinition == null) {
+      typeName = `claim-cvc:${baseUcaName}-v1`;
+      refDefinition = definitions.find(def => def.identifier.includes(typeName));
+    }
     // get it's required definitions
     output.required = refDefinition.type.required;
   }
@@ -88,23 +109,7 @@ const process = (definition, json) => {
     output.type = processOutput.type;
     output.properties = processOutput.properties;
   }
-  // for simple Claim get json schema properties
-  if (typeof definition !== 'undefined' && definition !== null) {
-    if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
-      if (definition.exclusiveMinimum) {
-        output.exclusiveMinimum = definition.minimum;
-      } else {
-        output.minimum = definition.minimum;
-      }
-    }
-    if (typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
-      if (definition.exclusiveMaximum) {
-        output.exclusiveMaximum = definition.maximum;
-      } else {
-        output.maximum = definition.maximum;
-      }
-    }
-  }
+
   // never allow additionalProperties
   output.additionalProperties = false;
   // Output
@@ -118,9 +123,9 @@ const process = (definition, json) => {
  * @param definition receive an Claim and build an sample json from it's properties
  * @returns {{$schema: string}}
  */
-const buildSampleJson = (definition) => {
+const buildSampleJson = (definition, includeDefinitions = false) => {
   let output = {};
-  output = makeJsonRecursion(definition);
+  output = makeJsonRecursion(definition, includeDefinitions);
   return output;
 };
 
@@ -128,22 +133,25 @@ const buildSampleJson = (definition) => {
  * Recursion to build the schema from an json value
  * @param ucaDefinition
  */
-const makeJsonRecursion = (ucaDefinition) => {
+const makeJsonRecursion = (ucaDefinition, includeDefinitions = false) => {
   let output = {};
   const typeName = Claim.getTypeName(ucaDefinition);
   if (typeof ucaDefinition.type === 'object' && ucaDefinition.type.properties !== undefined) { // array of properties
     ucaDefinition.type.properties.forEach((property) => {
-      output[property.name] = generateRandomValueForType(property.type);
+      output[property.name] = generateRandomValueForType(property, includeDefinitions);
     });
   } else if (typeName !== 'Object') { // not a reference
     const propertyName = getPropertyNameFromDefinition(ucaDefinition);
     if (typeof ucaDefinition.pattern !== 'undefined' && ucaDefinition.pattern !== null) {
       output[propertyName] = new RandExp(ucaDefinition.pattern).gen();
     } else {
-      output[propertyName] = generateRandomValueForType(ucaDefinition.type);
+      output[propertyName] = generateRandomValueForType(ucaDefinition, includeDefinitions);
     }
   } else { // a direct reference to a composite type
-    output = generateRandomValueForType(ucaDefinition.type);
+    output = generateRandomValueForType(ucaDefinition, includeDefinitions);
+  }
+  if (includeDefinitions && output.definition == null) {
+    output.definition = ucaDefinition;
   }
   return output;
 };
@@ -157,49 +165,35 @@ const makeJsonRecursion = (ucaDefinition) => {
  */
 const generateRandomNumberValueWithRange = (definition) => {
   let genRandomNumber = Math.random() * 100;
+
   if (definition !== null) {
-    /*
-     * 6.2.5. exclusiveMinimum
-     * The value of "exclusiveMinimum" MUST be number, representing an exclusive
-     * lower limit for a numeric instance. If the instance is a number, then the
-     * instance is valid only if it has a value strictly greater than (not equal
-     * to) "exclusiveMinimum".
-     */
-    const exclusiveMinVariance = definition.exclusiveMinimum ? 1 : 0;
-    /*
-     * 6.2.3. exclusiveMaximum
-     * The value of "exclusiveMaximum" MUST be number, representing an exclusive
-     * upper limit for a numeric instance. If the instance is a number, then the
-     * instance is valid only if it has a value strictly less than (not equal to)
-     * "exclusiveMaximum".
-     */
-    const exclusiveMaxVariance = definition.exclusiveMaximum ? -1 : 0;
     if (typeof definition.minimum !== 'undefined' && definition.minimum !== null
-      && typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
-      if (Number.isInteger(definition.minimum)) {
-        genRandomNumber = Math.floor(definition.minimum + exclusiveMinVariance + (Math.random()
-          * (definition.maximum + exclusiveMaxVariance)));
-      }
-      genRandomNumber = definition.minimum + (Math.random() * definition.maximum);
-    } else if (typeof definition.minimum !== 'undefined' && definition.minimum !== null) {
-      if (Number.isInteger(definition.minimum)) {
-        genRandomNumber = Math.floor(
-          definition.minimum + exclusiveMinVariance + (Math.random() * 100),
-        );
-      }
-      genRandomNumber = definition.minimum + (Math.random() * 100);
-    } else if (typeof definition.maximum !== 'undefined' && definition.maximum !== null) {
-      if (Number.isInteger(definition.maximum)) {
-        genRandomNumber = Math.floor((Math.random() * (definition.maximum + exclusiveMaxVariance)));
-      }
-      genRandomNumber = (Math.random() * definition.maximum);
+        && genRandomNumber < definition.minimum) {
+      genRandomNumber = definition.minimum;
+    }
+
+    if (definition.exclusiveMinimum !== 'undefined' && definition.exclusiveMinimum !== null
+        && genRandomNumber <= definition.exclusiveMinimum) {
+      genRandomNumber = definition.exclusiveMinimum + 0.1;
+    }
+
+    if (typeof definition.maximum !== 'undefined' && definition.maximum !== null
+        && genRandomNumber > definition.maximum) {
+      genRandomNumber = definition.maximum;
+    }
+
+    if (definition.exclusiveMaximum !== 'undefined' && definition.exclusiveMaximum !== null
+        && genRandomNumber >= definition.exclusiveMaximum) {
+      genRandomNumber = definition.exclusiveMaximum - 0.1;
     }
   }
+
   return genRandomNumber;
 };
 
-const generateRandomValueForType = (typeName) => {
-  let refDefinition = null;
+const generateRandomValueForType = (definition, includeDefinitions = false) => {
+  const typeName = definition.type;
+  let refDefinition = definition;
   let resolvedTypeName = typeName;
   if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
     refDefinition = definitions.find(def => def.identifier === typeName);
@@ -217,8 +211,31 @@ const generateRandomValueForType = (typeName) => {
     case 'Boolean':
       return (Math.round(Math.random()) === 1);
     default:
-      return makeJsonRecursion(refDefinition);
+      return makeJsonRecursion(refDefinition, includeDefinitions);
   }
+};
+
+const addMinimumMaximum = (definition, object) => {
+  const output = object;
+  // for simple Claim get json schema properties
+  if (typeof definition !== 'undefined' && definition !== null) {
+    if (definition.exclusiveMinimum != null) {
+      output.exclusiveMinimum = definition.exclusiveMinimum;
+    }
+
+    if (definition.minimum != null) {
+      output.minimum = definition.minimum;
+    }
+
+    if (definition.exclusiveMaximum != null) {
+      output.exclusiveMaximum = definition.exclusiveMaximum;
+    }
+
+    if (definition.maximum != null) {
+      output.maximum = definition.maximum;
+    }
+  }
+  return output;
 };
 
 module.exports = { process, buildSampleJson };

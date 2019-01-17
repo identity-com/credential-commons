@@ -2,12 +2,12 @@
   "id": "7e984bcc-602a-478f-adaa-5a586e4abae6",
   "issuer": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD",
   "issuanceDate": "2018-11-20T20:41:59.861Z",
-  "identifier": "cvc:Credential:GenericDocumentId",
+  "identifier": "credential-cvc:GenericDocumentId-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:GenericDocumentId"
+    "credential-cvc:GenericDocumentId-v1"
   ],
   "claim": {
     "document": {
@@ -63,7 +63,7 @@
     "anchor": "TBD (Civic Blockchain Attestation)",
     "leaves": [
       {
-        "identifier": "cvc:Document:type",
+        "identifier": "claim-cvc:Document.type-v1",
         "value": "urn:type:3c6c88d9054ff152103737d4631d508519ceb3398f4a2fdb68079feb6a8d6d22:UYOTemeop1|",
         "claimPath": "document.type",
         "targetHash": "862fb2fbfd5c47581c61c936fe6eb72b0f8fddc323f59d5615e8143c0f71b167",
@@ -86,7 +86,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:number",
+        "identifier": "claim-cvc:Document.number-v1",
         "value": "urn:number:6a3d75f1c6ca6b30c2ec7583dc963aeb028bdd5d0b90f199c2aed131c201ba3a:hwktDQnVSM|",
         "claimPath": "document.number",
         "targetHash": "e04a092fce6e0734feb469e4dcd6058336e61e750874ccd3081200b987669ec0",
@@ -109,7 +109,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:name",
+        "identifier": "claim-cvc:Document.name-v1",
         "value": "urn:name.familyNames:ae24dd60b8a4259d478d725efd12900c8b83a6c36f7b0090b8f81a51567c44c6:o74I3q0Udy|urn:name.givenNames:5bef2387e1e897fb64de2ba5c20607f704b57056939bd4258a6ddf762b5a6c7d:xVIkPSoKlw|urn:name.otherNames:1f7b6a70eba5550a47664e85286ab2fda0d9dee99908da0a88234860b29b5d7e:90Dov8xBgR|",
         "claimPath": "document.name",
         "targetHash": "b4bb4b697b78c253f3dbc1a0b9d5b14218616cd5ebddd8983bb231ef647db36d",
@@ -132,7 +132,7 @@
         ]
       },
       {
-        "identifier": "cvc:Name:givenNames",
+        "identifier": "claim-cvc:Name.givenNames-v1",
         "value": "urn:givenNames:5bef2387e1e897fb64de2ba5c20607f704b57056939bd4258a6ddf762b5a6c7d:xVIkPSoKlw|",
         "claimPath": "document.name.givenNames",
         "targetHash": "736ce485a7c50a89b1863e8dc7f24c0e2cf9bc63950408e9a539d427137d57ee",
@@ -155,7 +155,7 @@
         ]
       },
       {
-        "identifier": "cvc:Name:familyNames",
+        "identifier": "claim-cvc:Name.familyNames-v1",
         "value": "urn:familyNames:ae24dd60b8a4259d478d725efd12900c8b83a6c36f7b0090b8f81a51567c44c6:o74I3q0Udy|",
         "claimPath": "document.name.familyNames",
         "targetHash": "e909ecb6288af6f60261756ed591fb8e0dbfe8a23f8b17c596bfee3dbf88b1ff",
@@ -178,7 +178,7 @@
         ]
       },
       {
-        "identifier": "cvc:Name:otherNames",
+        "identifier": "claim-cvc:Name.otherNames-v1",
         "value": "urn:otherNames:1f7b6a70eba5550a47664e85286ab2fda0d9dee99908da0a88234860b29b5d7e:90Dov8xBgR|",
         "claimPath": "document.name.otherNames",
         "targetHash": "fa12c4aee6b4c9a7892d98c95f1c0341043c481f6dd1484497e6aa2b4d4fd1cf",
@@ -201,7 +201,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:gender",
+        "identifier": "claim-cvc:Document.gender-v1",
         "value": "urn:gender:11bdb5ad75545352a0adea4a740d59d98b7e0575c9bda65fcc887dfb20774cce:6ZgZaMAEC1|",
         "claimPath": "document.gender",
         "targetHash": "46bc6d28dced24e1b4be54fb33a95c3e0005ae4ae4ccfb4deff2129953f9d3e5",
@@ -224,7 +224,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:issueLocation",
+        "identifier": "claim-cvc:Document.issueLocation-v1",
         "value": "urn:issueLocation:b5170635bf804356f6b11e205caed4ae82325395a3507b3309690e725f5aec67:qlWfJ4znwU|",
         "claimPath": "document.issueLocation",
         "targetHash": "f1761ba3e96e3040f82ab63c4f54c3fedc8b51d54bb23abf3cbfc605dfc1fa7b",
@@ -247,7 +247,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:issueAuthority",
+        "identifier": "claim-cvc:Document.issueAuthority-v1",
         "value": "urn:issueAuthority:8593ee28f4f5cbedb3a7bbf6d9827caac43c1d3d8ecc2c9d718e62446a5da269:I0LM3IeIBy|",
         "claimPath": "document.issueAuthority",
         "targetHash": "2b07878f4cdf087786eab97145281952430ba63e5e37d562b5985b0c011b6fe4",
@@ -270,7 +270,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:issueCountry",
+        "identifier": "claim-cvc:Document.issueCountry-v1",
         "value": "urn:issueCountry:b213aecb4747a9019f6353e3ab75b4731daac7a77bc94785c874264591c3c11f:EzAXU0eTKT|",
         "claimPath": "document.issueCountry",
         "targetHash": "ec2187615883221a545fe324b85e4b98b8b9ac8fe6c37d84d847137f9f34a8e4",
@@ -293,7 +293,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:placeOfBirth",
+        "identifier": "claim-cvc:Document.placeOfBirth-v1",
         "value": "urn:placeOfBirth:f5a93b9e3716946d0287dcbbb9425eb10d5c3d91bbe6433e53106271dce8c359:mPX5qQBMlU|",
         "claimPath": "document.placeOfBirth",
         "targetHash": "eca8173c15059da48ff863e6391a958af428f6ecc935222b52807adadb4d7e98",
@@ -316,7 +316,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:dateOfBirth",
+        "identifier": "claim-cvc:Document.dateOfBirth-v1",
         "value": "urn:dateOfBirth.day:d90296bbf0a86f74bbcb9f9b00217d2436b7596a552402f83f7b3b3b1b539106:23.509202572883346|urn:dateOfBirth.month:c60e2d34d02dec716d3419a941b601800c6c97dd4543a347b8b231966105a831:10.046320849916473|urn:dateOfBirth.year:8f02a483181f1f60c5617b861324142ca5f9ffdecc431852cfd24162e3c96225:1972.4471022760558|",
         "claimPath": "document.dateOfBirth",
         "targetHash": "90bad2d86838bd2253bac063313007397c4b5b8538f9c49467419cc491d38315",
@@ -339,7 +339,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:address",
+        "identifier": "claim-cvc:Document.address-v1",
         "value": "urn:address.city:8ad2e2298eda7623d46256882306bf2eb9f20c043697e6d59fbcca1f7a30a3e2:FM7pcb3F68|urn:address.country:9bdff9437318cbee926fc1f43bf21a66b1054d1ffb7c0af0f26b6d5092617ce5:C6DK4Ad534|urn:address.county:1e2ded862696ab32a69f7ac3419583e3a97c5c3fcc658d7316f954dce5947342:7JUOzujKGo|urn:address.postalCode:949e7cc3190664424a46ad78370e9b88977f3b254b3e6eef05f9e9bfafd09e8b:hTmK78Pkbu|urn:address.state:aca9a888e7249805a906156e903523c3538fb5a54d413f4ab891e4844665a7d6:bpPbF2Z3wS|urn:address.street:d1efdf491876f7728c597aa29db0c5159cc8c6ec7c233aa0a02d8531ce060fdd:vBC4ibu7a3|urn:address.unit:0a8cfa23cf9f9c048b1629cc0607a1b5ab7f5239387007d61a0337b324016424:iAvobg7Lah|",
         "claimPath": "document.address",
         "targetHash": "02c108d38408c8c07f9d31719e251c12a58dae108ab0d6d78fc40e993d721b1b",
@@ -362,7 +362,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:country",
+        "identifier": "claim-cvc:Address.county-v1",
         "value": "urn:country:9bdff9437318cbee926fc1f43bf21a66b1054d1ffb7c0af0f26b6d5092617ce5:C6DK4Ad534|",
         "claimPath": "document.address.country",
         "targetHash": "b519dbefb94f5495026a4b9c5a696d7b22d81cbd75542c9e45e84664a3d9eca0",
@@ -385,7 +385,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:county",
+        "identifier": "claim-cvc:Address.county-v1",
         "value": "urn:county:1e2ded862696ab32a69f7ac3419583e3a97c5c3fcc658d7316f954dce5947342:7JUOzujKGo|",
         "claimPath": "document.address.county",
         "targetHash": "236e2c5e658b3d6cdc38fd1a15cb05175ea43c1ce2f45244b58bcfd8875195d2",
@@ -408,7 +408,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:state",
+        "identifier": "claim-cvc:Address.state-v1",
         "value": "urn:state:aca9a888e7249805a906156e903523c3538fb5a54d413f4ab891e4844665a7d6:bpPbF2Z3wS|",
         "claimPath": "document.address.state",
         "targetHash": "594d40f665ffa1c789b0c5130decccd92c740f9969d354c05d88f6d3c91f5e6b",
@@ -431,7 +431,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:city",
+        "identifier": "claim-cvc:Address.city-v1",
         "value": "urn:city:8ad2e2298eda7623d46256882306bf2eb9f20c043697e6d59fbcca1f7a30a3e2:FM7pcb3F68|",
         "claimPath": "document.address.city",
         "targetHash": "76fdb32e4b242f524950bc5ffc4702276da3abd9c953fdce37b24d471508ee23",
@@ -454,7 +454,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:postalCode",
+        "identifier": "claim-cvc:Address.postalCode-v1",
         "value": "urn:postalCode:949e7cc3190664424a46ad78370e9b88977f3b254b3e6eef05f9e9bfafd09e8b:hTmK78Pkbu|",
         "claimPath": "document.address.postalCode",
         "targetHash": "23d512efa9f798ce35659b2efc0eb73786088105c597620b63d3b1c4c9538e63",
@@ -477,7 +477,7 @@
         ]
       },
       {
-        "identifier": "cvc:Document:properties",
+        "identifier": "claim-cvc:Document.properties-v1",
         "value": "urn:properties.dateOfExpiry.day:36e953f09aa82006bf6d440f9254e1624c4671ae2f2239dc159185095cf7ede1:9.14320914518909|urn:properties.dateOfExpiry.month:d7613bf86aab2145bc437be871499497773257670b53059992ccbb1abf534cf3:0.7636856996725372|urn:properties.dateOfExpiry.year:bc2415865fb397d1c7ab321b1289d7b366faab01cce1332c5c1ae71eab5ffc6d:1956.942523652118|urn:properties.dateOfIssue.day:4e1cbadfa735adbe2ab85bc1543020a4cd25dd25834abcf41a66bb52337448e4:11.923255701048788|urn:properties.dateOfIssue.month:a35de497883832af0b19a2c0475d1269143611167c2d5f1054005190d2eb58fa:12.215323364578072|urn:properties.dateOfIssue.year:32084189d4aee0cabda3d31840b3b4b48024912c491d8bd82acf7019ea9dd9de:1982.8838709090696|",
         "claimPath": "document.properties",
         "targetHash": "998c8c996d42d7ae04447b110274a68bdf1c234a0b0f6bc6d6bff3ff4c43f4c6",

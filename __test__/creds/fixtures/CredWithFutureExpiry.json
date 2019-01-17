@@ -2,12 +2,12 @@
   "id": "8a842560-40fc-4dcf-ae7f-23148a108829",
   "issuer": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD",
   "issuanceDate": "2018-11-14T09:00:43.439Z",
-  "identifier": "cvc:Credential:Address",
+  "identifier": "credential-cvc:Address-v1",
   "expirationDate": "2028-11-13T19:08:23.439Z",
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:Address"
+    "credential-cvc:Address-v1"
   ],
   "claim": {
     "identity": {
@@ -28,7 +28,7 @@
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "cvc:Credential:Address",
+        "label": "credential-cvc:Address-v1",
         "data": "b9714602a25118942d5aa1e4865aabd8238c4f6b2bb74c746b2a954c9fd1b9ea",
         "signature": "signed:dummy"
       },
@@ -55,7 +55,7 @@
     },
     "leaves": [
       {
-        "identifier": "cvc:Identity:address",
+        "identifier": "claim-cvc:Identity.address-v1",
         "value": "urn:address.city:ee7831025d001c630566afd1f4067e90f28caa23823e764c6295f41dff89e18a:Belo Horizonte|urn:address.country:75c6faa83a9621b3cf6e05762d1440be1a58c857faee4fab50d0c62575a3e7e6:Brazil|urn:address.county:e18f114049b5e5a37958c662a61ea27817fb69c7123bdc16c196dd460151b16a:Sao Bento|urn:address.postalCode:5bc128e2161a7cc971cca3d32da2af201d87fa7b2f236549d1d28b2dce7af318:94103345|urn:address.state:6ff19a2a4928c2d8b8c3265d44206290d686068a3ed1ae551caf4d8762a77c33:Minas Gerais|urn:address.street:e9bed36fda0902eb92c9661b4f525855105a400e7fc08083564e379befc7414d:Alameda dos Anjos|urn:address.unit:78783212de2926fc1221870bcca846d7e9378b5b750d6104b773ce776eefa961:500|",
         "claimPath": "identity.address",
         "targetHash": "514fc789cc8a37abd2dfdcb11017051f51cc84ae7878d2da8b190c3c5074b329",
@@ -78,7 +78,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:city",
+        "identifier": "claim-cvc:Address.city-v1",
         "value": "urn:city:ee7831025d001c630566afd1f4067e90f28caa23823e764c6295f41dff89e18a:Belo Horizonte|",
         "claimPath": "identity.address.city",
         "targetHash": "adbded73c3db76bb49d718184588184547b511737419e51cbec04ae1be0847ac",
@@ -101,7 +101,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:postalCode",
+        "identifier": "claim-cvc:Address.postalCode-v1",
         "value": "urn:postalCode:5bc128e2161a7cc971cca3d32da2af201d87fa7b2f236549d1d28b2dce7af318:94103345|",
         "claimPath": "identity.address.postalCode",
         "targetHash": "c8a2719635d2eb4d4dfcee2d04ec4651318c8a9406ccebd12345ca644c75b51d",
@@ -124,7 +124,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:state",
+        "identifier": "claim-cvc:Address.state-v1",
         "value": "urn:state:6ff19a2a4928c2d8b8c3265d44206290d686068a3ed1ae551caf4d8762a77c33:Minas Gerais|",
         "claimPath": "identity.address.state",
         "targetHash": "e7f430e61b6d5ac758f35e881289077978cd59ed648b841f0d8b09671bf697dd",
@@ -147,7 +147,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:county",
+        "identifier": "claim-cvc:Address.county-v1",
         "value": "urn:county:e18f114049b5e5a37958c662a61ea27817fb69c7123bdc16c196dd460151b16a:Sao Bento|",
         "claimPath": "identity.address.county",
         "targetHash": "cba237895ec0aa51ded88b320b727114472e5dfd7a70651bf51c619bdfd787e2",
@@ -170,7 +170,7 @@
         ]
       },
       {
-        "identifier": "cvc:Address:country",
+        "identifier": "claim-cvc:Address.county-v1",
         "value": "urn:country:75c6faa83a9621b3cf6e05762d1440be1a58c857faee4fab50d0c62575a3e7e6:Brazil|",
         "claimPath": "identity.address.country",
         "targetHash": "ac2e07db0f6c4923e1cb67dcd387af07150d6043fcdd12ba7c884d72709b724b",

@@ -2,12 +2,12 @@
   "id": "3636227c-5adf-4135-b81c-6dd1da53fd67",
   "issuer": "",
   "issuanceDate": "2018-11-13T18:54:11.665Z",
-  "identifier": "cvc:Credential:Email",
+  "identifier": "credential-cvc:Email-v1",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "cvc:Credential:Email"
+    "credential-cvc:Email-v1"
   ],
   "claim": {
     "contact": {
@@ -26,7 +26,7 @@
     "anchor": "TBD (Civic Blockchain Attestation)",
     "leaves": [
       {
-        "identifier": "cvc:Contact:email",
+        "identifier": "claim-cvc:Contact.email-v1",
         "value": "urn:email.domain.name:65572f78625ca98197745bd560fc5d8e6a7be7d8d9fcf6344947b697b73cd676:UTpHKFyaaB|urn:email.domain.tld:199c3b2cbc991cf024860f3cdfb71c956f0dea1fe397efb10ad1d8621163a9a1:oVaPsceZ4C|urn:email.username:705e41988a3659d943eeaaa5e6c91cc8de401674c4e130a7c44f5b4b2e8d7736:ZcMpCBQ0lE|",
         "claimPath": "contact.email",
         "targetHash": "dbd7c2e9f6369bdc1653cd29484b23324bac5cc2681bc956d5621163d10c82e7",
@@ -49,7 +49,7 @@
         ]
       },
       {
-        "identifier": "cvc:Email:domain",
+        "identifier": "claim-cvc:Email.domain-v1",
         "value": "urn:domain.name:65572f78625ca98197745bd560fc5d8e6a7be7d8d9fcf6344947b697b73cd676:UTpHKFyaaB|urn:domain.tld:199c3b2cbc991cf024860f3cdfb71c956f0dea1fe397efb10ad1d8621163a9a1:oVaPsceZ4C|",
         "claimPath": "contact.email.domain",
         "targetHash": "e3662aeff5df76f0a694848bf529ec9e52f4a981d5a0afa27e48bfeae37992d7",

@@ -6,50 +6,50 @@
  */
 const definitions = [
   {
-    identifier: 'cvc:Credential:Email',
+    identifier: 'credential-cvc:Email-v1',
     version: '1',
     depends: [
-      'cvc:Contact:email',
+      'claim-cvc:Contact.email-v1',
     ],
   },
   {
-    identifier: 'cvc:Credential:PhoneNumber',
+    identifier: 'credential-cvc:PhoneNumber-v1',
     version: '1',
     depends: [
-      'cvc:Contact:phoneNumber',
+      'claim-cvc:Contact.phoneNumber-v1',
     ],
   },
   {
-    identifier: 'cvc:Credential:GenericDocumentId',
+    identifier: 'credential-cvc:GenericDocumentId-v1',
     version: '1',
     depends: [
-      'cvc:Document:type',
-      'cvc:Document:number',
-      'cvc:Document:name',
-      'cvc:Document:gender',
-      'cvc:Document:issueLocation',
-      'cvc:Document:issueAuthority',
-      'cvc:Document:issueCountry',
-      'cvc:Document:placeOfBirth',
-      'cvc:Document:dateOfBirth',
-      'cvc:Document:address',
-      'cvc:Document:properties',
+      'claim-cvc:Document.type-v1',
+      'claim-cvc:Document.number-v1',
+      'claim-cvc:Document.name-v1',
+      'claim-cvc:Document.gender-v1',
+      'claim-cvc:Document.issueLocation-v1',
+      'claim-cvc:Document.issueAuthority-v1',
+      'claim-cvc:Document.issueCountry-v1',
+      'claim-cvc:Document.placeOfBirth-v1',
+      'claim-cvc:Document.dateOfBirth-v1',
+      'claim-cvc:Document.address-v1',
+      'claim-cvc:Document.properties-v1',
       'cvc:Document:image',
     ],
   },
   {
-    identifier: 'cvc:Credential:Address',
+    identifier: 'credential-cvc:Address-v1',
     version: '1',
     depends: [
-      'cvc:Identity:address',
+      'claim-cvc:Identity.address-v1',
     ],
   },
   {
-    identifier: 'cvc:Credential:Identity',
+    identifier: 'credential-cvc:Identity-v1',
     version: '1',
     depends: [
-      'cvc:Identity:name',
-      'cvc:Identity:dateOfBirth',
+      'claim-cvc:Identity.name-v1',
+      'claim-cvc:Identity.dateOfBirth-v1',
     ],
   },
 ];
