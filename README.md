@@ -559,7 +559,7 @@ const credJSon = require('./ACred.json');
 const cred = VC.fromJSON(credJSon);
 const verifiedLevel = cred.verify();
 ```
-The `.verify(targetLevel=1, requestorId=null, requestId=null)` method return the hiest level verified, follow the `VC.VERIFY_LEVELS` constant:
+The `.verify(VC.VERIFY_LEVELS.*, options)` method return the hiehighest level verified, follow the `VC.VERIFY_LEVELS` constant:
 ```
 VERIFY_LEVELS = {
   INVALID: -1, // Credential structure and/or signature proofs is not valid, or credential is expired
@@ -568,6 +568,14 @@ VERIFY_LEVELS = {
   GRANTED: 2, // Check if the owner granted the usage for the specific request
   BLOCKCHAIN: 3, // Attestation was validated on blockchain
 };
+```
+The `options` may contatins:
+```
+{ 
+  "requestorId"="", // If GRANTED is requested, `requestorId` should be provided to the verification
+  "requestId"="", // If GRANTED is requested, `requestId` (the nonce) should be provided to the verification
+  "keyName"="", // Optional. If a custom CryptoManager is provided, the `keyName` shoud be passed. Otherwise the library will use the `cred.proof.anchor.subject.pub` publicKey to verify.
+}
 ```
 
 ## Schema Generator
