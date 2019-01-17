@@ -91,7 +91,7 @@ jobs:
       - run: sudo npm install -g npm
       - run: |
           sh ./.circleci/install_hub.sh
-          mkdir ~/.config/ && echo -e "github.com:\n- user: civictechuser\n  oauth_token: $GITHUB_API_KEY\n  protocol: https\n" > ~/.config/hub
+          mkdir ~/.config/ && echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_API_KEY\n  protocol: https\n" > ~/.config/hub
 
       - run: npm ci
 
