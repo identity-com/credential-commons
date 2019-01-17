@@ -537,7 +537,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('should have a empty "granted" field just after construct a VC', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
 
     expect(cred).toBeDefined();
     expect(cred.granted).toBeNull();
@@ -558,7 +558,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('should throw exception id ".grantUsageFor()" request without proper ".requestAnchor()" first', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
 
     expect(cred).toBeDefined();
     expect(cred.granted).toBeNull();
@@ -576,7 +576,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('should have a filled "granted" field after ".grantUsageFor()" request', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     await cred.requestAnchor();
     expect(cred).toBeDefined();
     expect(cred.granted).toBeNull();
@@ -605,7 +605,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('should verifyGrant() accordingly', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
@@ -634,7 +634,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('should fail verifyGrant() with a invalid "granted" token', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
@@ -667,7 +667,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('should verify() with maximum level of GRANTED', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
@@ -696,7 +696,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('should fail verify() with maximum level of GRANTED if granted is invalid', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-    const cred = new VC('cvc:Credential:Identity', uuidv4(), null, [name, dob], '1');
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
