@@ -378,13 +378,19 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     let verifiedlevel = VERIFY_LEVELS.INVALID;
 
     // Test next level
-    if (verifiedlevel === VERIFY_LEVELS.INVALID && hVerifyLevel >= VERIFY_LEVELS.PROOFS && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS; // eslint-disable-line max-len
+    if (verifiedlevel === VERIFY_LEVELS.INVALID
+        && hVerifyLevel >= VERIFY_LEVELS.PROOFS
+        && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
 
     // Test next level
-    if (verifiedlevel === VERIFY_LEVELS.PROOFS && hVerifyLevel >= VERIFY_LEVELS.ANCHOR && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR; // eslint-disable-line max-len
+    if (verifiedlevel === VERIFY_LEVELS.PROOFS
+        && hVerifyLevel >= VERIFY_LEVELS.ANCHOR
+        && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR;
 
     // Test next level
-    if (verifiedlevel === VERIFY_LEVELS.ANCHOR && hVerifyLevel >= VERIFY_LEVELS.GRANTED && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED; // eslint-disable-line max-len
+    if (verifiedlevel === VERIFY_LEVELS.ANCHOR
+        && hVerifyLevel >= VERIFY_LEVELS.GRANTED
+        && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED;
 
     return verifiedlevel;
   };
