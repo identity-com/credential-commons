@@ -589,7 +589,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
     cred.grantUsageFor(requestorId, requestId, XPVT1);
-    // console.log(JSON.stringify(cred, null, 2));
     expect(cred.granted).not.toBeNull();
     done();
   });
