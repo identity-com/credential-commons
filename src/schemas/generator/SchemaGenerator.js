@@ -205,7 +205,9 @@ const generateRandomValueForType = (definition, includeDefinitions = false) => {
   // that's why the magic numbers are here
   switch (resolvedTypeName) {
     case 'String':
-      return randomString.generate(10);
+      return refDefinition && refDefinition.pattern
+        ? new RandExp(refDefinition.pattern).gen()
+        : randomString.generate(10);
     case 'Number':
       return generateRandomNumberValueWithRange(refDefinition);
     case 'Boolean':
