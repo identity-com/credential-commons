@@ -844,7 +844,8 @@ describe('Unit tests for Verifiable Credentials', () => {
       await credential.updateAnchor();
 
       const filteredCredential = credential.filter([]);
-      return Object.keys(filteredCredential.claim).length === 0 && filteredCredential.verify() === 0;
+      return Object.keys(filteredCredential.claim).length === 0
+        && filteredCredential.verify() === VC.VERIFY_LEVELS.PROOFS;
     };
     const promises = [];
     credentialDefinitions.forEach((credentialDefinition) => {
