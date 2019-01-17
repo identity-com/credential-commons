@@ -60,7 +60,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@identity.com/uca": "0.0.5",
+    "@identity.com/uca": "0.0.8",
     "ajv": "^6.6.2",
     "babel-runtime": "^6.26.0",
     "bluebird": "^3.5.1",
