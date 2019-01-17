@@ -156,7 +156,7 @@ class Claim extends UserCollectableAttribute {
 
   getClaimRootPropertyName() {
     const { identifierComponents } = getBaseIdentifiers(this.identifier);
-    return _.toLower(identifierComponents[1]);
+    return _.camelCase(identifierComponents[1]);
   }
 
   getClaimPropertyName() {

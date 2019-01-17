@@ -44,7 +44,6 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
       await credential.requestAnchor();
       await credential.updateAnchor();
-
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);

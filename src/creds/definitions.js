@@ -52,6 +52,19 @@ const definitions = [
       'claim-cvc:Identity.dateOfBirth-v1',
     ],
   },
+  {
+    identifier: 'credential-IDaaS-v1',
+    version: '1',
+    depends: [
+      'claim-cvc:Identity.name-v1',
+      'claim-cvc:Identity.dateOfBirth-v1',
+      'claim-cvc:Identity.address-v1',
+      'claim-cvc:Contact.email-v1',
+      'claim-cvc:SocialSecurity.number-v1',
+      'claim-cvc:PhoneNumber.countryCode-v1',
+      'claim-cvc:PhoneNumber.number-v1',
+    ],
+  },
 ];
 
 module.exports = definitions;

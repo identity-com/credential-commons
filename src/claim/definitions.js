@@ -392,6 +392,12 @@ const definitions = [
     },
     credentialItem: true,
   },
+  {
+    identifier: 'claim-cvc:SocialSecurity.number-v1',
+    version: '1',
+    type: 'cvc:Type:socialSecurityNumber',
+    credentialItem: true,
+  },
 ];
 
 function transformUcaIdToClaimId(identifier) {
