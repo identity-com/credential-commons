@@ -377,10 +377,10 @@ cred.updateAnchor().then(() => {
 ```
 
 #### Granting the Credential Usage(for single user) from the owner
-Since the Verifiable Credential is an immutable structure that is anchored on a immutable database(blockchain),
-someone can ask. "What if someone else gets a copy of the VC and tries to use that as if is the owner of it latter?"
-To prevent that to happen is important that the owner always grant the usage of the credential *for a single time only*.
-And the entity that is receiving the VC has always to verify if the credential is granted for that specific request.
+Since the Verifiable Credential is an immutable structure that is anchored on an immutable database(blockchain), 
+someone can ask "What if someone else gets a copy of the VC and tries to use it later as if they are the owner?"
+
+To prevent that to happen is important that the owner always grant the usage of the credential *for a single time only*. And the entity that is receiving the VC has always to verify if the credential is granted for that specific request.
 
 The library provide ways to do both.
 
