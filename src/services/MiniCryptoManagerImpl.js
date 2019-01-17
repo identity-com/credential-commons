@@ -23,7 +23,7 @@ class MiniCryptoManagerImpl {
    *                             NOTE: This is not just a keyName!
    * @param { string } hexHash - hex string representation of the hash
    */
-  sign(keyName, hexHash) {
+  sign(keyName, hexHash) { // eslint-disable-line
     const privateKey = keyName;
     const keyPair = HDNode.fromBase58(privateKey);
 
@@ -41,7 +41,7 @@ class MiniCryptoManagerImpl {
    * @param { string } hexHash - hex string representation of the hash
    * @param { string } hexSignature - DER encoded signature.
    */
-  verify(keyName, hexHash, hexSignature) {
+  verify(keyName, hexHash, hexSignature) { // eslint-disable-line
     const key = keyName;
     const keyPair = HDNode.fromBase58(key);
 
