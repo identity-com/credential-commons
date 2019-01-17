@@ -195,11 +195,11 @@ class ClaimModel {
 }
 
 const VERIFY_LEVELS = {
-  INVALID: -1, // Credential structure and/or signature proofs is not valid, or credential is expired
-  PROOFS: 0, // Credential structure and/or signature proofs are valid, including the expiry
-  ANCHOR: 1, // Attestation Anchor struture is valid
-  GRANTED: 2, // Check if the owner granted the usage for the specific request
-  BLOCKCHAIN: 3, // Attestation was validated on blockchain
+  INVALID: -1, // Verifies if the VC structure and/or signature proofs is not valid, or credential is expired
+  PROOFS: 0, // Verifies if the VC structure  and/or signature proofs are valid, including the expiry
+  ANCHOR: 1, // Verifies if the VC Attestation Anchor structure is valid
+  GRANTED: 2, // Verifies if the owner granted the VC usage for a specific request
+  BLOCKCHAIN: 3, // Verifies if the VC Attestation is valid on the blockchain
 };
 
 /**
