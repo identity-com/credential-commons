@@ -61,8 +61,7 @@ const definitions = [
       'claim-cvc:Identity.address-v1',
       'claim-cvc:Contact.email-v1',
       'claim-cvc:SocialSecurity.number-v1',
-      'claim-cvc:PhoneNumber.countryCode-v1',
-      'claim-cvc:PhoneNumber.number-v1',
+      'claim-cvc:Contact.phoneNumber-v1',
     ],
   },
 ];
