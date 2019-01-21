@@ -390,13 +390,21 @@ cred.grantUsageFor(requestorId, requestId)
 ```
 this updates the credential with a `granted` section. where: 
 ```js
-granted = hex_encoded(sign(SHA256(`${cred.proof.anchor.subject.label}${cred.proof.anchor.subject}${requestorId}${requestId}`)))
+granted = hex_encoded(sign(SHA256(`${cred.proof.anchor.subject.label}${cred.proof.anchor.subject.data}${requestorId}${requestId}`)))
 ````
  
 ##### Verify if is Granted
 ````js
-cred.verify(targetLevel=(VERIFY_LEVELS.GRANTED | VERIFY_LEVELS.BLOCKCHAIN), requestorId=null, requestId=null)
+cred.verify(VERIFY_LEVELS.GRANTED | VERIFY_LEVELS.BLOCKCHAIN), options)
 ````
+Where `options` may contatins:
+```
+{ 
+  "requestorId" = "", // If GRANTED is requested, `requestorId` should be provided to the verification
+  "requestId" = "", // If GRANTED is requested, `requestId` (the nonce) should be provided to the verification
+  "keyName" = "", // Optional. If a custom CryptoManager is provided, the `keyName` shoud be passed and will be used to verify the "granted" field.
+}
+```
 
 ##### Verifiable Credential Sample
 ```
@@ -559,6 +567,7 @@ const credJSon = require('./ACred.json');
 const cred = VC.fromJSON(credJSon);
 const verifiedLevel = cred.verify();
 ```
+
 The `.verify(VC.VERIFY_LEVELS.*, options)` method return the hiehighest level verified, follow the `VC.VERIFY_LEVELS` constant:
 ```
 VERIFY_LEVELS = {
@@ -569,14 +578,7 @@ VERIFY_LEVELS = {
   BLOCKCHAIN: 3, // Verifies if the VC Attestation is valid on the blockchain
 };
 ```
-The `options` may contatins:
-```
-{ 
-  "requestorId"="", // If GRANTED is requested, `requestorId` should be provided to the verification
-  "requestId"="", // If GRANTED is requested, `requestId` (the nonce) should be provided to the verification
-  "keyName"="", // Optional. If a custom CryptoManager is provided, the `keyName` shoud be passed. Otherwise the library will use the `cred.proof.anchor.subject.pub` publicKey to verify.
-}
-```
+
 
 ## Schema Generator
 
