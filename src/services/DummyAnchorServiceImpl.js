@@ -41,12 +41,12 @@ function DummyAnchorServiceImpl(config, http) {
     }
   };
 
-  this.anchor = async (label, data, options) => (
+  this.anchor = async (options = {}) => (
     Promise.resolve({
       subject: {
         pub: 'xpub:dummy',
-        label,
-        data,
+        label: options.label ? options.label : null,
+        data: options.data ? options.data : null,
         signature: 'signed:dummy',
       },
       walletId: 'none',

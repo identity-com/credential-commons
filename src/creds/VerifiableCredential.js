@@ -270,6 +270,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   /**
    * Request that this credential MerkleRoot is anchored on the Blockchain.
    * This will return a _temporary_ anchor meaning that the blockchain entry is still not confirmed.
+   * @param {*} options
    *
    * @param options options to be passed
    * @param options.subject the local signed subject with the user private key
