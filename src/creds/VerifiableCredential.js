@@ -273,11 +273,24 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   /**
    * Request that this credential MerkleRoot is anchored on the Blockchain.
    * This will return a _temporary_ anchor meaning that the blockchain entry is still not confirmed.
-   * @param {*} options
+   *
+   * @param options options to be passed
+   * @param options.subject the local signed subject with the user private key
+   * @param options.subject.label a short description of the subject
+   * @param options.subject.data hash of the merkle root
+   * @param options.subject.pub xpub of the signing private key
+   * @param options.subject.signature the value of the signature of the private key
+   * @param options.network testnet for test env, bitcoin for production
+   * @param options.cosigner object containing private and public key for cosigning
+   * @param options.cosigner.xpub public key of the cosigner
+   * @param options.cosigner.xprv private key of the cosigner
+   *
+   * @returns the json object containing the whole anchor attestation
+   *
    */
   this.requestAnchor = async (options) => {
     const anchorService = services.container.AnchorService;
-    const anchor = await anchorService.anchor(this.identifier, this.proof.merkleRoot, options);
+    const anchor = await anchorService.anchor(options);
     this.proof.anchor = anchor;
     return this;
   };

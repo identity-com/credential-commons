@@ -78,8 +78,8 @@ jobs:
   release:
     <<: *defaults
     environment:
-      HUB_ARTIFACT_VERSION: 2.5.1
-      HUB_ARTIFACT: hub-linux-amd64-2.5.1
+      HUB_ARTIFACT_VERSION: 2.7.0
+      HUB_ARTIFACT: hub-linux-amd64-2.7.0
     steps:
       - checkout
 
@@ -91,7 +91,7 @@ jobs:
       - run: sudo npm install -g npm
       - run: |
           sh ./.circleci/install_hub.sh
-          mkdir ~/.config/ && echo -e "github.com:\n- user: civictechuser\n  oauth_token: $GITHUB_API_KEY\n  protocol: https\n" > ~/.config/hub
+          mkdir -p ~/.config/ && echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_API_KEY\n  protocol: https\n" > ~/.config/hub
 
       - run: npm ci
 
