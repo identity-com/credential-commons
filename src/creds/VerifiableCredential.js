@@ -446,7 +446,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     if (!requestorId || !requestId || !pvtKey) {
       throw new Error('Missing required parameter: requestorId, requestId or key');
     }
-    const stringToHash = `${this.proof.anchor.subject.label}${this.proof.anchor.subject.pub}${requestorId}${requestId}`;
+    // eslint-disable-next-line max-len
+    const stringToHash = `${this.proof.anchor.subject.label}${this.proof.anchor.subject.data}${requestorId}${requestId}`;
     const hexHash = sha256(stringToHash);
 
     const cryptoManager = services.container.CryptoManager;
@@ -471,7 +472,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     if (!requestorId || !requestId) {
       return verified;
     }
-    const stringToHash = `${this.proof.anchor.subject.label}${this.proof.anchor.subject.pub}${requestorId}${requestId}`;
+    // eslint-disable-next-line max-len
+    const stringToHash = `${this.proof.anchor.subject.label}${this.proof.anchor.subject.data}${requestorId}${requestId}`;
     const hexHash = sha256(stringToHash);
 
     const cryptoManager = services.container.CryptoManager;
