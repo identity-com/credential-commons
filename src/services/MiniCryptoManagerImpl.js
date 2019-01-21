@@ -10,44 +10,70 @@ const { HDNode, ECSignature } = require('bitcoinjs-lib');
  *
  *  2. This implementation is based on HDNode key material from bitcoinjs library;
  *
- *  3. There is no Storage Implementation nor any key storage as well. All "keyName" parameters are treated as
- *    the own key in a base58 format ready to be used for sign or verify;
+ *  3. There is a volatile in memory only Storage Implementation to allow `installKey()`.
+ *     You should `installKey` a PVT key or a PUB key (verify only) before call `sign()` or `verify()`.
+ *     The installed key is removed after `sign()` or `verify()` function was called.
  */
 class MiniCryptoManagerImpl {
+  constructor() {
+    this.KEY_STORAGE = {};
+  }
+
+  /**
+   * Install a pvt or a pub key on a keyName to be used on `sign()` or `verify()` function later.
+   * @param  {} keyName - name of the key to be installed.
+   * @param  {} key - a pvt or a pub key in base58 format.
+   */
+  installKey(keyName, key) {
+    try {
+      // Test if key is a valid HDNode key
+      HDNode.fromBase58(key);
+      this.KEY_STORAGE[keyName] = key;
+    } catch (err) {
+      throw new Error(`Invalid key format: ${err.message}`);
+    }
+  }
+
   /**
    * Return input data signed using the specified key.
    *
    * Signature return value will be to be a DER encoded value.
    *
-   * @param { string } keyName - The pvtKey in base58 format to be used to sign.
-   *                             NOTE: This is not just a keyName!
+   * @param { string } keyName - name of the key to be used to sign.
    * @param { string } hexHash - hex string representation of the hash
    */
-  sign(keyName, hexHash) { // eslint-disable-line
-    const privateKey = keyName;
+  sign(keyName, hexHash) {
+    const privateKey = this.KEY_STORAGE[keyName];
     const keyPair = HDNode.fromBase58(privateKey);
 
     const hash = Buffer.from(hexHash, 'hex');
     const signature = keyPair.sign(hash);
     const hexSignature = signature.toDER().toString('hex');
+
+    // keys are volatile in this impl, removes
+    delete this.KEY_STORAGE[keyName];
+
     return hexSignature;
   }
 
   /**
    * Return true if signature has been verified, false otherwise.
    *
-   * @param { string } keyName - The pubKey in base58 format to be used to verify signature.
-   *                             NOTE: This is not just a keyName!
+   * @param { string } keyName - name of the key to be used to verify signature.
    * @param { string } hexHash - hex string representation of the hash
    * @param { string } hexSignature - DER encoded signature.
    */
-  verify(keyName, hexHash, hexSignature) { // eslint-disable-line
-    const key = keyName;
+  verify(keyName, hexHash, hexSignature) {
+    const key = this.KEY_STORAGE[keyName];
     const keyPair = HDNode.fromBase58(key);
 
     const hash = Buffer.from(hexHash, 'hex');
     const signature = Buffer.from(hexSignature, 'hex');
     const ecSignature = ECSignature.fromDER(signature);
+
+    // keys are volatile in this impl, removes
+    delete this.KEY_STORAGE[keyName];
+
     return keyPair.verify(hash, ecSignature);
   }
 }

@@ -18,13 +18,19 @@ describe('Unit tests for MiniCryptoManager', () => {
     const stringWithNonce = `SomeStringWithNonce${nonce}`;
     const hexHashNonce = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(stringWithNonce));
 
-    const hexSignature = cryptoManagerImpl.sign(XPVT, hexHashNonce);
+    const keyNameSign = 'KeyNameToSign';
+    cryptoManagerImpl.installKey(keyNameSign, XPVT);
+
+    const hexSignature = cryptoManagerImpl.sign(keyNameSign, hexHashNonce);
     expect(hexSignature).toBeDefined();
 
     const stringWithNonceToVerify = `SomeStringWithNonce${nonce}`;
     const hexHashNonceToVerify = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(stringWithNonceToVerify));
 
-    const verify = cryptoManagerImpl.verify(XPUB, hexHashNonceToVerify, hexSignature);
+    const keyNameVerify = 'KeyNameToVerify';
+    cryptoManagerImpl.installKey(keyNameVerify, XPUB);
+
+    const verify = cryptoManagerImpl.verify(keyNameVerify, hexHashNonceToVerify, hexSignature);
     expect(verify).toEqual(true);
     done();
   });

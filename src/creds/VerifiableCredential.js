@@ -433,10 +433,11 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    *
    * @param  {string} requestorId - The IDR id (DID).
    * @param  {string} requestId - A unique requestID. This should be a nonce for proof chanlange.
-   * @param  {string} pvtKey - Depending of the provided CryptoManager service, it can be either a
-   *                           keyName (i.e. the CredentialWallet Impl) or a pvtKey in base58 format (the default).
+   * @param  {Object} option - You should provide either a keyName or a pvtKey.
+   * @param  {string} option.keyName - A keyName - if CryptoManager is been used.
+   * @param  {string} option.pvtKey - A pvtKey in base58 format (default impl).
    */
-  this.grantUsageFor = (requestorId, requestId, pvtKey) => {
+  this.grantUsageFor = (requestorId, requestId, { keyName, pvtKey }) => {
     if (_.isEmpty(_.get(this.proof, 'anchor.subject.label')) || _.isEmpty(_.get(this.proof, 'anchor.subject.pub'))) {
       throw new Error('Invalid credential attestation/anchor');
     }
@@ -452,7 +453,16 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
     const cryptoManager = services.container.CryptoManager;
 
-    const hexSign = cryptoManager.sign(pvtKey, hexHash);
+    let signKey = keyName;
+    if (pvtKey) {
+      if (!_.isFunction(cryptoManager.installKey)) {
+        throw new Error('You provide a `pvtKey` but the CryptoManager does not support it, use a `keyName` instead.');
+      }
+      signKey = `TEMP_KEY_NAME_${new Date().getTime()}`;
+      cryptoManager.installKey(signKey, pvtKey);
+    }
+
+    const hexSign = cryptoManager.sign(signKey, hexHash);
     this.granted = hexSign;
   };
 
@@ -478,8 +488,15 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
     const cryptoManager = services.container.CryptoManager;
 
-    const verifyKey = keyName || _.get(this.proof, 'anchor.subject.pub');
-
+    let verifyKey = keyName;
+    if (_.isEmpty(verifyKey)) {
+      if (!_.isFunction(cryptoManager.installKey)) {
+        throw new Error('CryptoManager does not support intallKey, please use a `keyName` instead.');
+      }
+      verifyKey = `TEMP_KEY_NAME_${new Date().getTime()}`;
+      const anchorPubKey = _.get(this.proof, 'anchor.subject.pub');
+      cryptoManager.installKey(verifyKey, anchorPubKey);
+    }
     verified = cryptoManager.verify(verifyKey, hexHash, this.granted);
     return verified;
   };

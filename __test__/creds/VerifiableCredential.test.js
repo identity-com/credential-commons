@@ -20,7 +20,9 @@ const signAttestationSubject = (subject, xprv, xpub) => {
   const { data } = subject;
   const tupleToHash = JSON.stringify({ xpub, label, data });
   const hashToSignHex = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(tupleToHash));
-  const signature = miniCryptoManager.sign(xprv, hashToSignHex);
+  const keyName = `TEMP_KEY_${new Date().getTime()}`;
+  miniCryptoManager.installKey(keyName, xprv);
+  const signature = miniCryptoManager.sign(keyName, hashToSignHex);
 
   const newSubject = {
     pub: xpub,
@@ -566,7 +568,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const requestorId = 'REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
     try {
-      cred.grantUsageFor(requestorId, requestId, XPVT1);
+      cred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
     } catch (err) {
       expect(err.message).toEqual('Invalid credential attestation/anchor');
       done();
@@ -583,7 +585,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
-    cred.grantUsageFor(requestorId, requestId, XPVT1);
+    cred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
     expect(cred.granted).not.toBeNull();
     done();
   });
@@ -597,7 +599,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
-    cred.grantUsageFor(requestorId, requestId, XPVT1);
+    cred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
     expect(cred.granted).not.toBeNull();
     done();
   });
@@ -615,7 +617,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
-    signedCred.grantUsageFor(requestorId, requestId, XPVT1);
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
 
     // simulate a wire transmition
     const transmitedCred = JSON.stringify(signedCred, null, 2);
@@ -644,7 +646,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
-    signedCred.grantUsageFor(requestorId, requestId, XPVT1);
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
 
     // simulate a wire transmition
     const transmitedCred = JSON.stringify(signedCred, null, 2);
@@ -677,7 +679,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
-    signedCred.grantUsageFor(requestorId, requestId, XPVT1);
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
 
     // simulate a wire transmition
     const transmitedCred = JSON.stringify(signedCred, null, 2);
@@ -706,7 +708,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
-    signedCred.grantUsageFor(requestorId, requestId, XPVT1);
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
 
     // simulate a wire transmition
     const transmitedCred = JSON.stringify(signedCred, null, 2);
