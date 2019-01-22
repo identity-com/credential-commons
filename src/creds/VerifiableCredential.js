@@ -193,10 +193,11 @@ class ClaimModel {
 }
 
 const VERIFY_LEVELS = {
-  INVALID: -1,
-  PROOFS: 0, // Includes expiry if its there
-  ANCHOR: 1,
-  BLOCKCHAIN: 2,
+  INVALID: -1, // Verifies if the VC structure and/or signature proofs is not valid, or credential is expired
+  PROOFS: 0, // Verifies if the VC structure  and/or signature proofs are valid, including the expiry
+  ANCHOR: 1, // Verifies if the VC Attestation Anchor structure is valid
+  GRANTED: 2, // Verifies if the owner granted the VC usage for a specific request
+  BLOCKCHAIN: 3, // Verifies if the VC Attestation is valid on the blockchain
 };
 
 /**
@@ -244,6 +245,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         _.unset(this.claim, r.claimPath);
       });
     }
+    // The VC Grantted session (see .grantUsageFor)
+    this.granted = null;
   }
 
   /**
@@ -287,7 +290,15 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.requestAnchor = async (options) => {
     const anchorService = services.container.AnchorService;
-    const anchor = await anchorService.anchor(options);
+    const updatedOption = _.merge({},
+      options,
+      {
+        subject: {
+          label: this.identifier,
+          data: this.proof.merkleRoot,
+        },
+      });
+    const anchor = await anchorService.anchor(updatedOption);
     this.proof.anchor = anchor;
     return this;
   };
@@ -380,10 +391,26 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * Verify the Credential and return a verification level.
    * @return Any of VC.VERIFY_LEVELS
    */
-  this.verify = (higherVerifyLevel) => {
-    const hVerifyLevel = higherVerifyLevel || VERIFY_LEVELS.PROOFS;
+  this.verify = (higherVerifyLevel, options) => {
+    const { requestorId, requestId, keyName } = options || {};
+    const hVerifyLevel = !_.isNil(higherVerifyLevel) ? higherVerifyLevel : VERIFY_LEVELS.GRANTED;
     let verifiedlevel = VERIFY_LEVELS.INVALID;
-    if (hVerifyLevel >= VERIFY_LEVELS.PROOFS && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
+
+    // Test next level
+    if (verifiedlevel === VERIFY_LEVELS.INVALID
+        && hVerifyLevel >= VERIFY_LEVELS.PROOFS
+        && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
+
+    // Test next level
+    if (verifiedlevel === VERIFY_LEVELS.PROOFS
+        && hVerifyLevel >= VERIFY_LEVELS.ANCHOR
+        && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR;
+
+    // Test next level
+    if (verifiedlevel === VERIFY_LEVELS.ANCHOR
+        && hVerifyLevel >= VERIFY_LEVELS.GRANTED
+        && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED;
+
     return verifiedlevel;
   };
 
@@ -419,6 +446,80 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       return result;
     });
     return result;
+  };
+
+  /**
+   * Updates the credential with a "granted" token based on the requestorId and a unique requestId (a nonce) that
+   * can be verified later using .verify() function.
+   *
+   * @param  {string} requestorId - The IDR id (DID).
+   * @param  {string} requestId - A unique requestID. This should be a nonce for proof chanlange.
+   * @param  {Object} option - You should provide either a keyName or a pvtKey.
+   * @param  {string} option.keyName - A keyName - if CryptoManager is been used.
+   * @param  {string} option.pvtKey - A pvtKey in base58 format (default impl).
+   */
+  this.grantUsageFor = (requestorId, requestId, { keyName, pvtKey }) => {
+    if (_.isEmpty(_.get(this.proof, 'anchor.subject.label')) || _.isEmpty(_.get(this.proof, 'anchor.subject.pub'))) {
+      throw new Error('Invalid credential attestation/anchor');
+    }
+    if (!this.verifySignature()) {
+      throw new Error('Invalid credential attestation/anchor signature');
+    }
+    if (!requestorId || !requestId || !(keyName || pvtKey)) {
+      throw new Error('Missing required parameter: requestorId, requestId or key');
+    }
+    // eslint-disable-next-line max-len
+    const stringToHash = `${this.proof.anchor.subject.label}${this.proof.anchor.subject.data}${requestorId}${requestId}`;
+    const hexHash = sha256(stringToHash);
+
+    const cryptoManager = services.container.CryptoManager;
+
+    let signKey = keyName;
+    if (pvtKey) {
+      if (!_.isFunction(cryptoManager.installKey)) {
+        throw new Error('You provide a `pvtKey` but the CryptoManager does not support it, use a `keyName` instead.');
+      }
+      signKey = `TEMP_KEY_NAME_${new Date().getTime()}`;
+      cryptoManager.installKey(signKey, pvtKey);
+    }
+
+    const hexSign = cryptoManager.sign(signKey, hexHash);
+    this.granted = hexSign;
+  };
+
+  /**
+   * @param  {} requestorId
+   * @param  {} requestId
+   * @param  {} [keyName]
+   */
+  this.verifyGrant = (requestorId, requestId, keyName) => {
+    let verified = false;
+    if (_.isEmpty(_.get(this.proof, 'anchor.subject.label')) || _.isEmpty(_.get(this.proof, 'anchor.subject.pub'))) {
+      return verified;
+    }
+    if (_.isEmpty(this.granted)) {
+      return verified;
+    }
+    if (!requestorId || !requestId) {
+      return verified;
+    }
+    // eslint-disable-next-line max-len
+    const stringToHash = `${this.proof.anchor.subject.label}${this.proof.anchor.subject.data}${requestorId}${requestId}`;
+    const hexHash = sha256(stringToHash);
+
+    const cryptoManager = services.container.CryptoManager;
+
+    let verifyKey = keyName;
+    if (_.isEmpty(verifyKey)) {
+      if (!_.isFunction(cryptoManager.installKey)) {
+        throw new Error('CryptoManager does not support intallKey, please use a `keyName` instead.');
+      }
+      verifyKey = `TEMP_KEY_NAME_${new Date().getTime()}`;
+      const anchorPubKey = _.get(this.proof, 'anchor.subject.pub');
+      cryptoManager.installKey(verifyKey, anchorPubKey);
+    }
+    verified = cryptoManager.verify(verifyKey, hexHash, this.granted);
+    return verified;
   };
 
   return this;
@@ -507,6 +608,7 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
   newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
   newObj.claim = _.cloneDeep(verifiableCredentialJSON.claim);
   newObj.proof = _.cloneDeep(verifiableCredentialJSON.proof);
+  newObj.granted = _.clone(verifiableCredentialJSON.granted) || null;
   return newObj;
 };
 

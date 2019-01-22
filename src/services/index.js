@@ -7,6 +7,7 @@ const logger = require('../logger');
 const HttpServiceConstructor = require('./httpService');
 const config = require('./config');
 const SecureRandom = require('../SecureRandom');
+const MiniCryptoManagerImpl = require('./MiniCryptoManagerImpl');
 
 const services = new Bottle();
 
@@ -16,7 +17,7 @@ const services = new Bottle();
  * @param {*} http
  * @param secureRandom
  */
-const initServices = (conf, http, secureRandom) => {
+const initServices = (conf, http, secureRandom, cryptoManagerImpl) => {
   if (http) {
     services.resetProviders(['Http']);
     logger.debug('Registering custom HTTP service implementation');
@@ -32,6 +33,11 @@ const initServices = (conf, http, secureRandom) => {
     logger.debug('Registering custom SecureRandom service implementation');
     services.factory('SecureRandom', () => secureRandom);
   }
+  if (cryptoManagerImpl) {
+    services.resetProviders(['CryptoManager']);
+    logger.debug('Registering custom CryptoManager service implementation');
+    services.factory('CryptoManager', () => cryptoManagerImpl);
+  }
   return services;
 };
 
@@ -43,5 +49,8 @@ services.service('Http', HttpServiceConstructor);
 services.factory('SecureRandom', () => new SecureRandom());
 
 services.service('AnchorService', CurrentCivicAnchor, 'Config', 'Http');
+
+// The default CryptoManager Implementation
+services.service('CryptoManager', MiniCryptoManagerImpl);
 
 module.exports = { services, initServices };

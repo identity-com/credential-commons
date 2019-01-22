@@ -63,6 +63,7 @@
     "@identity.com/uca": "0.0.8",
     "ajv": "^6.6.2",
     "babel-runtime": "^6.26.0",
+    "bitcoinjs-lib": "git+https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
     "bluebird": "^3.5.1",
     "bottlejs": "^1.7.1",
     "bson": "^3.0.0",

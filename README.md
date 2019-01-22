@@ -376,6 +376,36 @@ cred.updateAnchor().then(() => {
 })
 ```
 
+#### Granting the Credential Usage(for single user) from the owner
+Since the Verifiable Credential is an immutable structure that is anchored on an immutable database(blockchain), 
+someone can ask "What if someone else gets a copy of the VC and tries to use it later as if they are the owner?"
+
+To prevent that to happen is important that the owner always grant the usage of the credential *for a single time only*. And the entity that is receiving the VC has always to verify if the credential is granted for that specific request.
+
+The library provide ways to do both.
+
+##### Grating
+```js
+cred.grantUsageFor(requestorId, requestId)
+```
+this updates the credential with a `granted` section. where: 
+```js
+granted = hex_encoded(sign(SHA256(`${cred.proof.anchor.subject.label}${cred.proof.anchor.subject.data}${requestorId}${requestId}`)))
+````
+ 
+##### Verify if is Granted
+````js
+cred.verify(VERIFY_LEVELS.GRANTED | VERIFY_LEVELS.BLOCKCHAIN), options)
+````
+Where `options` may contatins:
+```
+{ 
+  "requestorId" = "", // If GRANTED is requested, `requestorId` should be provided to the verification
+  "requestId" = "", // If GRANTED is requested, `requestId` (the nonce) should be provided to the verification
+  "keyName" = "", // Optional. If a custom CryptoManager is provided, the `keyName` shoud be passed and will be used to verify the "granted" field.
+}
+```
+
 ##### Verifiable Credential Sample
 ```
 {
@@ -537,15 +567,18 @@ const credJSon = require('./ACred.json');
 const cred = VC.fromJSON(credJSon);
 const verifiedLevel = cred.verify();
 ```
-The `.verify()` method return the hiest level verified, follow the `VC.VERIFY_LEVELS` constant:
+
+The `.verify(VC.VERIFY_LEVELS.*, options)` method return the hiehighest level verified, follow the `VC.VERIFY_LEVELS` constant:
 ```
 VERIFY_LEVELS = {
-  INVALID: -1, // Credential structure and/or signature proofs is not valid, or credential is expired
-  PROOFS: 0, // Credential structure and/or signature proofs are valid, including the expiry
-  ANCHOR: 1, // Anchor struture is valid
-  BLOCKCHAIN: 2, // Attestation was validated on blockchain
+  INVALID: -1, // Verifies if the VC structure and/or signature proofs is not valid, or credential is expired
+  PROOFS: 0, // Verifies if the VC structure  and/or signature proofs are valid, including the expiry
+  ANCHOR: 1, // Verifies if the VC Attestation Anchor structure is valid
+  GRANTED: 2, // Verifies if the owner granted the VC usage for a specific request
+  BLOCKCHAIN: 3, // Verifies if the VC Attestation is valid on the blockchain
 };
 ```
+
 
 ## Schema Generator
 
