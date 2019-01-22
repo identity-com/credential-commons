@@ -863,20 +863,20 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('Should match credential on constraints.meta with issuer', () => {
     const vcMeta = {
       id: '123456789',
-      identifier: 'civ:Credential:CivicBasic',
+      identifier: 'credential-cvc:Email-v1',
       issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
       issuanceDate: '2018-09-27T01:14:41.287Z',
       expirationDate: '2028-09-26T11:22:21.287Z',
       version: '1',
       type: [
         'Credential',
-        'civ:Credential:CivicBasic',
+        'credential-cvc:Email-v1',
       ],
     };
 
     const constraints = {
       meta: {
-        credential: 'credential-civ:Credential:CivicBasic-1',
+        credential: 'credential-cvc:Email-v1',
         issuer: {
           is: {
             $eq: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
@@ -891,20 +891,20 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('Should match credential on constraints.meta with multiple fileds', () => {
     const vcMeta = {
       id: '123456789',
-      identifier: 'civ:Credential:CivicBasic',
+      identifier: 'credential-cvc:Email-v1',
       issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
       issuanceDate: '2018-09-27T01:14:41.287Z',
       expirationDate: '2028-09-26T11:22:21.287Z',
       version: '1',
       type: [
         'Credential',
-        'civ:Credential:CivicBasic',
+        'credential-cvc:Email-v1',
       ],
     };
 
     const constraints = {
       meta: {
-        credential: 'credential-civ:Credential:CivicBasic-1',
+        credential: 'credential-cvc:Email-v1',
         issuer: {
           is: {
             $eq: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
