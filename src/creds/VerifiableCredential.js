@@ -290,7 +290,15 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.requestAnchor = async (options) => {
     const anchorService = services.container.AnchorService;
-    const anchor = await anchorService.anchor(options);
+    const updatedOption = _.merge({},
+      options,
+      {
+        subject: {
+          label: this.identifier,
+          data: this.proof.merkleRoot,
+        },
+      });
+    const anchor = await anchorService.anchor(updatedOption);
     this.proof.anchor = anchor;
     return this;
   };
@@ -385,7 +393,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.verify = (higherVerifyLevel, options) => {
     const { requestorId, requestId, keyName } = options || {};
-    const hVerifyLevel = higherVerifyLevel || VERIFY_LEVELS.GRANTED;
+    const hVerifyLevel = !_.isNil(higherVerifyLevel) ? higherVerifyLevel : VERIFY_LEVELS.GRANTED;
     let verifiedlevel = VERIFY_LEVELS.INVALID;
 
     // Test next level
@@ -457,7 +465,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     if (!this.verifySignature()) {
       throw new Error('Invalid credential attestation/anchor signature');
     }
-    if (!requestorId || !requestId || !pvtKey) {
+    if (!requestorId || !requestId || !(keyName || pvtKey)) {
       throw new Error('Missing required parameter: requestorId, requestId or key');
     }
     // eslint-disable-next-line max-len

@@ -45,8 +45,8 @@ function DummyAnchorServiceImpl(config, http) {
     Promise.resolve({
       subject: {
         pub: 'xpub:dummy',
-        label: options.label ? options.label : null,
-        data: options.data ? options.data : null,
+        label: options.subject && options.subject.label ? options.subject.label : null,
+        data: options.subject && options.subject.data ? options.subject.data : null,
         signature: 'signed:dummy',
       },
       walletId: 'none',
