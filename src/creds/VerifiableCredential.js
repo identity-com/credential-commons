@@ -555,15 +555,7 @@ function transformMetaConstraint(constraintsMeta) {
   // handle special field constraints.meta.credential
   const constraintsMetaCredential = _.get(constraintsMeta, 'meta.credential');
   if (constraintsMetaCredential) {
-    // (type)-(identifier)-(version)
-    const regexp = /(.*)-(.*)-(.*)/g;
-    const matches = regexp.exec(constraintsMetaCredential);
-    [, , siftConstraint.identifier, siftConstraint.version] = matches;
-
-    const metaFieldConstrait = getCredentialMeta(constraintsMeta.meta);
-    _.forEach(_.keys(metaFieldConstrait), (k) => {
-      siftConstraint[k] = metaFieldConstrait[k].is;
-    });
+    return { identifier: constraintsMetaCredential };
   }
   return siftConstraint;
 }
@@ -581,10 +573,10 @@ function transformMetaConstraint(constraintsMeta) {
  * //   }
  */
 const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
-  const metaConstrait = transformMetaConstraint(constraintsMeta);
+  const metaConstraint = transformMetaConstraint(constraintsMeta);
   let result = false;
-  if (!_.isEmpty(metaConstrait)) {
-    result = sift.indexOf(metaConstrait, [credentialMeta]) > -1;
+  if (!_.isEmpty(metaConstraint)) {
+    result = sift.indexOf(metaConstraint, [credentialMeta]) > -1;
   }
   return result;
 };
