@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Document:issueLocation",
+  "type": "object",
+  "properties": {
+    "issueLocation": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

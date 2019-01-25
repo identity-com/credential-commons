@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Domain:tld",
+  "type": "object",
+  "properties": {
+    "tld": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

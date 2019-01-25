@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Phone:extension",
+  "type": "object",
+  "properties": {
+    "extension": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

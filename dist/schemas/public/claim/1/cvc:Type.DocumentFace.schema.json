@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "claim-cvc:Type.DocumentFace-v1",
+  "type": "object",
+  "properties": {
+    "DocumentFace": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

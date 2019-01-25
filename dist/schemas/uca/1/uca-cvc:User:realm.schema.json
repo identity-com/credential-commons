@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:User:realm",
+  "type": "object",
+  "properties": {
+    "realm": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

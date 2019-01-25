@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Document:image",
+  "type": "object",
+  "properties": {
+    "front": {
+      "type": "string"
+    },
+    "frontMD5": {
+      "type": "string"
+    },
+    "back": {
+      "type": "string"
+    },
+    "backMD5": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

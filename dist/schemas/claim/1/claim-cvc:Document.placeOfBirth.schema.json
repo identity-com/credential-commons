@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "claim-cvc:Document.placeOfBirth-v1",
+  "type": "object",
+  "properties": {
+    "placeOfBirth": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

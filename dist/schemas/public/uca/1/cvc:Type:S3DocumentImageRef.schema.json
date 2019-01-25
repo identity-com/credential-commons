@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Type:S3DocumentImageRef",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string"
+    },
+    "face": {
+      "type": "string"
+    },
+    "reference": {
+      "type": "object",
+      "properties": {
+        "Bucket": {
+          "type": "string"
+        },
+        "Key": {
+          "type": "string"
+        },
+        "MD5": {
+          "type": "string"
+        },
+        "ContentType": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

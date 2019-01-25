@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Address:county",
+  "type": "object",
+  "properties": {
+    "county": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

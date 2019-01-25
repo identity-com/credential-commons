@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Document:issueAuthority",
+  "type": "object",
+  "properties": {
+    "issueAuthority": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "claim-cvc:Address.street-v1",
+  "type": "object",
+  "properties": {
+    "street": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
