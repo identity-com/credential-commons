@@ -2,9 +2,11 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
+const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+
 if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
 
-if (process.env.APP_ENV !== 'browser') {
+if (process.env.APP_ENV !== 'browser' && !isBrowser) {
   const CONFIG_FILE = 'config';
 
   const CONFIG_PATH = {
