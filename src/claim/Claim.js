@@ -148,9 +148,9 @@ class Claim extends UserCollectableAttribute {
   }
 
   /**
-   * Returns the global CredentialItemIdentifier of the Credential
+   * Returns the global CredentialItem of the Credential
    */
-  getGlobalCredentialItemIdentifier() {
+  getGlobalCredentialItem() {
     return `claim-${this.identifier}-${this.version}`;
   }
 
