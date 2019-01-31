@@ -183,7 +183,7 @@ describe('Claim Constructions tests', () => {
     const isoDate = '2018-06-20T13:51:18.640Z';
     const v = new Claim(identifier, isoDate);
     expect(v).toBeDefined();
-    expect(v.getGlobalCredentialItem()).toBe(`claim-${identifier}-1`);
+    expect(v.getGlobalIdentifier()).toBe(`claim-${identifier}-1`);
   });
 
   test('Construct a claim-cvc:Contact.email-v1 Claim', () => {

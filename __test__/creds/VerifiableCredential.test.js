@@ -106,7 +106,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
-    expect(cred.getGlobalCredentialItem()).toBe('credential-credential-cvc:Identity-v1-1');
+    expect(cred.getGlobalIdentifier()).toBe('credential-credential-cvc:Identity-v1-1');
   });
 
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
