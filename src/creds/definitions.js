@@ -53,7 +53,7 @@ const definitions = [
     ],
   },
   {
-    identifier: 'credential-IDaaS-v1',
+    identifier: 'credential-cvc:IDVaaS-v1',
     version: '1',
     depends: [
       'claim-cvc:Identity.name-v1',
