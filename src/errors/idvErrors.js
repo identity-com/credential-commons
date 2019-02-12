@@ -11,13 +11,24 @@ const IDVErrorCodes = {
   ERROR_IDV_CR_ALREADY_SIGNED: 'error.idv.cr.already.signed',
   ERROR_IDV_CR_MISSING_PROPERTY: 'error.idv.cr.missing.property',
   ERROR_IDV_UCA_SERVER: 'error.idv.uca.server',
+  ERROR_IDV_MISSING_UCA: 'error.idv.missing.uca',
+  ERROR_IDV_UCA_WRONG_VERSION: 'error.idv.uca.wrong.version',
+  ERROR_IDV_UCA_INVALID_EVENT: 'error.idv.uca.invalid.event',
+  ERROR_IDV_MISSING_PROCESS: 'error.idv.missing.process',
+  ERROR_IDV_MISSING_PLAN: 'error.idv.missing.plan',
+  ERROR_IDV_UCA_BAD_VALUE: 'error.idv.uca.bad.value',
 };
 
 // these are used in the 'name' property in the array of objects passed as the errorContext
 const ErrorContextTypes = {
   MISSING_PROPERTY: 'missing_property',
   UCA_STATE: 'uca_state',
+  UCA_VALUE: 'uca_value',
   PROCESS_STATE: 'process_state',
+  UCA_VERSION: 'uca_version',
+  EXPECTED_UCA_VERSION: 'expected_uca_version',
+  PROCESS_ID: 'process_id',
+  UCA_NAME: 'uca_name',
 };
 
 /*
