@@ -22,20 +22,19 @@ const ErrorContextTypes = {
 
 /*
 * IDVError parses a HTTP Error response body from the IDV-toolkit
-* expected errorObj properties:
-* message: human readable explanation of the error e.g. 'Missing required UCA fields'
-* name: Error-Code, defined in IDVErrorCodes, e.g. IDVErrorCodes.ERROR_IDV_UCA_MISSING_PROPERTY
-* code: HTTP code. Will mostly be 400 or 500
-* data: an array of objects with { name: "name", value: "value" } properties e.g.
-* [{ name: ErrorContextType.MISSING_PROPERTY, value: missingProperty }]
 * Usage: the IDVError can be instantiated directly from the HTTPResponse body e.g.
 * const idvError = new IDVError(response.body);
+* @param  errorObj: parsed directly from the HTTP Response body which should contain
+*           message: human readable explanation of the error e.g. 'Missing required UCA fields'
+*           name: Error-Code, defined in IDVErrorCodes, e.g. IDVErrorCodes.ERROR_IDV_UCA_MISSING_PROPERTY
+*           data: an array of objects with { name: "name", value: "value" } properties e.g.
+*               [{ name: ErrorContextType.MISSING_PROPERTY, value: missingProperty }]
+* @returns an instance of IDVError
 * */
 class IDVError {
   constructor(errorObj) {
     this.message = errorObj.message;
     this.errorCode = errorObj.name;
-    this.code = errorObj.code;
     this.errorContext = errorObj.data;
   }
 }
