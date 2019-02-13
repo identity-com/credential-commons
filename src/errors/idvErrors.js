@@ -27,13 +27,11 @@ const ErrorContextTypes = {
   MISSING_PROPERTY: 'missing_property',
   UCA_STATE: 'uca_state',
   UCA_VALUE: 'uca_value',
-  PROCESS_STATE: 'process_state',
   UCA_VERSION: 'uca_version',
   EXPECTED_UCA_VERSION: 'expected_uca_version',
   PROCESS_ID: 'process_id',
   UCA_NAME: 'uca_name',
   UCA_ID: 'uca_id',
-  UCA: 'uca',
   CREDENTIAL_ITEM: 'credential_item',
 };
 
