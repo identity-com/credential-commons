@@ -33,6 +33,7 @@ const ErrorContextTypes = {
   UCA_NAME: 'uca_name',
   UCA_ID: 'uca_id',
   CREDENTIAL_ITEM: 'credential_item',
+  UCA_ERROR: 'uca_error',
 };
 
 /*
