@@ -19,6 +19,7 @@ const IDVErrorCodes = {
   ERROR_IDV_UCA_BAD_VALUE: 'error.idv.uca.bad.value',
   ERROR_IDV_UCA_UPDATE_NO_STATUS: 'error.idv.uca.update.no.status',
   ERROR_IDV_UCA_UPDATE_NO_PROCESS_STATUS: 'error.idv.uca.update.no.process.status',
+  ERROR_IDV_TOKEN_RECEIVED_BEFORE_ISSUE: 'error.idv.token.received.before.issue',
 };
 
 // these are used in the 'name' property in the array of objects passed as the errorContext
