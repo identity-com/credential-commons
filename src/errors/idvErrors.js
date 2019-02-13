@@ -17,6 +17,8 @@ const IDVErrorCodes = {
   ERROR_IDV_MISSING_PROCESS: 'error.idv.missing.process',
   ERROR_IDV_MISSING_PLAN: 'error.idv.missing.plan',
   ERROR_IDV_UCA_BAD_VALUE: 'error.idv.uca.bad.value',
+  ERROR_IDV_UCA_UPDATE_NO_STATUS: 'error.idv.uca.update.no.status',
+  ERROR_IDV_UCA_UPDATE_NO_PROCESS_STATUS: 'error.idv.uca.update.no.process.status',
 };
 
 // these are used in the 'name' property in the array of objects passed as the errorContext
@@ -29,6 +31,7 @@ const ErrorContextTypes = {
   EXPECTED_UCA_VERSION: 'expected_uca_version',
   PROCESS_ID: 'process_id',
   UCA_NAME: 'uca_name',
+  UCA_ID: 'uca_id',
 };
 
 /*
