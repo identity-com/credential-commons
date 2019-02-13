@@ -357,7 +357,7 @@ const definitions = [
           type: 'claim-cvc:Address.postalCode-v1',
         },
       ],
-      required: ['street', 'unit', 'city', 'state', 'country'],
+      required: ['street', 'city', 'state', 'country'],
     },
     credentialItem: true,
   },
