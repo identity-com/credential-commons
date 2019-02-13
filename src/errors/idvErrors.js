@@ -55,7 +55,7 @@ class IDVError {
   }
 }
 
-module.export = {
+module.exports = {
   IDVErrorCodes,
   ErrorContextTypes,
   IDVError,
