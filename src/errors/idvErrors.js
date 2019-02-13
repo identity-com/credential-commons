@@ -28,7 +28,7 @@ const ErrorContextTypes = {
   UCA_STATE: 'uca_state',
   UCA_VALUE: 'uca_value',
   UCA_VERSION: 'uca_version',
-  EXPECTED_UCA_VERSION: 'expected_uca_version',
+  PLAN_UCA_VERSION: 'plan_uca_version',
   PROCESS_ID: 'process_id',
   UCA_NAME: 'uca_name',
   UCA_ID: 'uca_id',
