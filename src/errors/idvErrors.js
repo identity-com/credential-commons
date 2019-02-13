@@ -32,6 +32,7 @@ const ErrorContextTypes = {
   PROCESS_ID: 'process_id',
   UCA_NAME: 'uca_name',
   UCA_ID: 'uca_id',
+  CREDENTIAL_ITEM: 'credential_item',
 };
 
 /*
