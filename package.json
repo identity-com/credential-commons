@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -60,7 +60,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@identity.com/uca": "1.0.0-rc.0",
+    "@identity.com/uca": "1.0.0-rc.1",
     "ajv": "^6.6.2",
     "babel-runtime": "^6.26.0",
     "bitcoinjs-lib": "git+https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
@@ -76,7 +76,7 @@
     "inquirer": "^6.0.0",
     "install": "^0.11.0",
     "json-format": "^1.0.1",
-    "lodash": "4.17.10",
+    "lodash": "^4.17.11",
     "md5": "^2.2.1",
     "merkle-tools": "^1.4.0",
     "node-fetch": "^2.1.2",
