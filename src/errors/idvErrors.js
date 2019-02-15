@@ -1,40 +1,10 @@
+const _ = require('lodash');
+const { ErrorConstants, ErrorContextTypes } = require('./definitions');
+
 // These codes are passed in the 'name' value of the error object when the IDV-toolkit
 // throws an error
-const IDVErrorCodes = {
-  ERROR_IDV_UCA_MISSING_PROPERTY: 'error.idv.uca.missing.property',
-  ERROR_IDV_UCA_NO_RETRIES: 'error.idv.uca.no.retries',
-  ERROR_IDV_PROCESS_HAS_FINAL_STATUS: 'error.idv.process.has.final.status',
-  ERROR_IDV_UCA_HAS_FINAL_STATUS: 'error.idv.uca.has.final.status',
-  ERROR_IDV_UCA_BATCH_HAS_FINAL_STATUS: 'error.idv.uca.batch.has.final.status',
-  ERROR_IDV_CR_INVALID_CREDENTIAL_ITEM: 'error.idv.cr.invalid.credentialItem',
-  ERROR_IDV_CREDENTIAL_INVALID_SIGNATURE: 'error.idv.credential.invalid.signature',
-  ERROR_IDV_CR_ALREADY_SIGNED: 'error.idv.cr.already.signed',
-  ERROR_IDV_CR_MISSING_PROPERTY: 'error.idv.cr.missing.property',
-  ERROR_IDV_UCA_SERVER: 'error.idv.uca.server',
-  ERROR_IDV_MISSING_UCA: 'error.idv.missing.uca',
-  ERROR_IDV_UCA_WRONG_VERSION: 'error.idv.uca.wrong.version',
-  ERROR_IDV_UCA_INVALID_EVENT: 'error.idv.uca.invalid.event',
-  ERROR_IDV_MISSING_PROCESS: 'error.idv.missing.process',
-  ERROR_IDV_MISSING_PLAN: 'error.idv.missing.plan',
-  ERROR_IDV_UCA_BAD_VALUE: 'error.idv.uca.bad.value',
-  ERROR_IDV_UCA_UPDATE_NO_STATUS: 'error.idv.uca.update.no.status',
-  ERROR_IDV_UCA_UPDATE_NO_PROCESS_STATUS: 'error.idv.uca.update.no.process.status',
-  ERROR_IDV_TOKEN_RECEIVED_BEFORE_ISSUE: 'error.idv.token.received.before.issue',
-};
-
-// these are used in the 'name' property in the array of objects passed as the errorContext
-const ErrorContextTypes = {
-  MISSING_PROPERTY: 'missing_property',
-  UCA_STATE: 'uca_state',
-  UCA_VALUE: 'uca_value',
-  UCA_VERSION: 'uca_version',
-  PLAN_UCA_VERSION: 'plan_uca_version',
-  PROCESS_ID: 'process_id',
-  UCA_NAME: 'uca_name',
-  UCA_ID: 'uca_id',
-  CREDENTIAL_ITEM: 'credential_item',
-  UCA_ERROR: 'uca_error',
-};
+// @deprecated - left here for retrofit, use ErrorConstants instead for future versions
+const IDVErrorCodes = _.pickBy(ErrorConstants, (v, k) => (k.startsWith('ERROR_IDV')));
 
 /*
 * IDVError parses a HTTP Error response body from the IDV-toolkit
