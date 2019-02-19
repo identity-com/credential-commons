@@ -550,14 +550,28 @@ const getCredentialMeta = vc => _.pick(vc, CREDENTIAL_META_FIELDS);
  * @param {*} constraintsMeta
  */
 function transformMetaConstraint(constraintsMeta) {
-  const siftConstraint = {};
+  const resultConstraints = [];
 
   // handle special field constraints.meta.credential
-  const constraintsMetaCredential = _.get(constraintsMeta, 'meta.credential');
-  if (constraintsMetaCredential) {
-    return { identifier: constraintsMetaCredential };
-  }
-  return siftConstraint;
+  // const constraintsMetaCredential = _.get(constraintsMeta, 'meta.credential');
+  // if (constraintsMetaCredential) {
+  //   return { identifier: constraintsMetaCredential };
+  // }
+  const constraintsMetaKeys = _.keys(constraintsMeta.meta);
+  _.forEach(constraintsMetaKeys, (constraintKey) => {
+    const constraint = constraintsMeta.meta[constraintKey];
+    const siftConstraint = {};
+    // handle special field constraints.meta.credential
+    if (constraintKey === 'credential') {
+      siftConstraint.identifier = constraint;
+    } else if (constraint.is) {
+      siftConstraint[constraintKey] = constraint.is;
+    } else {
+      throw new Error(`Malformed meta contraint "${constraintKey}": missing the IS`);
+    }
+    resultConstraints.push(siftConstraint);
+  });
+  return resultConstraints;
 }
 
 /**
@@ -573,11 +587,11 @@ function transformMetaConstraint(constraintsMeta) {
  * //   }
  */
 const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
-  const metaConstraint = transformMetaConstraint(constraintsMeta);
-  let result = false;
-  if (!_.isEmpty(metaConstraint)) {
-    result = sift.indexOf(metaConstraint, [credentialMeta]) > -1;
-  }
+  const siftConstraints = transformMetaConstraint(constraintsMeta);
+  let result = !_.isEmpty(siftConstraints) && true;
+  _.forEach(siftConstraints, (constraint) => {
+    result = (sift.indexOf(constraint, [credentialMeta]) > -1) && result;
+  });
   return result;
 };
 
