@@ -26,6 +26,8 @@ const ErrorCodes = {
   ERROR_IDV_TOKEN_RECEIVED_BEFORE_ISSUE: 'error.idv.token.received.before.issue',
 
   // CW ERRORS
+  ERROR_CW_IDV_INVALID_REQUEST: 'error.cw.idv.request.failed.generic.4XX',
+  ERROR_CW_IDV_ERROR: 'error.cw.idv.server.failed.generic.5XX',
   ERROR_CW_GENERIC: 'error.generic',
   ERROR_CW_UNHANDLED: 'error.unhandled',
   ERROR_CW_NO_USER_IDENTIFIER: 'error.state.no.user.identifier',
