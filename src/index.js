@@ -4,7 +4,7 @@ const { initServices, services } = require('./services/index');
 const isValidGlobalIdentifier = require('./isValidGlobalIdentifier');
 const isClaimRelated = require('./isClaimRelated');
 const errors = require('./errors');
-const headers = require('./constants');
+const constants = require('./constants');
 /**
  * Entry Point for Civic Credential Commons
  * @returns {CredentialCommons}
@@ -18,7 +18,7 @@ function CredentialCommons() {
   this.isClaimRelated = isClaimRelated;
   this.services = services;
   this.errors = errors;
-  this.headers = headers;
+  this.constants = constants;
   return this;
 }
 
