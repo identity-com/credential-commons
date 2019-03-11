@@ -9,7 +9,8 @@ const ErrorCodes = {
 
   /**
    * Reason: Missing required property when sending UCAs
-   * Troubleshooting: Make sure the provided UCA has all the required properties filled
+   * Troubleshooting: Make sure the provided UCA has all the required properties filled.
+   * Look at the UCA definition to make sure you provided all the values.
    */
   ERROR_IDV_UCA_MISSING_PROPERTY: 'error.idv.uca.missing.property',
 
@@ -43,7 +44,7 @@ const ErrorCodes = {
 
   /**
    * Reason: The credentialItem is not valid/unknown to the IDV
-   * Troubleshooting: Make sure to provide the valid identifier of a credentialItem
+   * Troubleshooting: Make sure to provide the valid identifier of a credentialItem by checking the plan
    */
   ERROR_IDV_CR_INVALID_CREDENTIAL_ITEM: 'error.idv.cr.invalid.credentialItem',
 
@@ -54,14 +55,15 @@ const ErrorCodes = {
   ERROR_IDV_CREDENTIAL_INVALID_SIGNATURE: 'error.idv.credential.invalid.signature',
 
   /**
-   * Reason: The credential has already been signed by the user
-   * Troubleshooting: Don't try to sign again a credential
+   * Reason: The credential has already been signed.
+   * Troubleshooting: The credential is already signed. You must not sign it again
    */
   ERROR_IDV_CR_ALREADY_SIGNED: 'error.idv.cr.already.signed',
 
   /**
    * Reason: The payload is missing a required property
-   * Troubleshooting: Make sure the payload of a credential contains all the required properties
+   * Troubleshooting: Make sure the payload of a credential contains all the required properties.
+   * In the error values will be suplied the missing properties
    */
   ERROR_IDV_CR_MISSING_PROPERTY: 'error.idv.cr.missing.property',
 
@@ -72,8 +74,8 @@ const ErrorCodes = {
   ERROR_IDV_UCA_SERVER: 'error.idv.uca.server',
 
   /**
-   * Reason: Missing an UCA to be validated
-   * Troubleshooting: Make sure to provide all the missing UCAs
+   * Reason: thrown if there are no UCAs in the process or if the UCA specified in the event is missing
+   * Troubleshooting: Make sure to provide the missing specified UCA
    */
   ERROR_IDV_MISSING_UCA: 'error.idv.missing.uca',
 
@@ -84,7 +86,7 @@ const ErrorCodes = {
   ERROR_IDV_UCA_WRONG_VERSION: 'error.idv.uca.wrong.version',
 
   /**
-   * Reason: Could not find a valdation plan for credential item
+   * Reason: Could not find a validation plan for credential item
    * Troubleshooting: Check if you're providing the right validation plan
    * and credential item
    */
