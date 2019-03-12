@@ -11,7 +11,7 @@ workflows:
   build-and-test:
     jobs:
       - build
-      - publish-schemas
+      - publish-schemas:
           context: Development
       - check-schemas
 
