@@ -12,6 +12,7 @@ workflows:
     jobs:
       - build
       - publish-schemas
+          context: Development
       - check-schemas
 
   build-tag:
