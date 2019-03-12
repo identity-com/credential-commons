@@ -189,6 +189,12 @@ const ErrorCodes = {
   ERROR_CW_WRONG_QUERY_OPERATOR_SCOPE_REQUEST: 'error.dsr.wrong.sift.operator',
 
   /**
+   * Reason: Could not verify credential during build dsr response.
+   * Troubleshooting: Unexpected error during verifying credential. Check logs and try again.
+   */
+  ERROR_CW_VERIFY_CREDENTIAL: 'error.verify.credential',
+
+  /**
    * Reason: Legacy UCA identifier is not valid.
    * Troubleshooting: must be one of the followings:
    * 'credential-cvc:Email-v1'

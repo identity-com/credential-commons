@@ -66,12 +66,22 @@ class Claim extends UserCollectableAttribute {
       for (let i = 0; i < parsedAttestableValue.length; i += 1) {
         const { propertyName } = parsedAttestableValue[i];
         // we have stored only the property name on the urn, so we have to find the UCA definition
-        const splitPropertyName = propertyName.split('.');
-        // this property is used to check if the recursion tree has more than an depth
-        const ucaNamespace = splitPropertyName[splitPropertyName.length - 2];
-        const ucaNamespacePascal = ucaNamespace.substring(0, 1).toUpperCase() + ucaNamespace.substring(1);
-        const ucaPropertyName = splitPropertyName[splitPropertyName.length - 1];
-        let filteredIdentifier = `cvc:${ucaNamespacePascal}:${ucaPropertyName}`;
+
+        let filteredIdentifier;
+        let ucaPropertyName;
+        const ucaDef = definition.type.properties.find(prop => prop.name === propertyName);
+        if (ucaDef) {
+          filteredIdentifier = ucaDef.type;
+          ucaPropertyName = propertyName;
+        } else {
+          const splitPropertyName = propertyName.split('.');
+          // this property is used to check if the recursion tree has more than an depth
+          const ucaNamespace = splitPropertyName[splitPropertyName.length - 2];
+          const ucaNamespacePascal = ucaNamespace.substring(0, 1).toUpperCase() + ucaNamespace.substring(1);
+          ucaPropertyName = splitPropertyName[splitPropertyName.length - 1];
+          filteredIdentifier = `cvc:${ucaNamespacePascal}:${ucaPropertyName}`;
+        }
+
         // test if definition exists
         const filteredDefinition = definitions.find(def => def.identifier === filteredIdentifier);
         if (!filteredDefinition) {
