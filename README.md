@@ -35,7 +35,9 @@ This Javascript Library provides functionality around Verifiable Credentials (VC
       - [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-json)
       - [Verifying a Verifiable Credential](#verifying-a-verifiable-credential)
 - [Schema Generator](#schema-generator)
+
 - [Conventions:](#conventions-)
+  * [Publishing schemas](#publishing-schemas)
 - [Commands](#commands)
 - [Integration with CCS Libraries](#integration-with-ccs-libraries)
 - [ES5 and ES6 definitions](#es5-and-es6-definitions)
@@ -626,6 +628,21 @@ The schema generator will generate an json schema like this:
   "additionalProperties": false
 }
 ```
+
+## Publishing schemas
+
+The Verifiable Credential Library has a script, avaiable in the *package.json*, to publish the generate schemas to a bucket in AWS. The following command will publish the schemas:
+```bash
+S3_BUCKET_SCHEMA_URL=<s3://your-bucket-url> npm run publish-schemas
+```
+
+There is also a script to check the published schemas:
+```bash
+S3_PUBLIC_SCHEMA_URL=<http://your-schem-url> npm run check-schemas
+```
+
+To publish and check the schemas it is required to have the environment variables for AWS credentials defined (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY).
+
 
 ## Conventions:
 
