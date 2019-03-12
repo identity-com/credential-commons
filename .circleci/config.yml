@@ -11,6 +11,23 @@ workflows:
   build-and-test:
     jobs:
       - build
+      - publish-schemas:
+          context: Development
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+      - check-schemas:
+          context: Development
+          requires:
+            - publish-schemas
+          filters:
+            branches:
+              only:
+                - master
+
   build-tag:
     jobs:
       - build:
@@ -28,6 +45,7 @@ workflows:
               only: /^release\..*$/
             branches:
               ignore: /.*/
+
   deploy-npm:
     jobs:
       - build:
@@ -45,32 +63,44 @@ workflows:
               only: /^v\d+\.\d+\.\d+.*/
             branches:
               ignore: /.*/
+      - publish-schemas:
+          context: Production
+          requires:
+            - deploy
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+.*/
+            branches:
+              ignore: /.*/
+      - check-schemas:
+          context: Production
+          requires:
+            - publish-schemas
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+.*/
+            branches:
+              ignore: /.*/
       
 jobs:
   build:
     <<: *defaults
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-
       - run: sudo npm install -g npm
       - run: npm ci
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-
       - run:
           name: run tests incl coverage
           command: npm run test
       - run: npm run lint
       - run: npm run build
-
       - persist_to_workspace:
           root: ~/repo
           paths: .
@@ -82,30 +112,23 @@ jobs:
       HUB_ARTIFACT: hub-linux-amd64-2.7.0
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-
       - run: sudo npm install -g npm
       - run: |
           sh ./.circleci/install_hub.sh
-          mkdir -p ~/.config/ && echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_API_KEY\n  protocol: https\n" > ~/.config/hub
-
+          mkdir -p ~/.config/ && echo -e "github.com:\n- user: civictechuser\n  oauth_token: $GITHUB_API_KEY\n  protocol: https\n" > ~/.config/hub
       - run: npm ci
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-
       - run:
           name: run tests incl coverage
           command: npm run test
       - run: npm run lint
       - run: npm run build
-
       - run:
           name: git config
           command: |
@@ -113,15 +136,12 @@ jobs:
             git config user.email "no-reply@civic.com"
             git config user.name "CI Deployer"
             git config --global push.default simple
-
       - run:
           name: create-release
           command: npm run release:create
-
       - run:
           name: delete-release-tag
           command: git push --delete origin $CIRCLE_TAG
-
       - run: |
           hub release delete $CIRCLE_TAG
   deploy:
@@ -135,3 +155,49 @@ jobs:
       - run:
           name: Publish package
           command: npm publish --access=public
+
+  publish-schemas:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      - image: civicteam/circle-aws-node
+      # environment:
+          #S3_BUCKET_SCHEMA_URL: put your bucket URL here
+          #S3_PUBLIC_SCHEMA_URL: put your public schema URL here
+          #AWS_ACCESS_KEY_ID: put your token here
+          #AWS_SECRET_ACCESS_KEY: put your token here
+    working_directory: ~/repo
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+      - run: sudo npm install -g npm
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+      - run: npm run generate-schemas
+      - run: npm run publish-schemas
+
+  check-schemas:
+    docker:
+      # image extended from circleci/node:8.9 and includes AWS CLI
+      - image: civicteam/circle-aws-node
+      # environment:
+          #S3_PUBLIC_SCHEMA_URL: put your public schema URL here
+    working_directory: ~/repo
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+      - run: sudo npm install -g npm
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+      - run: npm run check-schemas
