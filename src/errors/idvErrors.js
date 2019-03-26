@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const { ErrorConstants, ErrorContextTypes } = require('./definitions');
+const { ErrorCodes, ErrorContextTypes } = require('./definitions');
 
 // These codes are passed in the 'name' value of the error object when the IDV-toolkit
 // throws an error
 // @deprecated - left here for retrofit, use ErrorConstants instead for future versions
-const IDVErrorCodes = _.pickBy(ErrorConstants, (v, k) => (k.startsWith('ERROR_IDV')));
+const IDVErrorCodes = _.pickBy(ErrorCodes, (v, k) => (k.startsWith('ERROR_IDV')));
 
 /*
 * IDVError parses a HTTP Error response body from the IDV-toolkit
