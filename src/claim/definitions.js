@@ -134,6 +134,12 @@ const definitions = [
     credentialItem: true,
   },
   {
+    identifier: 'claim-cvc:Document.nationality-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+  {
     identifier: 'claim-cvc:Document.number-v1',
     version: '1',
     type: 'String',
