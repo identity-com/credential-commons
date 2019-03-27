@@ -38,7 +38,7 @@ const definitions = [
     ],
   },
   {
-    identifier: 'credendial-cvc:IdDocument-v1',
+    identifier: 'credential-cvc:IdDocument-v1',
     version: '1',
     depends: [
       'claim-cvc:Document.type-v1',
