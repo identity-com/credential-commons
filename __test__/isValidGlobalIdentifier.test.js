@@ -34,4 +34,7 @@ describe('isGlobalIdentifier Tests', () => {
   test('credential-cvc:IDVaaS-v1 is valid', () => {
     expect(isGlobalIdentifier('credential-cvc:IDVaaS-v1')).toBeTruthy();
   });
+  test('credential-cvc:IdDocument-v1 is valid', () => {
+    expect(isGlobalIdentifier('credential-cvc:IdDocument-v1')).toBeTruthy();
+  });
 });
