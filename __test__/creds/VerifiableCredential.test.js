@@ -345,6 +345,43 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.contact.phoneNumber.number).toBeUndefined();
   });
 
+  it('Should create DocumentId credential', () => {
+    const typeValue = 'Passport';
+    const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
+    const numberValue = 'FP12345';
+    const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
+    const nameValue = {
+      givenNames: 'e8qhs4Iak1',
+      familyNames: 'e8qak1',
+      otherNames: 'qhs4I',
+    };
+    const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
+    const genderValue = 'M';
+    const gender = new Claim('claim-cvc:Document.gender-v1', genderValue, '1');
+    const issueCountryValue = 'Brazil';
+    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', issueCountryValue, '1');
+    const placeOfBirthValue = 'Belo Horizonte';
+    const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue, '1');
+    const dateOfBirthValue = {
+      day: 20,
+      month: 3,
+      year: 1978,
+    };
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+    const dateOfExpiryValue = {
+      day: 12,
+      month: 2,
+      year: 2025,
+    };
+    const dateOfExpiry = new Claim('claim-cvc:Document.dateOfExpiry-v1', dateOfExpiryValue, '1');
+    const nationalityValue = 'Brazilian';
+    const nationality = new Claim('claim-cvc:Document.nationality-v1', nationalityValue, '1');
+    const credential = new VC(
+      'credential-cvc:IdDocument-v1', '', null, [type, number, name, gender,
+        issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality], '1',
+    );
+    expect(credential).toBeDefined();
+  });
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
     const typeValue = 'fq6gOJR2rr';
     const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
