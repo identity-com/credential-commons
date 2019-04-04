@@ -140,11 +140,11 @@ function isDateStructure(obj) {
 /**
  * Trasnform {day, month, year } to Unix Date
  *
- * @param obj
- * @return {number}
+ * @param obj {day, month, year }
+ * @return {number} an unix-timestamp in seconds
  */
 function transformDate(obj) {
-  return new Date(obj.year, (obj.month - 1), obj.day).getTime();
+  return new Date(obj.year, (obj.month - 1), obj.day).getTime() / 1000;
 }
 /**
  * Transforms a list of UCAs into the signature property of the verifiable claims

@@ -880,7 +880,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
-        { path: 'identity.dateOfBirth', is: { $gte: '-18y' } },
+        { path: 'identity.dateOfBirth', is: { $lte: '-21y' } },
       ],
     })).toBeTruthy();
   });
