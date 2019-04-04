@@ -144,7 +144,7 @@ function isDateStructure(obj) {
  * @return {number}
  */
 function transformDate(obj) {
-  return new Date(obj.year, obj.month, obj.day).getTime();
+  return new Date(obj.year, (obj.month - 1), obj.day).getTime();
 }
 /**
  * Transforms a list of UCAs into the signature property of the verifiable claims
