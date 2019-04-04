@@ -123,6 +123,30 @@ function transformConstraint(constraints) {
 }
 
 /**
+ * Checks if object is a Date Structure (has day, month, year properties)
+ *
+ * @param obj - Structure to test
+ * @return {boolean}
+ */
+function isDateStructure(obj) {
+  const objKeys = _.keys(obj);
+  if (objKeys.length !== 3) {
+    // it has more or less keys the (day, month, year)
+    return false;
+  }
+  return (_.includes(objKeys, 'day') && _.includes(objKeys, 'month') && _.includes(objKeys, 'year'));
+}
+
+/**
+ * Trasnform {day, month, year } to Unix Date
+ *
+ * @param obj
+ * @return {number}
+ */
+function transformDate(obj) {
+  return new Date(obj.year, obj.month, obj.day).getTime();
+}
+/**
  * Transforms a list of UCAs into the signature property of the verifiable claims
  */
 class CvcMerkleProof {
@@ -440,9 +464,17 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   this.isMatch = (constraints) => {
     const siftConstraints = transformConstraint(constraints);
     let result = true;
-
+    const claims = _.cloneDeep(this.claim);
     _.forEach(siftConstraints, (constraint) => {
-      result = (sift.indexOf(constraint, [this.claim]) > -1);
+      const path = _.keys(constraint)[0];
+      const pathValue = _.get(claims, path);
+      if (isDateStructure(pathValue)) {
+        _.set(claims, path, transformDate(pathValue));
+        // transforns delta values lile "-18y" to a proper timestamp
+        // eslint-disable-next-line no-confusing-arrow
+        _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? timestamp.now(obj) : obj));
+      }
+      result = (sift.indexOf(constraint, [claims]) > -1);
       return result;
     });
     return result;

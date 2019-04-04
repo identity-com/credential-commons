@@ -863,6 +863,28 @@ describe('Unit tests for Verifiable Credentials', () => {
     })).toBeTruthy();
   });
 
+  it('Should match constraints targeting the parent properties of dates', () => {
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.dateOfBirth', is: { $lt: 1554377905342 } }, // 4-4-2019
+      ],
+    })).toBeTruthy();
+  });
+
+  it('Should match constraints targeting the parent properties and string deltas', () => {
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
+    expect(cred.isMatch({
+      claims: [
+        { path: 'identity.dateOfBirth', is: { $gte: '-18y' } },
+      ],
+    })).toBeTruthy();
+  });
+
   it('Should not match', () => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
