@@ -377,7 +377,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const nationalityValue = 'Brazilian';
     const nationality = new Claim('claim-cvc:Document.nationality-v1', nationalityValue, '1');
     const credential = new VC(
-      'credendial-cvc:IdDocument-v1', '', null, [type, number, name, gender,
+      'credential-cvc:IdDocument-v1', '', null, [type, number, name, gender,
         issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality], '1',
     );
     expect(credential).toBeDefined();
