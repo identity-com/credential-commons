@@ -353,7 +353,27 @@ To construct a new VC you need first to get instances of all Claim dependencies
 ```
 const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
 const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
+const cred = new VC('cvc:cred:Test', 'jest:test', null, [name, dob]);
+```
+
+###### creating VerifiableCredential with evidence
+
+Evidence can be included in a verifiable credential to provide the verifier with additional supporting information. For more details, please refer to the [Evidence session in Verifiable Credential Data Model 1.0](https://www.w3.org/TR/verifiable-claims-data-model/#evidence).
+
+The evidence is an optional parameter on VC construction:
+``` 
+const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+const evidence = {
+  id: 'https://idv.civic.com/evidence/f2aeec97-fc0d-42bf-8ca7-0548192dxyzab',
+  type: ['DocumentVerification'],
+  verifier: 'did:ethr:xxx',
+  evidenceDocument: 'Brazilian Passport',
+  subjectPresence: 'Digital',
+  documentPresence: 'Digital',
+};
+
+const cred = new VC('cvc:cred:Test', 'jest:test', null, [name, dob], '1', evidence);
 ```
 
 ##### anchoring VerifiableCredential instances with the constructor
