@@ -356,7 +356,7 @@ const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
 const cred = new VC('cvc:cred:Test', 'jest:test', null, [name, dob]);
 ```
 
-###### creating VerifiableCredential with evidence
+##### creating VerifiableCredential with evidence
 
 Evidence can be included in a verifiable credential to provide the verifier with additional supporting information. For more details, please refer to the [Evidence session in Verifiable Credential Data Model 1.0](https://www.w3.org/TR/verifiable-claims-data-model/#evidence).
 
