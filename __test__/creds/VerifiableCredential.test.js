@@ -1169,4 +1169,145 @@ describe('Unit tests for Verifiable Credentials', () => {
       done();
     });
   });
+
+  it('Should construct a VC with no evidence provided', () => {
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
+    expect(cred).toBeDefined();
+  });
+
+  it('Should construct a VC with the provided evidence', () => {
+    const evidence = {
+      id: 'https://idv.civic.com/evidence/f2aeec97-fc0d-42bf-8ca7-0548192dxyzab',
+      type: ['DocumentVerification'],
+      verifier: 'did:ethr:xxx',
+      evidenceDocument: 'Brazilian Passport',
+      subjectPresence: 'Digital',
+      documentPresence: 'Digital',
+    };
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
+    expect(cred.evidence).toBeDefined();
+    expect(cred.evidence).toEqual([evidence]);
+  });
+
+  it('Should construct a VC with multiple evidence items', () => {
+    const evidence = [
+      {
+        id: 'https://idv.civic.com/evidence/f2aeec97-fc0d-42bf-8ca7-0548192dxyzab',
+        type: ['DocumentVerification'],
+        verifier: 'did:ethr:xxx',
+        evidenceDocument: 'Brazilian Passport',
+        subjectPresence: 'Digital',
+        documentPresence: 'Digital',
+      },
+      {
+        id: 'https://idv.civic.com/evidence/a1adcc52-ac1d-31ff-1cd3-0123591dcadal',
+        type: ['DocumentVerification'],
+        verifier: 'did:ethr:xxx',
+        evidenceDocument: 'Brazilian Passport',
+        subjectPresence: 'Digital',
+        documentPresence: 'Digital',
+      },
+    ];
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
+    expect(cred.evidence).toBeDefined();
+    expect(cred.evidence).toEqual(evidence);
+  });
+
+  it('Should include only the evidence properties in the credential', () => {
+    const evidence = [
+      {
+        id: 'https://idv.civic.com/evidence/f2aeec97-fc0d-42bf-8ca7-0548192dxyzab',
+        type: ['DocumentVerification'],
+        verifier: 'did:ethr:xxx',
+        evidenceDocument: 'Brazilian Passport',
+        subjectPresence: 'Digital',
+        documentPresence: 'Digital',
+        other: 'other',
+      },
+    ];
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
+    expect(cred.evidence).toBeDefined();
+    expect(cred.evidence.other).not.toBeDefined();
+  });
+
+  it('Shuld construct a credential with an evidence without id', () => {
+    const evidence = [
+      {
+        type: ['DocumentVerification'],
+        verifier: 'did:ethr:xxx',
+        evidenceDocument: 'Brazilian Passport',
+        subjectPresence: 'Digital',
+        documentPresence: 'Digital',
+      },
+    ];
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
+    expect(cred.evidence).toBeDefined();
+    expect(cred.evidence).toEqual(evidence);
+  });
+
+  it('Should throw exception if a evidence required property is missing', () => {
+    const evidence = [
+      {
+        id: 'https://idv.civic.com/evidence/f2aeec97-fc0d-42bf-8ca7-0548192dxyzab',
+        verifier: 'did:ethr:xxx',
+        evidenceDocument: 'Brazilian Passport',
+        subjectPresence: 'Digital',
+        documentPresence: 'Digital',
+      },
+    ];
+    function createCredential() {
+      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+      const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+      return new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
+    }
+    expect(createCredential).toThrowError('Evidence type is required');
+  });
+
+  it('Should throw exception if evidence id is NOT a valid url', () => {
+    const evidence = [
+      {
+        id: 'not an URL',
+        type: ['DocumentVerification'],
+        verifier: 'did:ethr:xxx',
+        evidenceDocument: 'Brazilian Passport',
+        subjectPresence: 'Digital',
+        documentPresence: 'Digital',
+      },
+    ];
+    function createCredential() {
+      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+      const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+      return new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
+    }
+    expect(createCredential).toThrowError('Evidence id is not a valid URL');
+  });
+
+  it('Should throw exception if evidence type is not an array', () => {
+    const evidence = [
+      {
+        id: 'https://idv.civic.com/evidence/f2aeec97-fc0d-42bf-8ca7-0548192dxyzab',
+        type: 'DocumentVerification',
+        verifier: 'did:ethr:xxx',
+        evidenceDocument: 'Brazilian Passport',
+        subjectPresence: 'Digital',
+        documentPresence: 'Digital',
+      },
+    ];
+    function createCredential() {
+      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+      const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+      return new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
+    }
+    expect(createCredential).toThrowError('Evidence type is not an Array object');
+  });
 });

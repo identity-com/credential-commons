@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const validUrl = require('valid-url');
 const sift = require('sift');
 const MerkleTools = require('merkle-tools');
 const sjcl = require('sjcl');
@@ -35,7 +36,6 @@ function getClaimsWithFlatKeys(claims) {
     .value();
   return flattenSortedKeysClaim;
 }
-
 
 function paths(root) {
   const pathsArray = [];
@@ -97,6 +97,43 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   // 2. Validate targetHashs + proofs with merkleRoot
   const isValidProof = merkleTools.validateProof(leave.node, leave.targetHash, signature.merkleRoot);
   if (!isValidProof) invalidProofs.push(leave.targetHash);
+}
+
+function validateEvidence(evidenceItem) {
+  const requiredFields = [
+    'type',
+    'verifier',
+    'evidenceDocument',
+    'subjectPresence',
+    'documentPresence',
+  ];
+  _.forEach(requiredFields, (field) => {
+    if (!(field in evidenceItem)) {
+      throw new Error(`Evidence ${field} is required`);
+    }
+  });
+  // id property is optional, but if present, SHOULD contain a URL
+  if (('id' in evidenceItem) && !validUrl.isWebUri(evidenceItem.id)) {
+    throw new Error('Evidence id is not a valid URL');
+  }
+  if (!_.isArray(evidenceItem.type)) {
+    throw new Error('Evidence type is not an Array object');
+  }
+}
+
+function serializeEvidence(evidence) {
+  const evidenceList = _.isArray(evidence) ? evidence : [evidence];
+  return _.map(evidenceList, (evidenceItem) => {
+    validateEvidence(evidenceItem);
+    return {
+      id: evidenceItem.id,
+      type: evidenceItem.type,
+      verifier: evidenceItem.verifier,
+      evidenceDocument: evidenceItem.evidenceDocument,
+      subjectPresence: evidenceItem.subjectPresence,
+      documentPresence: evidenceItem.documentPresence,
+    };
+  });
 }
 
 /**
@@ -230,8 +267,9 @@ const VERIFY_LEVELS = {
  * @param {*} issuer
  * @param {*} ucas
  * @param {*} version
+ * @param {*} [evidence]
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version, evidence) {
   this.id = uuidv4();
   this.issuer = issuer;
   const issuerUCA = new Claim('cvc:Meta:issuer', this.issuer);
@@ -255,6 +293,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   }
   this.version = `${version}` || definition.version;
   this.type = ['Credential', identifier];
+
+  if (evidence) {
+    this.evidence = serializeEvidence(evidence);
+  }
 
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
