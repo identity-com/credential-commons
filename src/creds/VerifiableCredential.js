@@ -77,11 +77,18 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
     }
   } else if (ucaValue.type === 'Object') {
     const ucaValueValue = ucaValue.value;
-    const claimValue = _.get(claims, leave.claimPath);
+    const innerClaimValue = _.get(claims, leave.claimPath);
+    const claimPathSufix = _.last(_.split(leave.claimPath, '.'));
+    const claimValue = {};
+    claimValue[claimPathSufix] = innerClaimValue;
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
-      const expectedClaimValue = claimValue[k];
-      if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
+      const expectedClaimValue = _.get(claimValue, k);
+
+      // Forcing string comparison just to keep !== and make the LINT happy!
+      // I'm sad...(CPU wasted) JS offers != has is way more elegant... read the next line like
+      // _.get(ucaValueValue[k], 'value') != {expectedClaimValue
+      if (expectedClaimValue && `${_.get(ucaValueValue[k], 'value')}` !== `${expectedClaimValue}`) {
         invalidValues.push(claimValue[k]);
       }
     });
