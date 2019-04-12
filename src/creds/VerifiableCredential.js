@@ -77,13 +77,19 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
     }
   } else if (ucaValue.type === 'Object') {
     const ucaValueValue = ucaValue.value;
-    const claimValue = _.get(claims, leave.claimPath);
+    const innerClaimValue = _.get(claims, leave.claimPath);
+    const claimPathSufix = _.last(_.split(leave.claimPath, '.'));
+    const claimValue = {};
+    claimValue[claimPathSufix] = innerClaimValue;
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
-      const expectedClaimValue = claimValue[k];
-      if (expectedClaimValue && _.get(ucaValueValue[k], 'value') !== expectedClaimValue) {
+      const expectedClaimValue = _.get(claimValue, k);
+      /*eslint-disable */
+      // Here we do want to use != and let the interpreter to auto cast and treat 20 equals to '20'
+      if (expectedClaimValue && _.get(ucaValueValue[k], 'value') != expectedClaimValue) {
         invalidValues.push(claimValue[k]);
       }
+      /* eslint-enable */
     });
   } else {
     // Invalid ucaValue.type

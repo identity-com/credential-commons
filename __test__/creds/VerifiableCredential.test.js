@@ -455,11 +455,35 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.verifyProofs()).toBeTruthy();
   });
 
+  it('Should not verify an VC of with tampered domain Email', () => {
+    const credJSon = require('./fixtures/Email.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    cred.claim.contact.email.domain.name = 'civic';
+    expect(cred.verifyProofs()).toBeFalsy();
+  });
+
+  it('Should not verify an VC of with tampered username Email', () => {
+    const credJSon = require('./fixtures/Email.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    cred.claim.contact.email.username = 'jpsantos';
+    expect(cred.verifyProofs()).toBeFalsy();
+  });
+
   it('Should verify an VC of type Address', () => {
     const credJSon = require('./fixtures/Address.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
     expect(cred.verifyProofs()).toBeTruthy();
+  });
+
+  it('Should not verify an VC of tampered Address', () => {
+    const credJSon = require('./fixtures/Address.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    cred.claim.identity.address.city = 'Rio de Janeiro';
+    expect(cred.verifyProofs()).toBeFalsy();
   });
 
   it('Should verify an VC of type Identity', () => {
@@ -474,6 +498,16 @@ describe('Unit tests for Verifiable Credentials', () => {
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
     expect(cred.verifyProofs()).toBeTruthy();
+  });
+
+  it('Should not verify an VC of tampered GenericDocumentId', () => {
+    const credJSon = require('./fixtures/GenericDocumentId.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    cred.claim.document.dateOfBirth.day = 20;
+    cred.claim.document.dateOfBirth.year = 1900;
+
+    expect(cred.verifyProofs()).toBeFalsy();
   });
 
   it('Should verify an VC of type GenericDocumentId', () => {
