@@ -84,12 +84,13 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
       const expectedClaimValue = _.get(claimValue, k);
-      /*eslint-disable */
-      // Here we do want to use != and let the interpreter to auto cast and treat 20 equals to '20'
-      if (expectedClaimValue && _.get(ucaValueValue[k], 'value') != expectedClaimValue) {
+
+      // Forcing string comparison just to keep !== and make the LINT happy!
+      // I'm sad...(CPU wasted) JS offers != has is way more elegant... read the next line like
+      // _.get(ucaValueValue[k], 'value') != {expectedClaimValue
+      if (expectedClaimValue && `${_.get(ucaValueValue[k], 'value')}` !== `${expectedClaimValue}`) {
         invalidValues.push(claimValue[k]);
       }
-      /* eslint-enable */
     });
   } else {
     // Invalid ucaValue.type
