@@ -17,7 +17,7 @@ const ErrorCodes = {
    * Reason: Manual Review detected that the provided document is unsupported.
    * Troubleshooting: Make sure the provided document is a valid one.
    */
-  ERROR_IDV_MRT_UNSUPPORTED_DOC: 'error.idv.uca.unsupported.doc',
+  ERROR_IDV_MRT_UNSUPPORTED_DOC: 'error.idv.mrt.unsupported.doc',
 
   /**
    * Reason: Manual Review detected that the provided utility is invalid.
