@@ -6,6 +6,48 @@
 const ErrorCodes = {
 
   // IDV
+  // Manual Review Tool
+  /**
+   * Reason: Manual Review detected that the provided document is invalid.
+   * Troubleshooting: Make sure the provided document is a valid one.
+   */
+  ERROR_IDV_MRT_INVALID_DOC: 'error.idv.mrt.invalid.doc',
+
+  /**
+   * Reason: Manual Review detected that the provided document is unsupported.
+   * Troubleshooting: Make sure the provided document is a valid one.
+   */
+  ERROR_IDV_MRT_UNSUPPORTED_DOC: 'error.idv.mrt.unsupported.doc',
+
+  /**
+   * Reason: Manual Review detected that the provided utility is invalid.
+   * Troubleshooting: Make sure the provided utility is a valid one.
+   */
+  ERROR_IDV_MRT_INVALID_UTILITY: 'error.idv.mrt.invalid.utility',
+
+  /**
+   * Reason: Manual Review detected that the provided document scan has a low quality resolution.
+   * Troubleshooting: Make sure the provided document scan has a good resolution.
+   */
+  ERROR_IDV_MRT_QUALITY: 'error.idv.mrt.quality',
+
+  /**
+   * Reason: Manual Review detected that the provided document is expired.
+   * Troubleshooting: Make sure the provided document has a valid date of expiry.
+   */
+  ERROR_IDV_MRT_EXPIRED: 'error.idv.mrt.expired',
+
+  /**
+   * Reason: Manual Review detected that the provided document and photo don't have facial similiarity
+   * Troubleshooting: Make sure the provided document and photo have a good face similarity.
+   */
+  ERROR_IDV_MRT_MISMATCH: 'error.idv.mrt.mismatch',
+
+  /**
+   * Reason: Manual Review detected that the requirements fail.
+   * Troubleshooting: Make sure the provided document do fit the requirements.
+   */
+  ERROR_IDV_MRT_REQUIREMENTS_FAIL: 'error.idv.mrt.requirements.fail',
 
   /**
    * Reason: Missing required property when sending UCAs
@@ -20,7 +62,6 @@ const ErrorCodes = {
    * You must request a new credentialRequest and start over again
    */
   ERROR_IDV_UCA_NO_RETRIES: 'error.idv.uca.no.retries',
-
 
   /**
    * Reason: The process is in a final status "FAILED","COMPLETED"
