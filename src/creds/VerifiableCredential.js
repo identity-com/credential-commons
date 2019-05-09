@@ -462,6 +462,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
   /**
    * Verify the Credential and return a verification level.
+   *
+   * VERIFY_LEVELS.ANCHOR and VERIFY_LEVELS.BLOCKCHAIN are not checked with this function,
+   * user async verifyAll():bool to test all levels including VERIFY_LEVELS.ANCHOR & VERIFY_LEVELS.BLOCKCHAIN
+   *
    * @return Any of VC.VERIFY_LEVELS
    */
   this.verify = (higherVerifyLevel, options) => {
