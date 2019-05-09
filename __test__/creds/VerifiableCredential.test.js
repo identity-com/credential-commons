@@ -795,7 +795,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
 
     const verifyLevel = receivedCred.verify(VC.VERIFY_LEVELS.GRANTED, { requestorId, requestId });
-    expect(verifyLevel).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.ANCHOR); // Should be at least one level lower
+    expect(verifyLevel).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS); // Should be at least one level lower
 
     done();
   });

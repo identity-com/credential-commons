@@ -476,15 +476,17 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.PROOFS
-        && hVerifyLevel >= VERIFY_LEVELS.ANCHOR
-        && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR;
-
-    // Test next level
-    if (verifiedlevel === VERIFY_LEVELS.ANCHOR
         && hVerifyLevel >= VERIFY_LEVELS.GRANTED
         && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED;
 
     return verifiedlevel;
+  };
+
+  this.verifyAll = async (options) => {
+    const verifiedlevel = this.verify(VERIFY_LEVELS.GRANTED, options);
+    const anchored = await this.verifyAttestation();
+
+    return ((verifiedlevel === VERIFY_LEVELS.GRANTED) && anchored);
   };
 
   /**
