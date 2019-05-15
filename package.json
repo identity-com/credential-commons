@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -41,7 +41,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.24.1",
-    "babel-jest": "^23.4.0",
+    "babel-jest": "^24.8.0",
     "babel-minify": "^0.4.3",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
@@ -54,13 +54,13 @@
     "eslint-plugin-no-only-tests": "^2.3.0",
     "eslint-plugin-react": "^7.10.0",
     "husky": "^1.1.2",
-    "jest": "^23.6.0",
+    "jest": "^24.8.0",
     "jest-html-reporter": "^2.5.0",
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@identity.com/uca": "1.0.3",
+    "@identity.com/uca": "1.0.5",
     "ajv": "^6.10.0",
     "babel-runtime": "^6.26.0",
     "bitcoinjs-lib": "git+https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
