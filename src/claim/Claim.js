@@ -69,7 +69,8 @@ class Claim extends UserCollectableAttribute {
 
         let filteredIdentifier;
         let ucaPropertyName;
-        const ucaDef = definition.type.properties.find(prop => prop.name === propertyName);
+        const ucaType = UserCollectableAttribute.resolveType(definition, definitions);
+        const ucaDef = ucaType.properties.find(prop => prop.name === propertyName);
         if (ucaDef) {
           filteredIdentifier = ucaDef.type;
           ucaPropertyName = propertyName;
@@ -127,8 +128,8 @@ class Claim extends UserCollectableAttribute {
   }
 
   findDefinitionByAttestableValue(attestableValuePropertyName, rootDefinition) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const property of rootDefinition.type.properties) {
+    const ucaType = UserCollectableAttribute.resolveType(rootDefinition, definitions);
+    for (const property of ucaType.properties) { // eslint-disable-line no-restricted-syntax
       const resolvedDefinition = _.find(definitions, { identifier: property.type });
       resolvedDefinition.type = UserCollectableAttribute.resolveType(resolvedDefinition, definitions);
       if (!resolvedDefinition.type.properties && property.name === attestableValuePropertyName) {
