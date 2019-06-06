@@ -42,6 +42,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     }
     expect(createCredential).toThrowError('cvc:cred:Test is not defined');
   });
+
   test('Dont construct Credentials with wrong version', () => {
     function createCredential() {
       const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
@@ -50,6 +51,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     }
     expect(createCredential).toThrowError('Credential definition for credential-cvc:Identity-v1 v2 not found');
   });
+
   test('New Defined Credentials', () => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
@@ -382,6 +384,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     );
     expect(credential).toBeDefined();
   });
+
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
     const typeValue = 'fq6gOJR2rr';
     const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
@@ -1343,5 +1346,44 @@ describe('Unit tests for Verifiable Credentials', () => {
       return new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     }
     expect(createCredential).toThrowError('Evidence type is not an Array object');
+  });
+
+  it('Should create credential if non-required ucas are missing', () => {
+    const type = new Claim('claim-cvc:Document.type-v1', 'Passport', '1');
+    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
+    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
+    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+
+    const ucas = [type, name, issueCountry, dateOfBirth];
+    const credential = new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1');
+
+    expect(credential).toBeDefined();
+  });
+
+  it('Should throw exception on credential creation if required uca is missing', () => {
+    const type = new Claim('claim-cvc:Document.type-v1', 'Passport', '1');
+    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
+    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
+
+    const ucas = [type, name, issueCountry]; // dateOfBirth is missing
+
+    expect(() => {
+      new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1'); // eslint-disable-line no-new
+    }).toThrow();
+  });
+
+  it('Should verify a VC without non-required claims', () => {
+    const credJSon = require('./fixtures/IdDocumentWithoutNonRequiredClaims.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeTruthy();
+  });
+
+  it('Should throw exception when creating a VC from json without required claims', () => {
+    const credJSon = require('./fixtures/IdDocumentWithoutRequiredClaims.json'); // eslint-disable-line
+    expect(() => {
+      VC.fromJSON(credJSon);
+    }).toThrow();
   });
 });
