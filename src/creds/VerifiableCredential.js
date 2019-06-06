@@ -192,6 +192,7 @@ function transformDate(obj) {
 }
 /**
  * Transforms a list of UCAs into the signature property of the verifiable claims
+
  */
 class CvcMerkleProof {
   static get PADDING_INCREMENTS() {
@@ -269,6 +270,56 @@ const VERIFY_LEVELS = {
 };
 
 /**
+ * Returns true if the definition has no required claims or if it has required claims
+ * and the provided ucas meet the requirements. Returns false otherwise.
+ * @param {*} definition - the credential definition
+ * @param {*} ucas - the list of ucas
+ */
+function verifyRequiredClaims(definition, ucas) {
+  if (!_.isEmpty(definition.required)) {
+    const identifiers = ucas.map(uca => uca.identifier);
+    const missings = _.difference(definition.required, identifiers);
+    return _.isEmpty(missings);
+  }
+  return true;
+}
+
+/**
+ * Returns true if the definition has no required claims or if it has required claims
+ * and the verifiable credential JSON meets the requirements. Returns false otherwise.
+ * @param {*} definition - the credential definition
+ * @param {*} verifiableCredentialJSON - the verifiable credential JSON
+ */
+function verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON) {
+  const leaves = _.get(verifiableCredentialJSON, 'proof.leaves');
+
+  if (!_.isEmpty(definition.required) && leaves) {
+    const identifiers = leaves.map(leave => leave.identifier);
+    const missings = _.difference(definition.required, identifiers);
+    return _.isEmpty(missings);
+  }
+  return true;
+}
+
+/**
+ * Retrieves the credential definition
+ * @param {string} identifier - credential identifier
+ * @param {*} [version] - definition version
+ */
+function getCredentialDefinition(identifier, version) {
+  let definition;
+  if (version) {
+    definition = _.find(definitions, { identifier, version: `${version}` });
+  } else {
+    definition = _.find(definitions, { identifier });
+  }
+  if (!definition) {
+    throw new Error(`Credential definition for ${identifier} v${version} not found`);
+  }
+  return definition;
+}
+
+/**
  * Creates a new Verifiable Credential based on an well-known identifier and it's claims dependencies
  * @param {*} identifier
  * @param {*} issuer
@@ -293,11 +344,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     throw new Error(`${identifier} is not defined`);
   }
 
-  const definition = version ? _.find(definitions, { identifier, version: `${version}` })
-    : _.find(definitions, { identifier });
-  if (!definition) {
-    throw new Error(`Credential definition for ${identifier} v${version} not found`);
-  }
+  const definition = getCredentialDefinition(identifier, version);
   this.version = `${version}` || definition.version;
   this.type = ['Credential', identifier];
 
@@ -307,6 +354,9 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
+    if (!verifyRequiredClaims(definition, ucas)) {
+      throw new Error('Missing required(s) UCA');
+    }
     this.claim = new ClaimModel(ucas);
     const claimsPathRef = paths(this.claim);
     const deepKeys = _.keys(flatten(this.claim, { safe: true }));
@@ -685,6 +735,11 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
  * @param {*} verifiableCredentialJSON
  */
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
+  const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
+    verifiableCredentialJSON.version);
+  if (!verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON)) {
+    throw new Error('Missing required(s) claims');
+  }
   const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
