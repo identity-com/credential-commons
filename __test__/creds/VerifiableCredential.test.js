@@ -1361,13 +1361,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(credential).toBeDefined();
   });
 
-  it('Should verify a VC without non-required claims', () => {
-    const credJSon = require('./fixtures/IdDocumentWithoutNonRequiredClaims.json'); // eslint-disable-line
-    const cred = VC.fromJSON(credJSon);
-    expect(cred).toBeDefined();
-    expect(cred.verifyProofs()).toBeTruthy();
-  });
-
   it('Should throw exception on credential creation if required uca is missing', () => {
     const type = new Claim('claim-cvc:Document.type-v1', 'Passport', '1');
     const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
@@ -1378,6 +1371,13 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(() => {
       new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1'); // eslint-disable-line no-new
     }).toThrow();
+  });
+
+  it('Should verify a VC without non-required claims', () => {
+    const credJSon = require('./fixtures/IdDocumentWithoutNonRequiredClaims.json'); // eslint-disable-line
+    const cred = VC.fromJSON(credJSon);
+    expect(cred).toBeDefined();
+    expect(cred.verifyProofs()).toBeTruthy();
   });
 
   it('Should throw exception when creating a VC from json without required claims', () => {
