@@ -49,48 +49,72 @@ const ErrorCodes = {
    */
   ERROR_IDV_MRT_REQUIREMENTS_FAIL: 'error.idv.mrt.requirements.fail',
 
-  // Onfido
+  // Validation
   /**
-   * Reason: Onfido detected that the provided document is invalid.
+   * Reason: The IDV detected that the provided document is invalid.
    * Troubleshooting: Make sure the provided document is a valid one.
    */
-  ERROR_IDV_ONFIDO_INVALID_DOC: 'error.idv.onfido.invalid.doc',
+  ERROR_IDV_VALIDATION_INVALID_DOC: 'error.idv.validation.invalid.doc',
 
   /**
-   * Reason: Onfido detected that the provided document is unsupported.
+   * Reason: The IDV detected that the provided document is unsupported.
    * Troubleshooting: Make sure the provided document is a valid one.
    */
-  ERROR_IDV_ONFIDO_UNSUPPORTED_DOC: 'error.idv.onfido.unsupported.doc',
+  ERROR_IDV_VALIDATION_UNSUPPORTED_DOC: 'error.idv.validation.unsupported.doc',
 
   /**
-   * Reason: Onfido detected that the provided utility is invalid.
+   * Reason: The IDV detected that the provided utility is invalid.
    * Troubleshooting: Make sure the provided utility is a valid one.
    */
-  ERROR_IDV_ONFIDO_INVALID_UTILITY: 'error.idv.onfido.invalid.utility',
+  ERROR_IDV_VALIDATION_INVALID_UTILITY: 'error.idv.validation.invalid.utility',
 
   /**
-   * Reason: Onfido detected that the provided document scan has a low quality resolution.
+   * Reason: The IDV detected that the provided document scan has a low quality resolution.
    * Troubleshooting: Make sure the provided document scan has a good resolution.
    */
-  ERROR_IDV_ONFIDO_QUALITY: 'error.idv.onfido.quality',
+  ERROR_IDV_VALIDATION_QUALITY: 'error.idv.validation.quality',
 
   /**
-   * Reason: Onfido detected that the provided document is expired.
+   * Reason: The IDV detected that the provided document is expired.
    * Troubleshooting: Make sure the provided document has a valid date of expiry.
    */
-  ERROR_IDV_ONFIDO_EXPIRED: 'error.idv.onfido.expired',
+  ERROR_IDV_VALIDATION_EXPIRED: 'error.idv.validation.expired',
 
   /**
-   * Reason: Onfido detected that the provided document and photo don't have facial similiarity
+   * Reason: The IDV detected that the provided document and photo don't have facial similiarity
    * Troubleshooting: Make sure the provided document and photo have a good face similarity.
    */
-  ERROR_IDV_ONFIDO_MISMATCH: 'error.idv.onfido.mismatch',
+  ERROR_IDV_VALIDATION_MISMATCH: 'error.idv.validation.mismatch',
 
   /**
-   * Reason: Onfido detected that the requirements fail.
+   * Reason: The IDV detected that the provided document does not contain the user name.
+   * Troubleshooting: Make sure the provided document contains the user name.
+   */
+  ERROR_IDV_VALIDATION_MISSING_NAME: 'error.idv.validation.missing.name',
+
+  /**
+   * Reason: The IDV detected that the provided document does not contain the user date of birth.
+   * Troubleshooting: Make sure the provided document contains the user date of birth.
+   */
+  ERROR_IDV_VALIDATION_MISSING_DOB: 'error.idv.validation.missing.dob',
+
+  /**
+   * Reason: The IDV detected that the provided document does not contain the issuing country.
+   * Troubleshooting: Make sure the provided document contains the issuing country.
+   */
+  ERROR_IDV_VALIDATION_MISSING_COUNTRY: 'error.idv.validation.missing.country',
+
+  /**
+   * Reason: The IDV detected that the provided document does not contain a valid document type.
+   * Troubleshooting: Make sure the provided document contains a valid document type.
+   */
+  ERROR_IDV_VALIDATION_MISSING_DOC_TYPE: 'error.idv.validation.missing.doc.type',
+
+  /**
+   * Reason: The IDV detected that the requirements fail.
    * Troubleshooting: Make sure the provided document do fit the requirements.
    */
-  ERROR_IDV_ONFIDO_REQUIREMENTS_FAIL: 'error.idv.onfido.requirements.fail',
+  ERROR_IDV_VALIDATION_REQUIREMENTS_FAIL: 'error.idv.validation.requirements.fail',
 
   /**
    * Reason: Missing required property when sending UCAs
