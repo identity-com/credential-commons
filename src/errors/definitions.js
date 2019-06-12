@@ -45,7 +45,8 @@ const ErrorCodes = {
   /**
    * Reason: Manual Review detected that the provided document and photo don't have facial similarity
    * Troubleshooting: Make sure the provided document and photo have a good face similarity.
-   * English Localized Error Message: "The provided identity document does not seem to match with the your provided facial image."
+   * English Localized Error Message: "The provided identity document does not
+   * seem to match with the your provided facial image."
    */
   ERROR_IDV_MRT_MISMATCH: 'error.idv.mrt.mismatch',
 
@@ -95,7 +96,8 @@ const ErrorCodes = {
   /**
    * Reason: The IDV detected that the provided document and photo don't have facial similarity
    * Troubleshooting: Make sure the provided document and photo have a good face similarity.
-   * English Localized Error Message: "The provided identity document does not seem to match with the your provided facial image."
+   * English Localized Error Message: "The provided identity document does not
+   * seem to match with the your provided facial image."
    */
   ERROR_IDV_VALIDATION_MISMATCH: 'error.idv.validation.mismatch',
 
