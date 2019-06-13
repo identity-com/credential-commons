@@ -117,6 +117,12 @@ const ErrorCodes = {
   ERROR_IDV_VALIDATION_REQUIREMENTS_FAIL: 'error.idv.validation.requirements.fail',
 
   /**
+   * Reason: The data provided by the user is not the same as the one that the IDV got from the document
+   * Troubleshooting: Make sure the provided data is equal to the data in the document.
+   */
+  ERROR_IDV_VALIDATION_UCA_VALUE_MISMATCH: 'error.idv.validation.uca.value.mismatch',
+
+  /**
    * Reason: Missing required property when sending UCAs
    * Troubleshooting: Make sure the provided UCA has all the required properties filled.
    * Look at the UCA definition to make sure you provided all the values.
