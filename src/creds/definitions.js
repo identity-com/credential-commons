@@ -50,12 +50,14 @@ const definitions = [
       'claim-cvc:Document.dateOfBirth-v1',
       'claim-cvc:Document.dateOfExpiry-v1',
       'claim-cvc:Document.nationality-v1',
+      'claim-cvc:Document.evidences-v1',
     ],
     required: [
       'claim-cvc:Document.type-v1',
       'claim-cvc:Document.name-v1',
       'claim-cvc:Document.dateOfBirth-v1',
       'claim-cvc:Document.issueCountry-v1',
+      'claim-cvc:Document.evidences-v1',
     ],
   },
   {
