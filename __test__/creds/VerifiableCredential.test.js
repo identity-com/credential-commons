@@ -261,7 +261,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should filter claims for GenericDocumentId asking for claim-cvc:Identity.dateOfBirth-v1 and return nothing',
     () => {
-      const typeValue = 'fq6gOJR2rr';
+      const typeValue = 'passport';
       const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
       const numberValue = '3bj1LUg9yG';
       const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
@@ -348,7 +348,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should create DocumentId credential', () => {
-    const typeValue = 'Passport';
+    const typeValue = 'passport';
     const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
     const numberValue = 'FP12345';
     const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
@@ -378,15 +378,29 @@ describe('Unit tests for Verifiable Credentials', () => {
     const dateOfExpiry = new Claim('claim-cvc:Document.dateOfExpiry-v1', dateOfExpiryValue, '1');
     const nationalityValue = 'Brazilian';
     const nationality = new Claim('claim-cvc:Document.nationality-v1', nationalityValue, '1');
+    const evidences = new Claim('claim-cvc:Document.evidences-v1', {
+      idDocumentFront: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+      idDocumentBack: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+      selfie: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+    }, '1');
     const credential = new VC(
       'credential-cvc:IdDocument-v1', '', null, [type, number, name, gender,
-        issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality], '1',
+        issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality, evidences], '1',
     );
     expect(credential).toBeDefined();
   });
 
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
-    const typeValue = 'fq6gOJR2rr';
+    const typeValue = 'passport';
     const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
     const numberValue = '3bj1LUg9yG';
     const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
@@ -448,7 +462,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     );
     const filtered = credential.filter(['claim-cvc:Document.type-v1']);
 
-    expect(filtered.claim.document.type).toBe('fq6gOJR2rr');
+    expect(filtered.claim.document.type).toBe('passport');
   });
 
   it('Should verify an VC of type Email', () => {
@@ -1349,20 +1363,33 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should create credential if non-required ucas are missing', () => {
-    const type = new Claim('claim-cvc:Document.type-v1', 'Passport', '1');
+    const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
     const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
     const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
     const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
     const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
-
-    const ucas = [type, name, issueCountry, dateOfBirth];
+    const evidences = new Claim('claim-cvc:Document.evidences-v1', {
+      idDocumentFront: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+      idDocumentBack: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+      selfie: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+    }, '1');
+    const ucas = [type, name, issueCountry, dateOfBirth, evidences];
     const credential = new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1');
 
     expect(credential).toBeDefined();
   });
 
   it('Should throw exception on credential creation if required uca is missing', () => {
-    const type = new Claim('claim-cvc:Document.type-v1', 'Passport', '1');
+    const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
     const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
     const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
 

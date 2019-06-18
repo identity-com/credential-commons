@@ -1,4 +1,5 @@
 /* eslint-disable no-use-before-define */
+const _ = require('lodash');
 const randomString = require('randomstring');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
@@ -211,6 +212,9 @@ const generateRandomValueForType = (definition, includeDefinitions = false) => {
   // that's why the magic numbers are here
   switch (resolvedTypeName) {
     case 'String':
+      if (refDefinition.enum) {
+        return _.values(refDefinition.enum)[0];
+      }
       return refDefinition && refDefinition.pattern
         ? new RandExp(refDefinition.pattern).gen()
         : randomString.generate(10);

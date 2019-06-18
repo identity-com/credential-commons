@@ -221,7 +221,7 @@ const definitions = [
   {
     identifier: 'claim-cvc:Document.type-v1',
     version: '1',
-    type: 'claim-cvc:Document.enum-v1',
+    type: 'cvc:Type:documentType',
     credentialItem: true,
   },
   {
@@ -402,6 +402,44 @@ const definitions = [
     identifier: 'claim-cvc:SocialSecurity.number-v1',
     version: '1',
     type: 'cvc:Type:socialSecurityNumber',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Validation:evidences.idDocumentFront-v1',
+    version: '1',
+    type: 'cvc:Type:idDocumentFront',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Validation:evidences.idDocumentBack-v1',
+    version: '1',
+    type: 'cvc:Type:idDocumentBack',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Validation:evidences.selfie-v1',
+    version: '1',
+    type: 'cvc:Type:selfie',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Document.evidences-v1',
+    version: '1',
+    attestable: true,
+    type: {
+      properties: [{
+        name: 'idDocumentFront',
+        type: 'claim-cvc:Validation:evidences.idDocumentFront-v1',
+      },
+      {
+        name: 'idDocumentBack',
+        type: 'claim-cvc:Validation:evidences.idDocumentBack-v1',
+      },
+      {
+        name: 'selfie',
+        type: 'claim-cvc:Validation:evidences.selfie-v1',
+      }],
+    },
     credentialItem: true,
   },
 ];
