@@ -407,19 +407,19 @@ const definitions = [
   {
     identifier: 'claim-cvc:Validation:evidences.idDocumentFront-v1',
     version: '1',
-    type: 'cvc:Type:idDocumentFront',
+    type: 'cvc:Evidences:idDocumentFront',
     credentialItem: true,
   },
   {
     identifier: 'claim-cvc:Validation:evidences.idDocumentBack-v1',
     version: '1',
-    type: 'cvc:Type:idDocumentBack',
+    type: 'cvc:Evidences:idDocumentBack',
     credentialItem: true,
   },
   {
     identifier: 'claim-cvc:Validation:evidences.selfie-v1',
     version: '1',
-    type: 'cvc:Type:selfie',
+    type: 'cvc:Evidences:selfie',
     credentialItem: true,
   },
   {
