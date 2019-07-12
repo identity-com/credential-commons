@@ -291,4 +291,26 @@ describe('Claim Constructions tests', () => {
     expect(dateOfBirthClaim.value.day).toBeDefined();
     expect(dateOfBirthClaim.value.day.value).toBe(20);
   });
+
+  test('Transforming alias UCA to Claim', () => {
+    const identifier = 'cvc:Document:evidences';
+    const aliasIdentifier = 'cvc:Validation:evidences';
+    const value = {
+      idDocumentFront: { algorithm: 'sha256', data: 'sha256(idDocumentFront)' },
+      idDocumentBack: { algorithm: 'sha256', data: 'sha256(idDocumentBack)' },
+      selfie: { algorithm: 'sha256', data: 'sha256(selfie)' },
+    };
+
+    const evidencesUCA = new UserCollectableAttribute(identifier, value);
+    const evidencesAliasUCA = new UserCollectableAttribute(aliasIdentifier, value);
+
+    // converting UCAs to Claims
+    const evidencesClaim = new Claim(identifier, evidencesUCA.getPlainValue());
+    const evidencesClaimForAliasUCA = new Claim(identifier, evidencesAliasUCA.getPlainValue());
+
+    // should map to the same claim
+    expect(evidencesClaimForAliasUCA.identifier).toEqual(evidencesClaim.identifier);
+    expect(evidencesClaimForAliasUCA.getPlainValue()).toEqual(evidencesClaim.getPlainValue());
+    expect(evidencesClaim.identifier).toBe('claim-cvc:Document.evidences-v1');
+  });
 });
