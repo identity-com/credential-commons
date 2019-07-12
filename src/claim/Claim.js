@@ -6,6 +6,10 @@ const { services } = require('../services');
 
 const validIdentifiers = _.map(definitions, d => d.identifier);
 
+const getDefinition = (identifier, version) => (
+  version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier })
+);
+
 function getBaseIdentifiers(identifier) {
   const claimRegex = /claim-cvc:(.*)\.(.*)-v\d*/;
   let isNewIdentifier = true;
@@ -18,23 +22,26 @@ function getBaseIdentifiers(identifier) {
   return { identifierComponents, isNewIdentifier };
 }
 
-function adaptIdentifierIfNeeded(identifier) {
-  const { isNewIdentifier, identifierComponents } = getBaseIdentifiers(identifier);
+function adaptIdentifierIfNeeded(identifier, version) {
+  const definition = getDefinition(identifier, version);
+  const resolvedIdentifier = (definition && definition.alias) ? definition.type : identifier;
 
-  if (!isNewIdentifier && !_.find(definitions, { identifier })) {
+  const { isNewIdentifier, identifierComponents } = getBaseIdentifiers(resolvedIdentifier);
+
+  if (!isNewIdentifier && !getDefinition(resolvedIdentifier, version)) {
     const newIdentifier = `claim-cvc:${identifierComponents[1]}.${identifierComponents[2]}-v1`;
     const foundNewIdentifier = _.find(definitions, { identifier: newIdentifier });
     if (foundNewIdentifier) {
       return newIdentifier;
     }
-    throw new Error(`${identifier} is not defined`);
+    throw new Error(`${resolvedIdentifier} is not defined`);
   }
   return identifier;
 }
 
 class Claim extends UserCollectableAttribute {
   constructor(identifier, value, version) {
-    const currentIdentifier = adaptIdentifierIfNeeded(identifier);
+    const currentIdentifier = adaptIdentifierIfNeeded(identifier, version);
     super(currentIdentifier, value, version, definitions);
     this.initialize(currentIdentifier, value, version);
   }
@@ -49,9 +56,7 @@ class Claim extends UserCollectableAttribute {
 
   initializeAttestableValue() {
     const { value } = this;
-    const definition = this.version
-      ? _.find(definitions, { identifier: this.identifier, version: this.version })
-      : _.find(definitions, { identifier: this.identifier });
+    const definition = getDefinition(this.identifier, this.version);
 
     // Trying to construct UCA with a existing attestableValue
     const parsedAttestableValue = Claim.parseAttestableValue(value);

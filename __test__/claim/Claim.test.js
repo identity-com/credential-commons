@@ -306,7 +306,7 @@ describe('Claim Constructions tests', () => {
 
     // converting UCAs to Claims
     const evidencesClaim = new Claim(identifier, evidencesUCA.getPlainValue());
-    const evidencesClaimForAliasUCA = new Claim(identifier, evidencesAliasUCA.getPlainValue());
+    const evidencesClaimForAliasUCA = new Claim(aliasIdentifier, evidencesAliasUCA.getPlainValue());
 
     // should map to the same claim
     expect(evidencesClaimForAliasUCA.identifier).toEqual(evidencesClaim.identifier);
