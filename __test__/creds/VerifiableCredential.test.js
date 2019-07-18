@@ -1389,8 +1389,9 @@ describe('Unit tests for Verifiable Credentials', () => {
       },
     }, '1');
 
-    const ucas = [type, number, name, gender, issueCountry, placeOfBirth, dateOfBirth,
-                  nationality, dateOfExpiry, evidences];
+    const ucas = [
+      type, number, name, gender, issueCountry, placeOfBirth, dateOfBirth, nationality, dateOfExpiry, evidences,
+    ];
     const credential = new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1');
     expect(credential).toBeDefined();
   });
