@@ -57,7 +57,6 @@ const definitions = [
       'claim-cvc:Document.name-v1',
       'claim-cvc:Document.dateOfBirth-v1',
       'claim-cvc:Document.issueCountry-v1',
-      'claim-cvc:Document.evidences-v1',
     ],
   },
   {

@@ -1362,10 +1362,16 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(createCredential).toThrowError('Evidence type is not an Array object');
   });
 
-  it('Should create credential if non-required ucas are missing', () => {
+  it('Should create credential if all claims are provided', () => {
     const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
+    const number = new Claim('claim-cvc:Document.number-v1', '123', '1');
     const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
+    const gender = new Claim('claim-cvc:Document.gender-v1', 'M', '1');
+    const nationality = new Claim('claim-cvc:Document.nationality-v1', 'Brazilian', '1');
+    const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', 'Brazil', '1');
     const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
+    const dateOfExpiryValue = { day: 20, month: 3, year: 2020 };
+    const dateOfExpiry = new Claim('claim-cvc:Document.dateOfExpiry-v1', dateOfExpiryValue, '1');
     const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
     const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
     const evidences = new Claim('claim-cvc:Document.evidences-v1', {
@@ -1382,9 +1388,22 @@ describe('Unit tests for Verifiable Credentials', () => {
         data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
       },
     }, '1');
-    const ucas = [type, name, issueCountry, dateOfBirth, evidences];
-    const credential = new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1');
 
+    const ucas = [type, number, name, gender, issueCountry, placeOfBirth, dateOfBirth,
+                  nationality, dateOfExpiry, evidences];
+    const credential = new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1');
+    expect(credential).toBeDefined();
+  });
+
+  it('Should create credential if non-required claims are missing', () => {
+    const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
+    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
+    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
+    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+
+    const ucas = [type, name, issueCountry, dateOfBirth];
+    const credential = new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1');
     expect(credential).toBeDefined();
   });
 
