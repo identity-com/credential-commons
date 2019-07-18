@@ -737,9 +737,11 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
   const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.version);
+
   if (!verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON)) {
     throw new Error('Missing required(s) claims');
   }
+
   const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.issuer);
   newObj.id = _.clone(verifiableCredentialJSON.id);
