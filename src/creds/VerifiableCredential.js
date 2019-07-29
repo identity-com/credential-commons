@@ -270,8 +270,7 @@ const VERIFY_LEVELS = {
 };
 
 /**
- * Returns true if the definition has no required claims or if it has required claims
- * and the provided ucas meet the requirements. Returns false otherwise.
+ * Throws exception if the definition has missing required claims
  * @param {*} definition - the credential definition
  * @param {*} ucas - the list of ucas
  */
@@ -279,14 +278,14 @@ function verifyRequiredClaims(definition, ucas) {
   if (!_.isEmpty(definition.required)) {
     const identifiers = ucas.map(uca => uca.identifier);
     const missings = _.difference(definition.required, identifiers);
-    return _.isEmpty(missings);
+    if (!_.isEmpty(missings)) {
+      throw new Error(`Missing required claim(s): ${_.join(missings, ', ')}`);
+    }
   }
-  return true;
 }
 
 /**
- * Returns true if the definition has no required claims or if it has required claims
- * and the verifiable credential JSON meets the requirements. Returns false otherwise.
+ * Throws exception if the definition has missing required claims
  * @param {*} definition - the credential definition
  * @param {*} verifiableCredentialJSON - the verifiable credential JSON
  */
@@ -296,9 +295,10 @@ function verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON) {
   if (!_.isEmpty(definition.required) && leaves) {
     const identifiers = leaves.map(leave => leave.identifier);
     const missings = _.difference(definition.required, identifiers);
-    return _.isEmpty(missings);
+    if (!_.isEmpty(missings)) {
+      throw new Error(`Missing required claim(s): ${_.join(missings, ', ')}`);
+    }
   }
-  return true;
 }
 
 /**
@@ -354,9 +354,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
-    if (!verifyRequiredClaims(definition, ucas)) {
-      throw new Error('Missing required(s) UCA');
-    }
+    verifyRequiredClaims(definition, ucas);
     this.claim = new ClaimModel(ucas);
     const claimsPathRef = paths(this.claim);
     const deepKeys = _.keys(flatten(this.claim, { safe: true }));
@@ -738,9 +736,7 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
   const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.version);
 
-  if (!verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON)) {
-    throw new Error('Missing required(s) claims');
-  }
+  verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
 
   const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.issuer);

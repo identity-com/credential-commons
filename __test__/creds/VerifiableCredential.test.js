@@ -1418,18 +1418,15 @@ describe('Unit tests for Verifiable Credentials', () => {
     const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
     const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
     const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
-    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
-    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
 
-    let ucas = [type, name, issueCountry]; // dateOfBirth is missing
+    const ucas = [type, name, issueCountry];
     expect(() => {
       new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1'); // eslint-disable-line no-new
-    }).toThrow('Missing required(s) UCA');
+    }).toThrowError('Missing required claim(s): claim-cvc:Document.dateOfBirth-v1');
 
-    ucas = [type, name, issueCountry, dateOfBirth]; // evidences is missing
     expect(() => {
       new VC('credential-cvc:IdDocument-v2', '', null, ucas, '1'); // eslint-disable-line no-new
-    }).toThrow('Missing required(s) UCA');
+    }).toThrowError('Missing required claim(s): claim-cvc:Document.dateOfBirth-v1, claim-cvc:Document.evidences-v1');
   });
 
   it('Should verify a VC without non-required claims', () => {
