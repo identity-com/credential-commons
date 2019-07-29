@@ -347,38 +347,42 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered.claim.contact.phoneNumber.number).toBeUndefined();
   });
 
-  it('Should create DocumentId credential', () => {
-    const typeValue = 'passport';
-    const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
-    const numberValue = 'FP12345';
-    const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
-    const nameValue = {
-      givenNames: 'e8qhs4Iak1',
-      familyNames: 'e8qak1',
-      otherNames: 'qhs4I',
-    };
+  it('Should create IdDocument-v1 credential', () => {
+    const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
+    const number = new Claim('claim-cvc:Document.number-v1', 'FP12345', '1');
+    const nameValue = { givenNames: 'e8qhs4Iak1', familyNames: 'e8qak1', otherNames: 'qhs4I' };
     const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
-    const genderValue = 'M';
-    const gender = new Claim('claim-cvc:Document.gender-v1', genderValue, '1');
-    const issueCountryValue = 'Brazil';
-    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', issueCountryValue, '1');
-    const placeOfBirthValue = 'Belo Horizonte';
-    const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue, '1');
-    const dateOfBirthValue = {
-      day: 20,
-      month: 3,
-      year: 1978,
-    };
+    const gender = new Claim('claim-cvc:Document.gender-v1', 'M', '1');
+    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
+    const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', 'Belo Horizonte', '1');
+    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
     const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
-    const dateOfExpiryValue = {
-      day: 12,
-      month: 2,
-      year: 2025,
-    };
+    const dateOfExpiryValue = { day: 12, month: 2, year: 2025 };
     const dateOfExpiry = new Claim('claim-cvc:Document.dateOfExpiry-v1', dateOfExpiryValue, '1');
-    const nationalityValue = 'Brazilian';
-    const nationality = new Claim('claim-cvc:Document.nationality-v1', nationalityValue, '1');
-    const evidences = new Claim('claim-cvc:Document.evidences-v1', {
+    const nationality = new Claim('claim-cvc:Document.nationality-v1', 'Brazilian', '1');
+
+    const credential = new VC(
+      'credential-cvc:IdDocument-v1', '', null, [type, number, name, gender,
+        issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality], '1',
+    );
+    expect(credential).toBeDefined();
+  });
+
+  it('Should create IdDocument-v2 credential', () => {
+    const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
+    const number = new Claim('claim-cvc:Document.number-v1', 'FP12345', '1');
+    const nameValue = { givenNames: 'e8qhs4Iak1', familyNames: 'e8qak1', otherNames: 'qhs4I' };
+    const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
+    const gender = new Claim('claim-cvc:Document.gender-v1', 'M', '1');
+    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
+    const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', 'Belo Horizonte', '1');
+    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+    const dateOfExpiryValue = { day: 12, month: 2, year: 2025 };
+    const dateOfExpiry = new Claim('claim-cvc:Document.dateOfExpiry-v1', dateOfExpiryValue, '1');
+    const nationality = new Claim('claim-cvc:Document.nationality-v1', 'Brazilian', '1');
+
+    const evidencesValue = {
       idDocumentFront: {
         algorithm: 'sha256',
         data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
@@ -391,9 +395,11 @@ describe('Unit tests for Verifiable Credentials', () => {
         algorithm: 'sha256',
         data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
       },
-    }, '1');
+    };
+    const evidences = new Claim('claim-cvc:Document.evidences-v1', evidencesValue, '1');
+
     const credential = new VC(
-      'credential-cvc:IdDocument-v1', '', null, [type, number, name, gender,
+      'credential-cvc:IdDocument-v2', '', null, [type, number, name, gender,
         issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality, evidences], '1',
     );
     expect(credential).toBeDefined();
@@ -1412,12 +1418,18 @@ describe('Unit tests for Verifiable Credentials', () => {
     const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
     const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
     const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
+    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
 
-    const ucas = [type, name, issueCountry]; // dateOfBirth is missing
-
+    let ucas = [type, name, issueCountry]; // dateOfBirth is missing
     expect(() => {
       new VC('credential-cvc:IdDocument-v1', '', null, ucas, '1'); // eslint-disable-line no-new
-    }).toThrow();
+    }).toThrow('Missing required(s) UCA');
+
+    ucas = [type, name, issueCountry, dateOfBirth]; // evidences is missing
+    expect(() => {
+      new VC('credential-cvc:IdDocument-v2', '', null, ucas, '1'); // eslint-disable-line no-new
+    }).toThrow('Missing required(s) UCA');
   });
 
   it('Should verify a VC without non-required claims', () => {
