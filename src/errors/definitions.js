@@ -57,6 +57,18 @@ const ErrorCodes = {
   ERROR_IDV_VALIDATION_INVALID_DOC: 'error.idv.validation.invalid.doc',
 
   /**
+   * Reason: The IDV detected that the provided phone is invalid.
+   * Troubleshooting: Make sure the provided phone is a valid one.
+   */
+  ERROR_IDV_VALIDATION_INVALID_PHONE: 'error.idv.validation.invalid.phone',
+
+  /**
+   * Reason: The IDV detected that the provided email is invalid.
+   * Troubleshooting: Make sure the provided email is a valid one.
+   */
+  ERROR_IDV_VALIDATION_INVALID_EMAIL: 'error.idv.validation.invalid.email',
+
+  /**
    * Reason: The IDV detected that the provided document is unsupported.
    * Troubleshooting: Make sure the provided document is a valid one.
    */
@@ -231,10 +243,29 @@ const ErrorCodes = {
   ERROR_IDV_UCA_UPDATE_NO_PROCESS_STATUS: 'error.idv.uca.update.no.process.status',
 
   /**
-   * Reason: An SMS token is received before one is issued
-   * Troubleshooting:  Try again
+   * Reason: A token is received before one is issued
+   * Troubleshooting: Try again
    */
   ERROR_IDV_TOKEN_RECEIVED_BEFORE_ISSUE: 'error.idv.token.received.before.issue',
+
+  /**
+   * Reason: Unable to send the token
+   * Troubleshooting: Try again
+   */
+  ERROR_IDV_TOKEN_SENDING_FAILED: 'error.idv.token.sending.failed',
+
+  /**
+   * Reason: The provided token is expired
+   * Troubleshooting: Request a new token
+   */
+  ERROR_IDV_TOKEN_EXPIRED: 'error.idv.token.expired',
+
+  /**
+   * Reason: The provided token does not match the generated one
+   * Troubleshooting: Make sure to provide the received token
+   */
+  ERROR_IDV_TOKEN_MISMATCH: 'error.idv.token.mismatch',
+
 
   // CW ERRORS
 
