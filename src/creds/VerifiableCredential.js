@@ -544,7 +544,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
   /**
    * Cryptographically secure verify the Credential.
-   * Performs a non cryptographically secure verification, attestantion check and signature validation.
+   * Performs a non cryptographically secure verification, attestation check and signature validation.
    * @return true if verified, false otherwise.
    */
   this.cryptographicallySecureVerify = async () => {
