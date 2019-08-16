@@ -536,6 +536,33 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   };
 
   /**
+   * Non cryptographically secure verify the Credential
+   * Performs a proofs verification only.
+   * @return true if verified, false otherwise.
+   */
+  this.nonCryptographicallySecureVerify = () => this.verifyProofs();
+
+  /**
+   * Cryptographically secure verify the Credential.
+   * Performs a non cryptographically secure verification, attestantion check and signature validation.
+   * @return true if verified, false otherwise.
+   */
+  this.cryptographicallySecureVerify = async () => {
+    if (!this.nonCryptographicallySecureVerify()) {
+      return false;
+    }
+    const attestationCheck = await this.verifyAttestation();
+    if (!attestationCheck) {
+      return false;
+    }
+    const signatureCheck = await this.verifySignature();
+    if (!signatureCheck) {
+      return false;
+    }
+    return true;
+  };
+
+  /**
    * This method checks if the signature matches for the root of the Merkle Tree
    * @return true or false for the validation
    */
