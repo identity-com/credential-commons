@@ -8,6 +8,7 @@ const flatten = require('flat');
 const uuidv4 = require('uuid/v4');
 const { Claim } = require('../claim/Claim');
 const definitions = require('./definitions');
+const claimDefinitions = require('../claim/definitions');
 const { services } = require('../services');
 
 function sha256(string) {
@@ -16,7 +17,14 @@ function sha256(string) {
 
 function getClaimPath(identifier, claimsPathRef) {
   const sufix = Claim.getPath(identifier);
-  const claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
+  let claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
+  if (!claimPath) {
+    const claimDefinition = _.find(claimDefinitions, { identifier });
+    const typeSufix = claimDefinition ? Claim.getPath(claimDefinition.type) : null;
+    if (typeSufix) {
+      claimPath = _.find(claimsPathRef, o => _.endsWith(o, typeSufix));
+    }
+  }
   return claimPath || sufix;
 }
 
