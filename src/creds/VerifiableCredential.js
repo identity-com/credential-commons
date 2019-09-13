@@ -190,6 +190,108 @@ function isDateStructure(obj) {
 }
 
 /**
+  * Non cryptographically secure verify the Credential
+  * Performs a proofs verification only.
+  * @param credential - A credential object with expirationDate, claim and proof
+  * @return true if verified, false otherwise.
+  */
+function nonCryptographicallySecureVerify(credential) {
+  const expiry = _.clone(credential.expirationDate);
+  const claims = _.clone(credential.claim);
+  const signature = _.clone(credential.proof);
+  const signLeaves = _.get(signature, 'leaves');
+  let valid = false;
+
+  const merkleTools = new MerkleTools();
+  const claimsWithFlatKeys = getClaimsWithFlatKeys(claims);
+  const leavesClaimPaths = getLeavesClaimPaths(signLeaves);
+  const invalidClaim = [];
+  const invalidExpiry = [];
+  const invalidValues = [];
+  const invalidHashs = [];
+  const invalidProofs = [];
+  _.forEach(_.keys(claimsWithFlatKeys), (claimKey) => {
+    // check if `claimKey` has a `claimPath` proof
+    const leaveIdx = _.indexOf(leavesClaimPaths, claimKey);
+    // if not found
+    if (leaveIdx === -1) {
+      // .. still test if parent key node may have a `claimPath` proof
+      _.findLastIndex(claimKey, '.');
+      const parentClaimKey = claimKey.substring(0, _.lastIndexOf(claimKey, '.'));
+      if (_.indexOf(leavesClaimPaths, parentClaimKey) > -1) {
+        // if yes, no problem, go to next loop
+        return;
+      }
+      // if no, include on invalidClaim array
+      invalidClaim.push(claimKey);
+    } else {
+      const leave = signLeaves[leaveIdx];
+      verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs);
+    }
+  });
+
+  // It has to be present Credential expiry even with null value
+  const expiryIdx = _.indexOf(leavesClaimPaths, 'meta.expirationDate');
+  if (expiryIdx >= 0) {
+    const expiryLeave = signLeaves[expiryIdx];
+    const metaClaim = {
+      meta: {
+        expirationDate: expiry,
+      },
+    };
+    const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
+    verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
+    const totalLengthAfter = invalidValues.length + invalidHashs.length + invalidProofs.length;
+    if (totalLengthAfter === totalLengthBefore) {
+      // expiry has always to be string formatted date or null value
+      // if it is null it means it's indefinitely
+      if (expiry !== null) {
+        const now = new Date();
+        const expiryDate = new Date(expiry);
+        if (now.getTime() > expiryDate.getTime()) {
+          invalidExpiry.push(expiry);
+        }
+      }
+    }
+  }
+  if (_.isEmpty(invalidClaim)
+      && _.isEmpty(invalidValues)
+      && _.isEmpty(invalidHashs)
+      && _.isEmpty(invalidProofs)
+      && _.isEmpty(invalidExpiry)) {
+    valid = true;
+  }
+  return valid;
+}
+
+/**
+  * Cryptographically secure verify the Credential.
+  * Performs a non cryptographically secure verification, attestation check and signature validation.
+  * @param credential - A credential object with expirationDate, claim and proof
+  * @param verifyAttestationFunc - Async method to verify a credential attestation
+  * @param verifySignatureFunc - Async method to verify a credential signature
+  * @return true if verified, false otherwise.
+  */
+async function cryptographicallySecureVerify(credential, verifyAttestationFunc, verifySignatureFunc) {
+  if (!nonCryptographicallySecureVerify(credential)) {
+    return false;
+  }
+
+  if (verifyAttestationFunc) {
+    const attestationCheck = await verifyAttestationFunc(credential.proof);
+    if (!attestationCheck) return false;
+  }
+
+  if (verifySignatureFunc) {
+    const signatureCheck = await verifySignatureFunc(credential.proof);
+    if (!signatureCheck) return false;
+  }
+
+  return true;
+}
+
+
+/**
  * Trasnform {day, month, year } to Unix Date
  *
  * @param obj {day, month, year }
@@ -447,74 +549,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * Iterate over all leaves and see if their proofs are valid
    * @returns {boolean}
    */
-  this.verifyProofs = () => {
-    const expiry = _.clone(this.expirationDate);
-    const claims = _.clone(this.claim);
-    const signature = _.clone(this.proof);
-    const signLeaves = _.get(signature, 'leaves');
-    let valid = false;
-
-    const merkleTools = new MerkleTools();
-    const claimsWithFlatKeys = getClaimsWithFlatKeys(claims);
-    const leavesClaimPaths = getLeavesClaimPaths(signLeaves);
-    const invalidClaim = [];
-    const invalidExpiry = [];
-    const invalidValues = [];
-    const invalidHashs = [];
-    const invalidProofs = [];
-    _.forEach(_.keys(claimsWithFlatKeys), (claimKey) => {
-      // check if `claimKey` has a `claimPath` proof
-      const leaveIdx = _.indexOf(leavesClaimPaths, claimKey);
-      // if not found
-      if (leaveIdx === -1) {
-        // .. still test if parent key node may have a `claimPath` proof
-        _.findLastIndex(claimKey, '.');
-        const parentClaimKey = claimKey.substring(0, _.lastIndexOf(claimKey, '.'));
-        if (_.indexOf(leavesClaimPaths, parentClaimKey) > -1) {
-          // if yes, no problem, go to next loop
-          return;
-        }
-        // if no, include on invalidClaim array
-        invalidClaim.push(claimKey);
-      } else {
-        const leave = signLeaves[leaveIdx];
-        verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs);
-      }
-    });
-
-    // It has to be present Credential expiry even with null value
-    const expiryIdx = _.indexOf(leavesClaimPaths, 'meta.expirationDate');
-    if (expiryIdx >= 0) {
-      const expiryLeave = signLeaves[expiryIdx];
-      const metaClaim = {
-        meta: {
-          expirationDate: expiry,
-        },
-      };
-      const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
-      verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
-      const totalLengthAfter = invalidValues.length + invalidHashs.length + invalidProofs.length;
-      if (totalLengthAfter === totalLengthBefore) {
-        // expiry has always to be string formatted date or null value
-        // if it is null it means it's indefinitely
-        if (expiry !== null) {
-          const now = new Date();
-          const expiryDate = new Date(expiry);
-          if (now.getTime() > expiryDate.getTime()) {
-            invalidExpiry.push(expiry);
-          }
-        }
-      }
-    }
-    if (_.isEmpty(invalidClaim)
-        && _.isEmpty(invalidValues)
-        && _.isEmpty(invalidHashs)
-        && _.isEmpty(invalidProofs)
-        && _.isEmpty(invalidExpiry)) {
-      valid = true;
-    }
-    return valid;
-  };
+  this.verifyProofs = () => nonCryptographicallySecureVerify(this);
 
   /**
    * Verify the Credential and return a verification level.
@@ -780,5 +815,7 @@ VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
 };
 
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;
+VerifiableCredentialBaseConstructor.nonCryptographicallySecureVerify = nonCryptographicallySecureVerify;
+VerifiableCredentialBaseConstructor.cryptographicallySecureVerify = cryptographicallySecureVerify;
 
 module.exports = VerifiableCredentialBaseConstructor;

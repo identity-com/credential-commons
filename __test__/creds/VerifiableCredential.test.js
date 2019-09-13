@@ -568,6 +568,67 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
   });
 
+  it('Should verify an VC with no cryptographic security', () => {
+    const credJSon = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
+    const credential = VC.fromJSON(credJSon);
+    const isValid = VC.nonCryptographicallySecureVerify(credential);
+    expect(isValid).toBeTruthy();
+  });
+
+  it('Should verify an credential json with no cryptographic security', () => {
+    const credJSon = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
+    const isValid = VC.nonCryptographicallySecureVerify(credJSon);
+    expect(isValid).toBeTruthy();
+  });
+
+  it('Should verify a not anchored VC with non cryptographic verify', () => {
+    const value = {
+      country: '1ApYikRwDl',
+      countryCode: 'U4drpB96Hk',
+      number: 'kCTGifTdom',
+      extension: 'sXZpZJTe4R',
+      lineType: 'OaguqgUaR7',
+    };
+
+    const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value, '1');
+    const credential = new VC('credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
+    const isValid = VC.nonCryptographicallySecureVerify(credential);
+    expect(isValid).toBeTruthy();
+  });
+
+  it('Should verify an VC with cryptographic security', async (done) => {
+    const credJSon = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
+    const credential = VC.fromJSON(credJSon);
+
+    let isValid = await VC.cryptographicallySecureVerify(credential);
+    expect(isValid).toBeTruthy();
+
+    const verifyAttestationFunc = () => true;
+    isValid = await VC.cryptographicallySecureVerify(credential, verifyAttestationFunc);
+    expect(isValid).toBeTruthy();
+
+    const verifySignatureFunc = () => true;
+    isValid = await VC.cryptographicallySecureVerify(credential, verifyAttestationFunc, verifySignatureFunc);
+    expect(isValid).toBeTruthy();
+
+    done();
+  });
+
+  it('Should return false if attestation or signature check fail on cryptographic verification', async (done) => {
+    const credJSon = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
+    const credential = VC.fromJSON(credJSon);
+
+    let verifyAttestationFunc = () => false;
+    let isValid = await VC.cryptographicallySecureVerify(credential, verifyAttestationFunc);
+    expect(isValid).toBeFalsy();
+
+    verifyAttestationFunc = () => true;
+    const verifySignatureFunc = () => false;
+    isValid = await VC.cryptographicallySecureVerify(credential, verifyAttestationFunc, verifySignatureFunc);
+    expect(isValid).toBeFalsy();
+
+    done();
+  });
 
   test('cred.verify(): VERIFY_LEVELS.PROOFS without expirationDate INVALID', () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
