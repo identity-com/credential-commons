@@ -569,15 +569,14 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should verify an VC with no cryptographic security', () => {
-    const credJSon = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
-    const credential = VC.fromJSON(credJSon);
+    const credential = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
     const isValid = VC.nonCryptographicallySecureVerify(credential);
     expect(isValid).toBeTruthy();
   });
 
   it('Should verify an credential json with no cryptographic security', () => {
-    const credJSon = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
-    const isValid = VC.nonCryptographicallySecureVerify(credJSon);
+    const credential = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
+    const isValid = VC.nonCryptographicallySecureVerify(credential);
     expect(isValid).toBeTruthy();
   });
 
@@ -816,6 +815,66 @@ describe('Unit tests for Verifiable Credentials', () => {
     receivedCred.granted = '304502210085f6baceefcddefff535416df0eda6c9b8a01dcba592c599ec2c83cce7171dd802204473f5a15b3904dbf0fc309fe812fbf449948714938fb4871196d338ef38f1d1';
 
     const verifyGrant = receivedCred.verifyGrant(requestorId, requestId);
+    expect(verifyGrant).toEqual(false);
+
+    done();
+  });
+
+  it('should verify a granted credential json with requesterGrantVerify', async (done) => {
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const anchoredCred = await cred.requestAnchor();
+    expect(anchoredCred).toBeDefined();
+    expect(anchoredCred.granted).toBeNull();
+
+    const subject = signAttestationSubject(anchoredCred.proof.anchor.subject, XPVT1, XPUB1);
+    const signedCred = VC.fromJSON(_.merge({}, anchoredCred, { proof: { anchor: { subject } } }));
+
+    const requestorId = 'ANY_REQUESTOR_ID_12345';
+    const requestId = new Date().getTime(); // simulate an nonce ID
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
+
+    // simulate a wire transmition
+    const transmitedCred = JSON.stringify(signedCred, null, 2);
+    expect(transmitedCred).toBeDefined();
+    expect(transmitedCred.granted).not.toBeNull();
+
+    const credentialObj = JSON.parse(transmitedCred);
+
+    const verifyGrant = VC.requesterGrantVerify(credentialObj, requestorId, requestId);
+    expect(verifyGrant).toEqual(true);
+
+    done();
+  });
+
+  it('should fail to verify a credential json with invalid granted token with requesterGrantVerify', async (done) => {
+    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const anchoredCred = await cred.requestAnchor();
+    expect(anchoredCred).toBeDefined();
+    expect(anchoredCred.granted).toBeNull();
+
+    const subject = signAttestationSubject(anchoredCred.proof.anchor.subject, XPVT1, XPUB1);
+    const signedCred = VC.fromJSON(_.merge({}, anchoredCred, { proof: { anchor: { subject } } }));
+
+    const requestorId = 'ANY_REQUESTOR_ID_12345';
+    const requestId = new Date().getTime(); // simulate an nonce ID
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
+
+    // simulate a wire transmition
+    const transmitedCred = JSON.stringify(signedCred, null, 2);
+    expect(transmitedCred).toBeDefined();
+    expect(transmitedCred.granted).not.toBeNull();
+
+    const credentialObj = JSON.parse(transmitedCred);
+
+    // Simulate a invalid granted token - a one not based on the same nonce
+    // eslint-disable-next-line
+    credentialObj.granted = '304502210085f6baceefcddefff535416df0eda6c9b8a01dcba592c599ec2c83cce7171dd802204473f5a15b3904dbf0fc309fe812fbf449948714938fb4871196d338ef38f1d1';
+
+    const verifyGrant = VC.requesterGrantVerify(credentialObj, requestorId, requestId);
     expect(verifyGrant).toEqual(false);
 
     done();
