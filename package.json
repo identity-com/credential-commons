@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -54,8 +54,8 @@
     "eslint-plugin-no-only-tests": "^2.3.1",
     "eslint-plugin-react": "^7.14.3",
     "husky": "^1.1.2",
-    "jest": "^23.6.0",
-    "jest-html-reporter": "^2.5.0",
+    "jest": "^24.9.0",
+    "jest-html-reporter": "^2.6.0",
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2"
   },

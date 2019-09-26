@@ -290,6 +290,36 @@ async function cryptographicallySecureVerify(credential, verifyAttestationFunc, 
   return true;
 }
 
+/**
+ * Verify if a credential was granted for a specific requester and requestId.
+ * @param credential - A credential object with expirationDate, claim and proof
+ * @return true if verified, false otherwise.
+ */
+function requesterGrantVerify(credential, requesterId, requestId, keyName) {
+  const label = _.get(credential.proof, 'anchor.subject.label');
+  const anchorPubKey = _.get(credential.proof, 'anchor.subject.pub');
+  const anchorData = _.get(credential.proof, 'anchor.subject.data');
+
+  if (_.isEmpty(credential.granted) || _.isEmpty(label) || _.isEmpty(anchorPubKey)) {
+    return false;
+  }
+
+  const stringToHash = `${label}${anchorData}${requesterId}${requestId}`;
+  const hexHash = sha256(stringToHash);
+
+  const cryptoManager = services.container.CryptoManager;
+
+  let verifyKey = keyName;
+  if (_.isEmpty(verifyKey)) {
+    if (!_.isFunction(cryptoManager.installKey)) {
+      throw new Error('CryptoManager does not support installKey, please use a `keyName` instead.');
+    }
+    verifyKey = `TEMP_KEY_NAME_${new Date().getTime()}`;
+    cryptoManager.installKey(verifyKey, anchorPubKey);
+  }
+
+  return cryptoManager.verify(verifyKey, hexHash, credential.granted);
+}
 
 /**
  * Trasnform {day, month, year } to Unix Date
@@ -664,35 +694,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @param  {} requestId
    * @param  {} [keyName]
    */
-  this.verifyGrant = (requestorId, requestId, keyName) => {
-    let verified = false;
-    if (_.isEmpty(_.get(this.proof, 'anchor.subject.label')) || _.isEmpty(_.get(this.proof, 'anchor.subject.pub'))) {
-      return verified;
-    }
-    if (_.isEmpty(this.granted)) {
-      return verified;
-    }
-    if (!requestorId || !requestId) {
-      return verified;
-    }
-    // eslint-disable-next-line max-len
-    const stringToHash = `${this.proof.anchor.subject.label}${this.proof.anchor.subject.data}${requestorId}${requestId}`;
-    const hexHash = sha256(stringToHash);
-
-    const cryptoManager = services.container.CryptoManager;
-
-    let verifyKey = keyName;
-    if (_.isEmpty(verifyKey)) {
-      if (!_.isFunction(cryptoManager.installKey)) {
-        throw new Error('CryptoManager does not support intallKey, please use a `keyName` instead.');
-      }
-      verifyKey = `TEMP_KEY_NAME_${new Date().getTime()}`;
-      const anchorPubKey = _.get(this.proof, 'anchor.subject.pub');
-      cryptoManager.installKey(verifyKey, anchorPubKey);
-    }
-    verified = cryptoManager.verify(verifyKey, hexHash, this.granted);
-    return verified;
-  };
+  this.verifyGrant = (requesterId, requestId, keyName) => requesterGrantVerify(this, requesterId, requestId, keyName);
 
   return this;
 }
@@ -817,5 +819,6 @@ VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
 VerifiableCredentialBaseConstructor.VERIFY_LEVELS = VERIFY_LEVELS;
 VerifiableCredentialBaseConstructor.nonCryptographicallySecureVerify = nonCryptographicallySecureVerify;
 VerifiableCredentialBaseConstructor.cryptographicallySecureVerify = cryptographicallySecureVerify;
+VerifiableCredentialBaseConstructor.requesterGrantVerify = requesterGrantVerify;
 
 module.exports = VerifiableCredentialBaseConstructor;
