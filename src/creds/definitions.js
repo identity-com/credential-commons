@@ -109,6 +109,22 @@ const definitions = [
       'claim-cvc:Contact.phoneNumber-v1',
     ],
   },
+  {
+    identifier: 'credential-cvc:UsSsn-v1',
+    version: '1',
+    transient: true,
+    depends: [
+      'claim-cvc:SocialSecurity.number-v1',
+    ],
+  },
+  {
+    identifier: 'credential-cvc:UsAddress-v1',
+    version: '1',
+    transient: true,
+    depends: [
+      'claim-cvc:Identity.address-v1',
+    ],
+  },
 ];
 
 module.exports = definitions;

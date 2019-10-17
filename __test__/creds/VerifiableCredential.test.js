@@ -1563,3 +1563,61 @@ describe('Unit tests for Verifiable Credentials', () => {
     }).toThrow();
   });
 });
+
+describe('Transient Credential Tests', () => {
+  it('Should create an US Address Transient Credential', async () => {
+    const value = {
+      country: 'US',
+      county: 'Melo Park',
+      state: 'California',
+      street: 'Oak',
+      unit: '12',
+      city: 'Palo Alto',
+      postalCode: '94555',
+    };
+
+    const uca = new Claim('claim-cvc:Identity.address-v1', value, '1');
+    const credential = new VC('credential-cvc:UsAddress-v1', '', null, [uca], '1');
+
+
+    expect(credential).toBeDefined();
+    expect(credential.transient).toBeTruthy();
+
+    credential.requestAnchor();
+
+    expect(credential.proof.anchor).toBeDefined();
+    expect(credential.proof.anchor.type).toBe('transient');
+
+    const verified = await credential.verifyAttestation();
+    expect(verified).toBeTruthy();
+
+    const proved = credential.verifyProofs();
+    expect(proved).toBeTruthy();
+  });
+
+  it('Should create an US SSN Transient Credential', async () => {
+    const value = {
+      areaNumber: '111',
+      groupNumber: '11',
+      serialNumber: '1111',
+    };
+
+    const uca = new Claim('claim-cvc:SocialSecurity.number-v1', value, '1');
+    const credential = new VC('credential-cvc:UsSsn-v1', '', null, [uca], '1');
+
+
+    expect(credential).toBeDefined();
+    expect(credential.transient).toBeTruthy();
+
+    credential.requestAnchor();
+
+    expect(credential.proof.anchor).toBeDefined();
+    expect(credential.proof.anchor.type).toBe('transient');
+
+    const verified = await credential.verifyAttestation();
+    expect(verified).toBeTruthy();
+
+    const proved = credential.verifyProofs();
+    expect(proved).toBeTruthy();
+  });
+});

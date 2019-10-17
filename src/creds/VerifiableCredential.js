@@ -487,6 +487,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   const definition = getCredentialDefinition(identifier, version);
   this.version = `${version}` || definition.version;
   this.type = ['Credential', identifier];
+  this.transient = definition.transient || false;
 
   if (evidence) {
     this.evidence = serializeEvidence(evidence);
@@ -550,6 +551,18 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    *
    */
   this.requestAnchor = async (options) => {
+    if (this.transient) {
+      // If credential is transient no Blockchain attestation is issued
+      this.proof.anchor = {
+        type: 'transient',
+        subject: {
+          label: this.identifier,
+          data: this.proof.merkleRoot,
+        },
+      };
+      return this;
+    }
+
     const anchorService = services.container.AnchorService;
     const updatedOption = _.merge({},
       options,
@@ -569,6 +582,18 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * already confirmed on the blockchain.
    */
   this.updateAnchor = async () => {
+    // If credential is transient no Blockchain attestation is issued
+    if (this.transient) {
+      // If credential is transient no Blockchain attestation is issued
+      this.proof.anchor = {
+        type: 'transient',
+        subject: {
+          label: this.identifier,
+          data: this.proof.merkleRoot,
+        },
+      };
+      return this;
+    }
     const anchorService = services.container.AnchorService;
     const anchor = await anchorService.update(this.proof.anchor);
     this.proof.anchor = anchor;
@@ -612,24 +637,44 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This method checks if the signature matches for the root of the Merkle Tree
    * @return true or false for the validation
    */
-  this.verifySignature = async () => services.container.AnchorService.verifySignature(this.proof);
+  this.verifySignature = async () => {
+    if (this.proof.type === 'transient') {
+      return true;
+    }
+    return services.container.AnchorService.verifySignature(this.proof);
+  };
 
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
-  this.verifyAttestation = async () => services.container.AnchorService.verifyAttestation(this.proof);
+  this.verifyAttestation = async () => {
+    if (this.proof.type === 'transient') {
+      return true;
+    }
+    return services.container.AnchorService.verifyAttestation(this.proof);
+  };
 
   /**
    * This method will revoke the attestation on the chain
    * @returns {Promise<Promise<*>|void>}
    */
-  this.revokeAttestation = async () => services.container.AnchorService.revokeAttestation(this.proof);
+  this.revokeAttestation = async () => {
+    if (this.proof.type === 'transient') {
+      return;
+    }
+    services.container.AnchorService.revokeAttestation(this.proof);
+  };
 
   /**
    * This method will check on the chain the balance of the transaction and if it's still unspent, than it's not revoked
    * @returns {Promise<Promise<*>|void>}
    */
-  this.isRevoked = async () => services.container.AnchorService.isRevoked(this.proof);
+  this.isRevoked = async () => {
+    if (this.proof.type === 'transient') {
+      return false;
+    }
+    return services.container.AnchorService.isRevoked(this.proof);
+  };
 
   this.isMatch = (constraints) => {
     const siftConstraints = transformConstraint(constraints);
@@ -640,7 +685,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       const pathValue = _.get(claims, path);
       if (isDateStructure(pathValue)) {
         _.set(claims, path, transformDate(pathValue));
-        // transforns delta values lile "-18y" to a proper timestamp
+        // transforms delta values like "-18y" to a proper timestamp
         // eslint-disable-next-line no-confusing-arrow
         _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? timestamp.now(obj) : obj));
       }
