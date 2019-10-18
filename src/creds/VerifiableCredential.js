@@ -662,7 +662,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     if (this.proof.type === 'transient') {
       return;
     }
-    services.container.AnchorService.revokeAttestation(this.proof);
+    // eslint-disable-next-line consistent-return
+    return services.container.AnchorService.revokeAttestation(this.proof);
   };
 
   /**
