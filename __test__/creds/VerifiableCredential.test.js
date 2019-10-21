@@ -1577,7 +1577,7 @@ describe('Transient Credential Tests', () => {
     };
 
     const uca = new Claim('claim-cvc:Identity.address-v1', value, '1');
-    const credential = new VC('credential-cvc:UsAddress-v1', '', null, [uca], '1');
+    const credential = new VC('credential-cvc:UnverifiedAddress-v1', '', null, [uca], '1');
 
 
     expect(credential).toBeDefined();
@@ -1603,7 +1603,7 @@ describe('Transient Credential Tests', () => {
     };
 
     const uca = new Claim('claim-cvc:SocialSecurity.number-v1', value, '1');
-    const credential = new VC('credential-cvc:UsSsn-v1', '', null, [uca], '1');
+    const credential = new VC('credential-cvc:UnverifiedSsn-v1', '', null, [uca], '1');
 
 
     expect(credential).toBeDefined();
