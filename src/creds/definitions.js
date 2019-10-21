@@ -110,7 +110,7 @@ const definitions = [
     ],
   },
   {
-    identifier: 'credential-cvc:UsSsn-v1',
+    identifier: 'credential-cvc:UnverifiedSsn-v1',
     version: '1',
     transient: true,
     depends: [
@@ -118,7 +118,7 @@ const definitions = [
     ],
   },
   {
-    identifier: 'credential-cvc:UsAddress-v1',
+    identifier: 'credential-cvc:UnverifiedAddress-v1',
     version: '1',
     transient: true,
     depends: [
