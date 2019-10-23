@@ -637,7 +637,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This method checks if the signature matches for the root of the Merkle Tree
    * @return true or false for the validation
    */
-  this.verifySignature = async () => {
+  this.verifySignature = () => {
     if (this.proof.type === 'transient') {
       return true;
     }
@@ -707,7 +707,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @param  {string} option.pvtKey - A pvtKey in base58 format (default impl).
    */
   this.grantUsageFor = (requestorId, requestId, { keyName, pvtKey }) => {
-    if (_.isEmpty(_.get(this.proof, 'anchor.subject.label')) || _.isEmpty(_.get(this.proof, 'anchor.subject.pub'))) {
+    if (_.isEmpty(_.get(this.proof, 'anchor.subject.label')) || _.isEmpty(_.get(this.proof, 'anchor.subject.data'))) {
       throw new Error('Invalid credential attestation/anchor');
     }
     if (!this.verifySignature()) {
