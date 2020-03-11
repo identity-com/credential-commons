@@ -125,6 +125,15 @@ const definitions = [
       'claim-cvc:Identity.address-v1',
     ],
   },
+  {
+    identifier: 'credential-alt:Identity-v1',
+    version: '1',
+    depends: [
+      'claim-cvc:Identity.name-v1',
+      'claim-cvc:Identity.dateOfBirth-v1',
+      'claim-cvc:Identity.address-v1',
+    ],
+  },
 ];
 
 module.exports = definitions;

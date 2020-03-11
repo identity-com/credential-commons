@@ -405,6 +405,28 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(credential).toBeDefined();
   });
 
+  it('Should create alt:Identity-v1 credential', () => {
+    const nameValue = { givenNames: 'e8qhs4Iak1', familyNames: 'e8qak1', otherNames: 'qhs4I' };
+    const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
+    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+    const addressValue = {
+      country: 'IH4aiXuEoo',
+      county: 'akKjaQehNK',
+      state: 'IQB7oLhSnS',
+      street: '52Os5zJgkh',
+      unit: '3dGDkhEHxW',
+      city: 'WU9GJ0R9be',
+      postalCode: 'ci1DMuz16W',
+    };
+    const address = new Claim('claim-cvc:Document.address-v1', addressValue, '1');
+
+    const credential = new VC(
+      'credential-alt:Identity-v1', '', null, [name, dateOfBirth, address], '1',
+    );
+    expect(credential).toBeDefined();
+  });
+
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
     const typeValue = 'passport';
     const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
