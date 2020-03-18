@@ -1,5 +1,5 @@
 const { UserCollectableAttribute } = require('@identity.com/uca');
-const { Claim } = require('../../src/claim/Claim');
+const { Claim, getClaimIdentifier } = require('../../src/claim/Claim');
 
 describe('Claim Constructions tests', () => {
   test('Claim construction should fails', () => {
@@ -312,5 +312,11 @@ describe('Claim Constructions tests', () => {
     expect(evidencesClaimForAliasUCA.identifier).toEqual(evidencesClaim.identifier);
     expect(evidencesClaimForAliasUCA.getPlainValue()).toEqual(evidencesClaim.getPlainValue());
     expect(evidencesClaim.identifier).toBe('claim-cvc:Document.evidences-v1');
+  });
+
+  test('Should return a Claim identifier for the UCA identifier', () => {
+    const ucaIdentifier = 'cvc:Identity:address';
+    const claimIdentifier = getClaimIdentifier(ucaIdentifier, 'v1');
+    expect(claimIdentifier).toBe('claim-cvc:Identity.address-v1');
   });
 });
