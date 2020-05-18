@@ -413,6 +413,12 @@ const ErrorCodes = {
    */
   ERROR_CW_NETWORK_GENERIC: 'error.network.generic',
 
+  /**
+   * Reason: Unexpected error during communication with any endpoint that should be retried
+   * Troubleshooting: Retry the network call again
+   */
+  ERROR_RETRYABLE_NETWORK_ERROR: 'error.retryable.network',
+
 };
 
 /**
