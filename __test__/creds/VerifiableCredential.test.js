@@ -931,7 +931,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     done();
   });
 
-  it('should fail verify() with maximum level of GRANTED if granted is invalid', async (done) => {
+  it('should fail verify() with maximum level of PROOFS if granted is invalid', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
@@ -960,7 +960,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
 
     const verifyLevel = receivedCred.verify(VC.VERIFY_LEVELS.GRANTED, { requestorId, requestId });
-    expect(verifyLevel).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.ANCHOR); // Should be at least one level lower
+    expect(verifyLevel).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS); // Should be at least one level lower
 
     done();
   });
@@ -973,6 +973,104 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.proof.anchor).toBeDefined();
     const validation = await cred.verifyAttestation();
     expect(validation).toBeTruthy();
+    done();
+  });
+
+  it('should check all verifications with success', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+
+    const subject = signAttestationSubject(cred.proof.anchor.subject, XPVT1, XPUB1);
+    const signedCred = VC.fromJSON(_.merge({}, cred, { proof: { anchor: { subject } } }));
+
+    expect(signedCred).toBeDefined();
+    expect(signedCred.proof.anchor).toBeDefined();
+
+    const requestorId = 'ANY_REQUESTOR_ID_12345';
+    const requestId = new Date().getTime(); // simulate an nonce ID
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
+
+    expect(signedCred.granted).not.toBeNull();
+
+    const validation = await signedCred.verifyAll({ requestorId, requestId });
+    expect(validation).toBeTruthy();
+    done();
+  });
+
+  it('should check all verifications and fail - tampered grant', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+
+    const subject = signAttestationSubject(cred.proof.anchor.subject, XPVT1, XPUB1);
+    const signedCred = VC.fromJSON(_.merge({}, cred, { proof: { anchor: { subject } } }));
+
+    expect(signedCred).toBeDefined();
+    expect(signedCred.proof.anchor).toBeDefined();
+
+    const requestorId = 'ANY_REQUESTOR_ID_12345';
+    const requestId = new Date().getTime(); // simulate an nonce ID
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
+
+    expect(signedCred.granted).not.toBeNull();
+
+    // Tampering grant
+    // eslint-disable-next-line
+    signedCred.granted = '304502210085f6baceefcddefff535416df0eda6c9b8a01dcba592c599ec2c83cce7171dd802204473f5a15b3904dbf0fc309fe812fbf449948714938fb4871196d338ef38f1d1';
+
+
+    const validation = await signedCred.verifyAll({ requestorId, requestId });
+    expect(validation).toBeFalsy();
+    done();
+  });
+
+  it('should check all verifications and fail - tampered claims', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+
+    // Tampering claim
+    cred.claim.identity.name.givenNames = 'Jose';
+    const subject = signAttestationSubject(cred.proof.anchor.subject, XPVT1, XPUB1);
+    const signedCred = VC.fromJSON(_.merge({}, cred, { proof: { anchor: { subject } } }));
+
+    expect(signedCred).toBeDefined();
+    expect(signedCred.proof.anchor).toBeDefined();
+
+    const requestorId = 'ANY_REQUESTOR_ID_12345';
+    const requestId = new Date().getTime(); // simulate an nonce ID
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
+
+    expect(signedCred.granted).not.toBeNull();
+
+    const validation = await signedCred.verifyAll({ requestorId, requestId });
+    expect(validation).toBeFalsy();
+    done();
+  });
+
+  it('should check all verifications and fail - anchor fails', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+
+    const subject = signAttestationSubject(cred.proof.anchor.subject, XPVT1, XPUB1);
+    const signedCred = VC.fromJSON(_.merge({}, cred, { proof: { anchor: { subject } } }));
+
+    expect(signedCred).toBeDefined();
+    expect(signedCred.proof.anchor).toBeDefined();
+
+    const requestorId = 'ANY_REQUESTOR_ID_12345';
+    const requestId = new Date().getTime(); // simulate an nonce ID
+    signedCred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
+
+    expect(signedCred.granted).not.toBeNull();
+
+    // Mock verifyAttestation to return false
+    signedCred.verifyAttestation = () => Promise.resolve(false);
+
+    const validation = await signedCred.verifyAll({ requestorId, requestId });
+    expect(validation).toBeFalsy();
     done();
   });
 
