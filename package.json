@@ -78,6 +78,7 @@
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
     "merkle-tools": "^1.4.0",
+    "moment-mini": "^2.24.0",
     "node-fetch": "^2.6.0",
     "randexp": "^0.4.9",
     "randomstring": "^1.1.5",
