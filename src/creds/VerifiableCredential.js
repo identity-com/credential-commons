@@ -10,10 +10,13 @@ const { Claim } = require('../claim/Claim');
 const definitions = require('./definitions');
 const claimDefinitions = require('../claim/definitions');
 const { services } = require('../services');
+const time = require('../timeHelper');
 
 function sha256(string) {
   return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
 }
+
+const convertTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
 
 function getClaimPath(identifier, claimsPathRef) {
   const sufix = Claim.getPath(identifier);
@@ -688,7 +691,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         _.set(claims, path, transformDate(pathValue));
         // transforms delta values like "-18y" to a proper timestamp
         // eslint-disable-next-line no-confusing-arrow
-        _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? timestamp.now(obj) : obj));
+        _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? convertTimestamp(obj) : obj));
       }
       result = (sift.indexOf(constraint, [claims]) > -1);
       return result;
