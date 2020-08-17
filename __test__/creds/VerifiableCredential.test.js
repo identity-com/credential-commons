@@ -36,7 +36,7 @@ const signAttestationSubject = (subject, xprv, xpub) => {
 describe('Unit tests for Verifiable Credentials', () => {
   test('Dont construct undefined Credentials', () => {
     function createCredential() {
-      const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+      const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
       const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
       return new VC('cvc:cred:Test', uuidv4(), null, [name, dob], '1');
     }
@@ -45,7 +45,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   test('Dont construct Credentials with wrong version', () => {
     function createCredential() {
-      const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+      const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
       const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
       return new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '2');
     }
@@ -53,13 +53,13 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   test('New Defined Credentials', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred).toBeDefined();
-    expect(cred.claim.identity.name.givenNames).toBe('Joao');
-    expect(cred.claim.identity.name.otherNames).toBe('Barbosa');
-    expect(cred.claim.identity.name.familyNames).toBe('Santos');
+    expect(cred.claim.identity.name.givenNames).toBe('Max');
+    expect(cred.claim.identity.name.otherNames).toBe('Abc');
+    expect(cred.claim.identity.name.familyNames).toBe('Mustermann');
     expect(cred.claim.identity.dateOfBirth.day).toBe(20);
     expect(cred.claim.identity.dateOfBirth.month).toBe(3);
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
@@ -69,13 +69,13 @@ describe('Unit tests for Verifiable Credentials', () => {
   // This test was skipped cause in the current definitions we don't have this case any more
   test.skip('should validate new defined credentials with the obligatory Meta:expirationDate UCA with'
     + ' null value', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred).toBeDefined();
-    expect(cred.claim.identity.name.givenNames).toBe('Joao');
+    expect(cred.claim.identity.name.givenNames).toBe('Max');
     expect(cred.claim.identity.name.otherNames).toBeUndefined();
-    expect(cred.claim.identity.name.familyNames).toBe('Santos');
+    expect(cred.claim.identity.name.familyNames).toBe('Mustermann');
     expect(cred.claim.identity.dateOfBirth.day).toBe(20);
     expect(cred.claim.identity.dateOfBirth.month).toBe(3);
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
@@ -87,13 +87,13 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   test('New Expirable Credentials', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), '-1d', [name, dob], '1');
     expect(cred).toBeDefined();
-    expect(cred.claim.identity.name.givenNames).toBe('Joao');
-    expect(cred.claim.identity.name.otherNames).toBe('Barbosa');
-    expect(cred.claim.identity.name.familyNames).toBe('Santos');
+    expect(cred.claim.identity.name.givenNames).toBe('Max');
+    expect(cred.claim.identity.name.otherNames).toBe('Abc');
+    expect(cred.claim.identity.name.familyNames).toBe('Mustermann');
     expect(cred.claim.identity.dateOfBirth.day).toBe(20);
     expect(cred.claim.identity.dateOfBirth.month).toBe(3);
     expect(cred.claim.identity.dateOfBirth.year).toBe(1978);
@@ -105,14 +105,14 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   test('New Defined Credentials return the incorrect global Credential Identifier', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.getGlobalIdentifier()).toBe('credential-credential-cvc:Identity-v1-1');
   });
 
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), '-1d', [name, dob], '1');
     return cred.requestAnchor().then((updated) => {
@@ -125,7 +125,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should refresh an temporary anchoring with an permanent one', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
 
@@ -149,9 +149,9 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   test('Filter claims from Identity Name', () => {
     const civIdentityName = {
-      givenNames: 'Joao',
-      otherNames: 'Barbosa',
-      familyNames: 'Santos',
+      givenNames: 'Max',
+      otherNames: 'Abc',
+      familyNames: 'Mustermann',
     };
 
     const civIdentityDateOfBirth = {
@@ -512,7 +512,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const credJSon = require('./fixtures/Email.json'); // eslint-disable-line
     const cred = VC.fromJSON(credJSon);
     expect(cred).toBeDefined();
-    cred.claim.contact.email.username = 'jpsantos';
+    cred.claim.contact.email.username = 'jpMustermann';
     expect(cred.verifyProofs()).toBeFalsy();
   });
 
@@ -713,7 +713,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should have a empty "granted" field just after construct a VC', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
 
@@ -734,7 +734,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should throw exception id ".grantUsageFor()" request without proper ".requestAnchor()" first', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
 
@@ -752,7 +752,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should have a filled "granted" field after ".grantUsageFor()" request', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     await cred.requestAnchor();
@@ -781,7 +781,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should verifyGrant() accordingly', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
@@ -810,7 +810,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should fail verifyGrant() with a invalid "granted" token', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
@@ -843,7 +843,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should verify a granted credential json with requesterGrantVerify', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
@@ -871,7 +871,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should fail to verify a credential json with invalid granted token with requesterGrantVerify', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
@@ -903,7 +903,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should verify() with maximum level of GRANTED', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
@@ -932,7 +932,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should fail verify() with maximum level of GRANTED if granted is invalid', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
@@ -1003,7 +1003,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('should revoke the permanent anchor and succed verification', async (done) => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     await cred.requestAnchor();
@@ -1029,30 +1029,30 @@ describe('Unit tests for Verifiable Credentials', () => {
 
 
   it('Should match with one constraint', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
-        { path: 'identity.name.givenNames', is: { $eq: 'Joao' } },
+        { path: 'identity.name.givenNames', is: { $eq: 'Max' } },
       ],
     })).toBeTruthy();
   });
 
   it('Should match with two constraint', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
-        { path: 'identity.name.givenNames', is: { $eq: 'Joao' } },
-        { path: 'identity.name.otherNames', is: { $eq: 'Barbosa' } },
+        { path: 'identity.name.givenNames', is: { $eq: 'Max' } },
+        { path: 'identity.name.otherNames', is: { $eq: 'Abc' } },
       ],
     })).toBeTruthy();
   });
 
   it('Should match with gt constraint', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
@@ -1063,7 +1063,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should match constraints targeting the parent properties of dates', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
@@ -1073,24 +1073,37 @@ describe('Unit tests for Verifiable Credentials', () => {
     })).toBeTruthy();
   });
 
+  const getExactYearsAgo = (yearDelta) => {
+    const exactYearsAgo = new Date();
+    exactYearsAgo.setFullYear(new Date().getFullYear() - yearDelta);
+    return exactYearsAgo;
+  };
+
+  const dateToDOBClaim = (date) => {
+    const dobClaim = { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() };
+    return new Claim.IdentityDateOfBirth(dobClaim);
+  };
+
   it('Should match constraints targeting the parent properties and string deltas', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+    const exactlyFortyYearsAgo = getExactYearsAgo(40);
+    const dob = dateToDOBClaim(exactlyFortyYearsAgo);
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
+
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
-        { path: 'identity.dateOfBirth', is: { $lte: '-21y' } },
+        { path: 'identity.dateOfBirth', is: { $lte: '-40y' } },
       ],
     })).toBeTruthy();
   });
 
   it('Should not match', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
-        { path: 'identity.name.first', is: { $eq: 'Savio' } },
+        { path: 'identity.name.first', is: { $eq: 'Maxime' } },
       ],
     })).toBeFalsy();
   });
@@ -1370,7 +1383,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should construct a VC with no evidence provided', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred).toBeDefined();
@@ -1385,7 +1398,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       subjectPresence: 'Digital',
       documentPresence: 'Digital',
     };
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     expect(cred.evidence).toBeDefined();
@@ -1411,7 +1424,7 @@ describe('Unit tests for Verifiable Credentials', () => {
         documentPresence: 'Digital',
       },
     ];
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     expect(cred.evidence).toBeDefined();
@@ -1430,7 +1443,7 @@ describe('Unit tests for Verifiable Credentials', () => {
         other: 'other',
       },
     ];
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     expect(cred.evidence).toBeDefined();
@@ -1447,7 +1460,7 @@ describe('Unit tests for Verifiable Credentials', () => {
         documentPresence: 'Digital',
       },
     ];
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
     const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
     const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     expect(cred.evidence).toBeDefined();
@@ -1465,7 +1478,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       },
     ];
     function createCredential() {
-      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
       const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
       return new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     }
@@ -1484,7 +1497,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       },
     ];
     function createCredential() {
-      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
       const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
       return new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     }
@@ -1503,7 +1516,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       },
     ];
     function createCredential() {
-      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Santos' });
+      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
       const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
       return new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     }
@@ -1513,7 +1526,7 @@ describe('Unit tests for Verifiable Credentials', () => {
   it('Should create credential if all claims are provided', () => {
     const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
     const number = new Claim('claim-cvc:Document.number-v1', '123', '1');
-    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
+    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Maxime' }, '1');
     const gender = new Claim('claim-cvc:Document.gender-v1', 'M', '1');
     const nationality = new Claim('claim-cvc:Document.nationality-v1', 'Brazilian', '1');
     const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', 'Brazil', '1');
@@ -1546,7 +1559,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should create credential if non-required claims are missing', () => {
     const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
-    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
+    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Maxime' }, '1');
     const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
     const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
     const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
@@ -1558,7 +1571,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should throw exception on credential creation if required uca is missing', () => {
     const type = new Claim('claim-cvc:Document.type-v1', 'passport', '1');
-    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Lucas' }, '1');
+    const name = new Claim('claim-cvc:Document.name-v1', { givenNames: 'Maxime' }, '1');
     const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
 
     const ucas = [type, name, issueCountry];

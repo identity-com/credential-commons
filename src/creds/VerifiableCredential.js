@@ -692,6 +692,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         // transforms delta values like "-18y" to a proper timestamp
         // eslint-disable-next-line no-confusing-arrow
         _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? convertTimestamp(obj) : obj));
+        // _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? timestamp.now(obj) : obj));
       }
       result = (sift.indexOf(constraint, [claims]) > -1);
       return result;
