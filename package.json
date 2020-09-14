@@ -36,10 +36,11 @@
     "pretag": "git fetch --tags",
     "tag": "git tag v$npm_package_version && git push --tags origin master",
     "precommit": "npm run lint",
-    "release:create": "hub release create -m v$npm_package_version v$npm_package_version"
+    "release:create": "hub release create -m v$npm_package_version v$npm_package_version",
+    "audit-ci": "audit-ci --config audit-ci.json"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "audit-ci": "^3.1.0",
     "babel-core": "^6.24.1",
     "babel-jest": "^25.1.0",
     "babel-minify": "^0.4.3",
@@ -55,7 +56,7 @@
     "eslint-plugin-react": "^7.14.3",
     "husky": "^1.1.2",
     "jest": "^24.9.0",
-    "jest-html-reporter": "^2.6.0",
+    "jest-html-reporter": "^3.2.0",
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2"
   },
@@ -75,11 +76,11 @@
     "flat": "^4.1.0",
     "inquirer": "^6.5.0",
     "json-format": "^1.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "md5": "^2.2.1",
     "merkle-tools": "^1.4.0",
     "moment-mini": "^2.24.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "randexp": "^0.4.9",
     "randomstring": "^1.1.5",
     "request": "^2.87.0",

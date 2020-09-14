@@ -91,6 +91,7 @@ jobs:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
       - run: sudo npm install -g npm
+      - run: npm run audit-ci --pass-enoaudit
       - run: npm ci
       - save_cache:
           paths:
