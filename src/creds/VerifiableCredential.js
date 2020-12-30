@@ -640,11 +640,11 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This method checks if the signature matches for the root of the Merkle Tree
    * @return true or false for the validation
    */
-  this.verifySignature = () => {
+  this.verifySignature = (pinnedPubKey) => {
     if (this.proof.type === 'transient') {
       return true;
     }
-    return services.container.AnchorService.verifySignature(this.proof);
+    return services.container.AnchorService.verifySignature(this.proof, pinnedPubKey);
   };
 
   /**
