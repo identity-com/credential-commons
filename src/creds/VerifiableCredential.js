@@ -651,7 +651,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This method checks that the attestation / anchor exists on the BC
    */
   this.verifyAttestation = async () => {
-    if (this.proof.type === 'transient') {
+    // Don't check attestation for credentials that are never attested on blockchain
+    if (this.proof.anchor.type === 'transient' || this.proof.anchor.network === 'dummynet') {
       return true;
     }
     return services.container.AnchorService.verifyAttestation(this.proof);

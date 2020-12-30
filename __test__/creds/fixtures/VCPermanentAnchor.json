@@ -28,10 +28,10 @@
     "merkleRoot": "1fbe357dfcb0f19b0470d1017ce617bc8f3e88ff06552f425a3e2e81d6f38c10",
     "anchor": {
       "subject": {
-        "pub": "xpub:dummy",
+        "pub": "xpub6Expk8Z75vLhdyfopBrrcmcd3NhenAuuE4GXcX8KkwKbaQqzAe4Ywbtxu9F95hRHj79PvdtYEJcoR6gesbZ79fS4bLi1PQtm81rjxAHeLL9",
         "label": "credential-cvc:Identity-v1",
         "data": "1fbe357dfcb0f19b0470d1017ce617bc8f3e88ff06552f425a3e2e81d6f38c10",
-        "signature": "signed:dummy"
+        "signature": "3045022100cec320a177f699d1981a823c4030973d180db0b893592096b7d343531c13e3e7022064a5093c97d3372f81c7104b571c532db3b1a6eb4eb9d26bb3ac7d7be5e314b8"
       },
       "walletId": "none",
       "cosigners": [

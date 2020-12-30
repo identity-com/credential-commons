@@ -758,7 +758,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     await cred.requestAnchor();
     expect(cred).toBeDefined();
     expect(cred.granted).toBeNull();
-
+    cred.proof.anchor.subject = signAttestationSubject(cred.proof.anchor.subject, XPVT1, XPUB1);
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
     cred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
@@ -772,7 +772,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const cred = VC.fromJSON(credentialJson);
     expect(cred).toBeDefined();
     expect(cred.granted).toBeNull();
-
+    cred.proof.anchor.subject = signAttestationSubject(cred.proof.anchor.subject, XPVT1, XPUB1);
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
     cred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });

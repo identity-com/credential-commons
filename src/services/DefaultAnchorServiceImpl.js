@@ -6,6 +6,7 @@
  */
 const uuid = require('uuid/v4');
 const { HDNode, ECSignature } = require('bitcoinjs-lib');
+const sjcl = require('sjcl');
 const logger = require('../logger');
 
 /**
@@ -87,9 +88,10 @@ function DummyAnchorServiceImpl(config, http) {
    */
   this.verifySubjectSignature = (subject, pinnedPubKey) => {
     // Do not use JS destruct on the next line, We need to predict the JSON order
-    const hash = JSON.stringify({ xpub: subject.pub, label: subject.label, data: subject.data });
+    const toHash = JSON.stringify({ xpub: subject.pub, label: subject.label, data: subject.data });
+    const hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(toHash));
     const subjectSignature = ECSignature.fromDER(Buffer.from(subject.signature, 'hex'));
-    return HDNode.fromBase58(pinnedPubKey || subject.pub).keyPair.verify(hash, subjectSignature);
+    return HDNode.fromBase58(pinnedPubKey || subject.pub).keyPair.verify(Buffer.from(hash, 'hex'), subjectSignature);
   };
 
   /**
