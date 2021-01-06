@@ -266,7 +266,6 @@ const ErrorCodes = {
    */
   ERROR_IDV_TOKEN_MISMATCH: 'error.idv.token.mismatch',
 
-
   // CW ERRORS
 
   /**

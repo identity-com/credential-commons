@@ -1,51 +1,35 @@
 const _ = require('lodash');
 const validUrl = require('valid-url');
 const sift = require('sift');
-const MerkleTools = require('merkle-tools');
-const sjcl = require('sjcl');
+
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
+const MerkleTools = require('merkle-tools');
+
+const { sha256 } = require('../lib/crypto');
 const { Claim } = require('../claim/Claim');
+
 const definitions = require('./definitions');
-const claimDefinitions = require('../claim/definitions');
+
 const { services } = require('../services');
 const time = require('../timeHelper');
+const { CvcMerkleProof } = require('./CvcMerkleProof');
+const { ClaimModel } = require('./ClaimModel');
 
-function sha256(string) {
-  return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
-}
+const convertTimestamp = (delta) => time.applyDeltaToDate(delta).getTime() / 1000;
 
-const convertTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
-
-function getClaimPath(identifier, claimsPathRef) {
-  const sufix = Claim.getPath(identifier);
-  let claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
-  if (!claimPath) {
-    const claimDefinition = _.find(claimDefinitions, { identifier });
-    const typeSufix = claimDefinition ? Claim.getPath(claimDefinition.type) : null;
-    if (typeSufix) {
-      claimPath = _.find(claimsPathRef, o => _.endsWith(o, typeSufix));
-    }
-  }
-  return claimPath || sufix;
-}
-
-function validIdentifiers() {
-  const vi = _.map(definitions, d => d.identifier);
-  return vi;
-}
+const validIdentifiers = () => _.map(definitions, 'identifier');
 
 function getClaimsWithFlatKeys(claims) {
   const flattenDepth3 = flatten(claims, { maxDepth: 3 });
   const flattenDepth2 = flatten(claims, { maxDepth: 2 });
   const flattenClaim = _.merge({}, flattenDepth3, flattenDepth2);
-  const flattenSortedKeysClaim = _(flattenClaim)
+  return _(flattenClaim)
     .toPairs()
     .sortBy(0)
     .fromPairs()
     .value();
-  return flattenSortedKeysClaim;
 }
 
 function paths(root) {
@@ -333,76 +317,6 @@ function requesterGrantVerify(credential, requesterId, requestId, keyName) {
 function transformDate(obj) {
   return new Date(obj.year, (obj.month - 1), obj.day).getTime() / 1000;
 }
-/**
- * Transforms a list of UCAs into the signature property of the verifiable claims
-
- */
-class CvcMerkleProof {
-  static get PADDING_INCREMENTS() {
-    return 16;
-  }
-
-  constructor(ucas, claimsPathRef) {
-    const withRandomUcas = CvcMerkleProof.padTree(ucas);
-    this.type = 'CvcMerkleProof2018';
-    this.merkleRoot = null;
-    this.anchor = 'TBD (Civic Blockchain Attestation)';
-    this.leaves = CvcMerkleProof.getAllAttestableValue(withRandomUcas);
-    this.buildMerkleTree(claimsPathRef);
-  }
-
-  buildMerkleTree(claimsPathRef) {
-    const merkleTools = new MerkleTools();
-    const hashes = _.map(this.leaves, n => sha256(n.value));
-    merkleTools.addLeaves(hashes);
-    merkleTools.makeTree();
-    _.forEach(hashes, (hash, idx) => {
-      this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier, claimsPathRef);
-      this.leaves[idx].targetHash = hash;
-      this.leaves[idx].node = merkleTools.getProof(idx);
-    });
-    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'cvc:Random:node'));
-    this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
-  }
-
-  static padTree(nodes) {
-    const currentLength = nodes.length;
-    const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS ? CvcMerkleProof.PADDING_INCREMENTS
-      : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS;
-    const newNodes = _.clone(nodes);
-    const secureRandom = services.container.SecureRandom;
-    while (newNodes.length < targetLength) {
-      newNodes.push(new Claim('cvc:Random:node', secureRandom.wordWith(16)));
-    }
-    return newNodes;
-  }
-
-  static getAllAttestableValue(ucas) {
-    const values = [];
-    _.forEach(ucas, (uca) => {
-      const innerValues = uca.getAttestableValues();
-      _.reduce(innerValues, (res, iv) => {
-        res.push(iv);
-        return res;
-      }, values);
-    });
-    return values;
-  }
-}
-/**
- * Transforms a list of UCAs into the claim property of the verifiable cliams
- */
-class ClaimModel {
-  constructor(ucas) {
-    _.forEach(ucas, (uca) => {
-      const rootPropertyName = uca.getClaimRootPropertyName();
-      if (!this[rootPropertyName]) {
-        this[rootPropertyName] = {};
-      }
-      this[rootPropertyName][uca.getClaimPropertyName()] = uca.getPlainValue();
-    });
-  }
-}
 
 const VERIFY_LEVELS = {
   INVALID: -1, // Verifies if the VC structure and/or signature proofs is not valid, or credential is expired
@@ -419,7 +333,7 @@ const VERIFY_LEVELS = {
  */
 function verifyRequiredClaims(definition, ucas) {
   if (!_.isEmpty(definition.required)) {
-    const identifiers = ucas.map(uca => uca.identifier);
+    const identifiers = ucas.map((uca) => uca.identifier);
     const missings = _.difference(definition.required, identifiers);
     if (!_.isEmpty(missings)) {
       throw new Error(`Missing required claim(s): ${_.join(missings, ', ')}`);
@@ -436,7 +350,7 @@ function verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON) {
   const leaves = _.get(verifiableCredentialJSON, 'proof.leaves');
 
   if (!_.isEmpty(definition.required) && leaves) {
-    const identifiers = leaves.map(leave => leave.identifier);
+    const identifiers = leaves.map((leave) => leave.identifier);
     const missings = _.difference(definition.required, identifiers);
     if (!_.isEmpty(missings)) {
       throw new Error(`Missing required claim(s): ${_.join(missings, ', ')}`);
@@ -505,7 +419,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     const allClaimsPaths = claimsPathRef.concat(deepKeys);
     this.proof = new CvcMerkleProof(proofUCAs, allClaimsPaths);
     if (!_.isEmpty(definition.excludes)) {
-      const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
+      const removed = _.remove(this.proof.leaves, (el) => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
         _.unset(this.claim, r.claimPath);
       });
@@ -525,7 +439,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.filter = (requestedClaims) => {
     const filtered = _.cloneDeep(this);
-    _.remove(filtered.proof.leaves, el => !_.includes(requestedClaims, el.identifier));
+    _.remove(filtered.proof.leaves, (el) => !_.includes(requestedClaims, el.identifier));
 
     filtered.claim = {};
     _.forEach(filtered.proof.leaves, (el) => {
@@ -692,7 +606,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
         _.set(claims, path, transformDate(pathValue));
         // transforms delta values like "-18y" to a proper timestamp
         // eslint-disable-next-line no-confusing-arrow
-        _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? convertTimestamp(obj) : obj));
+        _.set(constraint, path, _.mapValues(constraint[path], (obj) => _.isString(obj) ? convertTimestamp(obj) : obj));
         // _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? timestamp.now(obj) : obj));
       }
       result = (sift.indexOf(constraint, [claims]) > -1);
@@ -750,7 +664,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   return this;
 }
 
-
 /**
  * CREDENTIAL_META_FIELDS - Array with meta fields of a credential
  */
@@ -768,7 +681,7 @@ const CREDENTIAL_META_FIELDS = [
  *
  * @param {*} vc
  */
-const getCredentialMeta = vc => _.pick(vc, CREDENTIAL_META_FIELDS);
+const getCredentialMeta = (vc) => _.pick(vc, CREDENTIAL_META_FIELDS);
 
 /**
  *

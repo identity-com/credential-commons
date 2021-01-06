@@ -13,5 +13,4 @@ function HttpServiceConstructor() {
   return this;
 }
 
-
 module.exports = HttpServiceConstructor;

@@ -81,7 +81,6 @@ describe('Claim Constructions tests', () => {
     expect(createClaim).toThrow();
   });
 
-
   test('cvc:Verify:phoneNumberToken must have type equals String', () => {
     const identifier = 'cvc:Verify:phoneNumberToken';
     const value = '12345';

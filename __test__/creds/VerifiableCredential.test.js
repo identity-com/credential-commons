@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
-const uuidv1 = require('uuid/v1');
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4, v1: uuidv1 } = require('uuid');
 const sjcl = require('sjcl');
 const { Claim, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
@@ -557,10 +556,10 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should verify an VC of type GenericDocumentId', () => {
     const ucaArray = [];
-    const credentialDefinition = credentialDefinitions.find(definition => definition.identifier
+    const credentialDefinition = credentialDefinitions.find((definition) => definition.identifier
       === 'credential-cvc:GenericDocumentId-v1');
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === ucaDefinitionIdentifier);
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
@@ -978,7 +977,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     // eslint-disable-next-line
     receivedCred.granted = '304502210085f6baceefcddefff535416df0eda6c9b8a01dcba592c599ec2c83cce7171dd802204473f5a15b3904dbf0fc309fe812fbf449948714938fb4871196d338ef38f1d1';
 
-
     const verifyLevel = receivedCred.verify(VC.VERIFY_LEVELS.GRANTED, { requestorId, requestId });
     expect(verifyLevel).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.ANCHOR); // Should be at least one level lower
 
@@ -1046,7 +1044,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(isRevoked).toBeFalsy();
     done();
   });
-
 
   it('Should match with one constraint', () => {
     const name = new Claim.IdentityName({ givenNames: 'Max', otherNames: 'Abc', familyNames: 'Mustermann' });
@@ -1273,7 +1270,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(VC.isMatchCredentialMeta(vcMeta, constraints)).toBeFalsy();
   });
 
-
   it('Should not match credential if constraints invalid or empty', () => {
     const vcMeta = {
       id: '123456789',
@@ -1372,7 +1368,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-        const ucaDefinition = definitions.find(ucaDef => (
+        const ucaDefinition = definitions.find((ucaDef) => (
           ucaDef.identifier === ucaDefinitionIdentifier
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -1397,7 +1393,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       promises.push(validateSchemaJestStep(credentialDefinition));
     });
     Promise.all(promises).then((values) => {
-      values.forEach(isValid => expect(isValid).toBeTruthy());
+      values.forEach((isValid) => expect(isValid).toBeTruthy());
       done();
     });
   });
@@ -1634,7 +1630,6 @@ describe('Transient Credential Tests', () => {
     const uca = new Claim('claim-cvc:Identity.address-v1', value, '1');
     const credential = new VC('credential-cvc:UnverifiedAddress-v1', '', null, [uca], '1');
 
-
     expect(credential).toBeDefined();
     expect(credential.transient).toBeTruthy();
 
@@ -1659,7 +1654,6 @@ describe('Transient Credential Tests', () => {
 
     const uca = new Claim('claim-cvc:SocialSecurity.number-v1', value, '1');
     const credential = new VC('credential-cvc:UnverifiedSsn-v1', '', null, [uca], '1');
-
 
     expect(credential).toBeDefined();
     expect(credential.transient).toBeTruthy();
