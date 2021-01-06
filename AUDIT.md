@@ -11,5 +11,4 @@ Whenever you whitelist a specific advisory it is required to refer it to here an
 
 | #    | Level | Module | Title | Explanation |
 |------|-------|---------|------|-------------|
-| 1490 | Low | babel-jest | Validation Bypass | used during testing |
 | 1500 | Low | babel-minify>yargs-parser | Prototype Pollution | dev dependency only |
