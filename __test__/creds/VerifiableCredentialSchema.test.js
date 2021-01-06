@@ -1,4 +1,4 @@
-const Ajv = require('ajv');
+const Ajv = require('ajv').default;
 
 const { v1: uuidv1 } = require('uuid');
 const { Claim, definitions } = require('../../src/claim/Claim');
@@ -47,7 +47,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
-      const ajv = new Ajv();
+      const ajv = new Ajv({ allErrors: true });
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
       return isValid;
@@ -86,7 +86,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
     generatedJson.claim.identity.name.familyNames = 123456;
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate(generatedJson);
     expect(isValid).toBeFalsy();
@@ -115,7 +115,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
     generatedJson.anAdditionalPropertyToFail = 'test';
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate(generatedJson);
     expect(isValid).toBeFalsy();

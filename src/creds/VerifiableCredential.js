@@ -177,11 +177,11 @@ function isDateStructure(obj) {
 }
 
 /**
-  * Non cryptographically secure verify the Credential
-  * Performs a proofs verification only.
-  * @param credential - A credential object with expirationDate, claim and proof
-  * @return true if verified, false otherwise.
-  */
+ * Non cryptographically secure verify the Credential
+ * Performs a proofs verification only.
+ * @param credential - A credential object with expirationDate, claim and proof
+ * @return true if verified, false otherwise.
+ */
 function nonCryptographicallySecureVerify(credential) {
   const expiry = _.clone(credential.expirationDate);
   const claims = _.clone(credential.claim);
@@ -242,23 +242,23 @@ function nonCryptographicallySecureVerify(credential) {
     }
   }
   if (_.isEmpty(invalidClaim)
-      && _.isEmpty(invalidValues)
-      && _.isEmpty(invalidHashs)
-      && _.isEmpty(invalidProofs)
-      && _.isEmpty(invalidExpiry)) {
+    && _.isEmpty(invalidValues)
+    && _.isEmpty(invalidHashs)
+    && _.isEmpty(invalidProofs)
+    && _.isEmpty(invalidExpiry)) {
     valid = true;
   }
   return valid;
 }
 
 /**
-  * Cryptographically secure verify the Credential.
-  * Performs a non cryptographically secure verification, attestation check and signature validation.
-  * @param credential - A credential object with expirationDate, claim and proof
-  * @param verifyAttestationFunc - Async method to verify a credential attestation
-  * @param verifySignatureFunc - Async method to verify a credential signature
-  * @return true if verified, false otherwise.
-  */
+ * Cryptographically secure verify the Credential.
+ * Performs a non cryptographically secure verification, attestation check and signature validation.
+ * @param credential - A credential object with expirationDate, claim and proof
+ * @param verifyAttestationFunc - Async method to verify a credential attestation
+ * @param verifySignatureFunc - Async method to verify a credential signature
+ * @return true if verified, false otherwise.
+ */
 async function cryptographicallySecureVerify(credential, verifyAttestationFunc, verifySignatureFunc) {
   if (!nonCryptographicallySecureVerify(credential)) {
     return false;
@@ -534,18 +534,18 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.INVALID
-        && hVerifyLevel >= VERIFY_LEVELS.PROOFS
-        && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
+      && hVerifyLevel >= VERIFY_LEVELS.PROOFS
+      && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.PROOFS
-        && hVerifyLevel >= VERIFY_LEVELS.ANCHOR
-        && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR;
+      && hVerifyLevel >= VERIFY_LEVELS.ANCHOR
+      && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR;
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.ANCHOR
-        && hVerifyLevel >= VERIFY_LEVELS.GRANTED
-        && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED;
+      && hVerifyLevel >= VERIFY_LEVELS.GRANTED
+      && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED;
 
     return verifiedlevel;
   };
@@ -566,9 +566,16 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.verifyAttestation = async () => {
     // Don't check attestation for credentials that are never attested on blockchain
-    if (this.proof.anchor.type === 'transient' || this.proof.anchor.network === 'dummynet') {
+    if (
+      this.proof.anchor.type === 'transient' || this.proof.anchor.network === 'dummynet') {
       return true;
     }
+
+    if (
+      this.proof.anchor.type === 'temporary') {
+      return false;
+    }
+
     return services.container.AnchorService.verifyAttestation(this.proof);
   };
 
@@ -595,24 +602,28 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     return services.container.AnchorService.isRevoked(this.proof);
   };
 
+  const convertTimestampIfString = (obj) => (_.isString(obj) ? convertTimestamp(obj) : obj);
+
   this.isMatch = (constraints) => {
-    const siftConstraints = transformConstraint(constraints);
-    let result = true;
     const claims = _.cloneDeep(this.claim);
-    _.forEach(siftConstraints, (constraint) => {
+    const siftCompatibleConstraints = transformConstraint(constraints);
+
+    const claimsMatchConstraint = (constraint) => {
       const path = _.keys(constraint)[0];
       const pathValue = _.get(claims, path);
       if (isDateStructure(pathValue)) {
         _.set(claims, path, transformDate(pathValue));
         // transforms delta values like "-18y" to a proper timestamp
-        // eslint-disable-next-line no-confusing-arrow
-        _.set(constraint, path, _.mapValues(constraint[path], (obj) => _.isString(obj) ? convertTimestamp(obj) : obj));
-        // _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? timestamp.now(obj) : obj));
+        _.set(constraint, path, _.mapValues(constraint[path], convertTimestampIfString));
       }
-      result = (sift.indexOf(constraint, [claims]) > -1);
-      return result;
-    });
-    return result;
+      // The Constraints are ANDed here - if one is false, the entire
+      return sift(constraint)([claims]);
+    };
+
+    return siftCompatibleConstraints.reduce(
+      (matchesAllConstraints, nextConstraint) => matchesAllConstraints && claimsMatchConstraint(nextConstraint),
+      true,
+    );
   };
 
   /**
@@ -714,7 +725,7 @@ function transformMetaConstraint(constraintsMeta) {
 
 /**
  * isMatchCredentialMeta
- * @param {*} credentialMeta A Object continais only VC meta fields. Other object keys will be ignored.
+ * @param {*} credentialMeta An Object contains only VC meta fields. Other object keys will be ignored.
  * @param {*} constraintsMeta Example:
  * // constraints.meta = {
  * //   "credential": "credential-civ:Credential:CivicBasic-1",
@@ -725,12 +736,16 @@ function transformMetaConstraint(constraintsMeta) {
  * //   }
  */
 const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
-  const siftConstraints = transformMetaConstraint(constraintsMeta);
-  let result = !_.isEmpty(siftConstraints) && true;
-  _.forEach(siftConstraints, (constraint) => {
-    result = (sift.indexOf(constraint, [credentialMeta]) > -1) && result;
-  });
-  return result;
+  const siftCompatibleConstraints = transformMetaConstraint(constraintsMeta);
+
+  if (_.isEmpty(siftCompatibleConstraints)) return false;
+
+  const credentialMetaMatchesConstraint = (constraint) => sift(constraint)([credentialMeta]);
+
+  return siftCompatibleConstraints.reduce(
+    (matchesAllConstraints, nextConstraint) => matchesAllConstraints && credentialMetaMatchesConstraint(nextConstraint),
+    true,
+  );
 };
 
 VerifiableCredentialBaseConstructor.CREDENTIAL_META_FIELDS = CREDENTIAL_META_FIELDS;

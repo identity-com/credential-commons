@@ -1,4 +1,4 @@
-const Ajv = require('ajv');
+const Ajv = require('ajv').default;
 const fs = require('fs');
 const fetch = require('node-fetch');
 const { definitions } = require('@identity.com/uca');
@@ -8,7 +8,7 @@ const credentialDefinitions = require('../../src/creds/definitions');
 const fixturesPath = '__integrations__/fixtures';
 // testings is done only on the test bucket,
 // since we only release to production on manual CircleCI flow
-// check process env for S3 SChema URL or fallback to an fixed one
+// check process env for S3 Schema URL or fallback to an fixed one
 const s3BucketUrl = process.env.S3_PUBLIC_SCHEMA_URL
   ? process.env.S3_PUBLIC_SCHEMA_URL
   : 'http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com';
@@ -31,7 +31,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       const response = await fetch(`${s3BucketUrl}/Credential/${jsonFolderVersion}/${jsonFile}`);
       const jsonSchema = await response.json();
       try {
-        const ajv = new Ajv();
+        const ajv = new Ajv({ allErrors: true });
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
         // validate now the json from the fixture against the json from the S3
@@ -69,7 +69,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       const response = await fetch(`${s3BucketUrl}/Credential/${jsonFolderVersion}/${jsonFile}`);
       const jsonSchema = await response.json();
       try {
-        const ajv = new Ajv();
+        const ajv = new Ajv({ allErrors: true });
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
         // validate now the json from the fixture against the json from the S3
@@ -108,7 +108,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       const response = await fetch(`${s3BucketUrl}/${typeFolder}/${jsonFolderVersion}/${jsonFile}`);
       const jsonSchema = await response.json();
       try {
-        const ajv = new Ajv();
+        const ajv = new Ajv({ allErrors: true });
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
         // validate now the json from the fixture against the json from the S3
@@ -144,7 +144,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       const response = await fetch(`${s3BucketUrl}/${typeFolder}/${jsonFolderVersion}/${jsonFile}`);
       const jsonSchema = await response.json();
       try {
-        const ajv = new Ajv();
+        const ajv = new Ajv({ allErrors: true });
         // compile ajv with the schema
         const validate = ajv.compile(jsonSchema);
         // validate now the json from the fixture against the json from the S3
