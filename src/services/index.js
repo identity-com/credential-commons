@@ -2,7 +2,7 @@
  * Services IoC modules
  */
 const Bottle = require('bottlejs');
-const { CurrentCivicAnchor } = require('./DummyAnchorServiceImpl.js');
+const { CurrentCivicAnchor } = require('./DefaultAnchorServiceImpl.js');
 const logger = require('../logger');
 const HttpServiceConstructor = require('./httpService');
 const config = require('./config');

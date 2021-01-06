@@ -700,7 +700,27 @@ describe('Unit tests for Verifiable Credentials', () => {
     done();
   });
 
-  it.skip('should tamper the root of Merkle and the signature should not match', async (done) => {
+  it('should check that signature matches for the root of the Merkle Tree using a pinned key', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+    expect(cred).toBeDefined();
+    expect(cred.proof.anchor).toBeDefined();
+    expect(await cred.verifySignature(XPUB1)).toBeTruthy();
+    done();
+  });
+
+  it('should fail to check that signature using a bad pinned key', async (done) => {
+    const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
+    const credentialJson = JSON.parse(credentialContents);
+    const cred = VC.fromJSON(credentialJson);
+    expect(cred).toBeDefined();
+    expect(cred.proof.anchor).toBeDefined();
+    expect(() => cred.verifySignature(XPUB1.replace('9', '6'))).toThrow();
+    done();
+  });
+
+  it('should tamper the root of Merkle and the signature should not match', async (done) => {
     const credentialContents = fs.readFileSync('__test__/creds/fixtures/VCPermanentAnchor.json', 'utf8');
     const credentialJson = JSON.parse(credentialContents);
     const cred = VC.fromJSON(credentialJson);
@@ -758,7 +778,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     await cred.requestAnchor();
     expect(cred).toBeDefined();
     expect(cred.granted).toBeNull();
-
+    cred.proof.anchor.subject = signAttestationSubject(cred.proof.anchor.subject, XPVT1, XPUB1);
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
     cred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
@@ -772,7 +792,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const cred = VC.fromJSON(credentialJson);
     expect(cred).toBeDefined();
     expect(cred.granted).toBeNull();
-
+    cred.proof.anchor.subject = signAttestationSubject(cred.proof.anchor.subject, XPVT1, XPUB1);
     const requestorId = 'ANY_REQUESTOR_ID_12345';
     const requestId = new Date().getTime(); // simulate an nonce ID
     cred.grantUsageFor(requestorId, requestId, { pvtKey: XPVT1 });
