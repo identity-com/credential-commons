@@ -17,7 +17,8 @@ const time = require('../timeHelper');
 const { CvcMerkleProof } = require('./CvcMerkleProof');
 const { ClaimModel } = require('./ClaimModel');
 
-const convertTimestamp = (delta) => time.applyDeltaToDate(delta).getTime() / 1000;
+// convert a time delta to a timestamp
+const convertDeltaToTimestamp = (delta) => time.applyDeltaToDate(delta).getTime() / 1000;
 
 const validIdentifiers = () => _.map(definitions, 'identifier');
 
@@ -602,7 +603,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     return services.container.AnchorService.isRevoked(this.proof);
   };
 
-  const convertTimestampIfString = (obj) => (_.isString(obj) ? convertTimestamp(obj) : obj);
+  const convertTimestampIfString = (obj) => (_.isString(obj) ? convertDeltaToTimestamp(obj) : obj);
 
   this.isMatch = (constraints) => {
     const claims = _.cloneDeep(this.claim);
@@ -695,17 +696,14 @@ const CREDENTIAL_META_FIELDS = [
 const getCredentialMeta = (vc) => _.pick(vc, CREDENTIAL_META_FIELDS);
 
 /**
- *
+ * Sift constraints to throw errors for constraints missing IS
  * @param {*} constraintsMeta
+ * @param Array
  */
 function transformMetaConstraint(constraintsMeta) {
   const resultConstraints = [];
 
   // handle special field constraints.meta.credential
-  // const constraintsMetaCredential = _.get(constraintsMeta, 'meta.credential');
-  // if (constraintsMetaCredential) {
-  //   return { identifier: constraintsMetaCredential };
-  // }
   const constraintsMetaKeys = _.keys(constraintsMeta.meta);
   _.forEach(constraintsMetaKeys, (constraintKey) => {
     const constraint = constraintsMeta.meta[constraintKey];
@@ -716,7 +714,7 @@ function transformMetaConstraint(constraintsMeta) {
     } else if (constraint.is) {
       siftConstraint[constraintKey] = constraint.is;
     } else {
-      throw new Error(`Malformed meta contraint "${constraintKey}": missing the IS`);
+      throw new Error(`Malformed meta constraint "${constraintKey}": missing the IS`);
     }
     resultConstraints.push(siftConstraint);
   });
@@ -734,6 +732,7 @@ function transformMetaConstraint(constraintsMeta) {
  * //       "$eq": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD"
  * //     }
  * //   }
+ * @returns boolean
  */
 const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
   const siftCompatibleConstraints = transformMetaConstraint(constraintsMeta);
@@ -755,6 +754,7 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
 /**
  * Factory function that creates a new Verifiable Credential based on a JSON object
  * @param {*} verifiableCredentialJSON
+ * @returns VerifiableCredentialBaseConstructor
  */
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
   const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
