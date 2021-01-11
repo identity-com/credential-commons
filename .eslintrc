@@ -1,15 +1,15 @@
 {
-    "extends": "airbnb-base",
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "es6": true,
-        "jest": true
-    },
-    "plugins": [
-        "no-only-tests"
-    ],
-    "rules": {
-        "max-len": ["warn", 120]
-    }
+  "extends": "airbnb-base",
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "jest": true
+  },
+  "plugins": [
+    "no-only-tests"
+  ],
+  "rules": {
+    "max-len": ["warn", 120]
+  }
 }

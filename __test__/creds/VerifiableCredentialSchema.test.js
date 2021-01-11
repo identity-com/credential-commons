@@ -1,6 +1,6 @@
-const Ajv = require('ajv');
+const Ajv = require('ajv').default;
 
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1 } = require('uuid');
 const { Claim, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
@@ -29,7 +29,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-        const ucaDefinition = definitions.find(ucaDef => (
+        const ucaDefinition = definitions.find((ucaDef) => (
           ucaDef.identifier === ucaDefinitionIdentifier
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -47,7 +47,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       const jsonString = JSON.stringify(credential, null, 2);
       const generatedJson = JSON.parse(jsonString);
       const jsonSchema = SchemaGenerator.process(credential, generatedJson);
-      const ajv = new Ajv();
+      const ajv = new Ajv({ allErrors: true });
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(generatedJson);
       return isValid;
@@ -57,19 +57,19 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       promises.push(validateSchemaJestStep(credentialDefinition));
     });
     Promise.all(promises).then((values) => {
-      values.forEach(isValid => expect(isValid).toBeTruthy());
+      values.forEach((isValid) => expect(isValid).toBeTruthy());
       done();
     });
   });
 
   it('Should change the VC Json data and fail against AJV', () => {
     const identifier = 'credential-cvc:Identity-v1';
-    const credentialDefinition = credentialDefinitions.find(credsDef => (
+    const credentialDefinition = credentialDefinitions.find((credsDef) => (
       credsDef.identifier === identifier
     ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = definitions.find(ucaDef => (
+      const ucaDefinition = definitions.find((ucaDef) => (
         ucaDef.identifier === ucaDefinitionIdentifier
       ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -86,7 +86,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
     generatedJson.claim.identity.name.familyNames = 123456;
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate(generatedJson);
     expect(isValid).toBeFalsy();
@@ -94,12 +94,12 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
   it('Should add an property to the root of the json and fail against AJV additionalProperties', () => {
     const identifier = 'credential-cvc:Identity-v1';
-    const credentialDefinition = credentialDefinitions.find(credsDef => (
+    const credentialDefinition = credentialDefinitions.find((credsDef) => (
       credsDef.identifier === identifier
     ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = definitions.find(ucaDef => (
+      const ucaDefinition = definitions.find((ucaDef) => (
         ucaDef.identifier === ucaDefinitionIdentifier
       ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -115,7 +115,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(credential, generatedJson);
     generatedJson.anAdditionalPropertyToFail = 'test';
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate(generatedJson);
     expect(isValid).toBeFalsy();

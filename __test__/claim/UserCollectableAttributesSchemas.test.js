@@ -1,4 +1,4 @@
-const Ajv = require('ajv');
+const Ajv = require('ajv').default;
 const { Claim, definitions } = require('../../src/claim/Claim');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 
@@ -26,7 +26,7 @@ describe('UCA Json Sample Date Construction tests', () => {
       const json = SchemaGenerator.buildSampleJson(definition, true);
       const jsonSchema = SchemaGenerator.process(definition, json);
       expect(jsonSchema.title).toEqual(definition.identifier);
-      const ajv = new Ajv();
+      const ajv = new Ajv({ allErrors: true });
       const validate = ajv.compile(jsonSchema);
       const isValid = validate(json);
       expect(isValid).toBeTruthy();
@@ -45,7 +45,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate({ myCustomType: 0 });
     expect(isValid).toBeFalsy();
@@ -63,7 +63,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate({ myCustomType: 1 });
     expect(isValid).toBeTruthy();
@@ -81,7 +81,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate({ myCustomType: 1 });
     expect(isValid).toBeFalsy();
@@ -99,7 +99,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate({ myCustomType: 2 });
     expect(isValid).toBeTruthy();
@@ -117,7 +117,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate({ myCustomType: 0 });
     expect(isValid).toBeTruthy();
@@ -135,7 +135,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate({ myCustomType: 1 });
     expect(isValid).toBeTruthy();
@@ -153,7 +153,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate({ myCustomType: 2 });
     expect(isValid).toBeFalsy();
@@ -171,7 +171,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate({ myCustomType: 1 });
     expect(isValid).toBeFalsy();
@@ -188,10 +188,10 @@ describe('UCA Json Sample Date Construction tests', () => {
     const uca = new Claim(identifier, value);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
-    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === identifier);
     const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
     expect(jsonSchema.title).toEqual(identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     // tamper the json from the uca and expect AJV to fail the schema validation
     generatedJson.value.givenNames.value = true;
@@ -210,10 +210,10 @@ describe('UCA Json Sample Date Construction tests', () => {
     const uca = new Claim(identifier, value);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
-    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === identifier);
     const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
     expect(jsonSchema.title).toEqual(identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     // tamper the json from the uca and expect AJV to fail the schema validation
     generatedJson.value.givenNames.value = 12.3535;
@@ -227,10 +227,10 @@ describe('UCA Json Sample Date Construction tests', () => {
     const uca = new Claim(identifier, 1);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
-    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === identifier);
     const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
     expect(jsonSchema.title).toEqual(identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     // tamper the json from the uca and expect AJV to fail the schema validation
     generatedJson.value = '1';

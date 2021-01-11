@@ -1,12 +1,9 @@
-/* eslint no-unused-vars: ["error", { "args": "none" }] */
-
 /**
  * Current Anchor/Attester service
  *
  */
-const uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 const logger = require('../logger');
-
 
 /**
  * An Anchor/Attester implementation
@@ -26,8 +23,8 @@ function DummyAnchorServiceImpl(config, http) {
         json: true,
       });
 
-
       if (!attestation || !attestation.type) {
+        // eslint-disable-next-line no-unused-vars
         return await pollService(statusUrl);
       }
       if (attestation && attestation.type !== 'permanent') {
@@ -69,31 +66,33 @@ function DummyAnchorServiceImpl(config, http) {
   );
 
   this.update = async (tempAnchor) => {
-    tempAnchor.type = 'permanent'; // eslint-disable-line
-    tempAnchor.value = new uuid(); // eslint-disable-line
+    // eslint-disable-next-line no-param-reassign
+    tempAnchor.type = 'permanent';
+    // eslint-disable-next-line no-param-reassign
+    tempAnchor.value = uuid();
     return Promise.resolve(tempAnchor);
   };
 
-  this.verifySignature = signature => true;
+  this.verifySignature = () => true;
 
   /**
    * This method checks if the subject signature matches the pub key
-   * @param subject a json with label, data, signature, pub
    * @returns {*} true or false for the validation
    */
-  this.verifySubjectSignature = subject => true;
+  this.verifySubjectSignature = () => true;
 
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
-  this.verifyAttestation = async signature => true;
+  this.verifyAttestation = async () => true;
 
   this.revokeAttestation = async (signature) => {
-    signature.revoked = true; // eslint-disable-line
+    // eslint-disable-next-line no-param-reassign
+    signature.revoked = true;
     return Promise.resolve(signature);
   };
 
-  this.isRevoked = signature => (signature.revoked ? signature.revoked : false);
+  this.isRevoked = (signature) => (signature.revoked ? signature.revoked : false);
 
   return this;
 }

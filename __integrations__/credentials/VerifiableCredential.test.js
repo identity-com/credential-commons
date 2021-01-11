@@ -1,10 +1,9 @@
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 
 jest.setTimeout(200000);
 
-// DO NOT FORGET TO CONFIGURE THE BITGO WALLET
 describe('Integration Tests for Verifiable Credentials', () => {
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
     const name = new Claim.IdentityName({ givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });

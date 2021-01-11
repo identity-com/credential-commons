@@ -1,6 +1,6 @@
 jest.mock('../../src/claim/definitions');
 
-const Ajv = require('ajv');
+const Ajv = require('ajv').default;
 const { Claim } = require('../../src/claim/Claim');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const ucaMockDefinitions = require('../../src/claim/__mocks__/definitions');
@@ -15,13 +15,13 @@ const ucaMockDefinitions = require('../../src/claim/__mocks__/definitions');
  */
 describe('UserCollectableAttribute Json Sample Date Construction tests', () => {
   it('Testing boolean types on the UserCollectableAttribute', async (done) => {
-    const definition = ucaMockDefinitions.find(def => def.identifier === 'civ:Mock:booleans');
+    const definition = ucaMockDefinitions.find((def) => def.identifier === 'civ:Mock:booleans');
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const sampleUca = new Claim(definition.identifier, json.booleans);
     expect(sampleUca).toBeDefined();
     const jsonSchema = SchemaGenerator.process(definition, json);
     expect(jsonSchema.title).toEqual(definition.identifier);
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(jsonSchema);
     const isValid = validate(json);
     expect(isValid).toBeTruthy();
