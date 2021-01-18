@@ -129,13 +129,27 @@ describe('Claim Constructions tests', () => {
     expect(v.value.year.value).toBe(value.year);
   });
 
-  test('Construct by NameGivenNames must result successfuly', () => {
+  test('Construct Vaccination.Records successfully', () => {
+    const identifier = 'claim-cvc:Vaccination.records-v1';
+    const value = [
+      { dateOfAdministration: { day: 20, month: 3, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
+      { dateOfAdministration: { day: 20, month: 5, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
+      { dateOfAdministration: { day: 20, month: 7, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
+    ];
+    const claim = new Claim(identifier, value);
+    expect(claim).toBeDefined();
+    expect(claim.getAttestableValue());
+    expect(claim.getAttestableValues());
+  });
+
+
+  test('Construct by NameGivenNames must result successfully', () => {
     const v = new Claim.NameGivenNames('Joao');
     expect(v).toBeDefined();
     expect(v.value).toBe('Joao');
   });
 
-  test('Construct IdentityName must result successfuly', () => {
+  test('Construct IdentityName must result successfully', () => {
     const value = { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' };
     const v = new Claim.IdentityName(value);
     expect(v).toBeDefined();

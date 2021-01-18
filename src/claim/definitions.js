@@ -442,6 +442,53 @@ const definitions = [
     },
     credentialItem: true,
   },
+  {
+    identifier: 'claim-cvc:Type.dateOfAdministration-v1',
+    version: '1',
+    type: 'cvc:Type:date',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.placeOfAdministration-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.kind-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.vaccination-v1',
+    version: '1',
+    type: {
+      properties: [{
+        name: 'dateOfAdministration',
+        type: 'claim-cvc:Type.dateOfAdministration-v1',
+      },
+      {
+        name: 'placeOfAdministration',
+        type: 'claim-cvc:Type.placeOfAdministration-v1',
+      },
+      {
+        name: 'kind',
+        type: 'claim-cvc:Type.kind-v1',
+      }],
+      required: ['dateOfAdministration', 'placeOfAdministration', 'kind'],
+    },
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Vaccination.records-v1',
+    version: '1',
+    type: 'Array',
+    items: {
+      type: 'claim-cvc:Type.vaccination-v1',
+    },
+    credentialItem: true,
+  },
 ];
 
 function transformUcaIdToClaimId(identifier) {

@@ -8,7 +8,6 @@ const flatten = require('flat');
 const uuidv4 = require('uuid/v4');
 const { Claim } = require('../claim/Claim');
 const definitions = require('./definitions');
-const claimDefinitions = require('../claim/definitions');
 const { services } = require('../services');
 const time = require('../timeHelper');
 
@@ -17,19 +16,6 @@ function sha256(string) {
 }
 
 const convertTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
-
-function getClaimPath(identifier, claimsPathRef) {
-  const sufix = Claim.getPath(identifier);
-  let claimPath = _.find(claimsPathRef, o => _.endsWith(o, sufix));
-  if (!claimPath) {
-    const claimDefinition = _.find(claimDefinitions, { identifier });
-    const typeSufix = claimDefinition ? Claim.getPath(claimDefinition.type) : null;
-    if (typeSufix) {
-      claimPath = _.find(claimsPathRef, o => _.endsWith(o, typeSufix));
-    }
-  }
-  return claimPath || sufix;
-}
 
 function validIdentifiers() {
   const vi = _.map(definitions, d => d.identifier);
@@ -46,32 +32,6 @@ function getClaimsWithFlatKeys(claims) {
     .fromPairs()
     .value();
   return flattenSortedKeysClaim;
-}
-
-function paths(root) {
-  const pathsArray = [];
-  const nodes = [{
-    obj: root,
-    path: [],
-  }];
-  while (nodes.length > 0) {
-    const n = nodes.pop();
-    Object.keys(n.obj).forEach((k) => {
-      if (typeof n.obj[k] === 'object') {
-        const path = n.path.concat(k);
-        pathsArray.push(path);
-        nodes.unshift({
-          obj: n.obj[k],
-          path,
-        });
-      }
-    });
-  }
-  const returnArray = [];
-  pathsArray.forEach((arr) => {
-    returnArray.push(arr.join('.'));
-  });
-  return returnArray;
 }
 
 function getLeavesClaimPaths(signLeaves) {
@@ -342,22 +302,22 @@ class CvcMerkleProof {
     return 16;
   }
 
-  constructor(ucas, claimsPathRef) {
+  constructor(ucas) {
     const withRandomUcas = CvcMerkleProof.padTree(ucas);
     this.type = 'CvcMerkleProof2018';
     this.merkleRoot = null;
     this.anchor = 'TBD (Civic Blockchain Attestation)';
     this.leaves = CvcMerkleProof.getAllAttestableValue(withRandomUcas);
-    this.buildMerkleTree(claimsPathRef);
+    this.buildMerkleTree();
   }
 
-  buildMerkleTree(claimsPathRef) {
+  buildMerkleTree() {
     const merkleTools = new MerkleTools();
     const hashes = _.map(this.leaves, n => sha256(n.value));
     merkleTools.addLeaves(hashes);
     merkleTools.makeTree();
     _.forEach(hashes, (hash, idx) => {
-      this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier, claimsPathRef);
+      // this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier, claimsPathRef);
       this.leaves[idx].targetHash = hash;
       this.leaves[idx].node = merkleTools.getProof(idx);
     });
@@ -500,10 +460,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   if (!_.isEmpty(ucas)) {
     verifyRequiredClaims(definition, ucas);
     this.claim = new ClaimModel(ucas);
-    const claimsPathRef = paths(this.claim);
-    const deepKeys = _.keys(flatten(this.claim, { safe: true }));
-    const allClaimsPaths = claimsPathRef.concat(deepKeys);
-    this.proof = new CvcMerkleProof(proofUCAs, allClaimsPaths);
+    this.proof = new CvcMerkleProof(proofUCAs);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {

@@ -126,6 +126,15 @@ const definitions = [
     ],
   },
   {
+    identifier: 'credential-cvc:HealthKey-v1',
+    version: '1',
+    depends: [
+      'claim-cvc:Identity.name-v1',
+      'claim-cvc:Identity.dateOfBirth-v1',
+      'claim-cvc:Vaccination.records-v1',
+    ],
+  },
+  {
     identifier: 'credential-alt:Identity-v1',
     version: '1',
     depends: [

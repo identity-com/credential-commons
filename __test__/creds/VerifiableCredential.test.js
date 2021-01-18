@@ -427,6 +427,34 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(credential).toBeDefined();
   });
 
+  it('Should create a ', () => {
+    const nameValue = { givenNames: 'e8qhs4Iak1', familyNames: 'e8qak1', otherNames: 'qhs4I' };
+    const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
+    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+    const shotsValue = [
+      { dateOfAdministration: { day: 20, month: 3, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
+      { dateOfAdministration: { day: 20, month: 5, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
+      { dateOfAdministration: { day: 20, month: 7, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
+    ];
+    const shots = new Claim('claim-cvc:Vaccination.records-v1', shotsValue);
+
+    const credential = new VC(
+      'credential-cvc:HealthKey-v1', '', null, [name, dateOfBirth, shots], '1',
+    );
+    expect(credential).toBeDefined();
+
+    // {
+    //   identifier: 'credential-cvc:HealthKey-v1',
+    //     version: '1',
+    //   depends: [
+    //   'claim-cvc:Identity.name-v1',
+    //   'claim-cvc:Identity.dateOfBirth-v1',
+    //   'claim-cvc:Vaccination.records-v1',
+    // ],
+    // },
+  });
+
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
     const typeValue = 'passport';
     const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
