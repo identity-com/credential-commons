@@ -1,5 +1,6 @@
 const { definitions: ucaDefinitions } = require('@identity.com/uca');
 
+
 // ######################################### DEFINITIONS ###########################################
 const definitions = [
   {
@@ -438,6 +439,118 @@ const definitions = [
         name: 'selfie',
         type: 'claim-cvc:Validation:evidences.selfie-v1',
       }],
+    },
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.dateOfAdministration-v1',
+    version: '1',
+    type: 'cvc:Type:date',
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.Patient-v1',
+    version: '1',
+    type: {
+      properties: [
+        {
+          name: 'name',
+          type: 'claim-cvc:Type.Name-v1',
+        },
+        {
+          name: 'dateOfBirth',
+          type: 'claim-cvc:Identity.dateOfBirth-v1',
+        },
+      ],
+    },
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.MedicalCode-v1',
+    version: '1',
+    type: {
+      properties: [
+        {
+          name: 'name',
+          type: 'String',
+        },
+        {
+          name: 'code',
+          type: 'String',
+        },
+        {
+          name: 'codeSystem',
+          type: 'String',
+        },
+        {
+          name: 'codeSystemName',
+          type: 'String',
+        },
+      ],
+    },
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.manufacturer-v1',
+    version: '1',
+    type: {
+      properties: [
+        {
+          name: 'name',
+          type: 'String',
+        },
+        {
+          name: 'code',
+          type: 'claim-cvc:Type.MedicalCode-v1',
+        },
+      ],
+    },
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Type.VaccinationRecord-v1',
+    version: '1',
+    type: {
+      properties: [
+        {
+          name: 'patient',
+          type: 'claim-cvc:Type.Patient-v1',
+        },
+        {
+          name: 'dateOfAdministration',
+          type: 'claim-cvc:Type.dateOfAdministration-v1',
+        },
+        {
+          name: 'manufacturer',
+          type: 'claim-cvc:Type.manufacturer-v1',
+        },
+        {
+          name: 'name',
+          type: 'claim-cvc:Type.vaccinationName-v1',
+        },
+        {
+          name: 'detail',
+          type: 'claim-cvc:Type.vaccinationRecordDetail-v1',
+        },
+        {
+          name: 'organisation',
+          type: 'claim-cvc:Type.organization-v1',
+        },
+        {
+          name: 'code',
+          type: 'claim-cvc:Type.MedicalCode-v1',
+        },
+      ],
+      required: ['patient', 'dateOfAdministration', 'name', 'organisation', 'code'],
+    },
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Vaccination-v1',
+    version: '1',
+    type: 'Array',
+    items: {
+      type: 'claim-cvc:Type.VaccinationRecord-v1',
     },
     credentialItem: true,
   },
