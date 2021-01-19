@@ -188,7 +188,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const uca = new Claim(identifier, value);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
-    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === identifier);
     const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
     expect(jsonSchema.title).toEqual(identifier);
     const ajv = new Ajv({ allErrors: true });
@@ -210,7 +210,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const uca = new Claim(identifier, value);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
-    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === identifier);
     const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
     expect(jsonSchema.title).toEqual(identifier);
     const ajv = new Ajv({ allErrors: true });
@@ -227,7 +227,7 @@ describe('UCA Json Sample Date Construction tests', () => {
     const uca = new Claim(identifier, 1);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
-    const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
+    const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === identifier);
     const jsonSchema = SchemaGenerator.process(ucaDefinition, generatedJson);
     expect(jsonSchema.title).toEqual(identifier);
     const ajv = new Ajv({ allErrors: true });

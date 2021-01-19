@@ -3,9 +3,9 @@ const { definitions } = require('@identity.com/uca');
 const vcDefinitions = require('./creds/definitions');
 const claimDefinitions = require('./claim/definitions');
 
-const validUCAIdentifiers = _.map(definitions, d => d.identifier);
-const validClaimIdentifiers = _.map(claimDefinitions, d => d.identifier);
-const validVCIdentifiers = _.map(vcDefinitions, d => d.identifier);
+const validUCAIdentifiers = _.map(definitions, (d) => d.identifier);
+const validClaimIdentifiers = _.map(claimDefinitions, (d) => d.identifier);
+const validVCIdentifiers = _.map(vcDefinitions, (d) => d.identifier);
 const validPrefixes = ['claim', 'credential'];
 
 function isValidGlobalIdentifier(identifier) {
