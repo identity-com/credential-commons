@@ -129,7 +129,7 @@ const definitions = [
     identifier: 'credential-cvc:Vaccination-v1',
     version: '1',
     depends: [
-      'claim-cvc:Vaccination-v1',
+      'claim-cvc:vaccination-v1',
     ],
   },
   {
