@@ -603,6 +603,7 @@ const definitions = [
         },
       ],
     },
+    required: ['records', 'name'],
     credentialItem: true,
   },
 ];
