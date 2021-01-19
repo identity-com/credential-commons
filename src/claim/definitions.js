@@ -584,7 +584,7 @@ const definitions = [
           },
         },
       ],
-      required: ['patient', 'dateOfAdministration', 'name', 'organisation', 'code'],
+      required: ['patient', 'dateOfAdministration', 'name', 'organisation', 'codes'],
     },
     credentialItem: true,
   },
