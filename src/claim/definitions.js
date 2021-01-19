@@ -472,6 +472,20 @@ const definitions = [
     credentialItem: true,
   },
   {
+    identifier: 'claim-cvc:Type.organisation-v1',
+    version: '1',
+    type: {
+      properties: [
+        {
+          name: 'name',
+          type: 'String',
+        },
+      ],
+    },
+    required: ['name'],
+    credentialItem: true,
+  },
+  {
     identifier: 'claim-cvc:Type.Patient-v1',
     version: '1',
     type: {
