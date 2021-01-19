@@ -577,8 +577,11 @@ const definitions = [
           type: 'claim-cvc:Type.organization-v1',
         },
         {
-          name: 'code',
-          type: 'claim-cvc:Type.medicalCode-v1',
+          name: 'codes',
+          type: 'Array',
+          items: {
+            type: 'claim-cvc:Type.medicalCode-v1',
+          },
         },
       ],
       required: ['patient', 'dateOfAdministration', 'name', 'organisation', 'code'],
