@@ -15,5 +15,4 @@ function Anchor(impl) {
   return this;
 }
 
-
 module.exports = Anchor;

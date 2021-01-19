@@ -1,4 +1,3 @@
-
 const Claim = require('../../src/claim/Claim');
 
 describe('Claim Constructions tests', () => {

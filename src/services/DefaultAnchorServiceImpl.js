@@ -1,10 +1,8 @@
-/* eslint no-unused-vars: ["error", { "args": "none" }] */
-
 /**
  * Current Anchor/Attester service
  *
  */
-const uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 const { HDNode, ECSignature } = require('bitcoinjs-lib');
 const sjcl = require('sjcl');
 const logger = require('../logger');
@@ -27,8 +25,8 @@ function DummyAnchorServiceImpl(config, http) {
         json: true,
       });
 
-
       if (!attestation || !attestation.type) {
+        // eslint-disable-next-line no-unused-vars
         return await pollService(statusUrl);
       }
       if (attestation && attestation.type !== 'permanent') {
@@ -61,7 +59,7 @@ function DummyAnchorServiceImpl(config, http) {
         path: '/',
       },
       coin: 'dummycoin',
-      tx: new uuid(), // eslint-disable-line
+      tx: uuid(),
       network: 'dummynet',
       type: 'temporary',
       civicAsPrimary: false,

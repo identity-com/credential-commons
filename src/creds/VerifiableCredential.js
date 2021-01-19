@@ -1,21 +1,23 @@
 const _ = require('lodash');
 const validUrl = require('valid-url');
 const sift = require('sift');
-const MerkleTools = require('merkle-tools');
-const sjcl = require('sjcl');
+
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
+const MerkleTools = require('merkle-tools');
+
+const { sha256 } = require('../lib/crypto');
 const { Claim } = require('../claim/Claim');
+
 const definitions = require('./definitions');
 const { services } = require('../services');
 const time = require('../timeHelper');
+const { CvcMerkleProof } = require('./CvcMerkleProof');
+const { ClaimModel } = require('./ClaimModel');
 
-function sha256(string) {
-  return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(string));
-}
-
-const convertTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
+// convert a time delta to a timestamp
+const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
 
 function validIdentifiers() {
   const vi = _.map(definitions, d => d.identifier);
@@ -26,12 +28,11 @@ function getClaimsWithFlatKeys(claims) {
   const flattenDepth3 = flatten(claims, { maxDepth: 3 });
   const flattenDepth2 = flatten(claims, { maxDepth: 2 });
   const flattenClaim = _.merge({}, flattenDepth3, flattenDepth2);
-  const flattenSortedKeysClaim = _(flattenClaim)
+  return _(flattenClaim)
     .toPairs()
     .sortBy(0)
     .fromPairs()
     .value();
-  return flattenSortedKeysClaim;
 }
 
 function getLeavesClaimPaths(signLeaves) {
@@ -153,11 +154,11 @@ function isDateStructure(obj) {
 }
 
 /**
-  * Non cryptographically secure verify the Credential
-  * Performs a proofs verification only.
-  * @param credential - A credential object with expirationDate, claim and proof
-  * @return true if verified, false otherwise.
-  */
+ * Non cryptographically secure verify the Credential
+ * Performs a proofs verification only.
+ * @param credential - A credential object with expirationDate, claim and proof
+ * @return true if verified, false otherwise.
+ */
 function nonCryptographicallySecureVerify(credential) {
   const expiry = _.clone(credential.expirationDate);
   const claims = _.clone(credential.claim);
@@ -218,23 +219,23 @@ function nonCryptographicallySecureVerify(credential) {
     }
   }
   if (_.isEmpty(invalidClaim)
-      && _.isEmpty(invalidValues)
-      && _.isEmpty(invalidHashs)
-      && _.isEmpty(invalidProofs)
-      && _.isEmpty(invalidExpiry)) {
+    && _.isEmpty(invalidValues)
+    && _.isEmpty(invalidHashs)
+    && _.isEmpty(invalidProofs)
+    && _.isEmpty(invalidExpiry)) {
     valid = true;
   }
   return valid;
 }
 
 /**
-  * Cryptographically secure verify the Credential.
-  * Performs a non cryptographically secure verification, attestation check and signature validation.
-  * @param credential - A credential object with expirationDate, claim and proof
-  * @param verifyAttestationFunc - Async method to verify a credential attestation
-  * @param verifySignatureFunc - Async method to verify a credential signature
-  * @return true if verified, false otherwise.
-  */
+ * Cryptographically secure verify the Credential.
+ * Performs a non cryptographically secure verification, attestation check and signature validation.
+ * @param credential - A credential object with expirationDate, claim and proof
+ * @param verifyAttestationFunc - Async method to verify a credential attestation
+ * @param verifySignatureFunc - Async method to verify a credential signature
+ * @return true if verified, false otherwise.
+ */
 async function cryptographicallySecureVerify(credential, verifyAttestationFunc, verifySignatureFunc) {
   if (!nonCryptographicallySecureVerify(credential)) {
     return false;
@@ -293,76 +294,7 @@ function requesterGrantVerify(credential, requesterId, requestId, keyName) {
 function transformDate(obj) {
   return new Date(obj.year, (obj.month - 1), obj.day).getTime() / 1000;
 }
-/**
- * Transforms a list of UCAs into the signature property of the verifiable claims
 
- */
-class CvcMerkleProof {
-  static get PADDING_INCREMENTS() {
-    return 16;
-  }
-
-  constructor(ucas) {
-    const withRandomUcas = CvcMerkleProof.padTree(ucas);
-    this.type = 'CvcMerkleProof2018';
-    this.merkleRoot = null;
-    this.anchor = 'TBD (Civic Blockchain Attestation)';
-    this.leaves = CvcMerkleProof.getAllAttestableValue(withRandomUcas);
-    this.buildMerkleTree();
-  }
-
-  buildMerkleTree() {
-    const merkleTools = new MerkleTools();
-    const hashes = _.map(this.leaves, n => sha256(n.value));
-    merkleTools.addLeaves(hashes);
-    merkleTools.makeTree();
-    _.forEach(hashes, (hash, idx) => {
-      // this.leaves[idx].claimPath = getClaimPath(this.leaves[idx].identifier, claimsPathRef);
-      this.leaves[idx].targetHash = hash;
-      this.leaves[idx].node = merkleTools.getProof(idx);
-    });
-    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'cvc:Random:node'));
-    this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
-  }
-
-  static padTree(nodes) {
-    const currentLength = nodes.length;
-    const targetLength = currentLength < CvcMerkleProof.PADDING_INCREMENTS ? CvcMerkleProof.PADDING_INCREMENTS
-      : _.ceil(currentLength / CvcMerkleProof.PADDING_INCREMENTS) * CvcMerkleProof.PADDING_INCREMENTS;
-    const newNodes = _.clone(nodes);
-    const secureRandom = services.container.SecureRandom;
-    while (newNodes.length < targetLength) {
-      newNodes.push(new Claim('cvc:Random:node', secureRandom.wordWith(16)));
-    }
-    return newNodes;
-  }
-
-  static getAllAttestableValue(ucas) {
-    const values = [];
-    _.forEach(ucas, (uca) => {
-      const innerValues = uca.getAttestableValues();
-      _.reduce(innerValues, (res, iv) => {
-        res.push(iv);
-        return res;
-      }, values);
-    });
-    return values;
-  }
-}
-/**
- * Transforms a list of UCAs into the claim property of the verifiable cliams
- */
-class ClaimModel {
-  constructor(ucas) {
-    _.forEach(ucas, (uca) => {
-      const rootPropertyName = uca.getClaimRootPropertyName();
-      if (!this[rootPropertyName]) {
-        this[rootPropertyName] = {};
-      }
-      this[rootPropertyName][uca.getClaimPropertyName()] = uca.getPlainValue();
-    });
-  }
-}
 
 const VERIFY_LEVELS = {
   INVALID: -1, // Verifies if the VC structure and/or signature proofs is not valid, or credential is expired
@@ -577,18 +509,18 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.INVALID
-        && hVerifyLevel >= VERIFY_LEVELS.PROOFS
-        && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
+      && hVerifyLevel >= VERIFY_LEVELS.PROOFS
+      && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.PROOFS
-        && hVerifyLevel >= VERIFY_LEVELS.ANCHOR
-        && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR;
+      && hVerifyLevel >= VERIFY_LEVELS.ANCHOR
+      && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR;
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.ANCHOR
-        && hVerifyLevel >= VERIFY_LEVELS.GRANTED
-        && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED;
+      && hVerifyLevel >= VERIFY_LEVELS.GRANTED
+      && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED;
 
     return verifiedlevel;
   };
@@ -609,9 +541,16 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.verifyAttestation = async () => {
     // Don't check attestation for credentials that are never attested on blockchain
-    if (this.proof.anchor.type === 'transient' || this.proof.anchor.network === 'dummynet') {
+    if (
+      this.proof.anchor.type === 'transient' || this.proof.anchor.network === 'dummynet') {
       return true;
     }
+
+    if (
+      this.proof.anchor.type === 'temporary') {
+      return false;
+    }
+
     return services.container.AnchorService.verifyAttestation(this.proof);
   };
 
@@ -638,24 +577,28 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     return services.container.AnchorService.isRevoked(this.proof);
   };
 
+  const convertTimestampIfString = obj => (_.isString(obj) ? convertDeltaToTimestamp(obj) : obj);
+
   this.isMatch = (constraints) => {
-    const siftConstraints = transformConstraint(constraints);
-    let result = true;
     const claims = _.cloneDeep(this.claim);
-    _.forEach(siftConstraints, (constraint) => {
+    const siftCompatibleConstraints = transformConstraint(constraints);
+
+    const claimsMatchConstraint = (constraint) => {
       const path = _.keys(constraint)[0];
       const pathValue = _.get(claims, path);
       if (isDateStructure(pathValue)) {
         _.set(claims, path, transformDate(pathValue));
         // transforms delta values like "-18y" to a proper timestamp
-        // eslint-disable-next-line no-confusing-arrow
-        _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? convertTimestamp(obj) : obj));
-        // _.set(constraint, path, _.mapValues(constraint[path], obj => _.isString(obj) ? timestamp.now(obj) : obj));
+        _.set(constraint, path, _.mapValues(constraint[path], convertTimestampIfString));
       }
-      result = (sift.indexOf(constraint, [claims]) > -1);
-      return result;
-    });
-    return result;
+      // The Constraints are ANDed here - if one is false, the entire
+      return sift(constraint)([claims]);
+    };
+
+    return siftCompatibleConstraints.reduce(
+      (matchesAllConstraints, nextConstraint) => matchesAllConstraints && claimsMatchConstraint(nextConstraint),
+      true,
+    );
   };
 
   /**
@@ -707,7 +650,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   return this;
 }
 
-
 /**
  * CREDENTIAL_META_FIELDS - Array with meta fields of a credential
  */
@@ -728,17 +670,14 @@ const CREDENTIAL_META_FIELDS = [
 const getCredentialMeta = vc => _.pick(vc, CREDENTIAL_META_FIELDS);
 
 /**
- *
+ * Sift constraints to throw errors for constraints missing IS
  * @param {*} constraintsMeta
+ * @param Array
  */
 function transformMetaConstraint(constraintsMeta) {
   const resultConstraints = [];
 
   // handle special field constraints.meta.credential
-  // const constraintsMetaCredential = _.get(constraintsMeta, 'meta.credential');
-  // if (constraintsMetaCredential) {
-  //   return { identifier: constraintsMetaCredential };
-  // }
   const constraintsMetaKeys = _.keys(constraintsMeta.meta);
   _.forEach(constraintsMetaKeys, (constraintKey) => {
     const constraint = constraintsMeta.meta[constraintKey];
@@ -749,7 +688,7 @@ function transformMetaConstraint(constraintsMeta) {
     } else if (constraint.is) {
       siftConstraint[constraintKey] = constraint.is;
     } else {
-      throw new Error(`Malformed meta contraint "${constraintKey}": missing the IS`);
+      throw new Error(`Malformed meta constraint "${constraintKey}": missing the IS`);
     }
     resultConstraints.push(siftConstraint);
   });
@@ -758,7 +697,7 @@ function transformMetaConstraint(constraintsMeta) {
 
 /**
  * isMatchCredentialMeta
- * @param {*} credentialMeta A Object continais only VC meta fields. Other object keys will be ignored.
+ * @param {*} credentialMeta An Object contains only VC meta fields. Other object keys will be ignored.
  * @param {*} constraintsMeta Example:
  * // constraints.meta = {
  * //   "credential": "credential-civ:Credential:CivicBasic-1",
@@ -767,14 +706,19 @@ function transformMetaConstraint(constraintsMeta) {
  * //       "$eq": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD"
  * //     }
  * //   }
+ * @returns boolean
  */
 const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
-  const siftConstraints = transformMetaConstraint(constraintsMeta);
-  let result = !_.isEmpty(siftConstraints) && true;
-  _.forEach(siftConstraints, (constraint) => {
-    result = (sift.indexOf(constraint, [credentialMeta]) > -1) && result;
-  });
-  return result;
+  const siftCompatibleConstraints = transformMetaConstraint(constraintsMeta);
+
+  if (_.isEmpty(siftCompatibleConstraints)) return false;
+
+  const credentialMetaMatchesConstraint = constraint => sift(constraint)([credentialMeta]);
+
+  return siftCompatibleConstraints.reduce(
+    (matchesAllConstraints, nextConstraint) => matchesAllConstraints && credentialMetaMatchesConstraint(nextConstraint),
+    true,
+  );
 };
 
 VerifiableCredentialBaseConstructor.CREDENTIAL_META_FIELDS = CREDENTIAL_META_FIELDS;
@@ -784,6 +728,7 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
 /**
  * Factory function that creates a new Verifiable Credential based on a JSON object
  * @param {*} verifiableCredentialJSON
+ * @returns VerifiableCredentialBaseConstructor
  */
 VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
   const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,

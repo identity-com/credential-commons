@@ -322,8 +322,7 @@ function mixinIdentifiers(UCA) {
     const { identifier } = def;
 
     function UCAConstructor(value, version) {
-      const self = new Claim(identifier, value, version);
-      return self;
+      return new Claim(identifier, value, version);
     }
 
     source[name] = UCAConstructor;

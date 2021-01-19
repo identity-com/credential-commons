@@ -1,6 +1,5 @@
 const { definitions: ucaDefinitions } = require('@identity.com/uca');
 
-
 // ######################################### DEFINITIONS ###########################################
 const definitions = [
   {
