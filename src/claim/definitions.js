@@ -448,6 +448,12 @@ const definitions = [
     credentialItem: true,
   },
   {
+    identifier: 'claim-cvc:Type.vaccinationName-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: true,
+  },
+  {
     identifier: 'claim-cvc:Type.Patient-v1',
     version: '1',
     type: {
