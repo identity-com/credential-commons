@@ -8,9 +8,9 @@ const { Claim, definitions, getBaseIdentifiers } = require('../../claim/Claim');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
 
-const getPropertyNameFromDefinition = (definition) => getBaseIdentifiers(definition.identifier).identifierComponents[2];
+const getPropertyNameFromDefinition = definition => getBaseIdentifiers(definition.identifier).identifierComponents[2];
 
-const getPropertyType = (value) => Type.string(value).toLowerCase();
+const getPropertyType = value => Type.string(value).toLowerCase();
 
 const processObject = (object, outputParam, parentKey) => {
   const output = outputParam || {};
@@ -39,10 +39,10 @@ const processObject = (object, outputParam, parentKey) => {
       output.properties[key] = {};
       output.properties[key].type = type === 'null' ? ['null', 'string'] : type;
       if (definition && definition.type.properties) {
-        let propType = definition.type.properties.find((prop) => prop.name === key);
+        let propType = definition.type.properties.find(prop => prop.name === key);
         // simple composite, one depth level civ:Identity.name for example
         if (propType && propType.type.includes(':')) {
-          propType = definitions.find((def) => def.identifier === propType.type);
+          propType = definitions.find(def => def.identifier === propType.type);
         }
 
         output.properties[key] = addMinimumMaximum(propType, output.properties[key]);
@@ -58,15 +58,15 @@ const processObject = (object, outputParam, parentKey) => {
     const baseUcaName = parentKey.substring('root.claim.'.length);
     let typeName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1)).replace('.', ':');
     // regenerate uca
-    let refDefinition = definitions.find((def) => def.identifier.includes(typeName));
+    let refDefinition = definitions.find(def => def.identifier.includes(typeName));
     if (refDefinition == null) {
       const baseName = (baseUcaName.substring(0, 1).toUpperCase() + baseUcaName.substring(1));
       typeName = `claim-cvc:${baseName}-v1`;
-      refDefinition = definitions.find((def) => def.identifier.includes(typeName));
+      refDefinition = definitions.find(def => def.identifier.includes(typeName));
     }
     if (refDefinition == null) {
       typeName = `claim-cvc:${baseUcaName}-v1`;
-      refDefinition = definitions.find((def) => def.identifier.includes(typeName));
+      refDefinition = definitions.find(def => def.identifier.includes(typeName));
     }
     // get it's required definitions
     output.required = refDefinition.type.required;
@@ -198,11 +198,11 @@ const generateRandomValueForType = (definition, includeDefinitions = false) => {
   let refDefinition = definition;
   let resolvedTypeName = typeName;
   if (typeName.includes(':')) { // simple composite, one depth level civ:Identity.name for example
-    refDefinition = definitions.find((def) => def.identifier === typeName);
+    refDefinition = definitions.find(def => def.identifier === typeName);
     if (refDefinition != null) {
       resolvedTypeName = Claim.resolveType(refDefinition);
     } else {
-      refDefinition = ucaDefinitions.find((def) => def.identifier === typeName);
+      refDefinition = ucaDefinitions.find(def => def.identifier === typeName);
       if (refDefinition !== null) {
         resolvedTypeName = UCA.resolveType(refDefinition);
       }
