@@ -11,7 +11,6 @@ const figlet = require('figlet');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const shell = require('shelljs');
-const uuidv4 = require('uuid/v4');
 
 // static variables only for the CLI, not used in any other place
 const GENERATION_FOLDER = 'dist/schemas';
