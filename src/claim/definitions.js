@@ -1,6 +1,5 @@
 const { definitions: ucaDefinitions } = require('@identity.com/uca');
 
-
 // ######################################### DEFINITIONS ###########################################
 const definitions = [
   {
@@ -566,8 +565,8 @@ const definitions = [
         {
           name: 'name',
           type: 'claim-cvc:Type.vaccinationName-v1',
-        }
-      ]
+        },
+      ],
     },
     credentialItem: true,
   },
