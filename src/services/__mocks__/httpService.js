@@ -60,7 +60,7 @@ function HttpServiceConstructor() {
 
       },
     ];
-    const res = _.find(responses, r => _.includes(params.url, r.path));
+    const res = _.find(responses, (r) => _.includes(params.url, r.path));
     if (res) {
       return Promise.resolve(res.response);
     }

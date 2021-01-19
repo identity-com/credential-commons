@@ -13,7 +13,7 @@ function isClaimRelated(claim, uca, credential) {
   // first get the UCA identifier
   const ucaIdentifier = uca.substring(uca.indexOf('-') + 1, uca.lastIndexOf('-'));
   // check on the credential commons if this identifier exists
-  const ucaDefinition = definitions.find(definition => definition.identifier === ucaIdentifier);
+  const ucaDefinition = definitions.find((definition) => definition.identifier === ucaIdentifier);
   // does the UCA exist?
   if (ucaDefinition) {
     const ucaProperties = Claim.getAllProperties(ucaIdentifier);
@@ -22,7 +22,7 @@ function isClaimRelated(claim, uca, credential) {
     if (_.includes(ucaProperties, claim)) {
       // we now have the composite uca, the uca for the claim property, they both are correct
       // we need to check now the UCA is inside the dependencies of the credential refered as parent
-      const credentialDefinition = vcDefinitions.find(definition => (
+      const credentialDefinition = vcDefinitions.find((definition) => (
         definition.identifier === credential
       ));
       if (credentialDefinition) {
