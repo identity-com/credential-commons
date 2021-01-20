@@ -126,10 +126,17 @@ const definitions = [
     ],
   },
   {
-    identifier: 'credential-cvc:Vaccination-v1',
+    identifier: 'credential-cvc:Medical.Vaccination-v1',
     version: '1',
     depends: [
-      'claim-cvc:vaccination-v1',
+      'claim-cvc:Medical.vaccination-v1',
+    ],
+  },
+  {
+    identifier: 'credential-cvc:Medical.Test-v1',
+    version: '1',
+    depends: [
+      'claim-cvc:Medical.test-v1',
     ],
   },
   {
