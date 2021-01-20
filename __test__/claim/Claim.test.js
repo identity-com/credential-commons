@@ -141,7 +141,6 @@ describe('Claim Constructions tests', () => {
     expect(claim.getAttestableValues());
   });
 
-
   test('Construct by NameGivenNames must result successfully', () => {
     const v = new Claim.NameGivenNames('Joao');
     expect(v).toBeDefined();

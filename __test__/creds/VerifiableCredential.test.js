@@ -406,7 +406,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(credential).toBeDefined();
   });
 
-  it('Should create a ', () => {
+  it('Should create and verify a credential with an array of clains ', () => {
     const nameValue = { givenNames: 'e8qhs4Iak1', familyNames: 'e8qak1', otherNames: 'qhs4I' };
     const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
     const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
@@ -422,16 +422,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       'credential-cvc:HealthKey-v1', '', null, [name, dateOfBirth, shots], '1',
     );
     expect(credential).toBeDefined();
-
-    // {
-    //   identifier: 'credential-cvc:HealthKey-v1',
-    //     version: '1',
-    //   depends: [
-    //   'claim-cvc:Identity.name-v1',
-    //   'claim-cvc:Identity.dateOfBirth-v1',
-    //   'claim-cvc:Vaccination.records-v1',
-    // ],
-    // },
+    expect(credential.verifyProofs()).toBeTruthy();
   });
 
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
@@ -564,10 +555,10 @@ describe('Unit tests for Verifiable Credentials', () => {
 
   it('Should verify an VC of type GenericDocumentId', () => {
     const ucaArray = [];
-    const credentialDefinition = credentialDefinitions.find(definition => definition.identifier
+    const credentialDefinition = credentialDefinitions.find((definition) => definition.identifier
       === 'credential-cvc:GenericDocumentId-v1');
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === ucaDefinitionIdentifier);
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
@@ -1385,12 +1376,12 @@ describe('Unit tests for Verifiable Credentials', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-        const ucaDefinition = definitions.find(ucaDef => (
+        const ucaDefinition = definitions.find((ucaDef) => (
           ucaDef.identifier === ucaDefinitionIdentifier
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
         let value = ucaJson;
-        if (Object.keys(ucaJson).length === 1) {
+        if (Object.keys(ucaJson).length === 1 && ucaDefinition.type !== 'Array') {
           [value] = Object.values(ucaJson);
         }
         const dependentUca = new Claim(ucaDefinition.identifier, value, ucaDefinition.version);
@@ -1410,7 +1401,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       promises.push(validateSchemaJestStep(credentialDefinition));
     });
     Promise.all(promises).then((values) => {
-      values.forEach(isValid => expect(isValid).toBeTruthy());
+      values.forEach((isValid) => expect(isValid).toBeTruthy());
       done();
     });
   });

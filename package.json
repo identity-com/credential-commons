@@ -61,7 +61,7 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "@identity.com/uca": "^1.0.16",
+    "@identity.com/uca": "^1.0.17",
     "ajv": "^7.0.3",
     "babel-runtime": "^6.26.0",
     "bitcoinjs-lib": "git+https://github.com/dabura667/bitcoinjs-lib.git#bcash330",

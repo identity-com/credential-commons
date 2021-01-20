@@ -4,11 +4,13 @@ const { UserCollectableAttribute } = require('@identity.com/uca');
 const definitions = require('./definitions');
 const { services } = require('../services');
 
-const validIdentifiers = _.map(definitions, d => d.identifier);
+const validIdentifiers = _.map(definitions, (d) => d.identifier);
 
 const getDefinition = (identifier, version) => (
   version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier })
 );
+
+const isArrayAttestableValue = (aValue) => aValue.indexOf('[') > -1 && aValue.indexOf(']') > -1;
 
 function getBaseIdentifiers(identifier) {
   const claimRegex = /claim-cvc:(.*)\.(.*)-v\d*/;
@@ -71,15 +73,17 @@ class Claim extends UserCollectableAttribute {
   initializeAttestableValue() {
     const { value } = this;
     const definition = getDefinition(this.identifier, this.version);
+    const parsedAttestableValue = Claim.parseAttestableValue(value);
 
     // Trying to construct UCA with a existing attestableValue
-    const parsedAttestableValue = Claim.parseAttestableValue(value);
     if (parsedAttestableValue.length === 1) {
       // This is a simple attestableValue
       this.timestamp = null;
       this.salt = parsedAttestableValue[0].salt;
       const ucaValue = parsedAttestableValue[0].value;
-      this.value = _.includes(['null', 'undefined'], ucaValue) ? null : ucaValue;
+      this.value = definition.type === 'Array'
+        ? _.map(ucaValue, (item) => new Claim(definition.items.type, { attestableValue: item }))
+        : this.value = _.includes(['null', 'undefined'], ucaValue) ? null : ucaValue;
     } else {
       const ucaValue = {};
       for (let i = 0; i < parsedAttestableValue.length; i += 1) {
@@ -89,7 +93,7 @@ class Claim extends UserCollectableAttribute {
         let filteredIdentifier;
         let ucaPropertyName;
         const ucaType = UserCollectableAttribute.resolveType(definition, definitions);
-        const ucaDef = ucaType.properties.find(prop => prop.name === propertyName);
+        const ucaDef = ucaType.properties.find((prop) => prop.name === propertyName);
         if (ucaDef) {
           filteredIdentifier = ucaDef.type;
           ucaPropertyName = propertyName;
@@ -103,7 +107,7 @@ class Claim extends UserCollectableAttribute {
         }
 
         // test if definition exists
-        const filteredDefinition = definitions.find(def => def.identifier === filteredIdentifier);
+        const filteredDefinition = definitions.find((def) => def.identifier === filteredIdentifier);
         if (!filteredDefinition) {
           // this must have an claim path with no recursive definition
           filteredIdentifier = this.findDefinitionByAttestableValue(ucaPropertyName, definition);
@@ -124,8 +128,34 @@ class Claim extends UserCollectableAttribute {
     return UserCollectableAttribute.resolveType(definition, definitions);
   }
 
+  static parseAttestableArrayValue(value) {
+    const splitDots = value.attestableValue.split(':');
+
+    const propertyName = splitDots[1];
+    const salt = splitDots[2];
+    const attestableValueItems = value.attestableValue
+      .substring(value.attestableValue.indexOf('[') + 1, value.attestableValue.indexOf(']') - 1).split(',');
+    const parsedArrayItems = _.map(attestableValueItems,
+      (item) => Claim.parseAttestableValue({ attestableValue: item }));
+    return {
+      propertyName, salt, value: parsedArrayItems,
+    };
+  }
+
   static parseAttestableValue(value) {
     const values = [];
+
+    if (_.isArray(value.attestableValue)) {
+      // Already parsed in a previous recursion
+      return value.attestableValue;
+    }
+
+    if (isArrayAttestableValue(value.attestableValue)) {
+      const arrayValues = Claim.parseAttestableArrayValue(value);
+      return [arrayValues];
+    }
+
+    // If is not an ArrayValue we parse it now
     const splitPipes = _.split(value.attestableValue, '|');
     const attestableValueRegex = /^urn:(\w+(?:\.\w+)*):(\w+):(.+)/;
     _.each(splitPipes, (stringValue) => {
@@ -161,10 +191,16 @@ class Claim extends UserCollectableAttribute {
     return null;
   }
 
-  getAttestableValue(path) {
+  getAttestableValue(path, isArrayItem = false) {
     // all UCA properties they have the form of :propertyName or :something.propertyName
     const { identifierComponents } = getBaseIdentifiers(this.identifier);
     let propertyName = identifierComponents[2];
+
+    if (isArrayItem) {
+      // we need to supress the root path
+      propertyName = null;
+    }
+
     if (path) {
       propertyName = `${path}.${propertyName}`;
     }
@@ -173,8 +209,9 @@ class Claim extends UserCollectableAttribute {
     if (['String', 'Number', 'Boolean'].indexOf(this.type) >= 0) {
       return `urn:${propertyName}:${this.salt}:${this.value}|`;
     } if (this.type === 'Array') {
-      const itemsValues = _.reduce(this.value, (result, item) => `${result}${item.getAttestableValue()},`, '');
-      return `urn:ARRAY${propertyName}:${this.salt}:[${itemsValues}]`;
+      const itemsValues = _.reduce(this.value,
+        (result, item) => `${result}${item.getAttestableValue(null, true)},`, '');
+      return `urn:${propertyName}:${this.salt}:[${itemsValues}]`;
     }
     return _.reduce(_.sortBy(_.keys(this.value)),
       (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
@@ -207,7 +244,7 @@ class Claim extends UserCollectableAttribute {
     return baseName !== 'type' ? `${baseName}.${identifierComponents[2]}` : identifierComponents[2];
   }
 
-  getAttestableValues(path, isItemArrays = false) {
+  getAttestableValues(path, isItemArray = false) {
     const joinPaths = (head, tail) => {
       const headComponents = head ? _.split(head, '.') : [];
       let tailComponents = tail ? _.split(tail, '.') : [];
@@ -219,8 +256,8 @@ class Claim extends UserCollectableAttribute {
     const values = [];
     const def = _.find(definitions, { identifier: this.identifier, version: this.version });
     if (def.credentialItem || def.attestable) {
-      const claimPath = joinPaths(path, !isItemArrays ? this.getClaimPath() : null);
-      values.push({ identifier: this.identifier, value: this.getAttestableValue(), claimPath });
+      const claimPath = joinPaths(path, !isItemArray ? this.getClaimPath() : null);
+      values.push({ identifier: this.identifier, value: this.getAttestableValue(null, isItemArray), claimPath });
       if (this.type === 'Object') {
         _.forEach(_.keys(this.value), (k) => {
           const innerValues = this.value[k].getAttestableValues(claimPath);
@@ -286,7 +323,7 @@ class Claim extends UserCollectableAttribute {
           const { isNewIdentifier } = getBaseIdentifiers(prop.type);
           const newBasePropName = !isNewIdentifier ? basePropName : `${basePropName}.${prop.name}`;
           const proProperties = this.getAllProperties(prop.type, newBasePropName);
-          _.forEach(proProperties, p => properties.push(p));
+          _.forEach(proProperties, (p) => properties.push(p));
         });
       }
     } else if (pathName) {
@@ -316,7 +353,7 @@ function convertIdentifierToClassName(identifier) {
 
 function mixinIdentifiers(UCA) {
   // Extend UCA Semantic
-  _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
+  _.forEach(_.filter(definitions, (d) => d.credentialItem), (def) => {
     const name = convertIdentifierToClassName(def.identifier);
     const source = {};
     const { identifier } = def;
