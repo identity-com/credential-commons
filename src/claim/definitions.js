@@ -504,7 +504,7 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:Medical.Code-v1',
+    identifier: 'claim-cvc:Medical.code-v1',
     version: '1',
     type: {
       properties: [
@@ -606,7 +606,7 @@ const definitions = [
         },
       ],
     },
-    required: ['records', 'name'],
+    required: ['records', 'name', 'patient'],
     credentialItem: true,
   },
   {
@@ -678,7 +678,24 @@ const definitions = [
         },
       ],
     },
-    required: ['records', 'name'],
+    required: ['records', 'name', 'patient'],
+    credentialItem: true,
+  },
+  {
+    identifier: 'claim-cvc:Medical.covid19-v1',
+    version: '1',
+    type: {
+      properties: [
+        {
+          name: 'vaccination',
+          type: 'claim-cvc:Medical.vaccination-v1',
+        },
+        {
+          name: 'test',
+          type: 'claim-cvc:Medical.test-v1',
+        },
+      ],
+    },
     credentialItem: true,
   },
 ];
