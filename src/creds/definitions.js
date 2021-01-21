@@ -129,21 +129,7 @@ const definitions = [
     identifier: 'credential-cvc:Medical.Covid19-v1',
     version: '1',
     depends: [
-      'claim-cvc:covid19-v1',
-    ],
-  },
-  {
-    identifier: 'credential-cvc:Medical.Vaccination-v1',
-    version: '1',
-    depends: [
-      'claim-cvc:vaccination-v1',
-    ],
-  },
-  {
-    identifier: 'credential-cvc:Medical.Test-v1',
-    version: '1',
-    depends: [
-      'claim-cvc:test-v1',
+      'claim-cvc:Type.covid19-v1',
     ],
   },
   {
