@@ -444,7 +444,7 @@ const definitions = [
   {
     identifier: 'claim-cvc:Vaccination.date-v1',
     version: '1',
-    type: 'cvc:Type:date',
+    type: 'cvc:Type:timestamp',
     credentialItem: true,
   },
   {
@@ -472,7 +472,7 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:organisation-v1',
+    identifier: 'claim-cvc:Type.organisation-v1',
     version: '1',
     type: {
       properties: [
@@ -486,13 +486,13 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:patient-v1',
+    identifier: 'claim-cvc:Type.patient-v1',
     version: '1',
     type: {
       properties: [
         {
           name: 'name',
-          type: 'claim-cvc:Type.Name-v1',
+          type: 'cvc:Type:simpleName',
         },
         {
           name: 'dateOfBirth',
@@ -504,7 +504,7 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:medicalCode-v1',
+    identifier: 'claim-cvc:Medical.code-v1',
     version: '1',
     type: {
       properties: [
@@ -540,7 +540,7 @@ const definitions = [
         },
         {
           name: 'code',
-          type: 'claim-cvc:medicalCode-v1',
+          type: 'claim-cvc:Medical.code-v1',
         },
       ],
       required: ['name'],
@@ -570,43 +570,18 @@ const definitions = [
         },
         {
           name: 'organisation',
-          type: 'claim-cvc:organization-v1',
+          type: 'claim-cvc:Type.organization-v1',
         },
         {
           name: 'codes',
           type: 'Array',
           items: {
-            type: 'claim-cvc:medicalCode-v1',
+            type: 'claim-cvc:Medical.code-v1',
           },
         },
       ],
       required: ['dateOfAdministration', 'name', 'organisation'],
     },
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:vaccination-v1',
-    version: '1',
-    type: {
-      properties: [
-        {
-          name: 'records',
-          type: 'Array',
-          items: {
-            type: 'claim-cvc:Vaccination.record-v1',
-          },
-        },
-        {
-          name: 'name',
-          type: 'claim-cvc:Vaccination.name-v1',
-        },
-        {
-          name: 'patient',
-          type: 'claim-cvc:patient-v1',
-        },
-      ],
-    },
-    required: ['records', 'name', 'patient'],
     credentialItem: true,
   },
   {
@@ -633,7 +608,11 @@ const definitions = [
     type: {
       properties: [
         {
-          name: 'date',
+          name: 'testDate',
+          type: 'claim-cvc:Test.date-v1',
+        },
+        {
+          name: 'resultDate',
           type: 'claim-cvc:Test.date-v1',
         },
         {
@@ -648,7 +627,7 @@ const definitions = [
           name: 'codes',
           type: 'Array',
           items: {
-            type: 'claim-cvc:medicalCode-v1',
+            type: 'claim-cvc:Medical.code-v1',
           },
         },
       ],
@@ -657,45 +636,29 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:test-v1',
+    identifier: 'claim-cvc:Type.covid19-v1',
     version: '1',
     type: {
       properties: [
         {
-          name: 'records',
-          type: 'Array',
+          name: 'vaccinations',
           items: {
-            type: 'claim-cvc:Test.record-v1',
+            type: 'cvc:Vaccination.record-v1',
           },
         },
         {
-          name: 'name',
-          type: 'claim-cvc:Test.name-v1',
+          name: 'tests',
+          items: {
+            type: 'cvc:Test.record-v1',
+          },
         },
         {
           name: 'patient',
-          type: 'claim-cvc:patient-v1',
+          type: 'claim-cvc:Type.patient-v1',
         },
       ],
     },
-    required: ['records', 'name', 'patient'],
-    credentialItem: true,
-  },
-  {
-    identifier: 'claim-cvc:covid19-v1',
-    version: '1',
-    type: {
-      properties: [
-        {
-          name: 'vaccination',
-          type: 'claim-cvc:vaccination-v1',
-        },
-        {
-          name: 'test',
-          type: 'claim-cvc:test-v1',
-        },
-      ],
-    },
+    require: ['patient'],
     credentialItem: true,
   },
 ];
