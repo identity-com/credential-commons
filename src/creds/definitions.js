@@ -126,12 +126,24 @@ const definitions = [
     ],
   },
   {
-    identifier: 'credential-cvc:HealthKey-v1',
+    identifier: 'credential-cvc:Medical.Covid19-v1',
     version: '1',
     depends: [
-      'claim-cvc:Identity.name-v1',
-      'claim-cvc:Identity.dateOfBirth-v1',
-      'claim-cvc:Vaccination.records-v1',
+      'claim-cvc:covid19-v1',
+    ],
+  },
+  {
+    identifier: 'credential-cvc:Medical.Vaccination-v1',
+    version: '1',
+    depends: [
+      'claim-cvc:vaccination-v1',
+    ],
+  },
+  {
+    identifier: 'credential-cvc:Medical.Test-v1',
+    version: '1',
+    depends: [
+      'claim-cvc:test-v1',
     ],
   },
   {

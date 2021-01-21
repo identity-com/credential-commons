@@ -7,5 +7,6 @@ npm-debug.log
 build
 .DS_Store
 dist
+.history/
 
 .history
