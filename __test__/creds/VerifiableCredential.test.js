@@ -407,19 +407,99 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should create and verify a credential with an array of clains ', () => {
-    const nameValue = { givenNames: 'e8qhs4Iak1', familyNames: 'e8qak1', otherNames: 'qhs4I' };
-    const name = new Claim('claim-cvc:Document.name-v1', nameValue, '1');
-    const dateOfBirthValue = { day: 20, month: 3, year: 1978 };
-    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
-    const shotsValue = [
-      { dateOfAdministration: { day: 20, month: 3, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
-      { dateOfAdministration: { day: 20, month: 5, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
-      { dateOfAdministration: { day: 20, month: 7, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
-    ];
-    const shots = new Claim('claim-cvc:Vaccination.records-v1', shotsValue);
+    const covidDetails = {
+      patient: {
+        fullName: 'Patient Name',
+        dateOfBirth: {
+          day: 2,
+          month: 2,
+          year: 1945,
+        },
+      },
+      vaccinations: [
+        {
+          dateOfAdministration: '150000001',
+          name: 'Pfizer',
+          manufacturer: {
+            name: 'Pfizer',
+            code: {
+              name: 'codeName',
+              code: 'codeCode',
+              codeSystem: 'codeCodeSystem',
+              codeSystemName: 'codeCodeSystemName',
+            },
+          },
+          detail: {
+            createdAt: {
+              day: 2,
+              month: 2,
+              year: 1945,
+            },
+            updatedAt: {
+              day: 2,
+              month: 2,
+              year: 1945,
+            },
+          },
+          organisation: {
+            name: 'CVS',
+          },
+          codes: [
+            {
+              name: 'codeName1',
+              code: 'codeCode1',
+              codeSystem: 'codeCodeSystem1',
+              codeSystemName: 'codeCodeSystemName1',
+            },
+            {
+              name: 'codeName2',
+              code: 'codeCode2',
+              codeSystem: 'codeCodeSystem3',
+              codeSystemName: 'codeCodeSystemName3',
+            },
+          ],
+        },
+        {
+          dateOfAdministration: '150000002',
+          name: 'Pfizer',
+          organisation: {
+            name: 'CVS',
+          },
+        },
+      ],
+      tests: [
+        {
+          testDate: '150000008',
+          resultDate: '150000010',
+          type: 'testType',
+          result: 'negative',
+          codes: [
+            {
+              name: 'codeName21',
+              code: 'codeCode21',
+              codeSystem: 'codeCodeSystem21',
+              codeSystemName: 'codeCodeSystemName21',
+            },
+            {
+              name: 'codeName22',
+              code: 'codeCode22',
+              codeSystem: 'codeCodeSystem23',
+              codeSystemName: 'codeCodeSystemName23',
+            },
+          ],
+        },
+        {
+          testDate: '150000028',
+          resultDate: '150000020',
+          type: 'testType',
+          result: 'negative',
+        },
+      ],
+    };
+    const covidClaim = new Claim('claim-cvc:Medical.covid19-v1', covidDetails);
 
     const credential = new VC(
-      'credential-cvc:HealthKey-v1', '', null, [name, dateOfBirth, shots], '1',
+      'credential-cvc:Medical.Covid19-v1', '', null, [covidClaim], '1',
     );
     expect(credential).toBeDefined();
     expect(credential.verifyProofs()).toBeTruthy();

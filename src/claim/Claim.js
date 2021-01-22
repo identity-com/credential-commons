@@ -226,7 +226,7 @@ class Claim extends UserCollectableAttribute {
 
   getClaimRootPropertyName() {
     const { identifierComponents } = getBaseIdentifiers(this.identifier);
-    return _.camelCase(identifierComponents[1]);
+    return identifierComponents[1].toLowerCase() === 'type' ? '' : _.camelCase(identifierComponents[1]);
   }
 
   getClaimPropertyName() {
@@ -253,7 +253,7 @@ class Claim extends UserCollectableAttribute {
       return newPath;
     };
 
-    const values = [];
+    let values = [];
     const def = _.find(definitions, { identifier: this.identifier, version: this.version });
     if (def.credentialItem || def.attestable) {
       const claimPath = joinPaths(path, !isItemArray ? this.getClaimPath() : null);
@@ -261,7 +261,7 @@ class Claim extends UserCollectableAttribute {
       if (this.type === 'Object') {
         _.forEach(_.keys(this.value), (k) => {
           const innerValues = this.value[k].getAttestableValues(claimPath);
-          _.reduce(innerValues, (res, iv) => res.push(iv), values);
+          values = _.concat(values, innerValues);
         });
       } else if (this.type === 'Array') {
         _.forEach(this.value, (item, idx) => {

@@ -7,10 +7,15 @@ class ClaimModel {
   constructor(ucas) {
     _.forEach(ucas, (uca) => {
       const rootPropertyName = uca.getClaimRootPropertyName();
-      if (!this[rootPropertyName]) {
-        this[rootPropertyName] = {};
+      if (!_.isEmpty(rootPropertyName)) {
+        if (!this[rootPropertyName]) {
+          this[rootPropertyName] = {};
+        }
+
+        this[rootPropertyName][uca.getClaimPropertyName()] = uca.getPlainValue();
+      } else {
+        this[uca.getClaimPropertyName()] = uca.getPlainValue();
       }
-      this[rootPropertyName][uca.getClaimPropertyName()] = uca.getPlainValue();
     });
   }
 }

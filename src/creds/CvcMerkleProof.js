@@ -49,13 +49,10 @@ class CvcMerkleProof {
   }
 
   static getAllAttestableValue(ucas) {
-    const values = [];
+    let values = [];
     _.forEach(ucas, (uca) => {
       const innerValues = uca.getAttestableValues();
-      _.reduce(innerValues, (res, iv) => {
-        res.push(iv);
-        return res;
-      }, values);
+      values = _.concat(values, innerValues);
     });
     return values;
   }

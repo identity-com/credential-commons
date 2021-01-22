@@ -207,7 +207,7 @@ const generateRandomValueForType = (definition, includeDefinitions = false) => {
       resolvedTypeName = Claim.resolveType(refDefinition);
     } else {
       refDefinition = ucaDefinitions.find((def) => def.identifier === typeName);
-      if (refDefinition !== null) {
+      if (refDefinition) {
         resolvedTypeName = UCA.resolveType(refDefinition);
       }
     }
@@ -226,6 +226,8 @@ const generateRandomValueForType = (definition, includeDefinitions = false) => {
       return generateRandomNumberValueWithRange(refDefinition);
     case 'Boolean':
       return (Math.round(Math.random()) === 1);
+    // case 'Array':
+    //   return [makeJsonRecursion(refDefinition.items.type, includeDefinitions)];
     default:
       return makeJsonRecursion(refDefinition, includeDefinitions);
   }

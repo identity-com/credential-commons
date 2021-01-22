@@ -130,11 +130,108 @@ describe('Claim Constructions tests', () => {
 
   test('Construct Vaccination.Records successfully', () => {
     const identifier = 'claim-cvc:Vaccination.records-v1';
-    const value = [
-      { dateOfAdministration: { day: 20, month: 3, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
-      { dateOfAdministration: { day: 20, month: 5, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
-      { dateOfAdministration: { day: 20, month: 7, year: 1978 }, placeOfAdministration: 'CVS', kind: 'Moderna' },
+    const value = [{
+      dateOfAdministration: '150000001',
+      name: 'Pfizer',
+      manufacturer: {
+        name: 'Pfizer',
+        code: {
+          name: 'codeName',
+          code: 'codeCode',
+          codeSystem: 'codeCodeSystem',
+          codeSystemName: 'codeCodeSystemName',
+        },
+      },
+      detail: {
+        createdAt: {
+          day: 2,
+          month: 2,
+          year: 1945,
+        },
+        updatedAt: {
+          day: 2,
+          month: 2,
+          year: 1945,
+        },
+      },
+      organisation: {
+        name: 'CVS',
+      },
+      codes: [
+        {
+          name: 'codeName1',
+          code: 'codeCode1',
+          codeSystem: 'codeCodeSystem1',
+          codeSystemName: 'codeCodeSystemName1',
+        },
+        {
+          name: 'codeName2',
+          code: 'codeCode2',
+          codeSystem: 'codeCodeSystem3',
+          codeSystemName: 'codeCodeSystemName3',
+        },
+      ],
+    },
+    {
+      dateOfAdministration: '150000002',
+      name: 'Pfizer',
+      organisation: {
+        name: 'CVS',
+      },
+    },
     ];
+    const claim = new Claim(identifier, value);
+    expect(claim).toBeDefined();
+    expect(claim.getAttestableValue());
+    expect(claim.getAttestableValues());
+  });
+
+  test('Construct Tests.Records successfully', () => {
+    const identifier = 'claim-cvc:Test.records-v1';
+    const value = [
+      {
+        testDate: '150000008',
+        resultDate: '150000010',
+        type: 'testType',
+        result: 'negative',
+        codes: [
+          {
+            name: 'codeName21',
+            code: 'codeCode21',
+            codeSystem: 'codeCodeSystem21',
+            codeSystemName: 'codeCodeSystemName21',
+          },
+          {
+            name: 'codeName22',
+            code: 'codeCode22',
+            codeSystem: 'codeCodeSystem23',
+            codeSystemName: 'codeCodeSystemName23',
+          },
+        ],
+      },
+      {
+        testDate: '150000028',
+        resultDate: '150000020',
+        type: 'testType',
+        result: 'negative',
+      },
+    ];
+    const claim = new Claim(identifier, value);
+    expect(claim).toBeDefined();
+    expect(claim.getAttestableValue());
+    expect(claim.getAttestableValues());
+  });
+
+  test('Construct Patient successfully', () => {
+    const identifier = 'claim-cvc:Type.patient-v1';
+    const value = {
+      fullName: 'Patient Name',
+      dateOfBirth: {
+        day: 2,
+        month: 2,
+        year: 1945,
+      },
+    };
     const claim = new Claim(identifier, value);
     expect(claim).toBeDefined();
     expect(claim.getAttestableValue());
