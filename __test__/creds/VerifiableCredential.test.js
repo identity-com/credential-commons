@@ -418,6 +418,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       },
       vaccinations: [
         {
+          vaccinationId: 'vID-123',
           dateOfAdministration: '150000001',
           name: 'Pfizer',
           manufacturer: {
@@ -460,6 +461,7 @@ describe('Unit tests for Verifiable Credentials', () => {
           ],
         },
         {
+          vaccinationId: 'vID-124',
           dateOfAdministration: '150000002',
           name: 'Pfizer',
           organization: {
@@ -469,6 +471,7 @@ describe('Unit tests for Verifiable Credentials', () => {
       ],
       tests: [
         {
+          testId: 'tID-23',
           testDate: '150000008',
           resultDate: '150000010',
           type: 'testType',
@@ -489,6 +492,7 @@ describe('Unit tests for Verifiable Credentials', () => {
           ],
         },
         {
+          testId: 'tID-25',
           testDate: '150000028',
           resultDate: '150000020',
           type: 'testType',
