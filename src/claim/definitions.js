@@ -478,18 +478,18 @@ const definitions = [
     credentialItem: true,
   },
   {
-    identifier: 'claim-cvc:Type.organisationName-v1',
+    identifier: 'claim-cvc:Type.organizationName-v1',
     version: '1',
     type: 'String',
   },
   {
-    identifier: 'claim-cvc:Type.organisation-v1',
+    identifier: 'claim-cvc:Type.organization-v1',
     version: '1',
     type: {
       properties: [
         {
           name: 'name',
-          type: 'claim-cvc:Type.organisationName-v1',
+          type: 'claim-cvc:Type.organizationName-v1',
         },
       ],
     },
@@ -614,15 +614,15 @@ const definitions = [
           type: 'claim-cvc:Vaccination.recordDetail-v1',
         },
         {
-          name: 'organisation',
-          type: 'cvc:Type:organisation',
+          name: 'organization',
+          type: 'cvc:Type:organization',
         },
         {
           name: 'codes',
           type: 'claim-cvc:Codes.records-v1',
         },
       ],
-      required: ['vaccinationId', 'dateOfAdministration', 'name', 'organisation'],
+      required: ['vaccinationId', 'dateOfAdministration', 'name', 'organization'],
     },
     credentialItem: true,
   },
@@ -679,8 +679,8 @@ const definitions = [
           type: 'claim-cvc:Test.result-v1',
         },
         {
-          name: 'organisation',
-          type: 'claim-cvc:Type.organisation-v1',
+          name: 'organization',
+          type: 'claim-cvc:Type.organization-v1',
         },
         {
           name: 'codes',

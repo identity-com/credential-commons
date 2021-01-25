@@ -441,7 +441,7 @@ describe('Unit tests for Verifiable Credentials', () => {
               year: 1945,
             },
           },
-          organisation: {
+          organization: {
             name: 'CVS',
           },
           codes: [
@@ -462,7 +462,7 @@ describe('Unit tests for Verifiable Credentials', () => {
         {
           dateOfAdministration: '150000002',
           name: 'Pfizer',
-          organisation: {
+          organization: {
             name: 'CVS',
           },
         },
