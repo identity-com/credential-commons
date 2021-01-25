@@ -499,7 +499,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const covidClaim = new Claim('claim-cvc:Medical.covid19-v1', covidDetails);
 
     const credential = new VC(
-      'credential-cvc:Medical.Covid19-v1', '', null, [covidClaim], '1',
+      'credential-cvc:Covid19-v1', '', null, [covidClaim], '1',
     );
     expect(credential).toBeDefined();
     expect(credential.verifyProofs()).toBeTruthy();
