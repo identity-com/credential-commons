@@ -131,6 +131,7 @@ describe('Claim Constructions tests', () => {
   test('Construct Vaccination.Records successfully', () => {
     const identifier = 'claim-cvc:Vaccination.records-v1';
     const value = [{
+      vaccinationId: 'vid15',
       dateOfAdministration: '150000001',
       name: 'Pfizer',
       manufacturer: {
@@ -173,6 +174,7 @@ describe('Claim Constructions tests', () => {
       ],
     },
     {
+      vaccinationId: 'vid12',
       dateOfAdministration: '150000002',
       name: 'Pfizer',
       organization: {
@@ -190,6 +192,7 @@ describe('Claim Constructions tests', () => {
     const identifier = 'claim-cvc:Test.records-v1';
     const value = [
       {
+        testId: 'tid99',
         testDate: '150000008',
         resultDate: '150000010',
         type: 'testType',
@@ -210,6 +213,7 @@ describe('Claim Constructions tests', () => {
         ],
       },
       {
+        testId: 'tid95',
         testDate: '150000028',
         resultDate: '150000020',
         type: 'testType',

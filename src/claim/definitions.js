@@ -445,19 +445,19 @@ const definitions = [
     identifier: 'claim-cvc:Vaccination.date-v1',
     version: '1',
     type: 'cvc:Type:timestamp',
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Test.date-v1',
     version: '1',
     type: 'cvc:Type:timestamp',
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Vaccination.name-v1',
     version: '1',
     type: 'String',
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Vaccination.recordDetail-v1',
@@ -475,12 +475,19 @@ const definitions = [
       ],
     },
     required: ['createdAt'],
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Type.organizationName-v1',
     version: '1',
     type: 'String',
+    credentialItem: false,
+  },
+  {
+    identifier: 'claim-cvc:Type.organizationId-v1',
+    version: '1',
+    type: 'String',
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Type.organization-v1',
@@ -491,10 +498,14 @@ const definitions = [
           name: 'name',
           type: 'claim-cvc:Type.organizationName-v1',
         },
+        {
+          name: 'id',
+          type: 'claim-cvc:Type.organizationId-v1',
+        },
       ],
     },
     required: ['name'],
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Type.patient-v1',
@@ -538,13 +549,13 @@ const definitions = [
       ],
     },
     required: ['name', 'code'],
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Manufacturer.name-v1',
     version: '1',
     type: 'String',
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Vaccination.manufacturer-v1',
@@ -562,7 +573,7 @@ const definitions = [
       ],
       required: ['name'],
     },
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Vaccination.id-v1',
@@ -577,7 +588,7 @@ const definitions = [
     items: {
       type: 'claim-cvc:Medical.code-v1',
     },
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Codes.records-v1',
@@ -586,7 +597,7 @@ const definitions = [
     items: {
       type: 'claim-cvc:Medical.code-v1',
     },
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Vaccination.record-v1',
@@ -639,13 +650,13 @@ const definitions = [
     identifier: 'claim-cvc:Test.type-v1',
     version: '1',
     type: 'String',
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Test.result-v1',
     version: '1',
     type: 'String',
-    credentialItem: true,
+    credentialItem: false,
   },
   {
     identifier: 'claim-cvc:Test.id-v1',
