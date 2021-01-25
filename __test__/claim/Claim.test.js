@@ -154,7 +154,7 @@ describe('Claim Constructions tests', () => {
           year: 1945,
         },
       },
-      organisation: {
+      organization: {
         name: 'CVS',
       },
       codes: [
@@ -175,7 +175,7 @@ describe('Claim Constructions tests', () => {
     {
       dateOfAdministration: '150000002',
       name: 'Pfizer',
-      organisation: {
+      organization: {
         name: 'CVS',
       },
     },
