@@ -226,8 +226,6 @@ const generateRandomValueForType = (definition, includeDefinitions = false) => {
       return generateRandomNumberValueWithRange(refDefinition);
     case 'Boolean':
       return (Math.round(Math.random()) === 1);
-    // case 'Array':
-    //   return [makeJsonRecursion(refDefinition.items.type, includeDefinitions)];
     default:
       return makeJsonRecursion(refDefinition, includeDefinitions);
   }
