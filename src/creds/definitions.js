@@ -126,7 +126,7 @@ const definitions = [
     ],
   },
   {
-    identifier: 'credential-cvc:Medical.Covid19-v1',
+    identifier: 'credential-cvc:Covid19-v1',
     version: '1',
     depends: [
       'claim-cvc:Medical.covid19-v1',
