@@ -10,6 +10,8 @@ const getDefinition = (identifier, version) => (
   version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier })
 );
 
+const isArrayAttestableValue = (aValue) => aValue.indexOf('[') > -1 && aValue.indexOf(']') > -1;
+
 function getBaseIdentifiers(identifier) {
   const claimRegex = /claim-cvc:(.*)\.(.*)-v\d*/;
   let isNewIdentifier = true;
@@ -54,18 +56,34 @@ class Claim extends UserCollectableAttribute {
     }
   }
 
+  initializeValuesWithArrayItems(identifier, values, version) {
+    const definition = getDefinition(this.identifier, this.version);
+    const ucaArray = [];
+
+    if (!_.isArray(values)) throw new Error(`Value for ${identifier}-${version} should be an array`);
+
+    _.forEach(values, (value) => {
+      const claim = new Claim(_.get(definition, 'items.type'), value);
+      ucaArray.push(claim);
+    });
+
+    this.value = ucaArray;
+  }
+
   initializeAttestableValue() {
     const { value } = this;
     const definition = getDefinition(this.identifier, this.version);
+    const parsedAttestableValue = Claim.parseAttestableValue(value);
 
     // Trying to construct UCA with a existing attestableValue
-    const parsedAttestableValue = Claim.parseAttestableValue(value);
     if (parsedAttestableValue.length === 1) {
       // This is a simple attestableValue
       this.timestamp = null;
       this.salt = parsedAttestableValue[0].salt;
       const ucaValue = parsedAttestableValue[0].value;
-      this.value = _.includes(['null', 'undefined'], ucaValue) ? null : ucaValue;
+      this.value = definition.type === 'Array'
+        ? _.map(ucaValue, (item) => new Claim(definition.items.type, { attestableValue: item }))
+        : this.value = _.includes(['null', 'undefined'], ucaValue) ? null : ucaValue;
     } else {
       const ucaValue = {};
       for (let i = 0; i < parsedAttestableValue.length; i += 1) {
@@ -110,8 +128,34 @@ class Claim extends UserCollectableAttribute {
     return UserCollectableAttribute.resolveType(definition, definitions);
   }
 
+  static parseAttestableArrayValue(value) {
+    const splitDots = value.attestableValue.split(':');
+
+    const propertyName = splitDots[1];
+    const salt = splitDots[2];
+    const attestableValueItems = value.attestableValue
+      .substring(value.attestableValue.indexOf('[') + 1, value.attestableValue.indexOf(']') - 1).split(',');
+    const parsedArrayItems = _.map(attestableValueItems,
+      (item) => Claim.parseAttestableValue({ attestableValue: item }));
+    return {
+      propertyName, salt, value: parsedArrayItems,
+    };
+  }
+
   static parseAttestableValue(value) {
     const values = [];
+
+    if (_.isArray(value.attestableValue)) {
+      // Already parsed in a previous recursion
+      return value.attestableValue;
+    }
+
+    if (isArrayAttestableValue(value.attestableValue)) {
+      const arrayValues = Claim.parseAttestableArrayValue(value);
+      return [arrayValues];
+    }
+
+    // If is not an ArrayValue we parse it now
     const splitPipes = _.split(value.attestableValue, '|');
     const attestableValueRegex = /^urn:(\w+(?:\.\w+)*):(\w+):(.+)/;
     _.each(splitPipes, (stringValue) => {
@@ -147,10 +191,16 @@ class Claim extends UserCollectableAttribute {
     return null;
   }
 
-  getAttestableValue(path) {
+  getAttestableValue(path, isArrayItem = false) {
     // all UCA properties they have the form of :propertyName or :something.propertyName
     const { identifierComponents } = getBaseIdentifiers(this.identifier);
     let propertyName = identifierComponents[2];
+
+    if (isArrayItem) {
+      // we need to supress the root path
+      propertyName = null;
+    }
+
     if (path) {
       propertyName = `${path}.${propertyName}`;
     }
@@ -158,6 +208,10 @@ class Claim extends UserCollectableAttribute {
     // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
     if (['String', 'Number', 'Boolean'].indexOf(this.type) >= 0) {
       return `urn:${propertyName}:${this.salt}:${this.value}|`;
+    } if (this.type === 'Array') {
+      const itemsValues = _.reduce(this.value,
+        (result, item) => `${result}${item.getAttestableValue(null, true)},`, '');
+      return `urn:${propertyName}:${this.salt}:[${itemsValues}]`;
     }
     return _.reduce(_.sortBy(_.keys(this.value)),
       (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
@@ -172,7 +226,7 @@ class Claim extends UserCollectableAttribute {
 
   getClaimRootPropertyName() {
     const { identifierComponents } = getBaseIdentifiers(this.identifier);
-    return _.camelCase(identifierComponents[1]);
+    return identifierComponents[1].toLowerCase() === 'type' ? '' : _.camelCase(identifierComponents[1]);
   }
 
   getClaimPropertyName() {
@@ -187,18 +241,31 @@ class Claim extends UserCollectableAttribute {
   static getPath(identifier) {
     const { identifierComponents } = getBaseIdentifiers(identifier);
     const baseName = _.camelCase(identifierComponents[1]);
-    return `${baseName}.${identifierComponents[2]}`;
+    return baseName !== 'type' ? `${baseName}.${identifierComponents[2]}` : identifierComponents[2];
   }
 
-  getAttestableValues() {
-    const values = [];
+  getAttestableValues(path, isItemArray = false) {
+    const joinPaths = (head, tail) => {
+      const headComponents = head ? _.split(head, '.') : [];
+      let tailComponents = tail ? _.split(tail, '.') : [];
+      tailComponents = _.last(headComponents) === _.first(tailComponents) ? tailComponents.splice(1) : tailComponents;
+      const newPath = _.join([...headComponents, ...tailComponents], '.');
+      return newPath;
+    };
+
+    let values = [];
     const def = _.find(definitions, { identifier: this.identifier, version: this.version });
     if (def.credentialItem || def.attestable) {
-      values.push({ identifier: this.identifier, value: this.getAttestableValue() });
+      const claimPath = joinPaths(path, !isItemArray ? this.getClaimPath() : null);
+      values.push({ identifier: this.identifier, value: this.getAttestableValue(null, isItemArray), claimPath });
       if (this.type === 'Object') {
         _.forEach(_.keys(this.value), (k) => {
-          const innerValues = this.value[k].getAttestableValues();
-          _.reduce(innerValues, (res, iv) => res.push(iv), values);
+          const innerValues = this.value[k].getAttestableValues(claimPath);
+          values = _.concat(values, innerValues);
+        });
+      } else if (this.type === 'Array') {
+        _.forEach(this.value, (item, idx) => {
+          values.push(...item.getAttestableValues(`${claimPath}.${idx}`, true));
         });
       }
     }

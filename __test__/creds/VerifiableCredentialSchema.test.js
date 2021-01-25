@@ -34,7 +34,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
         let value = ucaJson;
-        if (Object.keys(ucaJson).length === 1) {
+        if (Object.keys(ucaJson).length === 1 && ucaDefinition.type !== 'Array') {
           [value] = Object.values(ucaJson);
         }
         const dependentUca = new Claim(ucaDefinition.identifier, value, ucaDefinition.version);

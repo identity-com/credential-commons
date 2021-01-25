@@ -142,6 +142,10 @@ const makeJsonRecursion = (ucaDefinition, includeDefinitions = false) => {
     ucaDefinition.type.properties.forEach((property) => {
       output[property.name] = generateRandomValueForType(property, includeDefinitions);
     });
+  } else if (typeName === 'Array') {
+    const itemType = ucaDefinition.items.type;
+    const itemDefinition = _.find(definitions, { identifier: itemType });
+    output = [makeJsonRecursion(itemDefinition, includeDefinitions)];
   } else if (typeName !== 'Object') { // not a reference
     const propertyName = getPropertyNameFromDefinition(ucaDefinition);
     if (typeof ucaDefinition.pattern !== 'undefined' && ucaDefinition.pattern !== null) {
@@ -203,7 +207,7 @@ const generateRandomValueForType = (definition, includeDefinitions = false) => {
       resolvedTypeName = Claim.resolveType(refDefinition);
     } else {
       refDefinition = ucaDefinitions.find((def) => def.identifier === typeName);
-      if (refDefinition !== null) {
+      if (refDefinition) {
         resolvedTypeName = UCA.resolveType(refDefinition);
       }
     }

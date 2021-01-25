@@ -11,7 +11,6 @@ const { sha256 } = require('../lib/crypto');
 const { Claim } = require('../claim/Claim');
 
 const definitions = require('./definitions');
-
 const { services } = require('../services');
 const time = require('../timeHelper');
 const { CvcMerkleProof } = require('./CvcMerkleProof');
@@ -20,7 +19,10 @@ const { ClaimModel } = require('./ClaimModel');
 // convert a time delta to a timestamp
 const convertDeltaToTimestamp = (delta) => time.applyDeltaToDate(delta).getTime() / 1000;
 
-const validIdentifiers = () => _.map(definitions, 'identifier');
+function validIdentifiers() {
+  const vi = _.map(definitions, (d) => d.identifier);
+  return vi;
+}
 
 function getClaimsWithFlatKeys(claims) {
   const flattenDepth3 = flatten(claims, { maxDepth: 3 });
@@ -31,32 +33,6 @@ function getClaimsWithFlatKeys(claims) {
     .sortBy(0)
     .fromPairs()
     .value();
-}
-
-function paths(root) {
-  const pathsArray = [];
-  const nodes = [{
-    obj: root,
-    path: [],
-  }];
-  while (nodes.length > 0) {
-    const n = nodes.pop();
-    Object.keys(n.obj).forEach((k) => {
-      if (typeof n.obj[k] === 'object') {
-        const path = n.path.concat(k);
-        pathsArray.push(path);
-        nodes.unshift({
-          obj: n.obj[k],
-          path,
-        });
-      }
-    });
-  }
-  const returnArray = [];
-  pathsArray.forEach((arr) => {
-    returnArray.push(arr.join('.'));
-  });
-  return returnArray;
 }
 
 function getLeavesClaimPaths(signLeaves) {
@@ -75,18 +51,28 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
     const ucaValueValue = ucaValue.value;
     const innerClaimValue = _.get(claims, leave.claimPath);
     const claimPathSufix = _.last(_.split(leave.claimPath, '.'));
+
     const claimValue = {};
     claimValue[claimPathSufix] = innerClaimValue;
     const ucaValueKeys = _.keys(ucaValue.value);
     _.each(ucaValueKeys, (k) => {
       const expectedClaimValue = _.get(claimValue, k);
-
-      // Forcing string comparison just to keep !== and make the LINT happy!
-      // I'm sad...(CPU wasted) JS offers != has is way more elegant... read the next line like
-      // _.get(ucaValueValue[k], 'value') != {expectedClaimValue
       if (expectedClaimValue && `${_.get(ucaValueValue[k], 'value')}` !== `${expectedClaimValue}`) {
         invalidValues.push(claimValue[k]);
       }
+    });
+  } else if (ucaValue.type === 'Array') {
+    const innerClaimValue = _.get(claims, leave.claimPath);
+
+    _.forEach(ucaValue.value, (arrayItem, idx) => {
+      const itemInnerClaimValue = innerClaimValue[idx];
+      const ucaValueKeys = _.keys(arrayItem.value);
+      _.each(ucaValueKeys, (k) => {
+        const expectedClaimValue = _.get(itemInnerClaimValue, k);
+        if (expectedClaimValue && `${_.get(arrayItem.value, [k, 'value'])}` !== `${expectedClaimValue}`) {
+          invalidValues.push(itemInnerClaimValue[k]);
+        }
+      });
     });
   } else {
     // Invalid ucaValue.type
@@ -415,10 +401,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   if (!_.isEmpty(ucas)) {
     verifyRequiredClaims(definition, ucas);
     this.claim = new ClaimModel(ucas);
-    const claimsPathRef = paths(this.claim);
-    const deepKeys = _.keys(flatten(this.claim, { safe: true }));
-    const allClaimsPaths = claimsPathRef.concat(deepKeys);
-    this.proof = new CvcMerkleProof(proofUCAs, allClaimsPaths);
+    this.proof = new CvcMerkleProof(proofUCAs);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, (el) => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {

@@ -406,6 +406,109 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(credential).toBeDefined();
   });
 
+  it('Should create and verify a credential with an array of clains ', () => {
+    const covidDetails = {
+      patient: {
+        fullName: 'Patient Name',
+        dateOfBirth: {
+          day: 2,
+          month: 2,
+          year: 1945,
+        },
+      },
+      vaccinations: [
+        {
+          vaccinationId: 'vID-123',
+          dateOfAdministration: '150000001',
+          name: 'Pfizer',
+          manufacturer: {
+            name: 'Pfizer',
+            code: {
+              name: 'codeName',
+              code: 'codeCode',
+              codeSystem: 'codeCodeSystem',
+              codeSystemName: 'codeCodeSystemName',
+            },
+          },
+          detail: {
+            createdAt: {
+              day: 2,
+              month: 2,
+              year: 1945,
+            },
+            updatedAt: {
+              day: 2,
+              month: 2,
+              year: 1945,
+            },
+          },
+          organization: {
+            name: 'CVS',
+          },
+          codes: [
+            {
+              name: 'codeName1',
+              code: 'codeCode1',
+              codeSystem: 'codeCodeSystem1',
+              codeSystemName: 'codeCodeSystemName1',
+            },
+            {
+              name: 'codeName2',
+              code: 'codeCode2',
+              codeSystem: 'codeCodeSystem3',
+              codeSystemName: 'codeCodeSystemName3',
+            },
+          ],
+        },
+        {
+          vaccinationId: 'vID-124',
+          dateOfAdministration: '150000002',
+          name: 'Pfizer',
+          organization: {
+            name: 'CVS',
+          },
+        },
+      ],
+      tests: [
+        {
+          testId: 'tID-23',
+          testDate: '150000008',
+          resultDate: '150000010',
+          type: 'testType',
+          result: 'negative',
+          codes: [
+            {
+              name: 'codeName21',
+              code: 'codeCode21',
+              codeSystem: 'codeCodeSystem21',
+              codeSystemName: 'codeCodeSystemName21',
+            },
+            {
+              name: 'codeName22',
+              code: 'codeCode22',
+              codeSystem: 'codeCodeSystem23',
+              codeSystemName: 'codeCodeSystemName23',
+            },
+          ],
+        },
+        {
+          testId: 'tID-25',
+          testDate: '150000028',
+          resultDate: '150000020',
+          type: 'testType',
+          result: 'negative',
+        },
+      ],
+    };
+    const covidClaim = new Claim('claim-cvc:Medical.covid19-v1', covidDetails);
+
+    const credential = new VC(
+      'credential-cvc:Covid19-v1', '', null, [covidClaim], '1',
+    );
+    expect(credential).toBeDefined();
+    expect(credential.verifyProofs()).toBeTruthy();
+  });
+
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
     const typeValue = 'passport';
     const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
@@ -1362,7 +1465,7 @@ describe('Unit tests for Verifiable Credentials', () => {
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
         let value = ucaJson;
-        if (Object.keys(ucaJson).length === 1) {
+        if (Object.keys(ucaJson).length === 1 && ucaDefinition.type !== 'Array') {
           [value] = Object.values(ucaJson);
         }
         const dependentUca = new Claim(ucaDefinition.identifier, value, ucaDefinition.version);
