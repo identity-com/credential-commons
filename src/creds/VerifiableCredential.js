@@ -555,11 +555,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
       return true;
     }
 
-    if (
-      this.proof.anchor.type === 'temporary') {
-      return false;
-    }
-
     return services.container.AnchorService.verifyAttestation(this.proof);
   };
 
