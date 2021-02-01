@@ -92,7 +92,7 @@ function DummyAnchorServiceImpl(config, http) {
     return Promise.resolve(signature);
   };
 
-  this.isRevoked = (signature) => (signature.revoked ? signature.revoked : false);
+  this.isRevoked = signature => (signature.revoked ? signature.revoked : false);
 
   return this;
 }

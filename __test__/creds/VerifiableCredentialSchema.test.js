@@ -29,7 +29,7 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-        const ucaDefinition = definitions.find((ucaDef) => (
+        const ucaDefinition = definitions.find(ucaDef => (
           ucaDef.identifier === ucaDefinitionIdentifier
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -57,19 +57,19 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
       promises.push(validateSchemaJestStep(credentialDefinition));
     });
     Promise.all(promises).then((values) => {
-      values.forEach((isValid) => expect(isValid).toBeTruthy());
+      values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
     });
   });
 
   it('Should change the VC Json data and fail against AJV', () => {
     const identifier = 'credential-cvc:Identity-v1';
-    const credentialDefinition = credentialDefinitions.find((credsDef) => (
+    const credentialDefinition = credentialDefinitions.find(credsDef => (
       credsDef.identifier === identifier
     ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = definitions.find((ucaDef) => (
+      const ucaDefinition = definitions.find(ucaDef => (
         ucaDef.identifier === ucaDefinitionIdentifier
       ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -94,12 +94,12 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
 
   it('Should add an property to the root of the json and fail against AJV additionalProperties', () => {
     const identifier = 'credential-cvc:Identity-v1';
-    const credentialDefinition = credentialDefinitions.find((credsDef) => (
+    const credentialDefinition = credentialDefinitions.find(credsDef => (
       credsDef.identifier === identifier
     ));
     const ucaArray = [];
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = definitions.find((ucaDef) => (
+      const ucaDefinition = definitions.find(ucaDef => (
         ucaDef.identifier === ucaDefinitionIdentifier
       ));
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);

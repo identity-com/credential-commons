@@ -4,13 +4,13 @@ const { UserCollectableAttribute } = require('@identity.com/uca');
 const definitions = require('./definitions');
 const { services } = require('../services');
 
-const validIdentifiers = _.map(definitions, (d) => d.identifier);
+const validIdentifiers = _.map(definitions, d => d.identifier);
 
 const getDefinition = (identifier, version) => (
   version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier })
 );
 
-const isArrayAttestableValue = (aValue) => aValue.indexOf('[') > -1 && aValue.indexOf(']') > -1;
+const isArrayAttestableValue = aValue => aValue.indexOf('[') > -1 && aValue.indexOf(']') > -1;
 
 function getBaseIdentifiers(identifier) {
   const claimRegex = /claim-cvc:(.*)\.(.*)-v\d*/;
@@ -82,7 +82,7 @@ class Claim extends UserCollectableAttribute {
       this.salt = parsedAttestableValue[0].salt;
       const ucaValue = parsedAttestableValue[0].value;
       this.value = definition.type === 'Array'
-        ? _.map(ucaValue, (item) => new Claim(definition.items.type, { attestableValue: item }))
+        ? _.map(ucaValue, item => new Claim(definition.items.type, { attestableValue: item }))
         : this.value = _.includes(['null', 'undefined'], ucaValue) ? null : ucaValue;
     } else {
       const ucaValue = {};
@@ -93,7 +93,7 @@ class Claim extends UserCollectableAttribute {
         let filteredIdentifier;
         let ucaPropertyName;
         const ucaType = UserCollectableAttribute.resolveType(definition, definitions);
-        const ucaDef = ucaType.properties.find((prop) => prop.name === propertyName);
+        const ucaDef = ucaType.properties.find(prop => prop.name === propertyName);
         if (ucaDef) {
           filteredIdentifier = ucaDef.type;
           ucaPropertyName = propertyName;
@@ -107,7 +107,7 @@ class Claim extends UserCollectableAttribute {
         }
 
         // test if definition exists
-        const filteredDefinition = definitions.find((def) => def.identifier === filteredIdentifier);
+        const filteredDefinition = definitions.find(def => def.identifier === filteredIdentifier);
         if (!filteredDefinition) {
           // this must have an claim path with no recursive definition
           filteredIdentifier = this.findDefinitionByAttestableValue(ucaPropertyName, definition);
@@ -136,7 +136,7 @@ class Claim extends UserCollectableAttribute {
     const attestableValueItems = value.attestableValue
       .substring(value.attestableValue.indexOf('[') + 1, value.attestableValue.indexOf(']') - 1).split(',');
     const parsedArrayItems = _.map(attestableValueItems,
-      (item) => Claim.parseAttestableValue({ attestableValue: item }));
+      item => Claim.parseAttestableValue({ attestableValue: item }));
     return {
       propertyName, salt, value: parsedArrayItems,
     };
@@ -323,7 +323,7 @@ class Claim extends UserCollectableAttribute {
           const { isNewIdentifier } = getBaseIdentifiers(prop.type);
           const newBasePropName = !isNewIdentifier ? basePropName : `${basePropName}.${prop.name}`;
           const proProperties = this.getAllProperties(prop.type, newBasePropName);
-          _.forEach(proProperties, (p) => properties.push(p));
+          _.forEach(proProperties, p => properties.push(p));
         });
       }
     } else if (pathName) {
@@ -353,7 +353,7 @@ function convertIdentifierToClassName(identifier) {
 
 function mixinIdentifiers(UCA) {
   // Extend UCA Semantic
-  _.forEach(_.filter(definitions, (d) => d.credentialItem), (def) => {
+  _.forEach(_.filter(definitions, d => d.credentialItem), (def) => {
     const name = convertIdentifierToClassName(def.identifier);
     const source = {};
     const { identifier } = def;
