@@ -40,6 +40,7 @@
     "audit-ci": "audit-ci --config audit-ci.json"
   },
   "devDependencies": {
+    "ajv": "^7.0.3",
     "audit-ci": "^3.1.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.24.1",
@@ -62,7 +63,6 @@
   },
   "dependencies": {
     "@identity.com/uca": "^1.0.19",
-    "ajv": "^7.0.3",
     "babel-runtime": "^6.26.0",
     "bitcoinjs-lib": "git+https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
     "bluebird": "^3.7.2",
