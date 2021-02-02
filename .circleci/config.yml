@@ -101,7 +101,7 @@ jobs:
           command: npm run test
       - run: npm run lint
       - run: npm run build
-      - run: npm run audit-ci -- --pass-enoaudit
+#      - run: npm run audit-ci -- --pass-enoaudit
       - persist_to_workspace:
           root: ~/repo
           paths: .
