@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const validUrl = require('valid-url');
-const sift = require('sift');
+const sift = require('sift').default;
 
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
