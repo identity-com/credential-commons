@@ -539,7 +539,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * @return true or false for the validation
    */
   this.verifySignature = (pinnedPubKey) => {
-    if (this.proof.type === 'transient') {
+    if (this.proof.anchor.type === 'transient') {
       return true;
     }
     return services.container.AnchorService.verifySignature(this.proof, pinnedPubKey);
