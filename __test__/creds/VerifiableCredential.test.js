@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
-const { v4: uuidv4, v1: uuidv1 } = require('uuid');
+const uuidv4 = require('uuid/v4');
+const uuidv1 = require('uuid/v1');
 const sjcl = require('sjcl');
 const { Claim, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');

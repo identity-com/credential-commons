@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const uuidv4 = require('uuid/v4');
 const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 

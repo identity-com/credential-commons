@@ -1,6 +1,6 @@
 const Ajv = require('ajv').default;
 
-const { v1: uuidv1 } = require('uuid');
+const uuidv1 = require('uuid/v1');
 const { Claim, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');

@@ -4,7 +4,7 @@ const sift = require('sift');
 
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
-const { v4: uuidv4 } = require('uuid');
+const uuidv4 = require('uuid/v4');
 const MerkleTools = require('merkle-tools');
 
 const { sha256 } = require('../lib/crypto');
