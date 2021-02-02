@@ -3,11 +3,11 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:10.15.0
+    - image: civicteam/circle-aws-node:12.13
 
 workflows:
   version: 2
-  
+
   build-and-test:
     jobs:
       - build
@@ -81,7 +81,7 @@ workflows:
               only: /^v\d+\.\d+\.\d+.*/
             branches:
               ignore: /.*/
-      
+
 jobs:
   build:
     <<: *defaults
@@ -101,7 +101,7 @@ jobs:
           command: npm run test
       - run: npm run lint
       - run: npm run build
-#      - run: npm run audit-ci -- --pass-enoaudit
+      - run: npm run audit-ci -- --pass-enoaudit
       - persist_to_workspace:
           root: ~/repo
           paths: .
@@ -146,7 +146,7 @@ jobs:
       - run: |
           hub release delete $CIRCLE_TAG
   deploy:
-    <<: *defaults  
+    <<: *defaults
     steps:
       - attach_workspace:
           at: ~/repo
