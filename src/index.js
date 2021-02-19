@@ -7,6 +7,7 @@ const errors = require('./errors');
 const constants = require('./constants');
 const claimDefinitions = require('./claim/definitions');
 const credentialDefinitions = require('./creds/definitions');
+const aggregate = require('./AggregationHandler');
 
 /**
  * Entry Point for Civic Credential Commons
@@ -20,6 +21,7 @@ function CredentialCommons() {
   this.isValidGlobalIdentifier = isValidGlobalIdentifier;
   this.isClaimRelated = isClaimRelated;
   this.services = services;
+  this.aggregate = aggregate;
   this.errors = errors;
   this.constants = constants;
   this.claimDefinitions = claimDefinitions;
