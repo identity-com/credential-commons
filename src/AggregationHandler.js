@@ -5,7 +5,7 @@ const validateEmptyParametersOperators = (parameters) => {
   return true;
 };
 const validateNotEmptyParametersOperators = (parameters) => {
-  if (_.isEmpty(parameters)) { throw new Error('parameters should not be empty'); }
+  if (!parameters && _.isEmpty(parameters)) { throw new Error('parameters should not be empty'); }
   return true;
 };
 const validatePathParametersOperators = (parameters) => {
@@ -34,9 +34,9 @@ const AGGREGATION_OPERATORS_MAP = {
   $limit: (collection, params) => (validateNumberParametersOperators(params)
     ? [...(_.slice(collection, 0, params))] : null),
   $min: (collection, params) => (validatePathParametersOperators(params)
-    ? [...(_.minBy(collection, params))] : null),
+    ? [(_.minBy(collection, params))] : null),
   $max: (collection, params) => (validatePathParametersOperators(params)
-    ? [...(_.maxBy(collection, params))] : null),
+    ? [(_.maxBy(collection, params))] : null),
   $first: (collection, params) => (validateNotEmptyParametersOperators(params)
     ? [_.first(collection)] : null),
   $last: (collection, params) => (validateNotEmptyParametersOperators(params)
