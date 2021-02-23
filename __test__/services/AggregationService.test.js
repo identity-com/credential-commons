@@ -26,10 +26,34 @@ describe('Aggregation Service', () => {
     expect(result).toStrictEqual([{ k: 'a' }]);
   });
 
+  it('should  return the first elements using boolean', () => {
+    const collection = [{ k: 'a' }, { k: 'b' }, { k: 'c' }];
+    const result = aggregate(collection, [{ $first: true }]);
+    expect(result).toStrictEqual([{ k: 'a' }]);
+  });
+
   it('should  return the last elements only', () => {
     const collection = [{ k: 'a' }, { k: 'b' }, { k: 'c' }];
     const result = aggregate(collection, [{ $last: 'true' }]);
     expect(result).toStrictEqual([{ k: 'c' }]);
+  });
+
+  it('should  return the last elements using boolean', () => {
+    const collection = [{ k: 'a' }, { k: 'b' }, { k: 'c' }];
+    const result = aggregate(collection, [{ $last: true }]);
+    expect(result).toStrictEqual([{ k: 'c' }]);
+  });
+
+  it('should  return the max elements only', () => {
+    const collection = [{ k: 'a' }, { k: 'b' }, { k: 'c' }];
+    const result = aggregate(collection, [{ $max: 'k' }]);
+    expect(result).toStrictEqual([{ k: 'c' }]);
+  });
+
+  it('should  return the min elements only', () => {
+    const collection = [{ k: 'a' }, { k: 'b' }, { k: 'c' }];
+    const result = aggregate(collection, [{ $min: 'k' }]);
+    expect(result).toStrictEqual([{ k: 'a' }]);
   });
 
   it('should  return in ascending order ', () => {
