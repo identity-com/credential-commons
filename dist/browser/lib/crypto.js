@@ -1,0 +1,1 @@
+'use strict';var sjcl=require("sjcl"),sha256=function(a){return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(a))};module.exports={sha256:sha256};
