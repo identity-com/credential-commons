@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
-const uuidv4 = require('uuid/v4');
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1, v4: uuidv4 } = require('uuid');
 const sjcl = require('sjcl');
 const { initialize } = require('../../src');
 const { Claim, VerifiableCredential } = require('../../src/entities');
@@ -627,10 +626,10 @@ describe('Verifiable Credentials', () => {
 
   it('Should verify an VC of type GenericDocumentId', () => {
     const ucaArray = [];
-    const credentialDefinition = credentialDefinitions.find(definition => definition.identifier
+    const credentialDefinition = credentialDefinitions.find((definition) => definition.identifier
       === 'credential-cvc:GenericDocumentId-v1');
     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-      const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
+      const ucaDefinition = definitions.find((ucaDef) => ucaDef.identifier === ucaDefinitionIdentifier);
       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
       let value = ucaJson;
       if (Object.keys(ucaJson).length === 1) {
@@ -1418,7 +1417,7 @@ describe('Verifiable Credentials', () => {
     const validateSchemaJestStep = async (credentialDefinition) => {
       const ucaArray = [];
       credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-        const ucaDefinition = definitions.find(ucaDef => (
+        const ucaDefinition = definitions.find((ucaDef) => (
           ucaDef.identifier === ucaDefinitionIdentifier
         ));
         const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
@@ -1443,7 +1442,7 @@ describe('Verifiable Credentials', () => {
       promises.push(validateSchemaJestStep(credentialDefinition));
     });
     Promise.all(promises).then((values) => {
-      values.forEach(isValid => expect(isValid).toBeTruthy());
+      values.forEach((isValid) => expect(isValid).toBeTruthy());
       done();
     });
   });

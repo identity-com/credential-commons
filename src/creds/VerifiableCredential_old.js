@@ -4,7 +4,7 @@ const sift = require('sift').default;
 
 const timestamp = require('unix-timestamp');
 const flatten = require('flat');
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 const MerkleTools = require('merkle-tools');
 
 const { sha256 } = require('../lib/crypto');
@@ -14,10 +14,10 @@ const { CvcMerkleProof } = require('./CvcMerkleProof');
 const { ClaimModel } = require('./ClaimModel');
 
 // convert a time delta to a timestamp
-const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
+const convertDeltaToTimestamp = (delta) => time.applyDeltaToDate(delta).getTime() / 1000;
 
 function validIdentifiers() {
-  const vi = _.map(definitions, d => d.identifier);
+  const vi = _.map(definitions, (d) => d.identifier);
   return vi;
 }
 
@@ -317,7 +317,7 @@ const VERIFY_LEVELS = {
  */
 function verifyRequiredClaims(definition, ucas) {
   if (!_.isEmpty(definition.required)) {
-    const identifiers = ucas.map(uca => uca.identifier);
+    const identifiers = ucas.map((uca) => uca.identifier);
     const missings = _.difference(definition.required, identifiers);
     if (!_.isEmpty(missings)) {
       throw new Error(`Missing required claim(s): ${_.join(missings, ', ')}`);
@@ -334,7 +334,7 @@ function verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON) {
   const leaves = _.get(verifiableCredentialJSON, 'proof.leaves');
 
   if (!_.isEmpty(definition.required) && leaves) {
-    const identifiers = leaves.map(leave => leave.identifier);
+    const identifiers = leaves.map((leave) => leave.identifier);
     const missings = _.difference(definition.required, identifiers);
     if (!_.isEmpty(missings)) {
       throw new Error(`Missing required claim(s): ${_.join(missings, ', ')}`);
@@ -400,7 +400,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     this.claim = new ClaimModel(ucas);
     this.proof = new CvcMerkleProof(proofUCAs);
     if (!_.isEmpty(definition.excludes)) {
-      const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
+      const removed = _.remove(this.proof.leaves, (el) => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
         _.unset(this.claim, r.claimPath);
       });
@@ -420,7 +420,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    */
   this.filter = (requestedClaims) => {
     const filtered = _.cloneDeep(this);
-    _.remove(filtered.proof.leaves, el => !_.includes(requestedClaims, el.identifier));
+    _.remove(filtered.proof.leaves, (el) => !_.includes(requestedClaims, el.identifier));
 
     filtered.claim = {};
     _.forEach(filtered.proof.leaves, (el) => {
@@ -578,7 +578,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     return services.container.AnchorService.isRevoked(this.proof);
   };
 
-  const convertTimestampIfString = obj => (_.isString(obj) ? convertDeltaToTimestamp(obj) : obj);
+  const convertTimestampIfString = (obj) => (_.isString(obj) ? convertDeltaToTimestamp(obj) : obj);
 
   this.isMatch = (constraints) => {
     const claims = _.cloneDeep(this.claim);
@@ -668,7 +668,7 @@ const CREDENTIAL_META_FIELDS = [
  *
  * @param {*} vc
  */
-const getCredentialMeta = vc => _.pick(vc, CREDENTIAL_META_FIELDS);
+const getCredentialMeta = (vc) => _.pick(vc, CREDENTIAL_META_FIELDS);
 
 /**
  * Sift constraints to throw errors for constraints missing IS
@@ -714,7 +714,7 @@ const isMatchCredentialMeta = (credentialMeta, constraintsMeta) => {
 
   if (_.isEmpty(siftCompatibleConstraints)) return false;
 
-  const credentialMetaMatchesConstraint = constraint => sift(constraint)([credentialMeta]);
+  const credentialMetaMatchesConstraint = (constraint) => sift(constraint)([credentialMeta]);
 
   return siftCompatibleConstraints.reduce(
     (matchesAllConstraints, nextConstraint) => matchesAllConstraints && credentialMetaMatchesConstraint(nextConstraint),
