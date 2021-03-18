@@ -5,6 +5,7 @@ const isValidGlobalIdentifier = require('./isValidGlobalIdentifier');
 const errors = require('./errors');
 const constants = require('./constants');
 const schema = require('./schema/jsonSchema');
+const aggregate = require('./AggregationHandler');
 
 const credentialCommons = {
   Claim,
@@ -14,6 +15,7 @@ const credentialCommons = {
   init: initServices,
   isValidGlobalIdentifier,
   services,
+  aggregate,
   errors,
   constants,
 };

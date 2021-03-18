@@ -45,7 +45,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       promises.push(validateSchemaJestStep(credentialDefinition));
     });
     Promise.all(promises).then((values) => {
-      values.forEach((isValid) => expect(isValid).toBeTruthy());
+      values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
     }).catch((err) => {
       done.fail(err);
@@ -84,7 +84,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       promises.push(validateSchemaJestStep(credentialDefinition));
     });
     Promise.all(promises).then((values) => {
-      values.forEach((isValid) => expect(isValid).toBeFalsy());
+      values.forEach(isValid => expect(isValid).toBeFalsy());
       done();
     }).catch((err) => {
       done.fail(err);
@@ -120,7 +120,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
     const promises = [];
     definitions.forEach((definition) => { promises.push(validateSchemaJestStep(definition)); });
     Promise.all(promises).then((values) => {
-      values.forEach((isValid) => expect(isValid).toBeTruthy());
+      values.forEach(isValid => expect(isValid).toBeTruthy());
       done();
     }).catch((err) => {
       done.fail(err);
@@ -162,7 +162,7 @@ describe.skip('Public Schemas Integration Test Suite', () => {
       }
     });
     Promise.all(promises).then((values) => {
-      values.forEach((isValid) => expect(isValid).toBeFalsy());
+      values.forEach(isValid => expect(isValid).toBeFalsy());
       done();
     }).catch((err) => {
       done.fail(err);
