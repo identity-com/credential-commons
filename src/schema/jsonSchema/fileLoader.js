@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const path = require('path');
 const fs = require('fs');
 const { parseIdentifier } = require('../../lib/stringUtils');
@@ -72,7 +73,7 @@ const loadAll = async (ajv) => {
       return recursiveLoadAll(subpath);
     });
 
-    return Promise.all(allPromises).then((schemas) => schemas.flat());
+    return Promise.all(allPromises).then((schemas) => _.flatten(schemas));
   };
 
   return recursiveLoadAll(basePath);
