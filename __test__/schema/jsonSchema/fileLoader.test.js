@@ -1,10 +1,13 @@
 const Ajv = require('ajv').default;
 const addFormats = require('ajv-formats').default;
 const fileLoader = require('../../../src/schema/jsonSchema/fileLoader');
+const { initialize } = require('../../../src');
 
 let ajv;
 
 describe('fileLoader', () => {
+  beforeAll(initialize);
+
   beforeEach(() => {
     ajv = new Ajv({
       logger: console,
@@ -12,6 +15,9 @@ describe('fileLoader', () => {
       verbose: true,
       loadSchema: fileLoader.loadSchema,
     });
+
+    ajv.addKeyword('attestable');
+
     // add data formats such as date-time
     addFormats(ajv);
   });

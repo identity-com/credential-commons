@@ -1,6 +1,12 @@
-const CredentialCommons = require('../src/index');
+const { initialize } = require('../src');
+
+let CredentialCommons;
 
 describe('CredentialCommons.aggregate', () => {
+  beforeAll(async () => {
+    CredentialCommons = await initialize();
+  });
+
   it('should throw Invalid Operator', () => {
     const collection = [{ k: 'a' }, { k: 'b' }, { k: 'c' }];
     expect(() => {
