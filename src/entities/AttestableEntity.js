@@ -26,7 +26,7 @@ class AttestableEntity {
     this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
   }
 
-  __getAttestableValue(path, isArrayItem = false) {
+  getAttestableValue(path, isArrayItem = false) {
     // According to new convention, `parsedIdentifier.name` has format of
     // "Collection.propertyName"
     let [, propertyName] = this.parsedIdentifier.name.split('.');
@@ -50,20 +50,8 @@ class AttestableEntity {
       return `urn:${propertyName}:${this.salt}:[${itemsValues}]`;
     }
 
-    console.log(this.value);
-
     return _.reduce(_.sortBy(_.keys(this.value)),
-      (s, k) => {
-        console.log('a');
-        console.log(this.parsedIdentifier);
-        console.log(this.schema);
-
-        for (const i in this.parsedIdentifier) {
-          console.log(`:::::: ${i}`);
-        }
-
-        return `${s}${this.value[k].getAttestableValue(propertyName)}`;
-      }, '');
+      (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
   }
 
   getAttestableValues() {
