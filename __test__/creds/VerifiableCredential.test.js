@@ -39,7 +39,7 @@ describe('Verifiable Credentials', () => {
   // preload all the schemas
   beforeAll(async () => {
     await initialize();
-    name = () => new Claim('claim-cvc:Identity.name-v1', identityName);
+    name = new Claim('claim-cvc:Identity.name-v1', identityName);
     dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
     email = new Claim('claim-cvc:Contact.email-v1', emailValue);
   });
@@ -68,6 +68,7 @@ describe('Verifiable Credentials', () => {
     it('should fail to construct construct credentials if a required claim is missing', () => {
       const shouldFail = () => new VerifiableCredential({
         metadata: {
+          issuer: 'some issuer',
           identifier: 'credential-alt:Identity-v2',
         },
         claims: { name, dateOfBirth: dob },
@@ -77,8 +78,8 @@ describe('Verifiable Credentials', () => {
 
     it('should construct credentials from claims', () => {
       const credential = new VerifiableCredential({
-        issuer: 'Some Issuer',
         metadata: {
+          issuer: 'Some Issuer',
           identifier: 'credential-cvc:Email-v2',
         },
         claims: { email },
@@ -192,7 +193,7 @@ describe('Verifiable Credentials', () => {
       postalCode: '5JhmWkXBAg',
     };
 
-    const uca = new Claim('claim-cvc:Identity.address-v1', value, '1');
+    const uca = new Claim('claim-cvc:Identity.address-v1', value);
     const credential = new VerifiableCredential('credential-cvc:Address-v1', '', null, [uca], '1');
     const filtered = credential.filter(['claim-cvc:Identity.address-v1']);
 
@@ -216,8 +217,15 @@ describe('Verifiable Credentials', () => {
         lineType: 'OaguqgUaR7',
       };
 
-      const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value, '1');
-      const credential = new VerifiableCredential('credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
+      const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value);
+      const credential = new VerifiableCredential({
+        metadata: {
+          identifier: 'credential-cvc:PhoneNumber-v1',
+          provider: 'some provider',
+        },
+        claims: { uca },
+      });
+      // const credential = new VerifiableCredential({'credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
       const filtered = credential.filter(['claim-cvc:Contact.phoneNumber-v1']);
 
       expect(filtered.claim.contact.phoneNumber).toBeDefined();

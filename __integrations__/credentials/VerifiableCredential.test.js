@@ -11,7 +11,29 @@ describe('Integration Tests for Verifiable Credentials', () => {
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
     const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
-    const cred = new VC('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], 1);
+
+    const x = {
+      metadata: {
+        identifier: 'credential-alt:Identity-v1',
+        issuer: 'some issuer',
+      },
+      claims: {
+        identity: { name, dob },
+      },
+    };
+
+    // console.log(x);
+
+    const cred = new VC({
+      metadata: {
+        identifier: 'credential-alt:Identity-v1',
+        issuer: 'some issuer',
+      },
+      claims: {
+        identity: { name, dob },
+      },
+    });
+
     return cred.requestAnchor().then((updated) => {
       expect(updated.proof.anchor.type).toBe('temporary');
       expect(updated.proof.anchor.value).not.toBeDefined();

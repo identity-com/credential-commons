@@ -64,6 +64,7 @@ const loadAll = async (ajv) => {
     const filesOrDirectories = await fsp.readdir(schemaPath);
     const allPromises = filesOrDirectories.map(async (fileOrDirectory) => {
       const subpath = path.join(schemaPath, fileOrDirectory);
+
       const stats = await fsp.lstat(subpath);
       if (!stats.isDirectory()) {
         // eslint-disable-next-line import/no-dynamic-require,global-require

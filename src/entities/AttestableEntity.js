@@ -1,5 +1,7 @@
 const _ = require('lodash');
+const sjcl = require('sjcl');
 const { ParsedIdentifier } = require('./ParsedIdentifier');
+const { services } = require('../services');
 const DEFAULT_BUILDER = require('../schema/jsonSchema');
 
 class AttestableEntity {
@@ -13,15 +15,18 @@ class AttestableEntity {
     const { schemaInformation } = this.parsedIdentifier;
 
     builder.validate(schemaInformation.ref, value);
-
     this.schema = schemaInformation.schema;
 
     this.value = value;
     this.version = this.parsedIdentifier.version;
     this.type = this.schema.type;
+    this.builder = builder;
+
+    const secureRandom = services.container.SecureRandom;
+    this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
   }
 
-  getAttestableValue(path, isArrayItem = false) {
+  __getAttestableValue(path, isArrayItem = false) {
     // According to new convention, `parsedIdentifier.name` has format of
     // "Collection.propertyName"
     let [, propertyName] = this.parsedIdentifier.name.split('.');
@@ -45,8 +50,20 @@ class AttestableEntity {
       return `urn:${propertyName}:${this.salt}:[${itemsValues}]`;
     }
 
+    console.log(this.value);
+
     return _.reduce(_.sortBy(_.keys(this.value)),
-      (s, k) => `${s}${this.value[k].getAttestableValue(propertyName)}`, '');
+      (s, k) => {
+        console.log('a');
+        console.log(this.parsedIdentifier);
+        console.log(this.schema);
+
+        for (const i in this.parsedIdentifier) {
+          console.log(`:::::: ${i}`);
+        }
+
+        return `${s}${this.value[k].getAttestableValue(propertyName)}`;
+      }, '');
   }
 
   getAttestableValues() {

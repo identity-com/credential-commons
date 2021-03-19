@@ -120,6 +120,13 @@ const loadSchemaObject = (uri) => {
 };
 
 const initialize = () => fileLoader.loadAll(ajv).then((schemas) => {
+  let data = '';
+  for (const i in schemas) {
+    data += `${schemas[i].schema.$id} :: ${schemas[i].schema.title}\n`;
+  }
+
+  console.log(data);
+
   console.log('Credential schemas are loaded');
   return schemas;
 });

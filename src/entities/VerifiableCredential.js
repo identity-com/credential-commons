@@ -11,7 +11,9 @@ class VerifiableCredential extends AttestableEntity {
     metadata,
     claims,
   }) {
+    // TODO: Why this?
     const claimValues = _.mapValues(claims, (claim) => claim.value);
+
     super(metadata.identifier, { ...metadata, claim: claimValues });
 
     const issuanceDateUCA = new Claim('claim-cvc:Meta.issuanceDate-v1', (new Date()).toISOString());
