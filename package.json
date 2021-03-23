@@ -61,7 +61,7 @@
     "jest-html-reporter": "^2.3.0",
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2",
-    "ajv": "^7.0.3"
+    "ajv": "^6.5.2"
   },
   "dependencies": {
     "@identity.com/uca": "^1.0.27",
