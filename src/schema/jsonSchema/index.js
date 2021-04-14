@@ -111,9 +111,9 @@ const loadSchemaObject = (uri) => {
     const [, , schemaName] = parseIdentifier(schema.$id);
     const subPath = definitionPath
       .replace(schemaName, '') // get the subpath relative to the top-level schema
-      .replace(/\./g, '/'); // convert the dot syntax to schema / syntax
+      .replace(/\./g, '/properties/'); // convert the dot syntax to schema / syntax
 
-    ref = `${foundRef}/properties${subPath}`;
+    ref = `${foundRef}${subPath}`;
   }
 
   return { schema, ref };
