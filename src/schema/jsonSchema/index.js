@@ -68,7 +68,7 @@ const validate = (schemaRef, value) => {
   const validateSchema = ajv.getSchema(schemaRef);
   const valid = validateSchema(value);
 
-  if (!valid) throw new Error(`Invalid value. Errors: ${JSON.stringify(validateSchema.errors)}`);
+  if (!valid) throw new Error(`Invalid value. Errors: ${JSON.stringify(validateSchema.errors, null, 2)}`);
 };
 
 const loadSchemaOrParent = (uri) => {

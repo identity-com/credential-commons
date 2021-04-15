@@ -3,5 +3,6 @@
   "$id": "http://identity.com/schemas/claim-cvc:Identity.name-v1",
   "title": "claim-cvc:Identity.name-v1",
   "type": "object",
-  "allOf": [{"$ref": "http://identity.com/schemas/type-cvc:Name-v1#/definitions/name"}]
+  "allOf": [{"$ref": "http://identity.com/schemas/type-cvc:Name-v1#/definitions/name"}],
+  "attestable": true
 }

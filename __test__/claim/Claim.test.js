@@ -250,35 +250,18 @@ describe('Claim Constructions tests', () => {
     expect(claim.getAttestableValue());
     expect(claim.getAttestableValues());
   });
-
-  // TODO: Confirm this is no longer valid
-  // test('Construct by NameGivenNames must result successfully', () => {
-  //   const v = new Claim.NameGivenNames('Joao');
-  //   expect(v).toBeDefined();
-  //   expect(v.value).toBe('Joao');
-  // });
-  //
-  // test('Construct IdentityName must result successfully', () => {
-  //   const value = { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' };
-  //   const v = new Claim.IdentityName(value);
-  //   expect(v).toBeDefined();
-  //   expect(v.value.givenNames.value).toBe(value.givenNames);
-  //   expect(v.value.otherNames.value).toBe(value.otherNames);
-  //   expect(v.value.familyNames.value).toBe(value.familyNames);
-  // });
-
   describe('Attestable values', () => {
     test('Claim should construct a complex Attestatble Value: claim-cvc:Identity.name-v1', () => {
       // eslint-disable-next-line max-len
       const aComplexAttestableValue = 'urn:name.familyNames:c443e0a97a2df34573f910927e25c58e597e211152dfb650e6210facacc1a065:Mustermann|urn:name.givenNames:f14ab211784a3b3d2f20d423847a775ad56c3be8104a51aa084f0c94756d953b:Max|urn:name.otherNames:09a31dab0a537ac5330a07df63effd9d2f55e91845956b58119843835f7dd9ed:Paul|';
-      const v = new Claim.IdentityName({ attestableValue: aComplexAttestableValue });
+      const v = new Claim('claim-cvc:Identity.name.givenNames-v1', { attestableValue: aComplexAttestableValue });
       expect(v).toBeDefined();
     });
 
     test('Claim should create claim path correctly', () => {
       // eslint-disable-next-line max-len
       const aComplexAttestableValue = 'urn:name.familyNames:c443e0a97a2df34573f910927e25c58e597e211152dfb650e6210facacc1a065:Mustermann|urn:name.givenNames:f14ab211784a3b3d2f20d423847a775ad56c3be8104a51aa084f0c94756d953b:Max|urn:name.otherNames:09a31dab0a537ac5330a07df63effd9d2f55e91845956b58119843835f7dd9ed:Paul|';
-      const v = new Claim.IdentityName({ attestableValue: aComplexAttestableValue });
+      const v = new Claim('claim-cvc:Identity.name.givenNames-v1', { attestableValue: aComplexAttestableValue });
 
       expect(v).toBeDefined();
       const claimPath = v.getClaimPath();

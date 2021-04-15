@@ -5,6 +5,7 @@ const sjcl = require('sjcl');
 const { initialize } = require('../../src');
 const { Claim, VerifiableCredential } = require('../../src/entities');
 const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
+const { VerifiableCredential: VerifiableCredentialOld } = require('../../src/creds/VerifiableCredential');
 
 const XPVT1 = 'xprvA1yULd2DFYnQRVbLiAKrFdftVLsANiC3rqLvp8iiCbnchcWqd6kJPoaV3sy7R6CjHM8RbpoNdWVgiPZLVa1EmneRLtwiitNpWgwyVmjvay7'; // eslint-disable-line
 const XPUB1 = 'xpub6Expk8Z75vLhdyfopBrrcmcd3NhenAuuE4GXcX8KkwKbaQqzAe4Ywbtxu9F95hRHj79PvdtYEJcoR6gesbZ79fS4bLi1PQtm81rjxAHeLL9'; // eslint-disable-line
@@ -80,7 +81,7 @@ describe('Verifiable Credentials', () => {
       const credential = new VerifiableCredential({
         metadata: {
           issuer: 'Some Issuer',
-          identifier: 'credential-cvc:Email-v2',
+          identifier: 'credential-cvc:Email-v3',
         },
         claims: { email },
       });
@@ -93,27 +94,45 @@ describe('Verifiable Credentials', () => {
     it('should generate a merkle proof', () => {
       const credential = new VerifiableCredential({
         metadata: {
-          identifier: 'credential-cvc:Email-v2',
+          identifier: 'credential-cvc:Email-v3',
           issuer: 'Some Issuer',
         },
         claims: { email },
       });
       expect(credential.proof).toBeDefined();
       expect(credential.proof.leaves).toHaveLength(5);
-      // expect(credential.proof.leaves).toHaveLength(8);
     });
   });
 
-  it('should request an anchor for Credential and return an temporary attestation', async (done) => {
-    const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), '-1d', [name, dob], '1');
+  it('should request an anchor for Credential and return an temporary attestation', async () => {
+    const cred = new VerifiableCredential({
+      metadata: {
+        identifier: 'credential-alt:Identity-v1',
+        issuer: uuidv4(),
+      },
+      claims: {
+        name,
+        dob,
+      },
+    });
+
     const updatedAnchor = await cred.requestAnchor();
     expect(updatedAnchor.proof.anchor.type).toBe('temporary');
     expect(updatedAnchor.proof.anchor.value).not.toBeDefined();
     expect(updatedAnchor.proof.anchor.schema).toBe('dummy-20180201');
   });
 
-  it('should refresh an temporary anchoring with an permanent one', async (done) => {
-    const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
+  it('should refresh an temporary anchoring with an permanent one', async () => {
+    const cred = new VerifiableCredential({
+      metadata: {
+        identifier: 'credential-alt:Identity-v1',
+        issuer: uuidv4(),
+      },
+      claims: {
+        name,
+        dob,
+      },
+    });
 
     cred.requestAnchor = jest.fn().mockImplementation(async () => {
       // mock the function or otherwise it would call the server
@@ -132,10 +151,18 @@ describe('Verifiable Credentials', () => {
   });
 
   it('Filter claims from Identity Name', () => {
-    const simpleIdentity = new VerifiableCredential('credential-cvc:Identity-v1', 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
-      null, [name, dob], '1');
+    const simpleIdentity = new VerifiableCredential({
+      metadata: {
+        identifier: 'credential-alt:Identity-v3',
+        issuer: 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD',
+      },
+      claims: {
+        name,
+        dob,
+      },
+    });
 
-    const filtered = simpleIdentity.filter(['claim-cvc:Name.givenNames-v1']);
+    const filtered = simpleIdentity.filter(['claim-cvc:Identity.name.givenNames-v1']);
     expect(filtered.claim.identity.name.givenNames).toBeDefined();
     expect(filtered.claim.identity.name.otherNames).not.toBeDefined();
     expect(filtered.claim.identity.name.familyNames).not.toBeDefined();
@@ -153,8 +180,17 @@ describe('Verifiable Credentials', () => {
       username: 'ZcMpCBQ0lE',
     };
 
-    const emailUca = new Claim('claim-cvc:Contact.email-v1', email, '1');
-    const emailCredential = new VerifiableCredential('credential-cvc:Email-v1', '', null, [emailUca], '1');
+    const emailUca = new Claim('claim-cvc:Contact.email-v1', email);
+    const emailCredential = new VerifiableCredential({
+      metadata: {
+        identifier: 'credential-cvc:Email-v3',
+        issuer: uuidv4(),
+      },
+      claims: {
+        emailUca,
+      },
+    });
+
     const filtered = emailCredential.filter(['claim-cvc:Contact.email-v1']);
     expect(filtered.claim.contact.email.domain).toBeDefined();
     expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
@@ -171,9 +207,17 @@ describe('Verifiable Credentials', () => {
       username: 'ZcMpCBQ0lE',
     };
 
-    const emailUca = new Claim('claim-cvc:Contact.email-v1', email, '1');
-    const emailCredential = new VerifiableCredential('credential-cvc:Email-v1', '', null, [emailUca], '1');
-    const filtered = emailCredential.filter(['claim-cvc:Email.domain-v1']);
+    const emailUca = new Claim('claim-cvc:Contact.email-v1', email);
+    const emailCredential = new VerifiableCredential({
+      metadata: {
+        identifier: 'credential-cvc:Email-v3',
+        issuer: uuidv4(),
+      },
+      claims: {
+        emailUca,
+      },
+    });
+    const filtered = emailCredential.filter(['claim-cvc:Contact.email.domain-v1']);
 
     expect(filtered.claim.contact.email.domain).toBeDefined();
     expect(filtered.claim.contact.email.domain.tld).toBe('oVaPsceZ4C');
@@ -194,7 +238,15 @@ describe('Verifiable Credentials', () => {
     };
 
     const uca = new Claim('claim-cvc:Identity.address-v1', value);
-    const credential = new VerifiableCredential('credential-cvc:Address-v1', '', null, [uca], '1');
+    const credential = new VerifiableCredential({
+      metadata: {
+        identifier: 'credential-cvc:Address-v1',
+        issuer: uuidv4(),
+      },
+      claims: {
+        uca,
+      },
+    });
     const filtered = credential.filter(['claim-cvc:Identity.address-v1']);
 
     expect(filtered.claim.identity.address).toBeDefined();
@@ -207,63 +259,62 @@ describe('Verifiable Credentials', () => {
     expect(filtered.claim.identity.address.postalCode).toBe('5JhmWkXBAg');
   });
 
-  it('Should filter claims for PhoneNumber asking for credential-cvc:PhoneNumber-v1 and return the full claim',
-    () => {
-      const value = {
-        country: '1ApYikRwDl',
-        countryCode: 'U4drpB96Hk',
-        number: 'kCTGifTdom',
-        extension: 'sXZpZJTe4R',
-        lineType: 'OaguqgUaR7',
-      };
+  it('Should filter claims for PhoneNumber asking for credential-cvc:PhoneNumber-v1 and return the full claim', () => {
+    const value = {
+      country: '1ApYikRwDl',
+      countryCode: 'U4drpB96Hk',
+      number: 'kCTGifTdom',
+      extension: 'sXZpZJTe4R',
+      lineType: 'OaguqgUaR7',
+    };
 
-      const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value);
-      const credential = new VerifiableCredential({
-        metadata: {
-          identifier: 'credential-cvc:PhoneNumber-v1',
-          provider: 'some provider',
-        },
-        claims: { uca },
-      });
-      // const credential = new VerifiableCredential({'credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
-      const filtered = credential.filter(['claim-cvc:Contact.phoneNumber-v1']);
-
-      expect(filtered.claim.contact.phoneNumber).toBeDefined();
-      expect(filtered.claim.contact.phoneNumber.country).toBe('1ApYikRwDl');
-      expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');
-      expect(filtered.claim.contact.phoneNumber.extension).toBe('sXZpZJTe4R');
-      expect(filtered.claim.contact.phoneNumber.lineType).toBe('OaguqgUaR7');
-      expect(filtered.claim.contact.phoneNumber.number).toBe('kCTGifTdom');
+    const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value);
+    const credential = new VerifiableCredential({
+      metadata: {
+        identifier: 'credential-cvc:PhoneNumber-v2',
+        provider: 'some provider',
+      },
+      claims: { uca },
     });
+
+    const filtered = credential.filter(['claim-cvc:Contact.phoneNumber-v1']);
+
+    expect(filtered.claim.contact.phoneNumber).toBeDefined();
+    expect(filtered.claim.contact.phoneNumber.country).toBe('1ApYikRwDl');
+    expect(filtered.claim.contact.phoneNumber.countryCode).toBe('U4drpB96Hk');
+    expect(filtered.claim.contact.phoneNumber.extension).toBe('sXZpZJTe4R');
+    expect(filtered.claim.contact.phoneNumber.lineType).toBe('OaguqgUaR7');
+    expect(filtered.claim.contact.phoneNumber.number).toBe('kCTGifTdom');
+  });
 
   it('Should filter claims for GenericDocumentId asking for claim-cvc:Identity.dateOfBirth-v1 and return nothing',
     () => {
       const typeValue = 'passport';
-      const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
+      const type = new Claim('claim-cvc:Document.type-v1', typeValue);
       const numberValue = '3bj1LUg9yG';
-      const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
+      const number = new Claim('claim-cvc:Document.number-v1', numberValue);
       const nameOnDocumentValue = {
         givenNames: 'e8qhs4Iak1',
         familyNames: '4h8sLtEfav',
         otherNames: 'bDTn4stMpX',
       };
-      const nameOnDocument = new Claim('claim-cvc:Document.name-v1', nameOnDocumentValue, '1');
+      const nameOnDocument = new Claim('claim-cvc:Document.name-v1', nameOnDocumentValue);
       const genderValue = 'jFtCBFceQI';
-      const gender = new Claim('claim-cvc:Document.gender-v1', genderValue, '1');
+      const gender = new Claim('claim-cvc:Document.gender-v1', genderValue);
       const issueLocationValue = 'OZbhzBU8ng';
-      const issueLocation = new Claim('claim-cvc:Document.issueLocation-v1', issueLocationValue, '1');
+      const issueLocation = new Claim('claim-cvc:Document.issueLocation-v1', issueLocationValue);
       const issueAuthorityValue = 'BO2xblNSVK';
-      const issueAuthority = new Claim('claim-cvc:Document.issueAuthority-v1', issueAuthorityValue, '1');
+      const issueAuthority = new Claim('claim-cvc:Document.issueAuthority-v1', issueAuthorityValue);
       const issueCountryValue = 'p4dNUeAKtI';
-      const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', issueCountryValue, '1');
+      const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', issueCountryValue);
       const placeOfBirthValue = 'r4hIHbyLru';
-      const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue, '1');
+      const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue);
       const dateOfBirthValue = {
         day: 23,
         month: 2,
         year: 1973,
       };
-      const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+      const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue);
       const addressValue = {
         country: 'IH4aiXuEoo',
         county: 'akKjaQehNK',
@@ -273,7 +324,7 @@ describe('Verifiable Credentials', () => {
         city: 'WU9GJ0R9be',
         postalCode: 'ci1DMuz16W',
       };
-      const address = new Claim('claim-cvc:Document.address-v1', addressValue, '1');
+      const address = new Claim('claim-cvc:Document.address-v1', addressValue);
       const propertiesValue = {
         dateOfIssue: {
           day: 18,
@@ -286,18 +337,34 @@ describe('Verifiable Credentials', () => {
           year: 1957,
         },
       };
-      const properties = new Claim('claim-cvc:Document.properties-v1', propertiesValue, '1');
+      // const properties = new Claim('claim-cvc:Document.properties-v1', propertiesValue);
       const imageValue = {
         front: '9NMgeFErNd',
         frontMD5: 'zgOvmWXruS',
         back: 'uPrJKO3cbq',
         backMD5: '0yr9zkdApo',
       };
-      const image = new Claim('cvc:Document:image', imageValue, '1');
-      const credential = new VerifiableCredential(
-        'credential-cvc:GenericDocumentId-v1', '', null, [type, number, nameOnDocument, gender, issueAuthority,
-          issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1',
-      );
+      // const image = new Claim('cvc:Document:image', imageValue);
+      const credential = new VerifiableCredential({
+        metadata: {
+          identifier: 'credential-cvc:GenericDocumentId-v1',
+          issuer: uuidv4(),
+        },
+        claims: {
+          type,
+          number,
+          nameOnDocument,
+          gender,
+          issueAuthority,
+          issueLocation,
+          issueCountry,
+          placeOfBirth,
+          // properties,
+          address,
+          // image,
+          dateOfBirth,
+        },
+      });
       const filtered = credential.filter(['claim-cvc:Identity.dateOfBirth-v1']);
 
       expect(filtered.claim.document).toBeUndefined();
@@ -382,8 +449,8 @@ describe('Verifiable Credentials', () => {
 
   it('Should create alt:Identity-v1 credential', () => {
     const nameOnDocumentValue = { givenNames: 'e8qhs4Iak1', familyNames: 'e8qak1', otherNames: 'qhs4I' };
-    const nameOnDocument = new Claim('claim-cvc:Document.name-v1', nameOnDocumentValue, '1');
-    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', identityDateOfBirth, '1');
+    const nameOnDocument = new Claim('claim-cvc:Document.name-v1', nameOnDocumentValue);
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', identityDateOfBirth);
     const addressValue = {
       country: 'IH4aiXuEoo',
       county: 'akKjaQehNK',
@@ -393,10 +460,10 @@ describe('Verifiable Credentials', () => {
       city: 'WU9GJ0R9be',
       postalCode: 'ci1DMuz16W',
     };
-    const address = new Claim('claim-cvc:Document.address-v1', addressValue, '1');
+    const address = new Claim('claim-cvc:Document.address-v1', addressValue);
 
-    const credential = new VerifiableCredential(
-      'credential-alt:Identity-v1', '', null, [nameOnDocument, dateOfBirth, address], '1',
+    const credential = new VerifiableCredentialOld(
+      'credential-alt:Identity-v3', '', null, [nameOnDocument, dateOfBirth, address], '1',
     );
     expect(credential).toBeDefined();
   });
@@ -1080,7 +1147,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('should revoke the permanent anchor and succeed verification', async (done) => {
-    const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v3', uuidv4(), null, [name, dob], '1');
     await cred.requestAnchor();
     await cred.updateAnchor();
     const validation = await cred.verifyAttestation();
@@ -1141,7 +1208,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('Should match constraints targeting the parent properties of dates', () => {
-    const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
         { path: 'identity.dateOfBirth', is: { $lt: 1554377905342 } }, // 4-4-2019
@@ -1157,7 +1224,7 @@ describe('Verifiable Credentials', () => {
 
   const dateToDOBClaim = (date) => {
     const dobClaim = { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() };
-    return new Claim.IdentityDateOfBirth(dobClaim);
+    return new Claim('claim-cvc:Identity.dateOfBirth-v1', dobClaim);
   };
 
   it('Should match constraints targeting the parent properties and string deltas', () => {
@@ -1456,8 +1523,8 @@ describe('Verifiable Credentials', () => {
   });
 
   it('Should construct a VC with no evidence provided', () => {
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
-    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
+    const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 5, month: 2, year: 1992 });
     const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred).toBeDefined();
   });
@@ -1471,8 +1538,8 @@ describe('Verifiable Credentials', () => {
       subjectPresence: 'Digital',
       documentPresence: 'Digital',
     };
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
-    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
+    const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 5, month: 2, year: 1992 });
     const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     expect(cred.evidence).toBeDefined();
     expect(cred.evidence).toEqual([evidence]);
@@ -1497,8 +1564,8 @@ describe('Verifiable Credentials', () => {
         documentPresence: 'Digital',
       },
     ];
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
-    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
+    const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 5, month: 2, year: 1992 });
     const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     expect(cred.evidence).toBeDefined();
     expect(cred.evidence).toEqual(evidence);
@@ -1516,8 +1583,8 @@ describe('Verifiable Credentials', () => {
         other: 'other',
       },
     ];
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
-    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
+    const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 5, month: 2, year: 1992 });
     const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     expect(cred.evidence).toBeDefined();
     expect(cred.evidence.other).not.toBeDefined();
@@ -1533,8 +1600,8 @@ describe('Verifiable Credentials', () => {
         documentPresence: 'Digital',
       },
     ];
-    const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
-    const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+    const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
+    const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 5, month: 2, year: 1992 });
     const cred = new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     expect(cred.evidence).toBeDefined();
     expect(cred.evidence).toEqual(evidence);
@@ -1551,8 +1618,8 @@ describe('Verifiable Credentials', () => {
       },
     ];
     function createCredential() {
-      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
-      const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+      const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
+      const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 5, month: 2, year: 1992 });
       return new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     }
     expect(createCredential).toThrowError('Evidence type is required');
@@ -1570,8 +1637,8 @@ describe('Verifiable Credentials', () => {
       },
     ];
     function createCredential() {
-      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
-      const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+      const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
+      const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 5, month: 2, year: 1992 });
       return new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     }
     expect(createCredential).toThrowError('Evidence id is not a valid URL');
@@ -1589,8 +1656,8 @@ describe('Verifiable Credentials', () => {
       },
     ];
     function createCredential() {
-      const name = new Claim.IdentityName({ givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
-      const dob = new Claim.IdentityDateOfBirth({ day: 5, month: 2, year: 1992 });
+      const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Neymar', otherNames: 'Jr', familyNames: 'Mustermann' });
+      const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 5, month: 2, year: 1992 });
       return new VerifiableCredential('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', evidence);
     }
     expect(createCredential).toThrowError('Evidence type is not an Array object');

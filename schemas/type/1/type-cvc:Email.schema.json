@@ -30,7 +30,8 @@
             "name": {
               "type": "string"
             }
-          }
+          },
+          "attestable": true
         }
       }
     }

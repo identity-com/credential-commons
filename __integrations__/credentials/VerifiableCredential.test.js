@@ -4,33 +4,29 @@ const { VerifiableCredential: VC } = require('../../src/entities/VerifiableCrede
 const { initialize } = require('../../src');
 
 jest.setTimeout(200000);
+const addressValue = {
+  country: 'X2sEB9F9W9', county: 'sDlIM4Rjpo', state: 'ZZEOrbenrM', street: 'JkHgN5gdZ2', unit: 'fo9OmPSZNe', city: 'LVkRGsKqIf', postalCode: '5JhmWkXBAg',
+};
+const dateValues = { day: 20, month: 3, year: 1978 };
+const nameValues = { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' };
 
 describe('Integration Tests for Verifiable Credentials', () => {
   beforeAll(initialize);
 
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
-    const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
-
-    const x = {
-      metadata: {
-        identifier: 'credential-alt:Identity-v1',
-        issuer: 'some issuer',
-      },
-      claims: {
-        identity: { name, dob },
-      },
-    };
-
-    // console.log(x);
+    const name = new Claim('claim-cvc:Identity.name-v1', nameValues);
+    const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', dateValues);
+    const address = new Claim('claim-cvc:Identity.address-v1', addressValue);
 
     const cred = new VC({
       metadata: {
-        identifier: 'credential-alt:Identity-v1',
+        identifier: 'credential-alt:Identity-v3',
         issuer: 'some issuer',
       },
       claims: {
-        identity: { name, dob },
+        name,
+        dob,
+        address,
       },
     });
 
@@ -42,6 +38,7 @@ describe('Integration Tests for Verifiable Credentials', () => {
       done();
     });
   });
+
   it('should refresh an temporary anchoring with an permanent one', async (done) => {
     const name = new Claim('claim-cvc:Identity.name-v1', { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });

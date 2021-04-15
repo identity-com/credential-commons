@@ -10,13 +10,16 @@
       "required": ["givenNames"],
       "properties": {
         "givenNames": {
-          "type": "string"
+          "type": "string",
+          "attestable": true
         },
         "familyNames": {
-          "type": "string"
+          "type": "string",
+          "attestable": true
         },
         "otherNames": {
-          "type": "string"
+          "type": "string",
+          "attestable": true
         }
       },
       "additionalProperties": false
