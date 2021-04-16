@@ -14,6 +14,7 @@ class VerifiableCredential extends VerifiableCredentialNew {
         issuer,
       },
       claims: ucaObject,
+      evidence,
     });
   }
 }

@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "claim-cvc:SocialSecurity:serialNumber",
+  "$id": "http://identity.com/schemas/claim-cvc:SocialSecurity.serialNumber-v1",
+  "title": "claim-cvc:SocialSecurity:serialNumber.serialNumber-v1",
   "type": "string"
 }

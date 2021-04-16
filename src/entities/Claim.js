@@ -35,10 +35,13 @@ class Claim extends AttestableEntity {
 
   constructor(identifier, value, uriPrefix, builder = DEFAULT_BUILDER) {
     if (typeof value === 'object' && !_.isEmpty(value.attestableValue)) {
+      const rootIdentifier = identifier.replace(/^[^:]+:[^.]+\.([^-]+)-v[0-9]+/, '$1');
       _.forEach(value.attestableValue.split('|'), (part) => {
         if (!_.isEmpty(part)) {
           const parts = part.split(':');
-          _.set(value, parts[1], parts[3]);
+          const subPath = parts[1].replace(new RegExp(`^${rootIdentifier}\\.`), '');
+
+          _.set(value, subPath, parts[3]);
         }
       });
 

@@ -22,4 +22,14 @@ const credentialCommons = {
 
 module.exports = {
   initialize: () => schema.initialize().then(() => credentialCommons),
+  Claim,
+  Identifier,
+  AttestableEntity,
+  VC,
+  init: initServices,
+  isValidGlobalIdentifier,
+  services,
+  aggregate,
+  errors,
+  constants,
 };

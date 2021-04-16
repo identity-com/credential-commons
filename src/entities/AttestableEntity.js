@@ -9,7 +9,7 @@ class AttestableEntity {
     return this.parsedIdentifier.identifier;
   }
 
-  constructor(identifier, value, uriPrefix, builder = DEFAULT_BUILDER) {
+  constructor(identifier, value, uriPrefix, builder = DEFAULT_BUILDER, validate = true) {
     if (_.isEmpty(identifier)) {
       throw new Error('No identifier specified');
     }
@@ -18,7 +18,10 @@ class AttestableEntity {
 
     const { schemaInformation } = this.parsedIdentifier;
 
-    builder.validate(schemaInformation.ref, value);
+    if (validate) {
+      builder.validate(schemaInformation.ref, value);
+    }
+
     this.schema = schemaInformation.schema;
 
     this.value = value;

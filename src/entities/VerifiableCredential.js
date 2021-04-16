@@ -3,6 +3,9 @@ const _ = require('lodash');
 const timestamp = require('unix-timestamp');
 const { v4: uuidv4 } = require('uuid');
 const sift = require('sift').default;
+const validUrl = require('valid-url');
+const MerkleTools = require('merkle-tools');
+const flatten = require('flat');
 const { CvcMerkleProof } = require('../creds/CvcMerkleProof');
 const { Claim } = require('./Claim');
 const { AttestableEntity } = require('./AttestableEntity');
@@ -96,10 +99,82 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   if (!isValidProof) invalidProofs.push(leave.targetHash);
 }
 
+function validateEvidence(evidenceItem) {
+  const requiredFields = [
+    'type',
+    'verifier',
+    'evidenceDocument',
+    'subjectPresence',
+    'documentPresence',
+  ];
+  _.forEach(requiredFields, (field) => {
+    if (!(field in evidenceItem)) {
+      throw new Error(`Evidence ${field} is required`);
+    }
+  });
+  // id property is optional, but if present, SHOULD contain a URL
+  if (('id' in evidenceItem) && !validUrl.isWebUri(evidenceItem.id)) {
+    throw new Error('Evidence id is not a valid URL');
+  }
+  if (!_.isArray(evidenceItem.type)) {
+    throw new Error('Evidence type is not an Array object');
+  }
+}
+
+function serializeEvidence(evidence) {
+  const evidenceList = _.isArray(evidence) ? evidence : [evidence];
+  return _.map(evidenceList, (evidenceItem) => {
+    validateEvidence(evidenceItem);
+    return {
+      id: evidenceItem.id,
+      type: evidenceItem.type,
+      verifier: evidenceItem.verifier,
+      evidenceDocument: evidenceItem.evidenceDocument,
+      subjectPresence: evidenceItem.subjectPresence,
+      documentPresence: evidenceItem.documentPresence,
+    };
+  });
+}
+
+function transformMetaConstraint(constraintsMeta) {
+  const resultConstraints = [];
+
+  // handle special field constraints.meta.credential
+  const constraintsMetaKeys = _.keys(constraintsMeta.meta);
+  _.forEach(constraintsMetaKeys, (constraintKey) => {
+    const constraint = constraintsMeta.meta[constraintKey];
+    const siftConstraint = {};
+    // handle special field constraints.meta.credential
+    if (constraintKey === 'credential') {
+      siftConstraint.identifier = constraint;
+    } else if (constraint.is) {
+      siftConstraint[constraintKey] = constraint.is;
+    } else {
+      throw new Error(`Malformed meta constraint "${constraintKey}": missing the IS`);
+    }
+    resultConstraints.push(siftConstraint);
+  });
+  return resultConstraints;
+}
+function getLeavesClaimPaths(signLeaves) {
+  return _.map(signLeaves, 'claimPath');
+}
+
+function getClaimsWithFlatKeys(claims) {
+  const flattenDepth3 = flatten(claims, { maxDepth: 3 });
+  const flattenDepth2 = flatten(claims, { maxDepth: 2 });
+  const flattenClaim = _.merge({}, flattenDepth3, flattenDepth2);
+  return _(flattenClaim)
+    .toPairs()
+    .sortBy(0)
+    .fromPairs()
+    .value();
+}
 class VerifiableCredential extends AttestableEntity {
   constructor({
     metadata,
     claims,
+    evidence,
   }) {
     const claimValues = {};
     _.forEach(claims, (claim) => {
@@ -107,20 +182,26 @@ class VerifiableCredential extends AttestableEntity {
       _.set(claimValues, identifier, claim.value);
     });
 
-    super(metadata.identifier, { ...metadata, claim: claimValues });
+    const data = _.merge(metadata, { claim: claimValues });
 
-    const issuanceDateUCA = new Claim('claim-cvc:Meta.issuanceDate-v1', (new Date()).toISOString());
-    // TODO: Hardcode expiry date to null
-    const expiryUCA = new Claim('claim-cvc:Meta.expirationDate-v1', timestamp.toDate(timestamp.now('1y')).toISOString());
-    const issuerUCA = new Claim('claim-cvc:Meta.issuer-v1', metadata.issuer);
+    super(metadata.identifier, data, undefined, undefined, !_.isEmpty(claims));
+    if (!_.isEmpty(claims)) {
+      const issuanceDateUCA = new Claim('claim-cvc:Meta.issuanceDate-v1', (new Date()).toISOString());
+      // TODO: Hardcode expiry date to null
+      const expiryUCA = new Claim('claim-cvc:Meta.expirationDate-v1', timestamp.toDate(timestamp.now('1y')).toISOString());
+      const issuerUCA = new Claim('claim-cvc:Meta.issuer-v1', metadata.issuer);
 
-    const proofUCAs = _.concat(Object.values(claims), issuerUCA, issuanceDateUCA, expiryUCA);
+      const proofUCAs = _.concat(Object.values(claims), issuerUCA, issuanceDateUCA, expiryUCA);
 
-    this.metadata = metadata;
-    this.claims = claims;
-    this.proof = new CvcMerkleProof(proofUCAs);
+      this.metadata = metadata;
+      this.claims = claims;
+      this.proof = new CvcMerkleProof(proofUCAs);
 
-    this.claim = claimValues;
+      this.claim = claimValues;
+    }
+    if (evidence) {
+      this.evidence = serializeEvidence(evidence);
+    }
   }
 
   filter(requestedClaims) {
@@ -133,6 +214,79 @@ class VerifiableCredential extends AttestableEntity {
     });
 
     return filtered;
+  }
+
+  static nonCryptographicallySecureVerify(credential) {
+    const expiry = _.clone(credential.expirationDate);
+    const claims = _.clone(credential.claim);
+    const signature = _.clone(credential.proof);
+    const signLeaves = _.get(signature, 'leaves');
+    let valid = false;
+
+    const merkleTools = new MerkleTools();
+    const claimsWithFlatKeys = getClaimsWithFlatKeys(claims);
+    const leavesClaimPaths = getLeavesClaimPaths(signLeaves);
+    const invalidClaim = [];
+    const invalidExpiry = [];
+    const invalidValues = [];
+    const invalidHashs = [];
+    const invalidProofs = [];
+    _.forEach(_.keys(claimsWithFlatKeys), (claimKey) => {
+      // check if `claimKey` has a `claimPath` proof
+      const leaveIdx = _.indexOf(leavesClaimPaths, claimKey);
+      // if not found
+      if (leaveIdx === -1) {
+        // .. still test if parent key node may have a `claimPath` proof
+        _.findLastIndex(claimKey, '.');
+        const parentClaimKey = claimKey.substring(0, _.lastIndexOf(claimKey, '.'));
+        if (_.indexOf(leavesClaimPaths, parentClaimKey) > -1) {
+          // if yes, no problem, go to next loop
+          return;
+        }
+        // if no, include on invalidClaim array
+        invalidClaim.push(claimKey);
+      } else {
+        const leave = signLeaves[leaveIdx];
+        verifyLeave(leave, merkleTools, claims, signature, invalidValues, invalidHashs, invalidProofs);
+      }
+    });
+
+    // It has to be present Credential expiry even with null value
+    const expiryIdx = _.indexOf(leavesClaimPaths, 'meta.expirationDate');
+    if (expiryIdx >= 0) {
+      const expiryLeave = signLeaves[expiryIdx];
+      const metaClaim = {
+        meta: {
+          expirationDate: expiry,
+        },
+      };
+      const totalLengthBefore = invalidValues.length + invalidHashs.length + invalidProofs.length;
+      verifyLeave(expiryLeave, merkleTools, metaClaim, signature, invalidValues, invalidHashs, invalidProofs);
+      const totalLengthAfter = invalidValues.length + invalidHashs.length + invalidProofs.length;
+      if (totalLengthAfter === totalLengthBefore) {
+        // expiry has always to be string formatted date or null value
+        // if it is null it means it's indefinitely
+        if (expiry !== null) {
+          const now = new Date();
+          const expiryDate = new Date(expiry);
+          if (now.getTime() > expiryDate.getTime()) {
+            invalidExpiry.push(expiry);
+          }
+        }
+      }
+    }
+    if (_.isEmpty(invalidClaim)
+        && _.isEmpty(invalidValues)
+        && _.isEmpty(invalidHashs)
+        && _.isEmpty(invalidProofs)
+        && _.isEmpty(invalidExpiry)) {
+      valid = true;
+    }
+    return valid;
+  }
+
+  verifyProofs() {
+    return this.nonCryptographicallySecureVerify(this);
   }
 
   async requestAnchor(options) {
@@ -296,6 +450,56 @@ class VerifiableCredential extends AttestableEntity {
       valid = true;
     }
     return valid;
+  }
+
+  /**
+   * isMatchCredentialMeta
+   * @param {*} credentialMeta An Object contains only VC meta fields. Other object keys will be ignored.
+   * @param {*} constraintsMeta Example:
+   * // constraints.meta = {
+   * //   "credential": "credential-civ:Credential:CivicBasic-1",
+   * //   "issuer": {
+   * //     "is": {
+   * //       "$eq": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD"
+   * //     }
+   * //   }
+   * @returns boolean
+   */
+  static isMatchCredentialMeta(credentialMeta, constraintsMeta) {
+    const siftCompatibleConstraints = transformMetaConstraint(constraintsMeta);
+
+    if (_.isEmpty(siftCompatibleConstraints)) return false;
+
+    const credentialMetaMatchesConstraint = (constraint) => sift(constraint)([credentialMeta]);
+
+    return siftCompatibleConstraints.reduce(
+      (matchesAllConstraints, nextConstraint) => matchesAllConstraints && credentialMetaMatchesConstraint(nextConstraint),
+      true,
+    );
+  }
+
+  static fromJSON(verifiableCredentialJSON) {
+    // const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
+    //   verifiableCredentialJSON.version);
+
+    // verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
+    const newObj = new VerifiableCredential({
+      metadata: {
+        identifier: verifiableCredentialJSON.identifier,
+        issuer: verifiableCredentialJSON.issuer,
+      },
+    });
+
+    newObj.id = _.clone(verifiableCredentialJSON.id);
+    newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
+    newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
+    // newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
+    newObj.version = _.clone(verifiableCredentialJSON.version);
+    newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
+    newObj.claim = _.cloneDeep(verifiableCredentialJSON.claim);
+    newObj.proof = _.cloneDeep(verifiableCredentialJSON.proof);
+    newObj.granted = _.clone(verifiableCredentialJSON.granted) || null;
+    return newObj;
   }
 }
 
