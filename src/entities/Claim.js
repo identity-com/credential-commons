@@ -41,7 +41,12 @@ class Claim extends AttestableEntity {
           const parts = part.split(':');
           const subPath = parts[1].replace(new RegExp(`^${rootIdentifier}\\.`), '');
 
-          _.set(value, subPath, parts[3]);
+          let newValue = parts[3];
+          // TODO: Consider this ?
+          if (newValue === 'null') {
+            newValue = null;
+          }
+          _.set(value, subPath, newValue);
         }
       });
 
@@ -161,12 +166,16 @@ class Claim extends AttestableEntity {
       });
       return ret;
     } if (this.type === 'array') {
-      throw new Error('no array handling');
-    } else {
-      // TODO: is this correct
-      const path = _.last(this.parsedIdentifier.name.split('.'));
-      return `urn:${parentPath == null ? '' : parentPath}${path}:${this.salt}:${this.value}|`;
+      const x = this;
+      const arraySchema = this.builder.loadSchemaObject(this.schema.items.$ref);
+
+      const itemsValues = _.reduce(this.value,
+        (result, item) => `${result}${new Claim(arraySchema.schema.title, item).getAttestableValue(null)},`, '');
+      return `urn:${parentPath}:${this.salt}:[${itemsValues}]`;
     }
+    // TODO: is this correct
+    const path = _.last(this.parsedIdentifier.name.split('.'));
+    return `urn:${parentPath == null ? '' : parentPath}${path}:${this.salt}:${this.value}|`;
   }
 }
 

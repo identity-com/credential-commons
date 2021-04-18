@@ -2,6 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://identity.com/schemas/claim-cvc:Meta.expirationDate-v1",
   "title": "claim-cvc:Meta.expirationDate-v1",
-  "type": "string",
+  "type": ["string", "null"],
   "format": "date-time"
 }

@@ -214,7 +214,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:expirationDate",
+        "identifier": "claim-cvc:Meta.expirationDate-v1",
         "value": "urn:expirationDate:73719558c8aa661f54267f5b5aa25c334e85fd95e3decba2a196eff5e0ac3f78:null|",
         "claimPath": "meta.expirationDate",
         "targetHash": "4e9539df672c8789b924dc5eaf4d457ba75452e259edca9543e30130600e38f9",

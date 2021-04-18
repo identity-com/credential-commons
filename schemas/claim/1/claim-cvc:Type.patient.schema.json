@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://identity.com/schemas/claim-cvc:Type.patient-v1",
+  "title": "claim-cvc:Type.patient-v1",
+  "type": "object",
+  "properties": {
+    "fullName": {
+      "type": "string"
+    },
+    "dateOfBirth": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 31
+        },
+        "month": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "year": {
+          "type": "number",
+          "minimum": 1900
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

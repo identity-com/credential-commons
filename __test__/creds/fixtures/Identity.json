@@ -2,12 +2,12 @@
   "id": "e24b2c57-3d78-42c3-9111-aaabcab8006d",
   "issuer": "jest:test:fe0ca5d0-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.893Z",
-  "identifier": "credential-cvc:Identity-v1",
+  "identifier": "credential-alt:Identity-v3",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "credential-cvc:Identity-v1"
+    "credential-alt:Identity-v3"
   ],
   "claim": {
     "identity": {

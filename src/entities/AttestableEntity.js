@@ -18,6 +18,7 @@ class AttestableEntity {
 
     const { schemaInformation } = this.parsedIdentifier;
 
+    this.schemaInformation = schemaInformation;
     if (validate) {
       builder.validate(schemaInformation.ref, value);
     }
@@ -31,6 +32,10 @@ class AttestableEntity {
 
     const secureRandom = services.container.SecureRandom;
     this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
+  }
+
+  validate() {
+    this.builder.validate(this.schemaInformation.ref, this.value);
   }
 }
 

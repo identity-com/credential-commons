@@ -2,12 +2,12 @@
   "id": "0b41d088-03cb-4cce-b5c8-908fb6207cac",
   "issuer": "",
   "issuanceDate": "2019-06-18T18:40:43.324Z",
-  "identifier": "credential-cvc:IdDocument-v1",
+  "identifier": "credential-cvc:IdDocument-v3",
   "expirationDate": null,
   "version": "1",
   "type": [
     "Credential",
-    "credential-cvc:IdDocument-v1"
+    "credential-cvc:IdDocument-v3"
   ],
   "claim": {
     "document": {

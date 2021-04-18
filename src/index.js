@@ -1,5 +1,5 @@
 const { Claim, Identifier, AttestableEntity } = require('./entities');
-const VC = require('./creds/VerifiableCredential_old');
+const VC = require('./entities/VerifiableCredential');
 const { initServices, services } = require('./services/index');
 const isValidGlobalIdentifier = require('./isValidGlobalIdentifier');
 const errors = require('./errors');

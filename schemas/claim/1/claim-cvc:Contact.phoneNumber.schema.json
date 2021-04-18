@@ -6,19 +6,25 @@
   "required": ["country", "countryCode", "number", "lineType"],
   "properties": {
     "country": {
-      "type": "string"
+      "type": "string",
+      "attestable": true
     },
     "countryCode": {
-      "type": "string"
+      "type": "string",
+      "attestable": true
+
     },
     "number": {
-      "type": "string"
+      "type": "string",
+      "attestable": true
     },
     "extension": {
-      "type": "string"
+      "type": "string",
+      "attestable": true
     },
     "lineType": {
-      "type": "string"
+      "type": "string",
+      "attestable": true
     }
   },
   "additionalProperties": false,
