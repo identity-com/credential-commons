@@ -6,6 +6,7 @@ const sift = require('sift').default;
 const validUrl = require('valid-url');
 const MerkleTools = require('merkle-tools');
 const flatten = require('flat');
+const moment = require('moment-mini');
 const { CvcMerkleProof } = require('../creds/CvcMerkleProof');
 const { Claim } = require('./Claim');
 const { AttestableEntity } = require('./AttestableEntity');
@@ -263,7 +264,7 @@ class VerifiableCredential extends AttestableEntity {
     if (!_.isEmpty(claims)) {
       const issuanceDateUCA = new Claim('claim-cvc:Meta.issuanceDate-v1', (new Date()).toISOString());
       // TODO: Hardcode expiry date to null
-      const expiryUCA = new Claim('claim-cvc:Meta.expirationDate-v1', timestamp.toDate(timestamp.now('1y')).toISOString());
+      const expiryUCA = new Claim('claim-cvc:Meta.expirationDate-v1', moment(timestamp.toDate(timestamp.now('1y'))).format());
       const issuerUCA = new Claim('claim-cvc:Meta.issuer-v1', metadata.issuer);
 
       const proofUCAs = _.concat(Object.values(claims), issuerUCA, issuanceDateUCA, expiryUCA);
@@ -276,6 +277,8 @@ class VerifiableCredential extends AttestableEntity {
 
       this.granted = null;
     }
+
+    this.transient = this.schemaInformation.schema.transient === true;
 
     if (evidence) {
       this.evidence = serializeEvidence(evidence);
@@ -557,10 +560,6 @@ class VerifiableCredential extends AttestableEntity {
   }
 
   static fromJSON(verifiableCredentialJSON) {
-    // const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
-    //   verifiableCredentialJSON.version);
-
-    // verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
     const newObj = new VerifiableCredential({
       metadata: {
         identifier: verifiableCredentialJSON.identifier,

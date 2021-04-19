@@ -171,8 +171,8 @@
       },
       {
         "identifier": "claim-cvc:Address.county-v1",
-        "value": "urn:country:75c6faa83a9621b3cf6e05762d1440be1a58c857faee4fab50d0c62575a3e7e6:Brazil|",
-        "claimPath": "identity.address.country",
+        "value": "urn:county:75c6faa83a9621b3cf6e05762d1440be1a58c857faee4fab50d0c62575a3e7e6:Brazil|",
+        "claimPath": "identity.address.county",
         "targetHash": "ac2e07db0f6c4923e1cb67dcd387af07150d6043fcdd12ba7c884d72709b724b",
         "node": [
           {
@@ -193,7 +193,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuer",
+        "identifier": "clai-cvc:Meta.issuer-v1",
         "value": "urn:issuer:fd95eb174ddb8a0ec545894995a7ee542430fd9ce20da3117b35d8fbe29b7dcb:did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD|",
         "claimPath": "meta.issuer",
         "targetHash": "fdc74b079604ba0a45cfdb771e677b3ae426d07d8536d18d6a1b98e5781be56a",
@@ -216,7 +216,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuanceDate",
+        "identifier": "claim-cvc:Meta.issuanceDate-v1",
         "value": "urn:issuanceDate:08df34a6cea04496033a2e467019e57c17f63c730c6599a57238e77d9d842577:2018-11-14T09:00:43.439Z|",
         "claimPath": "meta.issuanceDate",
         "targetHash": "a286fc2a5baef447725b08cf55466589e31990038ee42269fd43d59cf186d613",
@@ -239,7 +239,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:expirationDate",
+        "identifier": "claim-cvc:Meta.expirationDate-v1",
         "value": "urn:expirationDate:330447afa605c5d0dfc277489c3cc8cf7fb78552376629d47c2eb56eafa791cc:2028-11-13T19:08:23.439Z|",
         "claimPath": "meta.expirationDate",
         "targetHash": "17a922e8326ede33f3b9ce28077a6ab0babf541419b3d991842a0fbd4ce53124",

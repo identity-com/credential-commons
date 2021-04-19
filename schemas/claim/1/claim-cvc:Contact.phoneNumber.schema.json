@@ -12,7 +12,6 @@
     "countryCode": {
       "type": "string",
       "attestable": true
-
     },
     "number": {
       "type": "string",

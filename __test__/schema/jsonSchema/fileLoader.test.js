@@ -17,6 +17,7 @@ describe('fileLoader', () => {
     });
 
     ajv.addKeyword('attestable');
+    ajv.addKeyword('transient');
 
     // add data formats such as date-time
     addFormats(ajv);

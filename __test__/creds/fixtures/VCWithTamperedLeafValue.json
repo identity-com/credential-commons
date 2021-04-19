@@ -2,12 +2,12 @@
   "id": "3636227c-5adf-4135-b81c-6dd1da53fd67",
   "issuer": "",
   "issuanceDate": "2018-11-13T18:54:11.665Z",
-  "identifier": "credential-cvc:Email-v1",
+  "identifier": "credential-cvc:Email-v3",
   "expirationDate": null,
-  "version": "1",
+  "version": "3",
   "type": [
     "Credential",
-    "credential-cvc:Email-v1"
+    "credential-cvc:Email-v3"
   ],
   "claim": {
     "contact": {
@@ -72,7 +72,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuer",
+        "identifier": "claim-cvc:Meta.issuer-v1",
         "value": "urn:issuer:3c1d9cc9f8bd5dd7f4845c18017c559ecee758c6dc2f5a3b63385bf3f681e13a:|",
         "claimPath": "meta.issuer",
         "targetHash": "321c8608ee0b80eab76db4d753e1f5311e722d0d77468e376bc25a78b8560b1b",
@@ -95,7 +95,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuanceDate",
+        "identifier": "claim-cvc:Meta.issuanceDate-v1",
         "value": "urn:issuanceDate:0029acb02ff26faf7775883957e9a5271b358f56734496b7ffde2760ace9ddce:2018-11-13T18:54:11.665Z|",
         "claimPath": "meta.issuanceDate",
         "targetHash": "2820718fc34e3e07c40c4c0c098937a193a63839695768f38630acfbecaf85d",
@@ -118,7 +118,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:expirationDate",
+        "identifier": "claim-cvc:Meta.expirationDate-v1",
         "value": "urn:expirationDate:f437c1d530d5422b3df947b7d97da82c5abfee582c1be15bd2900ff35e8d0624:null|",
         "claimPath": "meta.expirationDate",
         "targetHash": "c73ce4be4e264f366dfc8a95abf7e507e75d13a2a06af5e50d2dc09e6c71d9cd",

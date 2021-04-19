@@ -2,12 +2,12 @@
   "id": "7e984bcc-602a-478f-adaa-5a586e4abae6",
   "issuer": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD",
   "issuanceDate": "2018-11-20T20:41:59.861Z",
-  "identifier": "credential-cvc:GenericDocumentId-v1",
+  "identifier": "credential-cvc:GenericDocumentId-v3",
   "expirationDate": null,
-  "version": "1",
+  "version": "3",
   "type": [
     "Credential",
-    "credential-cvc:GenericDocumentId-v1"
+    "credential-cvc:GenericDocumentId-v3"
   ],
   "claim": {
     "document": {
@@ -363,8 +363,8 @@
       },
       {
         "identifier": "claim-cvc:Address.county-v1",
-        "value": "urn:country:9bdff9437318cbee926fc1f43bf21a66b1054d1ffb7c0af0f26b6d5092617ce5:C6DK4Ad534|",
-        "claimPath": "document.address.country",
+        "value": "urn:county:9bdff9437318cbee926fc1f43bf21a66b1054d1ffb7c0af0f26b6d5092617ce5:C6DK4Ad534|",
+        "claimPath": "document.address.county",
         "targetHash": "b519dbefb94f5495026a4b9c5a696d7b22d81cbd75542c9e45e84664a3d9eca0",
         "node": [
           {

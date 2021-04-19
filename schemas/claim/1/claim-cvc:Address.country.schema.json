@@ -3,10 +3,5 @@
   "$id": "http://identity.com/schemas/claim-cvc:Address.country-v1",
   "title": "claim-cvc:Address.country-v1",
   "type": "string",
-  "properties": {
-    "country": {
-      "type": "string"
-    }
-  },
   "additionalProperties": false
 }

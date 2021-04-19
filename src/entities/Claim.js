@@ -39,18 +39,24 @@ class Claim extends AttestableEntity {
       _.forEach(value.attestableValue.split('|'), (part) => {
         if (!_.isEmpty(part)) {
           const parts = part.split(':');
-          const subPath = parts[1].replace(new RegExp(`^${rootIdentifier}\\.`), '');
+          const subPath = parts[1].replace(new RegExp(`^${rootIdentifier}\\.?`), '');
 
           let newValue = parts[3];
           // TODO: Consider this ?
           if (newValue === 'null') {
             newValue = null;
           }
-          _.set(value, subPath, newValue);
+          if (_.isEmpty(subPath)) {
+            value = newValue;
+          } else {
+            _.set(value, subPath, newValue);
+          }
         }
       });
 
-      delete value.attestableValue;
+      if (!_.isEmpty(value) && typeof value === 'object') {
+        delete value.attestableValue;
+      }
     }
 
     super(identifier, value, uriPrefix, builder);

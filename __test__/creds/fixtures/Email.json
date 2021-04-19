@@ -2,12 +2,12 @@
   "id": "e3dc1ceb-3899-454f-a80c-52c97a0cc9d8",
   "issuer": "jest:test:fe07c3d0-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.862Z",
-  "identifier": "credential-cvc:Email-v1",
+  "identifier": "credential-cvc:Email-v3",
   "expirationDate": null,
-  "version": "1",
+  "version": "3",
   "type": [
     "Credential",
-    "credential-cvc:Email-v1"
+    "credential-cvc:Email-v3"
   ],
   "claim": {
     "contact": {

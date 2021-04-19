@@ -573,31 +573,31 @@ describe('Verifiable Credentials', () => {
 
   it('Should filter claims for GenericDocumentId asking for cvc:Document:Type and return only that claim', () => {
     const typeValue = 'passport';
-    const type = new Claim('claim-cvc:Document.type-v1', typeValue, '1');
+    const type = new Claim('claim-cvc:Document.type-v1', typeValue);
     const numberValue = '3bj1LUg9yG';
-    const number = new Claim('claim-cvc:Document.number-v1', numberValue, '1');
+    const number = new Claim('claim-cvc:Document.number-v1', numberValue);
     const nameOnDocumentValue = {
       givenNames: 'e8qhs4Iak1',
       familyNames: '4h8sLtEfav',
       otherNames: 'bDTn4stMpX',
     };
-    const nameOnDocument = new Claim('claim-cvc:Document.name-v1', nameOnDocumentValue, '1');
+    const nameOnDocument = new Claim('claim-cvc:Document.name-v1', nameOnDocumentValue);
     const genderValue = 'jFtCBFceQI';
-    const gender = new Claim('claim-cvc:Document.gender-v1', genderValue, '1');
+    const gender = new Claim('claim-cvc:Document.gender-v1', genderValue);
     const issueLocationValue = 'OZbhzBU8ng';
-    const issueLocation = new Claim('claim-cvc:Document.issueLocation-v1', issueLocationValue, '1');
+    const issueLocation = new Claim('claim-cvc:Document.issueLocation-v1', issueLocationValue);
     const issueAuthorityValue = 'BO2xblNSVK';
-    const issueAuthority = new Claim('claim-cvc:Document.issueAuthority-v1', issueAuthorityValue, '1');
+    const issueAuthority = new Claim('claim-cvc:Document.issueAuthority-v1', issueAuthorityValue);
     const issueCountryValue = 'p4dNUeAKtI';
-    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', issueCountryValue, '1');
+    const issueCountry = new Claim('claim-cvc:Document.issueCountry-v1', issueCountryValue);
     const placeOfBirthValue = 'r4hIHbyLru';
-    const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue, '1');
+    const placeOfBirth = new Claim('claim-cvc:Document.placeOfBirth-v1', placeOfBirthValue);
     const dateOfBirthValue = {
       day: 23,
       month: 2,
       year: 1973,
     };
-    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+    const dateOfBirth = new Claim('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue);
     const addressValue = {
       country: 'IH4aiXuEoo',
       county: 'akKjaQehNK',
@@ -607,7 +607,7 @@ describe('Verifiable Credentials', () => {
       city: 'WU9GJ0R9be',
       postalCode: 'ci1DMuz16W',
     };
-    const address = new Claim('claim-cvc:Document.address-v1', addressValue, '1');
+    const address = new Claim('claim-cvc:Document.address-v1', addressValue);
     const propertiesValue = {
       dateOfIssue: {
         day: 18,
@@ -620,16 +620,16 @@ describe('Verifiable Credentials', () => {
         year: 1957,
       },
     };
-    const properties = new Claim('claim-cvc:Document.properties-v1', propertiesValue, '1');
+    const properties = new Claim('claim-cvc:Document.properties-v1', propertiesValue);
     const imageValue = {
       front: '9NMgeFErNd',
       frontMD5: 'zgOvmWXruS',
       back: 'uPrJKO3cbq',
       backMD5: '0yr9zkdApo',
     };
-    const image = new Claim('cvc:Document:image', imageValue, '1');
-    const credential = new VerifiableCredential(
-      'credential-cvc:GenericDocumentId-v1', '', null, [type, number, nameOnDocument, gender, issueAuthority,
+    const image = new Claim('claim-cvc:Document.image-v1', imageValue);
+    const credential = new VerifiableCredentialOld(
+      'credential-cvc:GenericDocumentId-v3', '', null, [type, number, nameOnDocument, gender, issueAuthority,
         issueLocation, issueCountry, placeOfBirth, properties, address, image, dateOfBirth], '1',
     );
     const filtered = credential.filter(['claim-cvc:Document.type-v1']);
@@ -756,7 +756,7 @@ describe('Verifiable Credentials', () => {
     };
 
     const uca = new Claim('claim-cvc:Contact.phoneNumber-v1', value);
-    const credential = new VerifiableCredentialOld('credential-cvc:PhoneNumber-v1', '', null, [uca], '1');
+    const credential = new VerifiableCredentialOld('credential-cvc:PhoneNumber-v2', '', null, [uca], '1');
     const isValid = VerifiableCredential.nonCryptographicallySecureVerify(credential);
     expect(isValid).toBeTruthy();
   });
@@ -912,7 +912,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('should have a filled "granted" field after ".grantUsageFor()" request', async (done) => {
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     await cred.requestAnchor();
     expect(cred).toBeDefined();
     expect(cred.granted).toBeNull();
@@ -939,7 +939,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('should verifyGrant() accordingly', async (done) => {
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
@@ -966,7 +966,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('should fail verifyGrant() with a invalid "granted" token', async (done) => {
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
@@ -997,7 +997,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('should verify a granted credential json with requesterGrantVerify', async (done) => {
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
@@ -1023,7 +1023,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('should fail to verify a credential json with invalid granted token with requesterGrantVerify', async (done) => {
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
@@ -1080,7 +1080,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('should fail verify() with maximum level of GRANTED if granted is invalid', async (done) => {
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     const anchoredCred = await cred.requestAnchor();
     expect(anchoredCred).toBeDefined();
     expect(anchoredCred.granted).toBeNull();
@@ -1170,7 +1170,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('Should match with one constraint', () => {
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
         { path: 'identity.name.givenNames', is: { $eq: 'Max' } },
@@ -1230,9 +1230,9 @@ describe('Verifiable Credentials', () => {
   it('Should match constraints targeting the parent properties and string deltas', () => {
     const exactlyFortyYearsAgo = getExactYearsAgo(40);
     const dob = dateToDOBClaim(exactlyFortyYearsAgo);
-    const name = nameClaim();
+    const name = new Claim('claim-cvc:Identity.name-v1', identityName);
 
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
         { path: 'identity.dateOfBirth', is: { $lte: '-40y' } },
@@ -1241,7 +1241,7 @@ describe('Verifiable Credentials', () => {
   });
 
   it('Should not match', () => {
-    const cred = new VerifiableCredential('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
+    const cred = new VerifiableCredentialOld('credential-alt:Identity-v1', uuidv4(), null, [name, dob], '1');
     expect(cred.isMatch({
       claims: [
         { path: 'identity.name.first', is: { $eq: 'Maxime' } },

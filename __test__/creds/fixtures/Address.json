@@ -2,12 +2,12 @@
   "id": "7704ddf0-6226-4b2b-9146-d36083c7b01d",
   "issuer": "jest:test:fe0c0990-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.890Z",
-  "identifier": "credential-cvc:Address-v1",
+  "identifier": "credential-cvc:Address-v2",
   "expirationDate": null,
-  "version": "1",
+  "version": "2",
   "type": [
     "Credential",
-    "credential-cvc:Address-v1"
+    "credential-cvc:Address-v2"
   ],
   "claim": {
     "identity": {
@@ -79,8 +79,8 @@
       },
       {
         "identifier": "claim-cvc:Address.county-v1",
-        "value": "urn:country:e3a8e92030c324a07c0a431f523d6311d55ec834dfe55c78a7c60f004d716ef1:mqVSbDJF7I|",
-        "claimPath": "identity.address.country",
+        "value": "urn:county:e3a8e92030c324a07c0a431f523d6311d55ec834dfe55c78a7c60f004d716ef1:mqVSbDJF7I|",
+        "claimPath": "identity.address.county",
         "targetHash": "4ad22678ea5865cf00e123357a06599943fb3c5fffc1f5aeb9881c902306b95d",
         "node": [
           {
@@ -193,7 +193,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuer",
+        "identifier": "claim-cvc:Meta.issuer-v1",
         "value": "urn:issuer:40170bb006cc13d4f4868db5c7701fda8757857c910d64eff703172da20ba87d:jest:test:fe0c0990-e8b0-11e8-8a40-7fe4d191eb47|",
         "claimPath": "meta.issuer",
         "targetHash": "8bf25c5f15314b652511a075e9d952f8fb64582d642fc9289cc12e00547f7627",
@@ -216,7 +216,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuanceDate",
+        "identifier": "claim-cvc:Meta.issuanceDate-v1",
         "value": "urn:issuanceDate:dd867d88bef20850d36f7b5c406c68cc57657450e206eeb9da41bbf3b5773deb:2018-11-15T08:32:30.890Z|",
         "claimPath": "meta.issuanceDate",
         "targetHash": "df8a9da6a83881d4e2dc96874f8c34a32f08247614469cf3935289ea837eaa4d",
@@ -239,7 +239,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:expirationDate",
+        "identifier": "claim-cvc:Meta.expirationDate-v1",
         "value": "urn:expirationDate:2fe45cc905cd094206e2e929b28ee7fc761c7e1b4e13a5e7eb9d73891333919e:null|",
         "claimPath": "meta.expirationDate",
         "targetHash": "7f557ffcc00e1d0b840c0024edda1a2d08ca4c8674b3ddd5c635b5bfc2566302",

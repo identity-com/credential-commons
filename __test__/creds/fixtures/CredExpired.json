@@ -170,7 +170,7 @@
         ]
       },
       {
-        "identifier": "claim-cvc:Address.county-v1",
+        "identifier": "claim-cvc:Address.country-v1",
         "value": "urn:country:0ab5eb5f6129c1359e11c1eba514ffac6c5c9876a3ff99f839312dccf5560d61:Brazil|",
         "claimPath": "identity.address.country",
         "targetHash": "56a50a2a6debbea623de511b769e53a6d28773199115e108ff6618b85e912081",
@@ -193,7 +193,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuer",
+        "identifier": "claim-cvc:Meta.issuer-v1",
         "value": "urn:issuer:f99a51fb30de4ed925d04ce3cbdb9bfb433b82d37fa7a813e6a1c7f9aa912bbc:did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD|",
         "claimPath": "meta.issuer",
         "targetHash": "f8bd53c96d5a6ee23074c1480b48e4ebf704b8aa009987f880e49511370f46f9",
@@ -216,7 +216,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuanceDate",
+        "identifier": "claim-cvc:Meta.issuanceDate-v1",
         "value": "urn:issuanceDate:4e89a4981f5543ae8efbdde2ac64684a1c6decb4f004b3dd9daa8b785e1eda95:2018-11-14T08:59:12.241Z|",
         "claimPath": "meta.issuanceDate",
         "targetHash": "a5f7edc588233634be469b499add5090fd01bdd7bba3ef05d0f48e96eea5634d",
@@ -239,7 +239,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:expirationDate",
+        "identifier": "claim-cvc:Meta.expirationDate-v1",
         "value": "urn:expirationDate:67d7d4a87e862bd72c24b198d1773dbdf2bb6ae424617427cf434f004a03fa19:2008-11-13T22:51:32.241Z|",
         "claimPath": "meta.expirationDate",
         "targetHash": "552ac625ba33eaecee589d226da8bf6c206bcc634bc99d79b46f35ccd34c22f2",

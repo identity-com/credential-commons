@@ -23,6 +23,7 @@ const ajv = new Ajv({
 // add data formats such as date-time
 addFormats(ajv);
 ajv.addKeyword('attestable');
+ajv.addKeyword('transient');
 
 /**
  * For a given identifier, load its related schema and a reference to the part of it that this identifier uses.
