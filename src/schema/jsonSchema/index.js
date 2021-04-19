@@ -4,6 +4,7 @@
  * Imports and validates JSON Schema objects
  */
 
+const _ = require('lodash');
 const path = require('path');
 const fs = require('fs');
 const Ajv = require('ajv').default;
@@ -132,4 +133,46 @@ const initialize = () => fileLoader.loadAll(ajv).then((schemas) => {
   return schemas;
 });
 
-module.exports = { initialize, loadSchemaObject, validate };
+// TODO: Handling Array Types
+function schemaWithProperties(schema) {
+  const newSchema = _.clone(schema);
+  if (newSchema.type !== 'object') {
+    return newSchema;
+  }
+
+  if (!_.isEmpty(schema.allOf)) {
+    _.forEach(schema.allOf, (allOf) => {
+      if (!_.isEmpty(allOf.$ref)) {
+        const split = allOf.$ref.split('#');
+        const innerSchema = loadSchemaObject(split[0]);
+        const propertyPath = split[1].replace(/^\//, '').replace(/\//, '.');
+
+        const details = _.get(innerSchema.schema, propertyPath);
+
+        if (_.isEmpty(newSchema.properties)) {
+          newSchema.properties = {};
+        }
+
+        if (!_.isEmpty(details.attestable)) {
+          newSchema.attestable = details.attestable;
+        }
+
+        newSchema.properties = _.merge(newSchema.properties, details.properties);
+      } else {
+        throw new Error('Handle other allOf possiblity');
+      }
+    });
+  }
+
+  // TODO: Risk of never ending recursion here... better way would be to compare against which values actually exist
+  //  at this level and avoid recursing further if no value is set
+  _.forEach(newSchema.properties, (property, name) => {
+    newSchema.properties[name] = schemaWithProperties(property);
+  });
+
+  return newSchema;
+}
+
+module.exports = {
+  initialize, loadSchemaObject, validate, schemaWithProperties,
+};

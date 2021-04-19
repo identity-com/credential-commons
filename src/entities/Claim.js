@@ -34,31 +34,6 @@ class Claim extends AttestableEntity {
   }
 
   constructor(identifier, value, uriPrefix, builder = DEFAULT_BUILDER) {
-    if (typeof value === 'object' && !_.isEmpty(value.attestableValue)) {
-      const rootIdentifier = identifier.replace(/^[^:]+:[^.]+\.([^-]+)-v[0-9]+/, '$1');
-      _.forEach(value.attestableValue.split('|'), (part) => {
-        if (!_.isEmpty(part)) {
-          const parts = part.split(':');
-          const subPath = parts[1].replace(new RegExp(`^${rootIdentifier}\\.?`), '');
-
-          let newValue = parts[3];
-          // TODO: Consider this ?
-          if (newValue === 'null') {
-            newValue = null;
-          }
-          if (_.isEmpty(subPath)) {
-            value = newValue;
-          } else {
-            _.set(value, subPath, newValue);
-          }
-        }
-      });
-
-      if (!_.isEmpty(value) && typeof value === 'object') {
-        delete value.attestableValue;
-      }
-    }
-
     super(identifier, value, uriPrefix, builder);
 
     const details = this.getDetailsForSchema(this.parsedIdentifier.schemaInformation);
@@ -109,46 +84,6 @@ class Claim extends AttestableEntity {
     return _.get(subSchema.schema, propertyPath);
   }
 
-  // TODO: Handling Array Types
-  schemaWithProperties(schema) {
-    const newSchema = _.clone(schema);
-    if (newSchema.type !== 'object') {
-      return newSchema;
-    }
-
-    if (!_.isEmpty(schema.allOf)) {
-      _.forEach(schema.allOf, (allOf) => {
-        if (!_.isEmpty(allOf.$ref)) {
-          const split = allOf.$ref.split('#');
-          const innerSchema = this.builder.loadSchemaObject(split[0]);
-          const propertyPath = split[1].replace(/^\//, '').replace(/\//, '.');
-
-          const details = _.get(innerSchema.schema, propertyPath);
-
-          if (_.isEmpty(newSchema.properties)) {
-            newSchema.properties = {};
-          }
-
-          if (!_.isEmpty(details.attestable)) {
-            newSchema.attestable = details.attestable;
-          }
-
-          newSchema.properties = _.merge(newSchema.properties, details.properties);
-        } else {
-          throw new Error('Handle other allOf possiblity');
-        }
-      });
-    }
-
-    // TODO: Risk of never ending recursion here... better way would be to compare against which values actually exist
-    //  at this level and avoid recursing further if no value is set
-    _.forEach(newSchema.properties, (property, name) => {
-      newSchema.properties[name] = this.schemaWithProperties(property);
-    });
-
-    return newSchema;
-  }
-
   addAttestableValues(list) {
     list.push({
       identifier: this.identifier,
@@ -172,7 +107,6 @@ class Claim extends AttestableEntity {
       });
       return ret;
     } if (this.type === 'array') {
-      const x = this;
       const arraySchema = this.builder.loadSchemaObject(this.schema.items.$ref);
 
       const itemsValues = _.reduce(this.value,

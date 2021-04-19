@@ -100,6 +100,19 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   if (!isValidProof) invalidProofs.push(leave.targetHash);
 }
 
+function getLeavesClaimPaths(signLeaves) {
+  return _.map(signLeaves, 'claimPath');
+}
+function getClaimsWithFlatKeys(claims) {
+  const flattenDepth3 = flatten(claims, { maxDepth: 3 });
+  const flattenDepth2 = flatten(claims, { maxDepth: 2 });
+  const flattenClaim = _.merge({}, flattenDepth3, flattenDepth2);
+  return _(flattenClaim)
+    .toPairs()
+    .sortBy(0)
+    .fromPairs()
+    .value();
+}
 /**
  * Non cryptographically secure verify the Credential
  * Performs a proofs verification only.
@@ -232,20 +245,7 @@ function transformMetaConstraint(constraintsMeta) {
   });
   return resultConstraints;
 }
-function getLeavesClaimPaths(signLeaves) {
-  return _.map(signLeaves, 'claimPath');
-}
 
-function getClaimsWithFlatKeys(claims) {
-  const flattenDepth3 = flatten(claims, { maxDepth: 3 });
-  const flattenDepth2 = flatten(claims, { maxDepth: 2 });
-  const flattenClaim = _.merge({}, flattenDepth3, flattenDepth2);
-  return _(flattenClaim)
-    .toPairs()
-    .sortBy(0)
-    .fromPairs()
-    .value();
-}
 class VerifiableCredential extends AttestableEntity {
   constructor({
     metadata,
@@ -264,7 +264,8 @@ class VerifiableCredential extends AttestableEntity {
     if (!_.isEmpty(claims)) {
       const issuanceDateUCA = new Claim('claim-cvc:Meta.issuanceDate-v1', (new Date()).toISOString());
       // TODO: Hardcode expiry date to null
-      const expiryUCA = new Claim('claim-cvc:Meta.expirationDate-v1', moment(timestamp.toDate(timestamp.now('1y'))).format());
+      this.expirationDate = timestamp.toDate(timestamp.now('1y'));
+      const expiryUCA = new Claim('claim-cvc:Meta.expirationDate-v1', moment(this.expirationDate).format());
       const issuerUCA = new Claim('claim-cvc:Meta.issuer-v1', metadata.issuer);
 
       const proofUCAs = _.concat(Object.values(claims), issuerUCA, issuanceDateUCA, expiryUCA);

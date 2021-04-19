@@ -171,7 +171,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuer",
+        "identifier": "claim-cvc:Meta:issuer-v1",
         "value": "urn:issuer:2477fdbab78769105cfd637c53b5fe4500f1b528b4917ca371e25e32ba27ad79:jest:test:fe0ca5d0-e8b0-11e8-8a40-7fe4d191eb47|",
         "claimPath": "meta.issuer",
         "targetHash": "32402efef3cd6155a1762e4017c30960127f5ac371276fa98b4071de9e4167e2",
@@ -194,7 +194,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:issuanceDate",
+        "identifier": "claim-cvc:Meta:issuanceDate-v1",
         "value": "urn:issuanceDate:ca2c56221898ce1dc364c8f4cf153f5b61d3c03b4505daede5cb23a22cd6f9ba:2018-11-15T08:32:30.893Z|",
         "claimPath": "meta.issuanceDate",
         "targetHash": "a6b536e9d69c7fbe30017c4d89de2e1e4501532e2f1de145a28dff904ac7fb67",
@@ -217,7 +217,7 @@
         ]
       },
       {
-        "identifier": "cvc:Meta:expirationDate",
+        "identifier": "claim-cvc:Meta:expirationDate-v1",
         "value": "urn:expirationDate:27d69dde4c16a4f841236ae17d4e5839667ddcff19a6bb99e679fe64be301006:null|",
         "claimPath": "meta.expirationDate",
         "targetHash": "e4f5675ab686ed53b7d5fa60bc0c412e59cc312648c515cf8ff88497b0e6e971",
