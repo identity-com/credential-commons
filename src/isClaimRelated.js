@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { definitions, Claim } = require('./claim/Claim');
 const vcDefinitions = require('./creds/definitions');
+const { schemaLoader } = require('./schemas/jsonSchema');
 /**
  * Validate an claim path against it's parent UserCollectableAttribute, and the parent Claim against the
  * dependencies of an Credential
@@ -10,8 +11,14 @@ const vcDefinitions = require('./creds/definitions');
  * @return true if the dependency exists and false if it doesn't
  */
 function isClaimRelated(claim, uca, credential) {
+  schemaLoader.loadSchemaFromTitle(claim);
+  schemaLoader.loadSchemaFromTitle(uca);
+  schemaLoader.loadSchemaFromTitle(credential);
+
   // first get the UCA identifier
   const ucaIdentifier = uca.substring(uca.indexOf('-') + 1, uca.lastIndexOf('-'));
+  schemaLoader.loadSchemaFromTitle(ucaIdentifier);
+
   // check on the credential commons if this identifier exists
   const ucaDefinition = definitions.find(definition => definition.identifier === ucaIdentifier);
   // does the UCA exist?

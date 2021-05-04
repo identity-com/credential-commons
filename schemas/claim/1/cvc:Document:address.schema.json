@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Document:address",
+  "$id": "http://identity.com/schemas/cvc:Document:address",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "http://identity.com/schemas/cvc:Type:address"
+    }
+  ],
+  "credentialItem": true
+}

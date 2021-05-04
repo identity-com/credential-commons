@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Random:node",
+  "$id": "http://identity.com/schemas/cvc:Random:node",
+  "description": "a random node on the merkleTree, ",
+  "type": "string",
+  "attestable": true
+}

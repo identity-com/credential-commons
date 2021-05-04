@@ -1,10 +1,12 @@
 const _ = require('lodash');
 const sjcl = require('sjcl');
 const { UserCollectableAttribute } = require('@identity.com/uca');
-const definitions = require('./definitions');
 const { services } = require('../services');
+const definitions = require('./definitions');
+const { schemaLoader } = require('../schemas/jsonSchema');
 
-const validIdentifiers = _.map(definitions, d => d.identifier);
+// const validIdentifiers = _.map(definitions, d => d.identifier);
+const { validIdentifiers } = schemaLoader;
 
 const getDefinition = (identifier, version) => (
   version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier })
@@ -43,13 +45,22 @@ function adaptIdentifierIfNeeded(identifier, version) {
 
 class Claim extends UserCollectableAttribute {
   constructor(identifier, value, version) {
+    schemaLoader.loadSchemaFromTitle(identifier);
+
     const currentIdentifier = adaptIdentifierIfNeeded(identifier, version);
+
     super(currentIdentifier, value, version, definitions);
     this.initialize(currentIdentifier, value, version);
+
+    // TODO: We should be validating this too ?
+    // if (!value.attestableValue) {
+    //   schemaLoader.validateSchema(identifier, value);
+    // }
   }
 
   initialize(identifier, value, version) {
     super.initialize(identifier, value, version);
+
     if (!this.salt) {
       const secureRandom = services.container.SecureRandom;
       this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
@@ -289,6 +300,8 @@ class Claim extends UserCollectableAttribute {
   }
 
   static getAllProperties(identifier, pathName) {
+    schemaLoader.loadSchemaFromTitle(identifier);
+
     const definition = _.find(definitions, { identifier });
     const properties = [];
     const type = UserCollectableAttribute.resolveType(definition, definitions);

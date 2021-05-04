@@ -4,11 +4,9 @@ const randomString = require('randomstring');
 const Type = require('type-of-is');
 const RandExp = require('randexp');
 const { UserCollectableAttribute: UCA, definitions: ucaDefinitions } = require('@identity.com/uca');
-const { Claim, definitions, getBaseIdentifiers } = require('../../claim/Claim');
+const { Claim, definitions } = require('../../claim/Claim');
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
-
-const getPropertyNameFromDefinition = definition => getBaseIdentifiers(definition.identifier).identifierComponents[2];
 
 const getPropertyType = value => Type.string(value).toLowerCase();
 
@@ -20,6 +18,11 @@ const processObject = (object, outputParam, parentKey) => {
 
   output.type = getPropertyType(objectProperties);
   output.properties = output.properties || {};
+
+  if (object.definition && object.definition.type.required) {
+    output.required = object.definition.type.required;
+  }
+
   const keys = Object.entries(objectProperties);
 
   // too much debate on this eslint
@@ -85,6 +88,59 @@ const processArray = (array, outputParam) => {
   return output;
 };
 
+function findBaseType(identifier) {
+  if (['String', 'Number', 'Boolean', 'Array'].includes(identifier)) {
+    return identifier.toLowerCase();
+  }
+
+  const definition = _.find(definitions, { identifier });
+
+  if (['String', 'Number', 'Boolean', 'Array'].includes(definition.type)) {
+    return definition.type.toLowerCase();
+  }
+
+  if (definition.type.properties) {
+    return 'object';
+  }
+
+  return findBaseType(definition.type);
+}
+
+function getProperiesFromDefinition(definition) {
+  const schemaProperties = {};
+  _.forEach(definition.type.properties, (property) => {
+    if (['String', 'Number', 'Boolean'].includes(property.type)) {
+      schemaProperties[property.name] = {
+        type: property.type.toLowerCase(),
+      };
+    } else {
+      const found = _.find(definitions, { identifier: property.type });
+
+      if (found.type.properties) {
+        schemaProperties[property.name] = {
+          type: 'object',
+          allOf: [{ $ref: `http://identity.com/schemas/${found.identifier}` }],
+        };
+      } else {
+        const type = findBaseType(found.type);
+
+        schemaProperties[property.name] = {
+          // TODO: Not searching deeper... check if needed
+          type,
+        };
+
+        if (type === 'array') {
+          schemaProperties[property.name].items = { $ref: `http://identity.com/schemas/${found.identifier}` };
+        } else if (property.type.toLowerCase() !== type) {
+          schemaProperties[property.name].allOf = [{ $ref: `http://identity.com/schemas/${found.identifier}` }];
+        }
+      }
+    }
+  });
+
+  return schemaProperties;
+}
+
 /**
  * Entry point of this class. Use this to generate an sample json data
  * then an json schema from that data. That way you do not need to
@@ -101,20 +157,54 @@ const process = (definition, json) => {
   const output = {
     $schema: DRAFT,
   };
+
   output.title = title;
+  output.$id = `http://identity.com/schemas/${title}`;
+  if (definition.description) {
+    output.description = definition.description;
+  }
+
   // Set initial object type
   output.type = Type.string(object).toLowerCase();
 
-  // Process object
-  if (output.type === 'object') {
+  if (['String', 'Number', 'Boolean'].includes(definition.type)) {
+    output.type = definition.type.toLowerCase();
+  } else if (output.type === 'object') {
     processOutput = processObject(object, {}, 'root');
     output.type = processOutput.type;
-    output.properties = processOutput.properties;
+
+    if (definition.type === 'Object' || typeof definition.type === 'object') {
+      output.properties = getProperiesFromDefinition(definition);
+
+      if (definition.type.required) {
+        output.required = definition.type.required;
+      }
+
+      // never allow additionalProperties
+      output.additionalProperties = false;
+    } else {
+      output.allOf = [{ $ref: `http://identity.com/schemas/${definition.type}` }];
+    }
+  } else if (output.type === 'array') {
+    output.items = {
+      $ref: `http://identity.com/schemas/${definition.items.type}`,
+    };
   }
 
-  // never allow additionalProperties
-  output.additionalProperties = false;
-  // Output
+  if (definition.enum) {
+    output.enum = _.values(definition.enum);
+  }
+
+  if (definition.pattern) {
+    output.pattern = definition.pattern.toString();
+  }
+
+  ['attestable', 'credentialItem', 'minimum', 'maximum'].forEach((property) => {
+    if (property in definition) {
+      output[property] = definition[property];
+    }
+  });
+
   return output;
 };
 
@@ -144,15 +234,21 @@ const makeJsonRecursion = (ucaDefinition, includeDefinitions = false) => {
     });
   } else if (typeName === 'Array') {
     const itemType = ucaDefinition.items.type;
-    const itemDefinition = _.find(definitions, { identifier: itemType });
+
+    let itemDefinition = _.find(definitions, { identifier: itemType });
+    if (!itemDefinition) {
+      itemDefinition = _.find(ucaDefinitions, { identifier: itemType });
+    }
     output = [makeJsonRecursion(itemDefinition, includeDefinitions)];
   } else if (typeName !== 'Object') { // not a reference
-    const propertyName = getPropertyNameFromDefinition(ucaDefinition);
-    if (typeof ucaDefinition.pattern !== 'undefined' && ucaDefinition.pattern !== null) {
-      output[propertyName] = new RandExp(ucaDefinition.pattern).gen();
-    } else {
-      output[propertyName] = generateRandomValueForType(ucaDefinition, includeDefinitions);
-    }
+    return generateRandomValueForType(ucaDefinition, includeDefinitions);
+
+    // const propertyName = getPropertyNameFromDefinition(ucaDefinition);
+    // if (typeof ucaDefinition.pattern !== 'undefined' && ucaDefinition.pattern !== null) {
+    //   output[propertyName] = new RandExp(ucaDefinition.pattern).gen();
+    // } else {
+    //   output[propertyName] = generateRandomValueForType(ucaDefinition, includeDefinitions);
+    // }
   } else { // a direct reference to a composite type
     output = generateRandomValueForType(ucaDefinition, includeDefinitions);
   }

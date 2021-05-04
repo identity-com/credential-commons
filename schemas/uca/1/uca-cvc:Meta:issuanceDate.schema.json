@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Meta:issuanceDate",
+  "$id": "http://identity.com/schemas/cvc:Meta:issuanceDate",
+  "description": "Credential date of issuance",
+  "type": "string",
+  "attestable": true
+}

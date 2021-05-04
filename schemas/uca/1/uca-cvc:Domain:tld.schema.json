@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Domain:tld",
+  "$id": "http://identity.com/schemas/cvc:Domain:tld",
+  "description": "also known as email address domain suffix, like .com, .org, .com.br",
+  "type": "string",
+  "credentialItem": false
+}

@@ -30,9 +30,10 @@ describe('Claim Constructions tests', () => {
     };
 
     function createClaim() {
-      return new Claim(identifier, value);
-    }
+      const c = new Claim(identifier, value);
 
+      return c;
+    }
     expect(createClaim).toThrowError('Missing required fields to claim-cvc:Identity.name-v1');
   });
 
@@ -226,6 +227,7 @@ describe('Claim Constructions tests', () => {
     expect(claim.getAttestableValues());
   });
 
+
   test('Construct Patient successfully', () => {
     const identifier = 'claim-cvc:Type.patient-v1';
     const value = {
@@ -236,6 +238,7 @@ describe('Claim Constructions tests', () => {
         year: 1945,
       },
     };
+
     const claim = new Claim(identifier, value);
     expect(claim).toBeDefined();
     expect(claim.getAttestableValue());
@@ -243,14 +246,14 @@ describe('Claim Constructions tests', () => {
   });
 
   test('Construct by NameGivenNames must result successfully', () => {
-    const v = new Claim.NameGivenNames('Joao');
+    const v = new Claim('cvc:Name:givenNames', 'Joao');
     expect(v).toBeDefined();
     expect(v.value).toBe('Joao');
   });
 
   test('Construct IdentityName must result successfully', () => {
     const value = { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' };
-    const v = new Claim.IdentityName(value);
+    const v = new Claim('claim-cvc:Identity.name-v1', value);
     expect(v).toBeDefined();
     expect(v.value.givenNames.value).toBe(value.givenNames);
     expect(v.value.otherNames.value).toBe(value.otherNames);
@@ -260,14 +263,14 @@ describe('Claim Constructions tests', () => {
   test('Claim should construct a complex Attestatble Value: claim-cvc:Identity.name-v1', () => {
     // eslint-disable-next-line max-len
     const aComplexAttestableValue = 'urn:name.familyNames:c443e0a97a2df34573f910927e25c58e597e211152dfb650e6210facacc1a065:Santos|urn:name.givenNames:f14ab211784a3b3d2f20d423847a775ad56c3be8104a51aa084f0c94756d953b:Joao|urn:name.otherNames:09a31dab0a537ac5330a07df63effd9d2f55e91845956b58119843835f7dd9ed:Barbosa|';
-    const v = new Claim.IdentityName({ attestableValue: aComplexAttestableValue });
+    const v = new Claim('claim-cvc:Identity.name-v1', { attestableValue: aComplexAttestableValue });
     expect(v).toBeDefined();
   });
 
   test('Claim should create claim path correctly', () => {
     // eslint-disable-next-line max-len
     const aComplexAttestableValue = 'urn:name.familyNames:c443e0a97a2df34573f910927e25c58e597e211152dfb650e6210facacc1a065:Santos|urn:name.givenNames:f14ab211784a3b3d2f20d423847a775ad56c3be8104a51aa084f0c94756d953b:Joao|urn:name.otherNames:09a31dab0a537ac5330a07df63effd9d2f55e91845956b58119843835f7dd9ed:Barbosa|';
-    const v = new Claim.IdentityName({ attestableValue: aComplexAttestableValue });
+    const v = new Claim('claim-cvc:Identity.name-v1', { attestableValue: aComplexAttestableValue });
     expect(v).toBeDefined();
     const claimPath = v.getClaimPath();
     expect(claimPath).toBe('identity.name');

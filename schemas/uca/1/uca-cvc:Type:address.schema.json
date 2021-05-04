@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Type:address",
+  "$id": "http://identity.com/schemas/cvc:Type:address",
+  "type": "object",
+  "properties": {
+    "country": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Address:country"
+        }
+      ]
+    },
+    "county": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Address:county"
+        }
+      ]
+    },
+    "state": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Address:state"
+        }
+      ]
+    },
+    "street": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Address:street"
+        }
+      ]
+    },
+    "unit": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Address:unit"
+        }
+      ]
+    },
+    "city": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Address:city"
+        }
+      ]
+    },
+    "postalCode": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Address:postalCode"
+        }
+      ]
+    }
+  },
+  "required": [
+    "street",
+    "city",
+    "state",
+    "country"
+  ],
+  "additionalProperties": false,
+  "credentialItem": false
+}

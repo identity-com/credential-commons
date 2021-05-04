@@ -753,9 +753,10 @@ ucaDefinitions.forEach((ucaDefinition) => {
     }
     return found;
   });
-  if (!found) {
-    definitions.push(ucaDefinition);
-  }
+  // if (!found) {
+  definitions.push(ucaDefinition);
+  // }
 });
 
-module.exports = definitions;
+module.exports = [];
+// module.exports = definitions;

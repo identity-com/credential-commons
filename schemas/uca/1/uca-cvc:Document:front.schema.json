@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Document:front",
+  "$id": "http://identity.com/schemas/cvc:Document:front",
+  "type": "string"
+}

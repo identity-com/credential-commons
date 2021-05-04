@@ -14,7 +14,8 @@ const ucaMockDefinitions = require('../../src/claim/__mocks__/definitions');
  * definitions in memory.
  */
 describe('UserCollectableAttribute Json Sample Date Construction tests', () => {
-  it('Testing boolean types on the UserCollectableAttribute', async (done) => {
+  // TODO: Skipping as this is no longer going to be available without a schema
+  it.skip('Testing boolean types on the UserCollectableAttribute', async (done) => {
     const definition = ucaMockDefinitions.find(def => def.identifier === 'civ:Mock:booleans');
     const json = SchemaGenerator.buildSampleJson(definition, true);
     const sampleUca = new Claim(definition.identifier, json.booleans);

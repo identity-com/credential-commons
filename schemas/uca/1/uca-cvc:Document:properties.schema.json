@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Document:properties",
+  "$id": "http://identity.com/schemas/cvc:Document:properties",
+  "type": "object",
+  "properties": {
+    "dateOfIssue": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Document:dateOfIssue"
+        }
+      ]
+    },
+    "dateOfExpiry": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Document:dateOfExpiry"
+        }
+      ]
+    }
+  },
+  "required": [
+    "dateOfIssue"
+  ],
+  "additionalProperties": false,
+  "attestable": true,
+  "credentialItem": false
+}
