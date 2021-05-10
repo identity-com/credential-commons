@@ -181,6 +181,13 @@ const ErrorCodes = {
   ERROR_IDV_CREDENTIAL_INVALID_SIGNATURE: 'error.idv.credential.invalid.signature',
 
   /**
+   * Reason: Could not anchor the credential,
+   * possibly caused by errors while connecting to an external provider
+   * Troubleshooting: Try again later
+   */
+  ERROR_IDV_CREDENTIAL_FAILED_ANCHORING: 'error.idv.credential.failed.anchoring',
+
+  /**
    * Reason: The credential has already been signed.
    * Troubleshooting: The credential is already signed. You must not sign it again
    */
@@ -417,7 +424,6 @@ const ErrorCodes = {
    * Troubleshooting: Retry the network call again
    */
   ERROR_RETRYABLE_NETWORK_ERROR: 'error.retryable.network',
-
 };
 
 /**
