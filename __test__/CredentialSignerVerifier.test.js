@@ -42,6 +42,7 @@ describe('CredentialSignerVerifier Tests', () => {
           },
         },
       };
+
       expect(signerVerifier.isSignatureValid(toVerify)).toBeTruthy();
     });
 

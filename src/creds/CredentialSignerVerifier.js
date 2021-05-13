@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { HDNode, ECSignature } = require('bitcoinjs-lib');
 
+const SIGNATURE_ALGO = 'ec256k1';
 class CredentialSignerVerifier {
   /**
    * Creates a new instance of a CredentialSignerVerifier
@@ -50,7 +51,7 @@ class CredentialSignerVerifier {
     const hash = Buffer.from(proof.merkleRoot, 'hex');
     const signature = this.keyPair.sign(hash);
     return {
-      algo: 'ec256k1',
+      algo: SIGNATURE_ALGO,
       pubBase58: this.keyPair.neutered().toBase58(),
       signature: signature.toDER().toString('hex'),
     };
