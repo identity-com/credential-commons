@@ -83,6 +83,29 @@ const definitions = [
     ],
   },
   {
+    identifier: 'credential-cvc:LiveIdDocument-v1',
+    version: '1',
+    depends: [
+      'claim-cvc:Document.type-v1',
+      'claim-cvc:Document.number-v1',
+      'claim-cvc:Document.name-v1',
+      'claim-cvc:Document.gender-v1',
+      'claim-cvc:Document.issueCountry-v1',
+      'claim-cvc:Document.placeOfBirth-v1',
+      'claim-cvc:Document.dateOfBirth-v1',
+      'claim-cvc:Document.dateOfExpiry-v1',
+      'claim-cvc:Document.nationality-v1',
+      'claim-cvc:Document.evidences-v1',
+    ],
+    required: [
+      'claim-cvc:Document.type-v1',
+      'claim-cvc:Document.name-v1',
+      'claim-cvc:Document.dateOfBirth-v1',
+      'claim-cvc:Document.issueCountry-v1',
+      'claim-cvc:Document.evidences-v1',
+    ],
+  },
+  {
     identifier: 'credential-cvc:Address-v1',
     version: '1',
     depends: [

@@ -61,10 +61,10 @@
     "jest-html-reporter": "^2.3.0",
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2",
-    "ajv": "^7.0.3"
+    "ajv": "^6.5.2"
   },
   "dependencies": {
-    "@identity.com/uca": "^1.0.29",
+    "@identity.com/uca": "github:civicteam/uca",
     "babel-runtime": "^6.26.0",
     "bitcoinjs-lib": "git+https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
     "bluebird": "^3.7.2",
