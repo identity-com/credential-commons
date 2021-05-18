@@ -15,6 +15,7 @@ const { services } = require('../services');
 const time = require('../timeHelper');
 const { CvcMerkleProof } = require('./CvcMerkleProof');
 const { ClaimModel } = require('./ClaimModel');
+const CredentialSignerVerifier = require('./CredentialSignerVerifier');
 
 // convert a time delta to a timestamp
 const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
@@ -371,7 +372,8 @@ function getCredentialDefinition(identifier, version) {
  * @param {*} version
  * @param {*} [evidence]
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version, evidence) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
+  version, evidence, signerVerifier = null) {
   this.id = uuidv4();
   this.issuer = issuer;
   const issuerUCA = new Claim('cvc:Meta:issuer', this.issuer);
@@ -401,7 +403,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   if (!_.isEmpty(ucas)) {
     verifyRequiredClaims(definition, ucas);
     this.claim = new ClaimModel(ucas);
-    this.proof = new CvcMerkleProof(proofUCAs);
+    this.proof = new CvcMerkleProof(proofUCAs, signerVerifier);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
@@ -538,11 +540,21 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This method checks if the signature matches for the root of the Merkle Tree
    * @return true or false for the validation
    */
-  this.verifySignature = (pinnedPubKey) => {
+  this.verifyAnchorSignature = (pinnedPubKey) => {
     if (this.proof.anchor.type === 'transient') {
       return true;
     }
     return services.container.AnchorService.verifySignature(this.proof, pinnedPubKey);
+  };
+
+  /**
+   * This methods check the stand alone merkletreeSiganture
+   * return true or false for the validation
+   */
+  this.verifyMerkletreeSignature = (pubBase58) => {
+    if (_.isEmpty(pubBase58)) return false;
+    const verifier = new CredentialSignerVerifier({ pubBase58 });
+    return verifier.isSignatureValid(this);
   };
 
   /**
@@ -619,7 +631,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     if (_.isEmpty(_.get(this.proof, 'anchor.subject.label')) || _.isEmpty(_.get(this.proof, 'anchor.subject.data'))) {
       throw new Error('Invalid credential attestation/anchor');
     }
-    if (!this.verifySignature()) {
+    if (!this.verifyAnchorSignature()) {
       throw new Error('Invalid credential attestation/anchor signature');
     }
     if (!requestorId || !requestId || !(keyName || pvtKey)) {
