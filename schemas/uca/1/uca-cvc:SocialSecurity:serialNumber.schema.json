@@ -1,8 +1,0 @@
-{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "cvc:SocialSecurity:serialNumber",
-  "$id": "http://identity.com/schemas/cvc:SocialSecurity:serialNumber",
-  "type": "string",
-  "pattern": "/^\\d{4}$/",
-  "credentialItem": true
-}

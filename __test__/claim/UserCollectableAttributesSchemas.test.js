@@ -187,7 +187,7 @@ describe('UCA Json Sample Date Construction tests', () => {
       otherNames: 'Paulo',
       familyNames: 'Santos',
     };
-    const uca = new Claim(identifier, value);
+    const uca = await Claim.create(identifier, value);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
@@ -210,7 +210,7 @@ describe('UCA Json Sample Date Construction tests', () => {
       otherNames: 'Paulo',
       familyNames: 'Santos',
     };
-    const uca = new Claim(identifier, value);
+    const uca = await Claim.create(identifier, value);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);
@@ -227,7 +227,7 @@ describe('UCA Json Sample Date Construction tests', () => {
 
   it('Should change the type of Number to Boolean and fail AJV validation', async (done) => {
     const identifier = 'cvc:Type:day';
-    const uca = new Claim(identifier, 1);
+    const uca = await Claim.create(identifier, 1);
     const jsonString = JSON.stringify(uca, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === identifier);

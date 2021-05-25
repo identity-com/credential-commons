@@ -5,17 +5,20 @@ const { services } = require('../services');
 const definitions = require('./definitions');
 const { schemaLoader } = require('../schemas/jsonSchema');
 
-// const validIdentifiers = _.map(definitions, d => d.identifier);
 const { validIdentifiers } = schemaLoader;
 
-const getDefinition = (identifier, version) => (
-  version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier })
-);
+const findDefinition = (identifier, version) => (version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier }));
+
+const getDefinition = async (identifier, version) => {
+  await schemaLoader.loadSchemaFromTitle(identifier);
+
+  return findDefinition(identifier, version);
+};
 
 const isArrayAttestableValue = aValue => aValue.indexOf('[') > -1 && aValue.indexOf(']') > -1;
 
 function getBaseIdentifiers(identifier) {
-  const claimRegex = /claim-cvc:(.*)\.(.*)-v\d*/;
+  const claimRegex = /^claim-cvc:(.*)\.(.*)-v\d*$/;
   let isNewIdentifier = true;
 
   let identifierComponents = claimRegex.exec(identifier);
@@ -26,14 +29,16 @@ function getBaseIdentifiers(identifier) {
   return { identifierComponents, isNewIdentifier };
 }
 
-function adaptIdentifierIfNeeded(identifier, version) {
-  const definition = getDefinition(identifier, version);
+async function adaptIdentifierIfNeeded(identifier, version) {
+  const definition = await getDefinition(identifier, version);
   const resolvedIdentifier = (definition && definition.alias) ? definition.type : identifier;
 
   const { isNewIdentifier, identifierComponents } = getBaseIdentifiers(resolvedIdentifier);
 
-  if (!isNewIdentifier && !getDefinition(resolvedIdentifier, version)) {
+  if (!isNewIdentifier && !(await getDefinition(resolvedIdentifier, version))) {
     const newIdentifier = `claim-cvc:${identifierComponents[1]}.${identifierComponents[2]}-v1`;
+    await schemaLoader.loadSchemaFromTitle(newIdentifier);
+
     const foundNewIdentifier = _.find(definitions, { identifier: newIdentifier });
     if (foundNewIdentifier) {
       return newIdentifier;
@@ -45,17 +50,16 @@ function adaptIdentifierIfNeeded(identifier, version) {
 
 class Claim extends UserCollectableAttribute {
   constructor(identifier, value, version) {
-    schemaLoader.loadSchemaFromTitle(identifier);
+    super(identifier, value, version, definitions);
+    this.initialize(identifier, value, version);
+  }
 
-    const currentIdentifier = adaptIdentifierIfNeeded(identifier, version);
+  static async create(identifier, value, version) {
+    const currentIdentifier = await adaptIdentifierIfNeeded(identifier, version);
 
-    super(currentIdentifier, value, version, definitions);
-    this.initialize(currentIdentifier, value, version);
+    await schemaLoader.loadSchemaFromTitle(currentIdentifier);
 
-    // TODO: We should be validating this too ?
-    // if (!value.attestableValue) {
-    //   schemaLoader.validateSchema(identifier, value);
-    // }
+    return new Claim(currentIdentifier, value, version);
   }
 
   initialize(identifier, value, version) {
@@ -68,7 +72,7 @@ class Claim extends UserCollectableAttribute {
   }
 
   initializeValuesWithArrayItems(identifier, values, version) {
-    const definition = getDefinition(this.identifier, this.version);
+    const definition = findDefinition(this.identifier, this.version);
     const ucaArray = [];
 
     if (!_.isArray(values)) throw new Error(`Value for ${identifier}-${version} should be an array`);
@@ -83,7 +87,7 @@ class Claim extends UserCollectableAttribute {
 
   initializeAttestableValue() {
     const { value } = this;
-    const definition = getDefinition(this.identifier, this.version);
+    const definition = findDefinition(this.identifier, this.version);
     const parsedAttestableValue = Claim.parseAttestableValue(value);
 
     // Trying to construct UCA with a existing attestableValue
@@ -299,8 +303,8 @@ class Claim extends UserCollectableAttribute {
     return 'Object';
   }
 
-  static getAllProperties(identifier, pathName) {
-    schemaLoader.loadSchemaFromTitle(identifier);
+  static async getAllProperties(identifier, pathName) {
+    await schemaLoader.loadSchemaFromTitle(identifier);
 
     const definition = _.find(definitions, { identifier });
     const properties = [];
@@ -332,12 +336,14 @@ class Claim extends UserCollectableAttribute {
         // Properties is not an object
         properties.push(`${basePropName}.${typeDefProps.name}`);
       } else {
-        _.forEach(typeDefProps, (prop) => {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const prop of typeDefProps) {
           const { isNewIdentifier } = getBaseIdentifiers(prop.type);
           const newBasePropName = !isNewIdentifier ? basePropName : `${basePropName}.${prop.name}`;
-          const proProperties = this.getAllProperties(prop.type, newBasePropName);
+          // eslint-disable-next-line no-await-in-loop
+          const proProperties = await this.getAllProperties(prop.type, newBasePropName);
           _.forEach(proProperties, p => properties.push(p));
-        });
+        }
       }
     } else if (pathName) {
       const { identifierComponents } = getBaseIdentifiers(definition.identifier);

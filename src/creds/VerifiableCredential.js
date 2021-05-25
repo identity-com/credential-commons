@@ -15,13 +15,13 @@ const { services } = require('../services');
 const time = require('../timeHelper');
 const { CvcMerkleProof } = require('./CvcMerkleProof');
 const { ClaimModel } = require('./ClaimModel');
+const { schemaLoader } = require('../schemas/jsonSchema');
 
 // convert a time delta to a timestamp
 const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
 
 function validIdentifiers() {
-  const vi = _.map(definitions, d => d.identifier);
-  return vi;
+  return _.map(definitions, d => d.identifier);
 }
 
 function getClaimsWithFlatKeys(claims) {
@@ -229,10 +229,10 @@ function nonCryptographicallySecureVerify(credential) {
     }
   }
   if (_.isEmpty(invalidClaim)
-    && _.isEmpty(invalidValues)
-    && _.isEmpty(invalidHashs)
-    && _.isEmpty(invalidProofs)
-    && _.isEmpty(invalidExpiry)) {
+        && _.isEmpty(invalidValues)
+        && _.isEmpty(invalidHashs)
+        && _.isEmpty(invalidProofs)
+        && _.isEmpty(invalidExpiry)) {
     valid = true;
   }
   return valid;
@@ -729,19 +729,37 @@ VerifiableCredentialBaseConstructor.CREDENTIAL_META_FIELDS = CREDENTIAL_META_FIE
 VerifiableCredentialBaseConstructor.getCredentialMeta = getCredentialMeta;
 VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMeta;
 
+VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn, ucas, version, evidence) => {
+  await schemaLoader.loadSchemaFromTitle(identifier);
+
+  await schemaLoader.loadSchemaFromTitle('cvc:Meta:issuer');
+  await schemaLoader.loadSchemaFromTitle('cvc:Meta:issuanceDate');
+  await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
+  await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
+
+  return new VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version, evidence);
+};
+
 /**
  * Factory function that creates a new Verifiable Credential based on a JSON object
  * @param {*} verifiableCredentialJSON
  * @returns VerifiableCredentialBaseConstructor
  */
-VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
-  const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
-    verifiableCredentialJSON.version);
+VerifiableCredentialBaseConstructor.fromJSON = async (verifiableCredentialJSON) => {
+  await schemaLoader.loadSchemaFromTitle(verifiableCredentialJSON.identifier);
+
+  const definition = getCredentialDefinition(
+    verifiableCredentialJSON.identifier,
+    verifiableCredentialJSON.version,
+  );
 
   verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
 
-  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier,
-    verifiableCredentialJSON.issuer);
+  const newObj = await VerifiableCredentialBaseConstructor.create(
+    verifiableCredentialJSON.identifier,
+    verifiableCredentialJSON.issuer,
+  );
+
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
   newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
@@ -757,17 +775,27 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
 /**
  * List all properties of a Verifiable Credential
  */
-VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
+VerifiableCredentialBaseConstructor.getAllProperties = async (identifier) => {
+  await schemaLoader.loadSchemaFromTitle(identifier);
+
   const vcDefinition = _.find(definitions, { identifier });
   if (vcDefinition) {
     const allProperties = [];
-    _.forEach(vcDefinition.depends, (ucaIdentifier) => {
-      allProperties.push(...Claim.getAllProperties(ucaIdentifier));
-    });
+    // eslint-disable-next-line no-restricted-syntax
+    for (const definition of vcDefinition.depends) {
+      // eslint-disable-next-line no-await-in-loop
+      allProperties.push(...await Claim.getAllProperties(definition));
+    }
+
     const excludesProperties = [];
-    _.forEach(vcDefinition.excludes, (ucaIdentifier) => {
-      excludesProperties.push(...Claim.getAllProperties(ucaIdentifier));
-    });
+    if (vcDefinition.excludes) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const definition of vcDefinition.excludes) {
+        // eslint-disable-next-line no-await-in-loop
+        excludesProperties.push(...await Claim.getAllProperties(definition));
+      }
+    }
+
     return _.difference(allProperties, excludesProperties);
   }
   return null;

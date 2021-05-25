@@ -8,6 +8,7 @@ const constants = require('./constants');
 const claimDefinitions = require('./claim/definitions');
 const credentialDefinitions = require('./creds/definitions');
 const aggregate = require('./AggregationHandler');
+const { schemaLoader } = require('./schemas/jsonSchema');
 
 /**
  * Entry Point for Civic Credential Commons
@@ -26,6 +27,7 @@ function CredentialCommons() {
   this.constants = constants;
   this.claimDefinitions = claimDefinitions;
   this.credentialDefinitions = credentialDefinitions;
+  this.schemaLoader = schemaLoader;
   return this;
 }
 
