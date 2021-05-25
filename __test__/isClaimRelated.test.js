@@ -1,5 +1,8 @@
-const _ = require('lodash');
 const isClaimRelated = require('../src/isClaimRelated');
+const { schemaLoader } = require('../src');
+const { CVCSchemaLoader } = require('../src/schemas/jsonSchema/loaders/cvc');
+
+schemaLoader.addLoader(new CVCSchemaLoader());
 
 describe('isClaimRelated Tests', () => {
   it('Should validate a claim path against UCA definitions '

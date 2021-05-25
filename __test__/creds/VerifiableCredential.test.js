@@ -7,6 +7,10 @@ const VC = require('../../src/creds/VerifiableCredential');
 const credentialDefinitions = require('../../src/creds/definitions');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
+const { schemaLoader } = require('../../src');
+const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
+
+schemaLoader.addLoader(new CVCSchemaLoader());
 
 jest.setTimeout(150000);
 

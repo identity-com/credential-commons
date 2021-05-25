@@ -1,6 +1,10 @@
 const Ajv = require('ajv').default;
 const { Claim, definitions } = require('../../src/claim/Claim');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
+const { schemaLoader } = require('../../src');
+const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
+
+schemaLoader.addLoader(new CVCSchemaLoader());
 
 describe('UCA Json Sample Date Construction tests', () => {
   it.skip('Should generate UCA JSON Sample Data from all coded identifiers and succeed', async (done) => {

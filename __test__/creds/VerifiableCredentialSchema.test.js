@@ -13,7 +13,7 @@ jest.setTimeout(1500000);
  */
 describe('VerifiableCredentials SchemaGenerator validation', () => {
   // TODO: Check, this is skipped as it won't be used in future ?
-  it.skip('Should validate the VC Schema generation against a single well known definition', () => {
+  it('Should validate the VC Schema generation against a single well known definition', () => {
     const name = new Claim('claim-cvc:Identity.name-v1',
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
     const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 1, year: 1978 });

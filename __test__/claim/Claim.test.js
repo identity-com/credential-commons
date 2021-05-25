@@ -1,5 +1,9 @@
 const { UserCollectableAttribute } = require('@identity.com/uca');
 const { Claim } = require('../../src/claim/Claim');
+const { schemaLoader } = require('../../src');
+const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
+
+schemaLoader.addLoader(new CVCSchemaLoader());
 
 describe('Claim Constructions tests', () => {
   test('Claim construction should fails',
