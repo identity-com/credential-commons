@@ -314,10 +314,11 @@ class SchemaLoader {
     }
 
     const schemaId = loader.schemaId(title);
-    const validateSchema = this.ajv.getSchema(schemaId);
+    const existingSchema = this.ajv.getSchema(schemaId);
 
     let schema;
-    if (!validateSchema) {
+    // If AJV is unaware of the schema, look it up and create it
+    if (!existingSchema) {
       schema = await loader.loadSchema(title);
       if (schema === null) {
         return null;
