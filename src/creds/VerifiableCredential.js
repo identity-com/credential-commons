@@ -746,11 +746,13 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
  * @param {*} verifiableCredentialJSON
  * @returns VerifiableCredentialBaseConstructor
  */
-VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON) => {
+VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON, partialPresentation = false) => {
   const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.version);
 
-  verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
+  if (!partialPresentation) {
+    verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
+  }
 
   const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.issuer);

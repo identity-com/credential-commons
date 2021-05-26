@@ -9,6 +9,7 @@ const credentialDefinitions = require('../../src/creds/definitions');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
 const CredentialSignerVerifier = require('../../src/creds/CredentialSignerVerifier');
+const filteredCredentialJson = require('./fixtures/filteredIdDocument-v2.json');
 
 // eslint-disable-next-line max-len
 const prvBase58 = 'xprv9s21ZrQH143K4aBUwUW6GVec7Y6oUEBqrt2WWaXyxjh2pjofNc1of44BLufn4p1t7Jq4EPzm5C9sRxCuBYJdHu62jhgfyPm544sNjtH7x8S';
@@ -390,6 +391,17 @@ describe('Unit tests for Verifiable Credentials', () => {
         issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality, evidences], '1',
     );
     expect(credential).toBeDefined();
+    const filtered = credential.filter(['claim-cvc:Document.dateOfBirth-v1']);
+    expect(filtered).toBeDefined();
+  });
+
+  it('Should hydrate a partial presentation', () => {
+    const presentation = VC.fromJSON(filteredCredentialJson, true);
+    expect(presentation).toBeDefined();
+
+    expect(() => {
+      VC.fromJSON(filteredCredentialJson);
+    }).toThrow();
   });
 
   it('Should create alt:Identity-v1 credential', () => {
