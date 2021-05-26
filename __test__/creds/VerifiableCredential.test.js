@@ -798,7 +798,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const cred = await VC.fromJSON(credentialJson);
     expect(cred).toBeDefined();
     expect(cred.proof.anchor).toBeDefined();
-    expect(await cred.verifySignature()).toBeTruthy();
+    expect(await cred.verifyAnchorSignature()).toBeTruthy();
     done();
   });
 
