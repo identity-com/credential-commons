@@ -2,7 +2,6 @@ const _ = require('lodash');
 const Ajv = require('ajv').default;
 const traverse = require('json-schema-traverse');
 const addFormats = require('ajv-formats').default;
-const { CVCSchemaLoader } = require('./loaders/cvc');
 const definitions = require('../../claim/definitions');
 const credentialDefinitions = require('../../creds/definitions');
 
@@ -13,7 +12,7 @@ const summaryMap = {};
  * TODO: This should be refactored out of credential commons?
  */
 class SummaryMapper {
-  addDefinition(def) {
+  static addDefinition(def) {
     const textLabel = SummaryMapper.getTextLabel(def.identifier);
 
     if (textLabel) {
@@ -27,13 +26,13 @@ class SummaryMapper {
           credentials: SummaryMapper.getCredentials(def.identifier),
           labelFor: [def.identifier],
           changeable: SummaryMapper.isUpdatable(textLabel),
-          claimPath: this.getClaimPath(def.identifier),
+          claimPath: SummaryMapper.getClaimPath(def.identifier),
         };
       }
     }
   }
 
-  addCredentialDefinition(def) {
+  static addCredentialDefinition(def) {
     const textLabel = SummaryMapper.getTextLabel(def.identifier);
 
     if (textLabel) {
@@ -82,7 +81,7 @@ class SummaryMapper {
     return _.map(credentials, item => item.identifier);
   }
 
-  getClaimPath(identifier) {
+  static getClaimPath(identifier) {
     // eslint-disable-next-line no-unused-vars
     const [type, name, version] = _.split(identifier, '-');
 
@@ -130,7 +129,6 @@ class SchemaLoader {
     this.definitions = definitions;
     this.credentialDefinitions = credentialDefinitions;
     this.summaryMap = summaryMap;
-    this.summaryMapper = new SummaryMapper();
     this.validIdentifiers = [];
     this.validCredentialIdentifiers = [];
     this.ajv = new Ajv({
@@ -143,11 +141,9 @@ class SchemaLoader {
     addFormats(this.ajv);
     this.ajv.addKeyword('attestable');
     // Needed to add these to support "reversing" definitions back to the previous definitions for backwards
-    // compatibilty. These shuld be removed?
+    // compatibilty. These should be removed?
     this.ajv.addKeyword('transient');
     this.ajv.addKeyword('credentialItem');
-
-    this.addLoader(new CVCSchemaLoader());
   }
 
   /**
@@ -217,7 +213,7 @@ class SchemaLoader {
 
     this.credentialDefinitions.push(definition);
     this.validCredentialIdentifiers.push(definition.identifier);
-    this.summaryMapper.addCredentialDefinition(definition);
+    SummaryMapper.addCredentialDefinition(definition);
   }
 
   async addClaimDefinition(schema) {
@@ -247,12 +243,13 @@ class SchemaLoader {
 
     this.definitions.push(definition);
     this.validIdentifiers.push(schema.title);
-    this.summaryMapper.addDefinition(definition);
+    SummaryMapper.addDefinition(definition);
   }
 
   async getPropertyValues(properties) {
     const defProperties = [];
 
+    // eslint-disable-next-line guard-for-in,no-restricted-syntax
     for (const name in properties) {
       const property = properties[name];
 
@@ -269,6 +266,7 @@ class SchemaLoader {
       }
 
       if (property.allOf) {
+        // eslint-disable-next-line no-await-in-loop
         const schema = await this.loadSchemaFromUri(property.allOf[0].$ref);
         type = schema.title;
       }

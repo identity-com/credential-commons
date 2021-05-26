@@ -6,7 +6,8 @@ const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
 
 schemaLoader.addLoader(new CVCSchemaLoader());
 
-describe('UCA Json Sample Date Construction tests', () => {
+// TODO: These tests should be removed
+describe.skip('UCA Json Sample Date Construction tests', () => {
   it.skip('Should generate UCA JSON Sample Data from all coded identifiers and succeed', async (done) => {
     definitions.forEach((definition) => {
       const json = SchemaGenerator.buildSampleJson(definition);
@@ -24,7 +25,6 @@ describe('UCA Json Sample Date Construction tests', () => {
     done();
   });
 
-  // TODO: Removed by William
   it.skip('Should generate Sample Data from all UCA, create the json schema and use AJV to '
     + ' validate both the data and the json schema against each other', async (done) => {
     definitions.forEach((definition) => {

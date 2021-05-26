@@ -5,6 +5,10 @@ const { Claim, definitions } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const credentialDefinitions = require('../../src/creds/definitions');
+const { schemaLoader } = require('../../src');
+const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
+
+schemaLoader.addLoader(new CVCSchemaLoader());
 
 jest.setTimeout(1500000);
 
@@ -13,11 +17,11 @@ jest.setTimeout(1500000);
  */
 describe('VerifiableCredentials SchemaGenerator validation', () => {
   // TODO: Check, this is skipped as it won't be used in future ?
-  it('Should validate the VC Schema generation against a single well known definition', () => {
-    const name = new Claim('claim-cvc:Identity.name-v1',
+  it.skip('Should validate the VC Schema generation against a single well known definition', async () => {
+    const name = await Claim.create('claim-cvc:Identity.name-v1',
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
-    const dob = new Claim('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 1, year: 1978 });
-    const cred = new VC('credential-cvc:Identity-v1', 'jest:test-v1', null, [name, dob], 1);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 1, year: 1978 });
+    const cred = await VC.create('credential-cvc:Identity-v1', 'jest:test-v1', null, [name, dob], 1);
     const jsonString = JSON.stringify(cred, null, 2);
     const generatedJson = JSON.parse(jsonString);
     const jsonSchema = SchemaGenerator.process(cred, generatedJson);
@@ -65,8 +69,11 @@ describe('VerifiableCredentials SchemaGenerator validation', () => {
   });
 
   // TODO: Double check if this should be failing against new schema loader
-  it.skip('Should change the VC Json data and fail against AJV', () => {
+  it.skip('Should change the VC Json data and fail against AJV', async () => {
     const identifier = 'credential-cvc:Identity-v1';
+
+    await schemaLoader.loadSchemaFromTitle(identifier);
+
     const credentialDefinition = credentialDefinitions.find(credsDef => (
       credsDef.identifier === identifier
     ));

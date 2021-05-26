@@ -7,7 +7,9 @@ const { schemaLoader } = require('../schemas/jsonSchema');
 
 const { validIdentifiers } = schemaLoader;
 
-const findDefinition = (identifier, version) => (version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier }));
+const findDefinition = (identifier, version) => (
+  version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier })
+);
 
 const getDefinition = async (identifier, version) => {
   await schemaLoader.loadSchemaFromTitle(identifier);

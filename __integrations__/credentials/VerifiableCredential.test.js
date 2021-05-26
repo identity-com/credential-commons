@@ -1,6 +1,10 @@
 const uuidv4 = require('uuid/v4');
 const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
+const { schemaLoader } = require('../../src');
+const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
+
+schemaLoader.addLoader(new CVCSchemaLoader());
 
 jest.setTimeout(200000);
 
