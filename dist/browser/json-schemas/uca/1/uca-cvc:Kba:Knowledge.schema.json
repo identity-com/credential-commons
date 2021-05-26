@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Kba:Knowledge",
+  "$id": "http://identity.com/schemas/cvc:Kba:Knowledge",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "http://identity.com/schemas/cvc:Type:knowledge"
+    }
+  ],
+  "credentialItem": false
+}

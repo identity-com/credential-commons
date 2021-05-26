@@ -7,10 +7,17 @@ const VC = require('../../src/creds/VerifiableCredential');
 const credentialDefinitions = require('../../src/creds/definitions');
 const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
+const CredentialSignerVerifier = require('../../src/creds/CredentialSignerVerifier');
 const { schemaLoader } = require('../../src');
 const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
 
 schemaLoader.addLoader(new CVCSchemaLoader());
+
+// eslint-disable-next-line max-len
+const prvBase58 = 'xprv9s21ZrQH143K4aBUwUW6GVec7Y6oUEBqrt2WWaXyxjh2pjofNc1of44BLufn4p1t7Jq4EPzm5C9sRxCuBYJdHu62jhgfyPm544sNjtH7x8S';
+// eslint-disable-next-line max-len
+const pubBase58 = 'xpub661MyMwAqRbcH4Fx3W36ddbLfZwHsguhE6x7JxwbX5E1hY8ov9L4CrNfCCQpV8pVK64CVqkhYQ9QLFgkVAUqkRThkTY1R4GiWHNZtAFSVpD';
+
 
 jest.setTimeout(150000);
 
@@ -801,7 +808,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const cred = await VC.fromJSON(credentialJson);
     expect(cred).toBeDefined();
     expect(cred.proof.anchor).toBeDefined();
-    expect(await cred.verifySignature(XPUB1)).toBeTruthy();
+    expect(await cred.verifyAnchorSignature(XPUB1)).toBeTruthy();
     done();
   });
 
@@ -823,7 +830,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     cred.proof.merkleRoot = 'gfdagfagfda';
     expect(cred).toBeDefined();
     expect(cred.proof.anchor).toBeDefined();
-    expect(await cred.verifySignature()).toBeFalsy();
+    expect(await cred.verifyAnchorSignature()).toBeFalsy();
     done();
   });
 
@@ -1591,7 +1598,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(cred.evidence.other).not.toBeDefined();
   });
 
-  it('Shuld construct a credential with an evidence without id', async () => {
+  it('Should construct a credential with an evidence without id', async () => {
     const evidence = [
       {
         type: ['DocumentVerification'],
@@ -1821,5 +1828,30 @@ describe('Transient Credential Tests', () => {
 
     const proved = credential.verifyProofs();
     expect(proved).toBeTruthy();
+  });
+});
+
+describe('Signned Verifiable Credentials', () => {
+  test('Should create a verifiable credential instance', async () => {
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+    const cred = await VC.create('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', null,
+      new CredentialSignerVerifier({ prvBase58 }));
+    expect(cred).toBeDefined();
+    expect(cred.proof.merkleRootSignature).toBeDefined();
+    expect(cred.verifyMerkletreeSignature(pubBase58)).toBeTruthy();
+  });
+
+  test('Should verify credential(data only) signature', async () => {
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+    const signerVerifier = new CredentialSignerVerifier({ prvBase58 });
+    const cred = await VC.create('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], '1', null,
+      signerVerifier);
+    expect(cred).toBeDefined();
+    expect(cred.proof.merkleRootSignature).toBeDefined();
+
+    const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
+    expect(signerVerifier.isSignatureValid(dataOnlyCredential)).toBeTruthy();
   });
 });

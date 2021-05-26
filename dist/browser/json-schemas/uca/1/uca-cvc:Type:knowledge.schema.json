@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Type:knowledge",
+  "$id": "http://identity.com/schemas/cvc:Type:knowledge",
+  "type": "object",
+  "properties": {
+    "question": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Knowledge:question"
+        }
+      ]
+    },
+    "answer": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Knowledge:answer"
+        }
+      ]
+    }
+  },
+  "required": [
+    "question",
+    "answer"
+  ],
+  "additionalProperties": false,
+  "credentialItem": false
+}

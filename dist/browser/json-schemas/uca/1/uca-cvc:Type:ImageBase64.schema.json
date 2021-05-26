@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Type:ImageBase64",
+  "$id": "http://identity.com/schemas/cvc:Type:ImageBase64",
+  "type": "string"
+}

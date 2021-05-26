@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Type:userConfirm",
+  "$id": "http://identity.com/schemas/cvc:Type:userConfirm",
+  "type": "boolean",
+  "credentialItem": true
+}

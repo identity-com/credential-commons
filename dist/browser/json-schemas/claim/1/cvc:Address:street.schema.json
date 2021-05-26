@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Address:street",
+  "$id": "http://identity.com/schemas/cvc:Address:street",
+  "type": "string"
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Medical:covid19",
+  "$id": "http://identity.com/schemas/cvc:Medical:covid19",
+  "type": "object",
+  "properties": {
+    "vaccinations": {
+      "type": "array",
+      "items": {
+        "$ref": "http://identity.com/schemas/cvc:Vaccination:records"
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "$ref": "http://identity.com/schemas/cvc:Test:records"
+      }
+    },
+    "patient": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:patient"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "credentialItem": true
+}

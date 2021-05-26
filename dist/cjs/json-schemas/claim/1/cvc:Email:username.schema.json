@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Email:username",
+  "$id": "http://identity.com/schemas/cvc:Email:username",
+  "description": "also known as email user",
+  "type": "string",
+  "credentialItem": false
+}

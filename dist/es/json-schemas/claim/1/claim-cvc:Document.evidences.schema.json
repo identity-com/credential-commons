@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "claim-cvc:Document.evidences-v1",
+  "$id": "http://identity.com/schemas/claim-cvc:Document.evidences-v1",
+  "type": "object",
+  "properties": {
+    "idDocumentFront": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Validation:evidences.idDocumentFront-v1"
+        }
+      ]
+    },
+    "idDocumentBack": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Validation:evidences.idDocumentBack-v1"
+        }
+      ]
+    },
+    "selfie": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Validation:evidences.selfie-v1"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "attestable": true,
+  "credentialItem": true
+}

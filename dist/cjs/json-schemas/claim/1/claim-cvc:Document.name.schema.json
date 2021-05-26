@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "claim-cvc:Document.name-v1",
+  "$id": "http://identity.com/schemas/claim-cvc:Document.name-v1",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "http://identity.com/schemas/claim-cvc:Type.Name-v1"
+    }
+  ],
+  "credentialItem": true
+}

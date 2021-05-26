@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Document:image",
+  "$id": "http://identity.com/schemas/cvc:Document:image",
+  "type": "object",
+  "properties": {
+    "front": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Document:front"
+        }
+      ]
+    },
+    "frontMD5": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Document:frontMD5"
+        }
+      ]
+    },
+    "back": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Document:back"
+        }
+      ]
+    },
+    "backMD5": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Document:backMD5"
+        }
+      ]
+    }
+  },
+  "required": [
+    "front",
+    "frontMD5"
+  ],
+  "additionalProperties": false,
+  "attestable": true
+}

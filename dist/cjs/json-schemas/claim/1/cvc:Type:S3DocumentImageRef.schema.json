@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Type:S3DocumentImageRef",
+  "$id": "http://identity.com/schemas/cvc:Type:S3DocumentImageRef",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:documentType"
+        }
+      ]
+    },
+    "face": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:DocumentFace"
+        }
+      ]
+    },
+    "reference": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:S3FileRef"
+        }
+      ]
+    }
+  },
+  "required": [
+    "type",
+    "face",
+    "reference"
+  ],
+  "additionalProperties": false
+}

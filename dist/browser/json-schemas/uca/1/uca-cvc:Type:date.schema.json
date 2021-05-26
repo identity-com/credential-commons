@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Type:date",
+  "$id": "http://identity.com/schemas/cvc:Type:date",
+  "type": "object",
+  "properties": {
+    "day": {
+      "type": "number",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:day"
+        }
+      ]
+    },
+    "month": {
+      "type": "number",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:month"
+        }
+      ]
+    },
+    "year": {
+      "type": "number",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:year"
+        }
+      ]
+    }
+  },
+  "required": [
+    "day",
+    "month",
+    "year"
+  ],
+  "additionalProperties": false
+}

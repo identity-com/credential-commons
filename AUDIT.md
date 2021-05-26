@@ -11,5 +11,8 @@ Whenever you whitelist a specific advisory it is required to refer it to here an
 
 | #    | Level | Module | Title | Explanation |
 |------|-------|---------|------|-------------|
-| 1500 | Low | babel-minify>yargs-parser | Prototype Pollution | dev dependency only |
+| 565 | Moderate | npm>ssri | Regular Expression Denial of Service | dev dependency only |
 | 786 | Low | babel-cli > chokidar > anymatch > micromatch > braces | Regular Expression Denial of Service | dev dependency only |
+| 1500 | Low | babel-minify>yargs-parser | Prototype Pollution | dev dependency only |
+| 1654 | Moderate | npm>libnpx>y18n | Regular Expression Denial of Service | dev dependency only |
+| 1677 | Moderate | npm>hosted-git-info | Regular Expression Denial of Service | dev dependency only |

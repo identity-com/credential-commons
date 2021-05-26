@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:S3Ref:selfie",
+  "$id": "http://identity.com/schemas/cvc:S3Ref:selfie",
+  "type": "object",
+  "properties": {
+    "s3FileBucket": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:s3FileBucket"
+        }
+      ]
+    },
+    "s3FileKey": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:s3FileKey"
+        }
+      ]
+    },
+    "MD5": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:MD5"
+        }
+      ]
+    },
+    "ContentType": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:ContentType"
+        }
+      ]
+    }
+  },
+  "required": [
+    "s3FileBucket",
+    "s3FileKey",
+    "MD5",
+    "ContentType"
+  ],
+  "additionalProperties": false
+}

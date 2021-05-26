@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Type:domain",
+  "$id": "http://identity.com/schemas/cvc:Type:domain",
+  "type": "object",
+  "properties": {
+    "tld": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Domain:tld"
+        }
+      ]
+    },
+    "name": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Domain:name"
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "tld"
+  ],
+  "additionalProperties": false,
+  "credentialItem": false
+}

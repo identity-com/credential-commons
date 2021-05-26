@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Code:codeSystemName",
+  "$id": "http://identity.com/schemas/cvc:Code:codeSystemName",
+  "type": "string",
+  "credentialItem": false
+}

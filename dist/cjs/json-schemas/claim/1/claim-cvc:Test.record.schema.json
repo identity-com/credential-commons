@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "claim-cvc:Test.record-v1",
+  "$id": "http://identity.com/schemas/claim-cvc:Test.record-v1",
+  "type": "object",
+  "properties": {
+    "testId": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Test.id-v1"
+        }
+      ]
+    },
+    "testDate": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Test.date-v1"
+        }
+      ]
+    },
+    "resultDate": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Test.date-v1"
+        }
+      ]
+    },
+    "type": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Test.type-v1"
+        }
+      ]
+    },
+    "result": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Test.result-v1"
+        }
+      ]
+    },
+    "organization": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/claim-cvc:Type.organization-v1"
+        }
+      ]
+    },
+    "codes": {
+      "type": "array",
+      "items": {
+        "$ref": "http://identity.com/schemas/claim-cvc:Codes.records-v1"
+      }
+    }
+  },
+  "required": [
+    "testId",
+    "testDate",
+    "type",
+    "result"
+  ],
+  "additionalProperties": false,
+  "credentialItem": true
+}

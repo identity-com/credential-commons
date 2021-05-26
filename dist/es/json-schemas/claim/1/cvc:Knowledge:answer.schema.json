@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Knowledge:answer",
+  "$id": "http://identity.com/schemas/cvc:Knowledge:answer",
+  "description": "An answer or answerId for an question",
+  "type": "string",
+  "credentialItem": false
+}

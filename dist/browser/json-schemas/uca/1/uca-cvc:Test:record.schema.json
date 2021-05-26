@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cvc:Test:record",
+  "$id": "http://identity.com/schemas/cvc:Test:record",
+  "type": "object",
+  "properties": {
+    "testId": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Test:id"
+        }
+      ]
+    },
+    "testDate": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Test:date"
+        }
+      ]
+    },
+    "resultDate": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Test:date"
+        }
+      ]
+    },
+    "type": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Test:type"
+        }
+      ]
+    },
+    "result": {
+      "type": "string",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Test:result"
+        }
+      ]
+    },
+    "organization": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "http://identity.com/schemas/cvc:Type:organization"
+        }
+      ]
+    },
+    "codes": {
+      "type": "array",
+      "items": {
+        "$ref": "http://identity.com/schemas/cvc:Medical:codes"
+      }
+    }
+  },
+  "required": [
+    "testDate",
+    "testId",
+    "type"
+  ],
+  "additionalProperties": false,
+  "credentialItem": true
+}
