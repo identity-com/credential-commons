@@ -11,12 +11,14 @@ const { schemaLoader } = require('./schemas/jsonSchema');
  * @return true if the dependency exists and false if it doesn't
  */
 async function isClaimRelated(claim, uca, credential) {
+  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(claim);
   await schemaLoader.loadSchemaFromTitle(uca);
   await schemaLoader.loadSchemaFromTitle(credential);
 
   // first get the UCA identifier
   const ucaIdentifier = uca.substring(uca.indexOf('-') + 1, uca.lastIndexOf('-'));
+  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(ucaIdentifier);
 
   // check on the credential commons if this identifier exists

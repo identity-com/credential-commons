@@ -356,14 +356,6 @@ class SchemaLoader {
    */
   findSchemaLoader(identifier) {
     return _.find(this.loaders, loader => loader.valid(identifier));
-    // let found = null;
-    // _.forEach(this.loaders, (loader) => {
-    //   if (loader.valid(identifier)) {
-    //     found = loader;
-    //   }
-    // });
-    //
-    // return found;
   }
 
   /**

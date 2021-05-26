@@ -743,8 +743,10 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
 
 VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn, ucas, version, evidence,
   signerVerifier = null) => {
+  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(identifier);
 
+  // Load the meta schema's from a source
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:issuer');
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:issuanceDate');
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');

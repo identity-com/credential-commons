@@ -59,6 +59,7 @@ class Claim extends UserCollectableAttribute {
   static async create(identifier, value, version) {
     const currentIdentifier = await adaptIdentifierIfNeeded(identifier, version);
 
+    // Load the schema and it's references from a source to be used for validation and defining the schema definitions
     await schemaLoader.loadSchemaFromTitle(currentIdentifier);
 
     return new Claim(currentIdentifier, value, version);

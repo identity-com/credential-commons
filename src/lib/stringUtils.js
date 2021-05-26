@@ -8,7 +8,6 @@
 const pascalToCamelCase = string => string.replace(/^([A-Z])/, match => match.toLowerCase());
 
 const identifierPattern = /(claim|credential|uca|type)-((\w+):[\w.:]+)-v(\d+)/;
-// const identifierPattern = /(claim|credential|uca|type)-((\w+):[\w.]+)-v(\d+)/;
 const parseIdentifier = identifier => identifier.match(identifierPattern);
 
 module.exports = {

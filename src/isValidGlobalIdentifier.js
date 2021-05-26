@@ -8,6 +8,7 @@ const validVCIdentifiers = schemaLoader.validCredentialIdentifiers;
 const validPrefixes = ['claim', 'credential'];
 
 async function isValidGlobalIdentifier(identifier) {
+  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(identifier);
 
   const splited = _.split(identifier, '-');
