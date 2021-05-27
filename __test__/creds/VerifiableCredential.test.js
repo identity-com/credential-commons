@@ -2,10 +2,8 @@ const _ = require('lodash');
 const fs = require('fs');
 const uuidv4 = require('uuid/v4');
 const sjcl = require('sjcl');
-const { Claim, definitions } = require('../../src/claim/Claim');
+const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
-const credentialDefinitions = require('../../src/creds/definitions');
-const SchemaGenerator = require('../../src/schemas/generator/SchemaGenerator');
 const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
 const CredentialSignerVerifier = require('../../src/creds/CredentialSignerVerifier');
 const { schemaLoader } = require('../../src');
@@ -654,27 +652,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     cred.claim.document.dateOfBirth.year = 1900;
 
     expect(cred.verifyProofs()).toBeFalsy();
-  });
-
-  it('Should verify an VC of type GenericDocumentId', async () => {
-    const ucaArray = [];
-    const credentialDefinition = credentialDefinitions.find(definition => definition.identifier
-            === 'credential-cvc:GenericDocumentId-v1');
-    credentialDefinition.depends.forEach(async (ucaDefinitionIdentifier) => {
-      const ucaDefinition = definitions.find(ucaDef => ucaDef.identifier === ucaDefinitionIdentifier);
-      const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
-      let value = ucaJson;
-      if (Object.keys(ucaJson).length === 1) {
-        [value] = Object.values(ucaJson);
-      }
-      const dependentUca = await Claim.create(ucaDefinition.identifier, value, ucaDefinition.version);
-      ucaArray.push(dependentUca);
-    });
-    const credential = await VC.create(
-      credentialDefinition.identifier, 'did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD', null, ucaArray, 1,
-    );
-    expect(credential).toBeDefined();
-    expect(credential.verifyProofs()).toBeTruthy();
   });
 
   it('Should verify an VC of type PhoneNumber', async () => {
@@ -1477,42 +1454,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(properties).toContain('contact.email.domain.name');
     expect(properties).toContain('contact.email.domain.tld');
   });
-
-  // TODO: Confirm this can be skipped as part the schema generator no longer applies
-  // it.skip('Should generate each VC and test the empty filtering', async (done) => {
-  //   const validateSchemaJestStep = async (credentialDefinition) => {
-  //     const ucaArray = [];
-  //     credentialDefinition.depends.forEach((ucaDefinitionIdentifier) => {
-  //       const ucaDefinition = definitions.find(ucaDef => (
-  //         ucaDef.identifier === ucaDefinitionIdentifier
-  //       ));
-  //       const ucaJson = SchemaGenerator.buildSampleJson(ucaDefinition);
-  //       let value = ucaJson;
-  //       if (Object.keys(ucaJson).length === 1 && ucaDefinition.type !== 'Array') {
-  //         [value] = Object.values(ucaJson);
-  //       }
-  //       // const dependentUca = await Claim.create(ucaDefinition.identifier, value, ucaDefinition.version);
-  //       // ucaArray.push(dependentUca);
-  //     });
-  //     const credential =
-  //     await VC.create(credentialDefinition.identifier, `jest:test:${uuidv1()}`, null, ucaArray, 1);
-  //
-  //     await credential.requestAnchor();
-  //     await credential.updateAnchor();
-  //
-  //     const filteredCredential = credential.filter([]);
-  //     return Object.keys(filteredCredential.claim).length === 0
-  //               && filteredCredential.verify(VC.VERIFY_LEVELS.PROOFS) === VC.VERIFY_LEVELS.PROOFS;
-  //   };
-  //   const promises = [];
-  //   credentialDefinitions.forEach((credentialDefinition) => {
-  //     promises.push(validateSchemaJestStep(credentialDefinition));
-  //   });
-  //   Promise.all(promises).then((values) => {
-  //     values.forEach(isValid => expect(isValid).toBeTruthy());
-  //     done();
-  //   });
-  // });
 
   it('Should construct a VC with no evidence provided', async () => {
     const name = await Claim.create('claim-cvc:Identity.name-v1', {
