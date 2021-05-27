@@ -339,14 +339,16 @@ class Claim extends UserCollectableAttribute {
         // Properties is not an object
         properties.push(`${basePropName}.${typeDefProps.name}`);
       } else {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const prop of typeDefProps) {
+        const proProperties = await typeDefProps.reduce(async (prev, prop) => {
+          const prevProps = await prev;
           const { isNewIdentifier } = getBaseIdentifiers(prop.type);
           const newBasePropName = !isNewIdentifier ? basePropName : `${basePropName}.${prop.name}`;
-          // eslint-disable-next-line no-await-in-loop
-          const proProperties = await this.getAllProperties(prop.type, newBasePropName);
-          _.forEach(proProperties, p => properties.push(p));
-        }
+          const props = await this.getAllProperties(prop.type, newBasePropName);
+
+          return [...prevProps, ...props];
+        }, Promise.resolve([]));
+
+        properties.push(...proProperties);
       }
     } else if (pathName) {
       const { identifierComponents } = getBaseIdentifiers(definition.identifier);

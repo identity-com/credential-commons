@@ -120,6 +120,7 @@ const getSchemaVersion = (identifier) => {
   return '1';
 };
 
+
 /**
  * This class loads the schema definitions as needed by using loaders provided by the
  */
@@ -159,6 +160,18 @@ class SchemaLoader {
     return this.loadSchemaFromTitle(title[0]);
   }
 
+  async loadPropertySchema(schema, definition, ref, property) {
+    const propertySchema = await this.loadSchemaFromUri(ref);
+
+    if (propertySchema !== null) {
+      definition.depends.push(propertySchema.title);
+    }
+
+    if (schema.properties.claim.required && schema.properties.claim.required.includes(property)) {
+      definition.required.push(propertySchema.title);
+    }
+  }
+
   /**
    * Adds a schema definition to be backwards compatible with the old schema structure.
    */
@@ -190,26 +203,20 @@ class SchemaLoader {
       definition.required = [];
     }
 
+
+    const propertyPromises = [];
     // TODO: clean this section
     // eslint-disable-next-line guard-for-in,no-restricted-syntax
     for (const k in schema.properties.claim.properties) {
       const v = schema.properties.claim.properties[k];
       // eslint-disable-next-line guard-for-in,no-restricted-syntax
       for (const ki in v.properties) {
-        const vi = v.properties[ki];
-
         // eslint-disable-next-line no-await-in-loop
-        const propertySchema = await this.loadSchemaFromUri(vi.$ref);
-
-        if (propertySchema !== null) {
-          definition.depends.push(propertySchema.title);
-        }
-
-        if (schema.properties.claim.required && schema.properties.claim.required.includes(ki)) {
-          definition.required.push(propertySchema.title);
-        }
+        await this.loadPropertySchema(schema, definition, v.properties[ki].$ref, ki);
       }
     }
+
+    await Promise.all(propertyPromises);
 
     this.credentialDefinitions.push(definition);
     this.validCredentialIdentifiers.push(definition.identifier);
@@ -268,6 +275,7 @@ class SchemaLoader {
       if (property.allOf) {
         // eslint-disable-next-line no-await-in-loop
         const schema = await this.loadSchemaFromUri(property.allOf[0].$ref);
+
         type = schema.title;
       }
 

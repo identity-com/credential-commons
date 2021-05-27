@@ -795,20 +795,21 @@ VerifiableCredentialBaseConstructor.getAllProperties = async (identifier) => {
 
   const vcDefinition = _.find(definitions, { identifier });
   if (vcDefinition) {
-    const allProperties = [];
-    // eslint-disable-next-line no-restricted-syntax
-    for (const definition of vcDefinition.depends) {
-      // eslint-disable-next-line no-await-in-loop
-      allProperties.push(...await Claim.getAllProperties(definition));
-    }
+    const allProperties = await vcDefinition.depends.reduce(async (prev, definition) => {
+      const prevProps = await prev;
+      const claimProps = await Claim.getAllProperties(definition);
 
-    const excludesProperties = [];
+      return [...prevProps, ...claimProps];
+    }, Promise.resolve([]));
+
+    let excludesProperties = [];
     if (vcDefinition.excludes) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const definition of vcDefinition.excludes) {
-        // eslint-disable-next-line no-await-in-loop
-        excludesProperties.push(...await Claim.getAllProperties(definition));
-      }
+      excludesProperties = await vcDefinition.excludes.reduce(async (prev, definition) => {
+        const prevProps = await prev;
+        const claimProps = await Claim.getAllProperties(definition);
+
+        return [...prevProps, ...claimProps];
+      }, Promise.resolve([]));
     }
 
     return _.difference(allProperties, excludesProperties);
