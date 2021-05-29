@@ -368,4 +368,9 @@ function mixinIdentifiers(UCA) {
   return UCA;
 }
 
-module.exports = { Claim: mixinIdentifiers(Claim), definitions, getBaseIdentifiers };
+module.exports = {
+  Claim: mixinIdentifiers(Claim),
+  definitions,
+  getBaseIdentifiers,
+  getClaimIdentifier: adaptIdentifierIfNeeded,
+};

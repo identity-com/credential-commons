@@ -1,4 +1,4 @@
-const { Claim } = require('./claim/Claim');
+const { Claim, getClaimIdentifier } = require('./claim/Claim');
 const VC = require('./creds/VerifiableCredential');
 const { initServices, services } = require('./services/index');
 const isValidGlobalIdentifier = require('./isValidGlobalIdentifier');
@@ -26,6 +26,7 @@ function CredentialCommons() {
   this.constants = constants;
   this.claimDefinitions = claimDefinitions;
   this.credentialDefinitions = credentialDefinitions;
+  this.getClaimIdentifier = getClaimIdentifier;
   return this;
 }
 
