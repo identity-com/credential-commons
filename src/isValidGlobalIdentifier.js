@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { definitions } = require('@identity.com/uca');
 const { schemaLoader } = require('./schemas/jsonSchema');
 
-const validUCAIdentifiers = _.map(definitions, d => d.identifier);
+const validUCAIdentifiers = schemaLoader.validIdentifiers;
 const validClaimIdentifiers = schemaLoader.validIdentifiers;
 const validVCIdentifiers = schemaLoader.validCredentialIdentifiers;
 const validPrefixes = ['claim', 'credential'];

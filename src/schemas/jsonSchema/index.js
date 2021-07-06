@@ -4,12 +4,12 @@ const traverse = require('json-schema-traverse');
 const addFormats = require('ajv-formats').default;
 const definitions = require('../../claim/definitions');
 const credentialDefinitions = require('../../creds/definitions');
+const { CVCSchemaLoader } = require('./loaders/cvc');
 
 const summaryMap = {};
 
 /**
  * Code generated to create a sumary map for a human readable output.
- * TODO: This should be refactored out of credential commons?
  */
 class SummaryMapper {
   static addDefinition(def) {
@@ -112,7 +112,7 @@ class SummaryMapper {
 }
 
 const getSchemaVersion = (identifier) => {
-  const matches = identifier.match(/-v([\d]+$)/);
+  const matches = identifier.match(/D-v([\d]+$)/);
   if (matches && matches.length > 1) {
     return matches[1];
   }
@@ -145,6 +145,8 @@ class SchemaLoader {
     // compatibilty. These should be removed?
     this.ajv.addKeyword('transient');
     this.ajv.addKeyword('credentialItem');
+    this.ajv.addKeyword('alias');
+    this.ajv.addKeyword('deambiguify');
   }
 
   /**
@@ -157,7 +159,9 @@ class SchemaLoader {
   async loadSchemaFromUri(uri) {
     const title = uri.split('#')[0].match('[^/]+$', uri);
 
-    return this.loadSchemaFromTitle(title[0]);
+    const schema = await this.loadSchemaFromTitle(title[0]);
+
+    return schema;
   }
 
   async loadPropertySchema(schema, definition, ref, property) {
@@ -173,8 +177,8 @@ class SchemaLoader {
   }
 
   /**
-   * Adds a schema definition to be backwards compatible with the old schema structure.
-   */
+     * Adds a claim definition to be backwards compatible with the old schema structure.
+     */
   async addDefinition(schema) {
     if (/^credential-/.test(schema.title)) {
       await this.addCredentialDefinition(schema);
@@ -184,9 +188,7 @@ class SchemaLoader {
   }
 
   /**
-   *
-   * @param schema
-   * @returns {Promise<void>}
+   * Adds a credential definition to be backwards compatible with the old schema structure.
    */
   async addCredentialDefinition(schema) {
     const definition = {
@@ -203,20 +205,18 @@ class SchemaLoader {
       definition.required = [];
     }
 
+    const references = [];
+    _.forEach(schema.properties.claim.properties, (vo) => {
+      _.forEach(vo.properties, (vi, ki) => {
+        references.push({ ref: vo.properties[ki].$ref, property: ki });
+      });
+    });
 
-    const propertyPromises = [];
-    // TODO: clean this section
-    // eslint-disable-next-line guard-for-in,no-restricted-syntax
-    for (const k in schema.properties.claim.properties) {
-      const v = schema.properties.claim.properties[k];
-      // eslint-disable-next-line guard-for-in,no-restricted-syntax
-      for (const ki in v.properties) {
-        // eslint-disable-next-line no-await-in-loop
-        await this.loadPropertySchema(schema, definition, v.properties[ki].$ref, ki);
-      }
-    }
+    await _.reduce(references, async (promise, value) => {
+      await promise;
 
-    await Promise.all(propertyPromises);
+      return this.loadPropertySchema(schema, definition, value.ref, value.property);
+    }, Promise.resolve());
 
     this.credentialDefinitions.push(definition);
     this.validCredentialIdentifiers.push(definition.identifier);
@@ -238,51 +238,70 @@ class SchemaLoader {
       };
     }
 
-    ['attestable', 'credentialItem', 'minimum', 'maximum'].forEach((property) => {
-      if (property in schema) {
-        definition[property] = schema[property];
-      }
-    });
+    ['attestable', 'credentialItem', 'minimum', 'maximum', 'alias', 'description']
+      .forEach((property) => {
+        if (property in schema) {
+          definition[property] = schema[property];
+        }
+      });
+
+    if (schema.pattern) {
+      // definition.pattern = new RegExp(schema.pattern.substring(1, schema.pattern.length - 1));
+      definition.pattern = new RegExp(schema.pattern);
+    }
 
     if (schema.required) {
       definition.type.required = schema.required;
     }
 
+    if (schema.enum) {
+      definition.enum = {};
+      _.forEach(schema.enum, (value) => {
+        definition.enum[value.toUpperCase()] = value;
+      });
+    }
+
     this.definitions.push(definition);
+
     this.validIdentifiers.push(schema.title);
     SummaryMapper.addDefinition(definition);
+  }
+
+  async getPropertyValue(defProperties, property, name) {
+    const { deambiguify, items } = property;
+    let { type } = property;
+
+    if (type === 'array' || (items && items.$ref)) {
+      if (items.$ref) {
+        const arraySchema = await this.loadSchemaFromUri(items.$ref);
+
+        type = arraySchema.title;
+      } else {
+        type = _.capitalize(type);
+      }
+    }
+
+    if (property.allOf) {
+      const schema = await this.loadSchemaFromUri(property.allOf[0].$ref);
+
+      type = schema.title;
+    }
+
+    const defProperty = { name, type };
+    if (deambiguify) {
+      defProperty.deambiguify = deambiguify;
+    }
+    defProperties.push(defProperty);
   }
 
   async getPropertyValues(properties) {
     const defProperties = [];
 
-    // eslint-disable-next-line guard-for-in,no-restricted-syntax
-    for (const name in properties) {
-      const property = properties[name];
+    await _.reduce(properties, async (promise, value, name) => {
+      await promise;
 
-      let { type } = property;
-      const { items } = property;
-
-      if (type === 'array') {
-        if (items.$ref) {
-          // TODO: remove hardcode identifier
-          type = items.$ref.replace('http://identity.com/schemas/', '');
-        } else {
-          type = _.capitalize(type);
-        }
-      }
-
-      if (property.allOf) {
-        // eslint-disable-next-line no-await-in-loop
-        const schema = await this.loadSchemaFromUri(property.allOf[0].$ref);
-
-        type = schema.title;
-      }
-
-      const defProperty = { name, type };
-
-      defProperties.push(defProperty);
-    }
+      return this.getPropertyValue(defProperties, value, name);
+    }, Promise.resolve());
 
     return { properties: defProperties };
   }
@@ -291,18 +310,20 @@ class SchemaLoader {
    * Finds the definition/properties of a schema
    */
   async findDefinitionType(schema) {
-    if (schema.type === 'object') {
-      if (!_.isEmpty(schema.properties)) {
-        const values = await this.getPropertyValues(schema.properties);
-        return values;
-      }
-
+    if (schema.allOf) {
       const subSchema = await this.loadSchemaFromUri(schema.allOf[0].$ref);
       if (subSchema == null) {
         return null;
       }
 
       return subSchema.title;
+    }
+
+    if (schema.type === 'object') {
+      if (!_.isEmpty(schema.properties)) {
+        const values = await this.getPropertyValues(schema.properties);
+        return values;
+      }
     }
 
     if (schema.type === 'array') {
@@ -352,17 +373,17 @@ class SchemaLoader {
       });
 
       await Promise.all(references);
-    } else {
-      schema = await loader.loadSchema(title);
+
+      return schema;
     }
 
-    return schema;
+    return existingSchema.schema;
   }
 
 
   /**
-   * Finds the correct schema loader based on the identifier
-   */
+     * Finds the correct schema loader based on the identifier
+     */
   findSchemaLoader(identifier) {
     return _.find(this.loaders, loader => loader.valid(identifier));
   }
@@ -387,10 +408,19 @@ class SchemaLoader {
 
     const valid = validateSchema(value);
 
-    if (!valid) throw new Error(`Invalid value. Errors: ${JSON.stringify(validateSchema.errors, null, 2)}`);
+    if (!valid) {
+      _.forEach(validateSchema.errors, (error) => {
+        if (error.params && error.params.missingProperty) {
+          throw new Error(`Missing required fields to ${validateSchema.schema.title}`);
+        }
+      });
+
+      throw new Error(`Invalid value. Errors: ${JSON.stringify(validateSchema.errors, null, 2)}`);
+    }
   }
 }
 
 const schemaLoader = new SchemaLoader();
+schemaLoader.addLoader(new CVCSchemaLoader());
 
 module.exports = { schemaLoader };

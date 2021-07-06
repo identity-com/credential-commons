@@ -59,10 +59,17 @@ class Claim extends UserCollectableAttribute {
   static async create(identifier, value, version) {
     const currentIdentifier = await adaptIdentifierIfNeeded(identifier, version);
 
+    if (!value.attestableValue) {
+      await schemaLoader.validateSchema(currentIdentifier, value);
+    }
+
     // Load the schema and it's references from a source to be used for validation and defining the schema definitions
     await schemaLoader.loadSchemaFromTitle(currentIdentifier);
 
-    return new Claim(currentIdentifier, value, version);
+    const claim = new Claim(currentIdentifier, value, version);
+
+
+    return claim;
   }
 
   initialize(identifier, value, version) {
@@ -226,7 +233,8 @@ class Claim extends UserCollectableAttribute {
     // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
     if (['String', 'Number', 'Boolean'].indexOf(this.type) >= 0) {
       return `urn:${propertyName}:${this.salt}:${this.value}|`;
-    } if (this.type === 'Array') {
+    }
+    if (this.type === 'Array') {
       const itemsValues = _.reduce(this.value,
         (result, item) => `${result}${item.getAttestableValue(null, true)},`, '');
       return `urn:${propertyName}:${this.salt}:[${itemsValues}]`;
@@ -236,8 +244,8 @@ class Claim extends UserCollectableAttribute {
   }
 
   /**
-   * Returns the global CredentialItem of the Credential
-   */
+     * Returns the global CredentialItem of the Credential
+     */
   getGlobalIdentifier() {
     return `claim-${this.identifier}-${this.version}`;
   }
@@ -291,9 +299,9 @@ class Claim extends UserCollectableAttribute {
   }
 
   /**
-   * extract the expected Type name for the value when constructing an UCA
-   * @param {*} definition
-   */
+     * extract the expected Type name for the value when constructing an UCA
+     * @param {*} definition
+     */
   static getTypeName(definition) {
     if (_.isString(definition.type)) {
       if (_.includes(validIdentifiers, definition.type)) {

@@ -3,6 +3,20 @@ const { services } = require('../../../services');
 
 const rootUri = 'http://identity.com/schemas/';
 
+const getIdentifierPath = (identifier) => {
+  let identifierPath;
+
+  if (/^cvc:.*$/.test(identifier)) {
+    identifierPath = `uca/1/uca-${identifier}`;
+  } else {
+    const parsedIdentifier = parseIdentifier(identifier);
+
+    identifierPath = `${parsedIdentifier[1]}/${parsedIdentifier[4]}/${parsedIdentifier[1]}-${parsedIdentifier[2]}`;
+  }
+
+  return identifierPath;
+};
+
 class CVCSchemaLoader {
   constructor(baseRemoteUri = undefined) {
     this.baseRemoteUri = baseRemoteUri;
@@ -28,15 +42,9 @@ class CVCSchemaLoader {
    * Loads the schema based on the identifier
    */
   async loadSchema(identifier) {
-    let identifierPath;
+    await new Promise(r => setTimeout(r, 1));
 
-    if (/^cvc:.*$/.test(identifier)) {
-      identifierPath = `uca/1/uca-${identifier}`;
-    } else {
-      const parsedIdentifier = parseIdentifier(identifier);
-
-      identifierPath = `${parsedIdentifier[1]}/${parsedIdentifier[4]}/${parsedIdentifier[1]}-${parsedIdentifier[2]}`;
-    }
+    const identifierPath = getIdentifierPath(identifier);
 
     let schema = CVCSchemaLoader.local(identifierPath);
 
@@ -76,4 +84,4 @@ class CVCSchemaLoader {
   }
 }
 
-module.exports = { CVCSchemaLoader };
+module.exports = { CVCSchemaLoader, getIdentifierPath };
