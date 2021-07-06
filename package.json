@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "1.2.6",
+  "version": "2.0.0-beta.0",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -32,7 +32,6 @@
     "build": "npm run build:browser && npm run build:cjs && npm run build:es",
     "pretag": "git fetch --tags",
     "tag": "git tag v$npm_package_version && git push --tags origin master",
-    "precommit": "npm run lint",
     "release:create": "hub release create -m v$npm_package_version v$npm_package_version",
     "audit-ci": "audit-ci --config audit-ci.json"
   },
@@ -124,5 +123,10 @@
     "pageTitle": "Verifiable Credential and Attestation Library Test Suite",
     "outputPath": "reports/test-report.html",
     "includeFailureMsg": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
   }
 }
