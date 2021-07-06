@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "country": {
-      "type": "string",
+      "type": "object",
       "allOf": [
         {
           "$ref": "http://identity.com/schemas/cvc:PhoneNumber:country"
@@ -13,7 +13,7 @@
       ]
     },
     "countryCode": {
-      "type": "string",
+      "type": "object",
       "allOf": [
         {
           "$ref": "http://identity.com/schemas/cvc:PhoneNumber:countryCode"
@@ -21,7 +21,7 @@
       ]
     },
     "number": {
-      "type": "string",
+      "type": "object",
       "allOf": [
         {
           "$ref": "http://identity.com/schemas/cvc:PhoneNumber:number"
@@ -29,7 +29,7 @@
       ]
     },
     "extension": {
-      "type": "string",
+      "type": "object",
       "allOf": [
         {
           "$ref": "http://identity.com/schemas/cvc:PhoneNumber:extension"
@@ -37,7 +37,7 @@
       ]
     },
     "lineType": {
-      "type": "string",
+      "type": "object",
       "allOf": [
         {
           "$ref": "http://identity.com/schemas/cvc:PhoneNumber:lineType"

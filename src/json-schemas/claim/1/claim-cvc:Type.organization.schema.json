@@ -21,6 +21,7 @@
       ]
     }
   },
+  "required": ["name"],
   "additionalProperties": false,
   "credentialItem": false
 }

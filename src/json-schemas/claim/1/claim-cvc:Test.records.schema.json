@@ -3,7 +3,7 @@
   "title": "claim-cvc:Test.records-v1",
   "$id": "http://identity.com/schemas/claim-cvc:Test.records-v1",
   "type": "array",
-  "items": {
+  "allOf": {
     "$ref": "http://identity.com/schemas/claim-cvc:Test.record-v1"
   },
   "credentialItem": true

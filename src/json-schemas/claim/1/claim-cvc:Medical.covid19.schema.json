@@ -7,24 +7,25 @@
     "vaccinations": {
       "type": "array",
       "items": {
-        "$ref": "http://identity.com/schemas/claim-cvc:Vaccination.records-v1"
+        "$ref": "http://identity.com/schemas/claim-cvc:Vaccination.record-v1"
       }
     },
     "tests": {
       "type": "array",
       "items": {
-        "$ref": "http://identity.com/schemas/claim-cvc:Test.records-v1"
+        "$ref": "http://identity.com/schemas/claim-cvc:Test.record-v1"
       }
     },
     "patient": {
       "type": "object",
       "allOf": [
         {
-          "$ref": "http://identity.com/schemas/claim-cvc:Type.patient-v1"
+          "$ref": "http://identity.com/schemas/claim-cvc:Medical.covid19-v1"
         }
       ]
     }
   },
+  "required": ["patient"],
   "additionalProperties": false,
   "credentialItem": true
 }

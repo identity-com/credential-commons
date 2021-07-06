@@ -3,5 +3,5 @@
   "title": "cvc:SocialSecurity:areaNumber",
   "$id": "http://identity.com/schemas/cvc:SocialSecurity:areaNumber",
   "type": "string",
-  "pattern": "/^\\d{3}$/"
+  "pattern": "^\\d{3}$"
 }

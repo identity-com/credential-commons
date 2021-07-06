@@ -3,5 +3,10 @@
   "title": "cvc:Verify:phoneNumberToken",
   "$id": "http://identity.com/schemas/cvc:Verify:phoneNumberToken",
   "type": "string",
+  "allOf": [
+    {
+      "$ref": "http://identity.com/schemas/cvc:Type:shortToken"
+    }
+  ],
   "credentialItem": false
 }

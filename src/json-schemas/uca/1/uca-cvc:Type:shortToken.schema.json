@@ -3,6 +3,6 @@
   "title": "cvc:Type:shortToken",
   "$id": "http://identity.com/schemas/cvc:Type:shortToken",
   "type": "string",
-  "pattern": "/^\\d{5}$/",
+  "pattern": "^\\d{5}$",
   "credentialItem": false
 }

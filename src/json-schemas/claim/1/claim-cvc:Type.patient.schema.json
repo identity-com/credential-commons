@@ -21,6 +21,7 @@
       ]
     }
   },
+  "required":["fullName"],
   "additionalProperties": false,
   "credentialItem": true
 }

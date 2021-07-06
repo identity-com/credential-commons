@@ -3,5 +3,10 @@
   "title": "claim-cvc:Vaccination.date-v1",
   "$id": "http://identity.com/schemas/claim-cvc:Vaccination.date-v1",
   "type": "string",
+  "allOf": [
+    {
+      "$ref": "http://identity.com/schemas/cvc:Type:timestamp"
+    }
+  ],
   "credentialItem": false
 }

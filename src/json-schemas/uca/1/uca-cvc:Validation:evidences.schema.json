@@ -8,5 +8,6 @@
       "$ref": "http://identity.com/schemas/cvc:Document:evidences"
     }
   ],
-  "credentialItem": true
+  "credentialItem": true,
+  "alias": true
 }

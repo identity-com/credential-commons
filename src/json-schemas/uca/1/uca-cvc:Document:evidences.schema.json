@@ -6,6 +6,7 @@
   "properties": {
     "idDocumentFront": {
       "type": "object",
+      "deambiguify": true,
       "allOf": [
         {
           "$ref": "http://identity.com/schemas/cvc:Evidences:idDocumentFront"
@@ -14,6 +15,7 @@
     },
     "idDocumentBack": {
       "type": "object",
+      "deambiguify": true,
       "allOf": [
         {
           "$ref": "http://identity.com/schemas/cvc:Evidences:idDocumentBack"
@@ -22,6 +24,7 @@
     },
     "selfie": {
       "type": "object",
+      "deambiguify": true,
       "allOf": [
         {
           "$ref": "http://identity.com/schemas/cvc:Evidences:selfie"
