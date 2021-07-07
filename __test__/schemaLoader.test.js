@@ -2,16 +2,16 @@ const {
   Claim,
   VC,
   schemaLoader,
+  CVCSchemaLoader,
 } = require('../src/index');
 const claimDefinitions = require('../src/claim/definitions');
 const credentialDefinitions = require('../src/creds/definitions');
-const TestCVCLoader = require('./TestCVCLoader');
 
 const { summaryMap } = schemaLoader;
 
 describe('schema loading tests', () => {
   beforeAll(() => {
-    schemaLoader.addLoader(new TestCVCLoader());
+    schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
   it('test claim definition creation', async () => {

@@ -6,8 +6,7 @@ const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
 const CredentialSignerVerifier = require('../../src/creds/CredentialSignerVerifier');
-const { schemaLoader } = require('../../src');
-const TestCVCLoader = require('../TestCVCLoader');
+const { schemaLoader, CVCSchemaLoader } = require('../../src');
 
 // eslint-disable-next-line max-len
 const prvBase58 = 'xprv9s21ZrQH143K4aBUwUW6GVec7Y6oUEBqrt2WWaXyxjh2pjofNc1of44BLufn4p1t7Jq4EPzm5C9sRxCuBYJdHu62jhgfyPm544sNjtH7x8S';
@@ -43,7 +42,7 @@ const signAttestationSubject = (subject, xprv, xpub) => {
 
 describe('Unit tests for Verifiable Credentials', () => {
   beforeAll(() => {
-    schemaLoader.addLoader(new TestCVCLoader());
+    schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
   test('Dont construct undefined Credentials', async () => {
@@ -1720,7 +1719,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
 describe('Transient Credential Tests', () => {
   beforeAll(() => {
-    schemaLoader.addLoader(new TestCVCLoader());
+    schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
   // TODO: Double check this
@@ -1781,7 +1780,7 @@ describe('Transient Credential Tests', () => {
 
 describe('Signned Verifiable Credentials', () => {
   beforeAll(() => {
-    schemaLoader.addLoader(new TestCVCLoader());
+    schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
   test('Should create a verifiable credential instance', async () => {

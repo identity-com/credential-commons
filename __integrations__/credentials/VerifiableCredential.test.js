@@ -1,14 +1,13 @@
 const uuidv4 = require('uuid/v4');
 const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
-const { schemaLoader } = require('../../src');
-const TestCVCLoader = require('../../__test__/TestCVCLoader');
+const { schemaLoader, CVCSchemaLoader } = require('../../src');
 
 jest.setTimeout(200000);
 
 describe('Integration Tests for Verifiable Credentials', () => {
   beforeAll(() => {
-    schemaLoader.addLoader(new TestCVCLoader());
+    schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {

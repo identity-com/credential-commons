@@ -1,11 +1,10 @@
 const isGlobalIdentifier = require('../src/isValidGlobalIdentifier');
-const { schemaLoader } = require('../src');
-const TestCVCLoader = require('./TestCVCLoader');
+const { schemaLoader, CVCSchemaLoader } = require('../src');
 
 
 describe('isGlobalIdentifier Tests', () => {
   beforeAll(() => {
-    schemaLoader.addLoader(new TestCVCLoader());
+    schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
   test('name-v1 is malformed', () => expect(isGlobalIdentifier('name-v1'))

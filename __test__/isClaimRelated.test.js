@@ -1,11 +1,11 @@
 const isClaimRelated = require('../src/isClaimRelated');
-const { schemaLoader } = require('../src');
-const TestCVCLoader = require('./TestCVCLoader');
+const { schemaLoader, CVCSchemaLoader } = require('../src');
 
+jest.setTimeout(30000);
 
 describe('isClaimRelated Tests', () => {
   beforeAll(() => {
-    schemaLoader.addLoader(new TestCVCLoader());
+    schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
   it('Should validate a claim path against UCA definitions '
