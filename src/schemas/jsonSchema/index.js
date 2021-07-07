@@ -4,7 +4,6 @@ const traverse = require('json-schema-traverse');
 const addFormats = require('ajv-formats').default;
 const definitions = require('../../claim/definitions');
 const credentialDefinitions = require('../../creds/definitions');
-const { CVCSchemaLoader } = require('./loaders/cvc');
 
 const summaryMap = {};
 
@@ -421,6 +420,5 @@ class SchemaLoader {
 }
 
 const schemaLoader = new SchemaLoader();
-schemaLoader.addLoader(new CVCSchemaLoader());
 
 module.exports = { schemaLoader };

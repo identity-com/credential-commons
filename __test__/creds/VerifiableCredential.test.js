@@ -7,9 +7,7 @@ const VC = require('../../src/creds/VerifiableCredential');
 const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
 const CredentialSignerVerifier = require('../../src/creds/CredentialSignerVerifier');
 const { schemaLoader } = require('../../src');
-const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
-
-schemaLoader.addLoader(new CVCSchemaLoader());
+const TestCVCLoader = require('../TestCVCLoader');
 
 // eslint-disable-next-line max-len
 const prvBase58 = 'xprv9s21ZrQH143K4aBUwUW6GVec7Y6oUEBqrt2WWaXyxjh2pjofNc1of44BLufn4p1t7Jq4EPzm5C9sRxCuBYJdHu62jhgfyPm544sNjtH7x8S';
@@ -44,6 +42,10 @@ const signAttestationSubject = (subject, xprv, xpub) => {
 };
 
 describe('Unit tests for Verifiable Credentials', () => {
+  beforeAll(() => {
+    schemaLoader.addLoader(new TestCVCLoader());
+  });
+
   test('Dont construct undefined Credentials', async () => {
     const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
     const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
@@ -1717,6 +1719,10 @@ describe('Unit tests for Verifiable Credentials', () => {
 });
 
 describe('Transient Credential Tests', () => {
+  beforeAll(() => {
+    schemaLoader.addLoader(new TestCVCLoader());
+  });
+
   // TODO: Double check this
   it.skip('Should create an US Address Transient Credential', async () => {
     const value = {
@@ -1774,6 +1780,10 @@ describe('Transient Credential Tests', () => {
 });
 
 describe('Signned Verifiable Credentials', () => {
+  beforeAll(() => {
+    schemaLoader.addLoader(new TestCVCLoader());
+  });
+
   test('Should create a verifiable credential instance', async () => {
     const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
     const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);

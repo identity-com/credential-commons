@@ -1,10 +1,13 @@
 const isClaimRelated = require('../src/isClaimRelated');
 const { schemaLoader } = require('../src');
-const { CVCSchemaLoader } = require('../src/schemas/jsonSchema/loaders/cvc');
+const TestCVCLoader = require('./TestCVCLoader');
 
-schemaLoader.addLoader(new CVCSchemaLoader());
 
 describe('isClaimRelated Tests', () => {
+  beforeAll(() => {
+    schemaLoader.addLoader(new TestCVCLoader());
+  });
+
   it('Should validate a claim path against UCA definitions '
     + 'and VC definitions and succeed', async (done) => {
     const uca = 'claim-claim-cvc:Document.name-v1-1';

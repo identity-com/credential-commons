@@ -1,11 +1,13 @@
 const { UserCollectableAttribute } = require('@identity.com/uca');
 const { Claim } = require('../../src/claim/Claim');
 const { schemaLoader } = require('../../src');
-const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
-
-schemaLoader.addLoader(new CVCSchemaLoader());
+const TestCVCLoader = require('../TestCVCLoader');
 
 describe('Claim Constructions tests', () => {
+  beforeAll(() => {
+    schemaLoader.addLoader(new TestCVCLoader());
+  });
+
   test('Claim construction should fails',
     async () => expect(Claim.create('name.first', 'joao'))
       .rejects.toThrow(/name.first is not defined/));

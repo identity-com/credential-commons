@@ -2,13 +2,15 @@ const uuidv4 = require('uuid/v4');
 const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const { schemaLoader } = require('../../src');
-const { CVCSchemaLoader } = require('../../src/schemas/jsonSchema/loaders/cvc');
-
-schemaLoader.addLoader(new CVCSchemaLoader());
+const TestCVCLoader = require('../../__test__/TestCVCLoader');
 
 jest.setTimeout(200000);
 
 describe('Integration Tests for Verifiable Credentials', () => {
+  beforeAll(() => {
+    schemaLoader.addLoader(new TestCVCLoader());
+  });
+
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
     const name = await Claim.create('claim-cvc:Identity.name-v1',
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
