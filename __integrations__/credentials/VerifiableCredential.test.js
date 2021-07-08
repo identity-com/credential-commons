@@ -10,6 +10,10 @@ describe('Integration Tests for Verifiable Credentials', () => {
     schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
+  beforeEach(() => {
+    schemaLoader.reset();
+  });
+
   it('should request an anchor for Credential and return an temporary attestation', async (done) => {
     const name = await Claim.create('claim-cvc:Identity.name-v1',
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });

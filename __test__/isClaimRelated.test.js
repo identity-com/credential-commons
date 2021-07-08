@@ -8,6 +8,10 @@ describe('isClaimRelated Tests', () => {
     schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
+  beforeEach(() => {
+    schemaLoader.reset();
+  });
+
   it('Should validate a claim path against UCA definitions '
     + 'and VC definitions and succeed', async (done) => {
     const uca = 'claim-claim-cvc:Document.name-v1-1';

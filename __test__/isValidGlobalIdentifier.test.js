@@ -7,6 +7,10 @@ describe('isGlobalIdentifier Tests', () => {
     schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
+  beforeEach(() => {
+    schemaLoader.reset();
+  });
+
   test('name-v1 is malformed', () => expect(isGlobalIdentifier('name-v1'))
     .rejects.toThrow(/Malformed Global Identifier/));
 

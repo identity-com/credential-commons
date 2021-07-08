@@ -7,6 +7,10 @@ describe('Claim Constructions tests', () => {
     schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
+  beforeEach(() => {
+    schemaLoader.reset();
+  });
+
   test('Claim construction should fails',
     async () => expect(Claim.create('name.first', 'joao'))
       .rejects.toThrow(/name.first is not defined/));
