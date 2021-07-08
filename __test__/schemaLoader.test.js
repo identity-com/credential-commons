@@ -14,10 +14,6 @@ describe('schema loading tests', () => {
     schemaLoader.addLoader(new CVCSchemaLoader());
   });
 
-  beforeEach(() => {
-    schemaLoader.reset();
-  });
-
   it('test claim definition creation', async () => {
     expect(claimDefinitions)
       .toHaveLength(0);

@@ -170,7 +170,10 @@ function isDateStructure(obj) {
  * @param credential - A credential object with expirationDate, claim and proof
  * @return true if verified, false otherwise.
  */
-function nonCryptographicallySecureVerify(credential) {
+async function nonCryptographicallySecureVerify(credential) {
+  await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
+  await schemaLoader.loadSchemaFromTitle(credential.identifier);
+
   const expiry = _.clone(credential.expirationDate);
   const claims = _.clone(credential.claim);
   const signature = _.clone(credential.proof);
@@ -513,7 +516,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * Verify the Credential and return a verification level.
    * @return Any of VC.VERIFY_LEVELS
    */
-  this.verify = (higherVerifyLevel, options) => {
+  this.verify = async (higherVerifyLevel, options) => {
     const { requestorId, requestId, keyName } = options || {};
     const hVerifyLevel = !_.isNil(higherVerifyLevel) ? higherVerifyLevel : VERIFY_LEVELS.GRANTED;
     let verifiedlevel = VERIFY_LEVELS.INVALID;
@@ -521,7 +524,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.INVALID
       && hVerifyLevel >= VERIFY_LEVELS.PROOFS
-      && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
+      && await this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.PROOFS

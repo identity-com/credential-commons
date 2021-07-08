@@ -5,7 +5,7 @@ const addFormats = require('ajv-formats').default;
 const definitions = require('../../claim/definitions');
 const credentialDefinitions = require('../../creds/definitions');
 
-const summaryMap = {};
+let summaryMap = {};
 
 /**
  * Code generated to create a sumary map for a human readable output.
@@ -146,6 +146,16 @@ class SchemaLoader {
     this.ajv.addKeyword('credentialItem');
     this.ajv.addKeyword('alias');
     this.ajv.addKeyword('deambiguify');
+  }
+
+  reset() {
+    this.definitions.length = 0;
+    this.credentialDefinitions.length = 0;
+    this.validIdentifiers.length = 0;
+    this.validCredentialIdentifiers.length = 0;
+    this.ajv.removeSchema(/.*/);
+    summaryMap = {};
+    this.summaryMap = {};
   }
 
   /**
