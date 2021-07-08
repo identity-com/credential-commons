@@ -966,7 +966,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(transmittedCred).toBeDefined();
 
     // <wire transferred>
-    const receivedCred = VC.fromJSON(JSON.parse(transmittedCred));
+    const receivedCred = await VC.fromJSON(JSON.parse(transmittedCred));
     expect(receivedCred.granted).not.toBeNull();
 
     // Simulate a invalid granted token - one not based on the same nonce
