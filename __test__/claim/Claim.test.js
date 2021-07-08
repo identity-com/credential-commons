@@ -2,6 +2,8 @@ const { UserCollectableAttribute } = require('@identity.com/uca');
 const { Claim } = require('../../src/claim/Claim');
 const { schemaLoader, CVCSchemaLoader } = require('../../src');
 
+jest.setTimeout(30000);
+
 describe('Claim Constructions tests', () => {
   beforeAll(() => {
     schemaLoader.addLoader(new CVCSchemaLoader());

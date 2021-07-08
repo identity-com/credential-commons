@@ -22,7 +22,8 @@ const { schemaLoader } = require('../schemas/jsonSchema');
 const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
 
 function validIdentifiers() {
-  return _.map(definitions, d => d.identifier);
+  const vi = _.map(definitions, d => d.identifier);
+  return vi;
 }
 
 function getClaimsWithFlatKeys(claims) {
@@ -524,7 +525,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.INVALID
       && hVerifyLevel >= VERIFY_LEVELS.PROOFS
-      && await this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
+      && (await this.verifyProofs())) verifiedlevel = VERIFY_LEVELS.PROOFS;
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.PROOFS
@@ -763,15 +764,15 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn
  * @param {*} verifiableCredentialJSON
  * @returns VerifiableCredentialBaseConstructor
  */
-VerifiableCredentialBaseConstructor.fromJSON = async (verifiableCredentialJSON) => {
+VerifiableCredentialBaseConstructor.fromJSON = async (verifiableCredentialJSON, partialPresentation = false) => {
   await schemaLoader.loadSchemaFromTitle(verifiableCredentialJSON.identifier);
 
-  const definition = getCredentialDefinition(
-    verifiableCredentialJSON.identifier,
-    verifiableCredentialJSON.version,
-  );
+  const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
+    verifiableCredentialJSON.version);
 
-  verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
+  if (!partialPresentation) {
+    verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
+  }
 
   const newObj = await VerifiableCredentialBaseConstructor.create(
     verifiableCredentialJSON.identifier,

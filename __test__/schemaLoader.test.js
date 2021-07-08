@@ -9,6 +9,8 @@ const credentialDefinitions = require('../src/creds/definitions');
 
 const { summaryMap } = schemaLoader;
 
+jest.setTimeout(30000);
+
 describe('schema loading tests', () => {
   beforeAll(() => {
     schemaLoader.addLoader(new CVCSchemaLoader());

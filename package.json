@@ -32,6 +32,7 @@
     "build": "npm run build:browser && npm run build:cjs && npm run build:es",
     "pretag": "git fetch --tags",
     "tag": "git tag v$npm_package_version && git push --tags origin master",
+    "precommit": "npm run lint",
     "release:create": "hub release create -m v$npm_package_version v$npm_package_version",
     "audit-ci": "audit-ci --config audit-ci.json"
   },
@@ -54,12 +55,11 @@
     "husky": "^1.1.2",
     "jest": "^25.5.4",
     "jest-html-reporter": "^2.3.0",
-    "npm": "^6.14.13",
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@identity.com/uca": "^1.0.29",
+    "@identity.com/uca": "github:civicteam/uca",
     "ajv": "^7.2.4",
     "ajv-formats": "^2.0.2",
     "babel-runtime": "^6.26.0",
