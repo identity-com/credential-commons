@@ -37,7 +37,8 @@ async function adaptIdentifierIfNeeded(identifier, version) {
 
   const { isNewIdentifier, identifierComponents } = getBaseIdentifiers(resolvedIdentifier);
 
-  if (!isNewIdentifier && !(await getDefinition(resolvedIdentifier, version))) {
+  const compDefinition = await getDefinition(resolvedIdentifier, version);
+  if (!isNewIdentifier && !(compDefinition)) {
     const newIdentifier = `claim-cvc:${identifierComponents[1]}.${identifierComponents[2]}-v1`;
     await schemaLoader.loadSchemaFromTitle(newIdentifier);
 
