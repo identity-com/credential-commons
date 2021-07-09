@@ -8,5 +8,5 @@ build
 .DS_Store
 #dist
 .history/
-
+.tmp/
 .history

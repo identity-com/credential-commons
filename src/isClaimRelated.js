@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { definitions, Claim } = require('./claim/Claim');
 const vcDefinitions = require('./creds/definitions');
+const { schemaLoader } = require('./schemas/jsonSchema');
 /**
  * Validate an claim path against it's parent UserCollectableAttribute, and the parent Claim against the
  * dependencies of an Credential
@@ -9,14 +10,22 @@ const vcDefinitions = require('./creds/definitions');
  * @param credential the parent identifier, eg: civ:Credential:GenericId
  * @return true if the dependency exists and false if it doesn't
  */
-function isClaimRelated(claim, uca, credential) {
+async function isClaimRelated(claim, uca, credential) {
+  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
+  await schemaLoader.loadSchemaFromTitle(claim);
+  await schemaLoader.loadSchemaFromTitle(uca);
+  await schemaLoader.loadSchemaFromTitle(credential);
+
   // first get the UCA identifier
   const ucaIdentifier = uca.substring(uca.indexOf('-') + 1, uca.lastIndexOf('-'));
+  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
+  await schemaLoader.loadSchemaFromTitle(ucaIdentifier);
+
   // check on the credential commons if this identifier exists
   const ucaDefinition = definitions.find(definition => definition.identifier === ucaIdentifier);
   // does the UCA exist?
   if (ucaDefinition) {
-    const ucaProperties = Claim.getAllProperties(ucaIdentifier);
+    const ucaProperties = await Claim.getAllProperties(ucaIdentifier);
 
     // does the claim exists in the Claim?
     if (_.includes(ucaProperties, claim)) {

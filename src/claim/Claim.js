@@ -1,19 +1,26 @@
 const _ = require('lodash');
 const sjcl = require('sjcl');
 const { UserCollectableAttribute } = require('@identity.com/uca');
-const definitions = require('./definitions');
 const { services } = require('../services');
+const definitions = require('./definitions');
+const { schemaLoader } = require('../schemas/jsonSchema');
 
-const validIdentifiers = _.map(definitions, d => d.identifier);
+const { validIdentifiers } = schemaLoader;
 
-const getDefinition = (identifier, version) => (
+const findDefinition = (identifier, version) => (
   version ? _.find(definitions, { identifier, version }) : _.find(definitions, { identifier })
 );
+
+const getDefinition = async (identifier, version) => {
+  await schemaLoader.loadSchemaFromTitle(identifier);
+
+  return findDefinition(identifier, version);
+};
 
 const isArrayAttestableValue = aValue => aValue.indexOf('[') > -1 && aValue.indexOf(']') > -1;
 
 function getBaseIdentifiers(identifier) {
-  const claimRegex = /claim-cvc:(.*)\.(.*)-v\d*/;
+  const claimRegex = /^claim-cvc:(.*)\.(.*)-v\d*$/;
   let isNewIdentifier = true;
 
   let identifierComponents = claimRegex.exec(identifier);
@@ -24,14 +31,17 @@ function getBaseIdentifiers(identifier) {
   return { identifierComponents, isNewIdentifier };
 }
 
-function adaptIdentifierIfNeeded(identifier, version) {
-  const definition = getDefinition(identifier, version);
+async function adaptIdentifierIfNeeded(identifier, version) {
+  const definition = await getDefinition(identifier, version);
   const resolvedIdentifier = (definition && definition.alias) ? definition.type : identifier;
 
   const { isNewIdentifier, identifierComponents } = getBaseIdentifiers(resolvedIdentifier);
 
-  if (!isNewIdentifier && !getDefinition(resolvedIdentifier, version)) {
+  const compDefinition = await getDefinition(resolvedIdentifier, version);
+  if (!isNewIdentifier && !(compDefinition)) {
     const newIdentifier = `claim-cvc:${identifierComponents[1]}.${identifierComponents[2]}-v1`;
+    await schemaLoader.loadSchemaFromTitle(newIdentifier);
+
     const foundNewIdentifier = _.find(definitions, { identifier: newIdentifier });
     if (foundNewIdentifier) {
       return newIdentifier;
@@ -43,13 +53,29 @@ function adaptIdentifierIfNeeded(identifier, version) {
 
 class Claim extends UserCollectableAttribute {
   constructor(identifier, value, version) {
-    const currentIdentifier = adaptIdentifierIfNeeded(identifier, version);
-    super(currentIdentifier, value, version, definitions);
-    this.initialize(currentIdentifier, value, version);
+    super(identifier, value, version, definitions);
+    this.initialize(identifier, value, version);
+  }
+
+  static async create(identifier, value, version) {
+    const currentIdentifier = await adaptIdentifierIfNeeded(identifier, version);
+
+    if (!value.attestableValue) {
+      await schemaLoader.validateSchema(currentIdentifier, value);
+    }
+
+    // Load the schema and it's references from a source to be used for validation and defining the schema definitions
+    await schemaLoader.loadSchemaFromTitle(currentIdentifier);
+
+    const claim = new Claim(currentIdentifier, value, version);
+
+
+    return claim;
   }
 
   initialize(identifier, value, version) {
     super.initialize(identifier, value, version);
+
     if (!this.salt) {
       const secureRandom = services.container.SecureRandom;
       this.salt = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(secureRandom.wordWith(64)));
@@ -57,7 +83,7 @@ class Claim extends UserCollectableAttribute {
   }
 
   initializeValuesWithArrayItems(identifier, values, version) {
-    const definition = getDefinition(this.identifier, this.version);
+    const definition = findDefinition(this.identifier, this.version);
     const ucaArray = [];
 
     if (!_.isArray(values)) throw new Error(`Value for ${identifier}-${version} should be an array`);
@@ -72,7 +98,7 @@ class Claim extends UserCollectableAttribute {
 
   initializeAttestableValue() {
     const { value } = this;
-    const definition = getDefinition(this.identifier, this.version);
+    const definition = findDefinition(this.identifier, this.version);
     const parsedAttestableValue = Claim.parseAttestableValue(value);
 
     // Trying to construct UCA with a existing attestableValue
@@ -208,7 +234,8 @@ class Claim extends UserCollectableAttribute {
     // it was defined that the attestable value would be on the URN type https://tools.ietf.org/html/rfc8141
     if (['String', 'Number', 'Boolean'].indexOf(this.type) >= 0) {
       return `urn:${propertyName}:${this.salt}:${this.value}|`;
-    } if (this.type === 'Array') {
+    }
+    if (this.type === 'Array') {
       const itemsValues = _.reduce(this.value,
         (result, item) => `${result}${item.getAttestableValue(null, true)},`, '');
       return `urn:${propertyName}:${this.salt}:[${itemsValues}]`;
@@ -218,8 +245,8 @@ class Claim extends UserCollectableAttribute {
   }
 
   /**
-   * Returns the global CredentialItem of the Credential
-   */
+     * Returns the global CredentialItem of the Credential
+     */
   getGlobalIdentifier() {
     return `claim-${this.identifier}-${this.version}`;
   }
@@ -273,9 +300,9 @@ class Claim extends UserCollectableAttribute {
   }
 
   /**
-   * extract the expected Type name for the value when constructing an UCA
-   * @param {*} definition
-   */
+     * extract the expected Type name for the value when constructing an UCA
+     * @param {*} definition
+     */
   static getTypeName(definition) {
     if (_.isString(definition.type)) {
       if (_.includes(validIdentifiers, definition.type)) {
@@ -288,7 +315,9 @@ class Claim extends UserCollectableAttribute {
     return 'Object';
   }
 
-  static getAllProperties(identifier, pathName) {
+  static async getAllProperties(identifier, pathName) {
+    await schemaLoader.loadSchemaFromTitle(identifier);
+
     const definition = _.find(definitions, { identifier });
     const properties = [];
     const type = UserCollectableAttribute.resolveType(definition, definitions);
@@ -319,12 +348,16 @@ class Claim extends UserCollectableAttribute {
         // Properties is not an object
         properties.push(`${basePropName}.${typeDefProps.name}`);
       } else {
-        _.forEach(typeDefProps, (prop) => {
+        const proProperties = await typeDefProps.reduce(async (prev, prop) => {
+          const prevProps = await prev;
           const { isNewIdentifier } = getBaseIdentifiers(prop.type);
           const newBasePropName = !isNewIdentifier ? basePropName : `${basePropName}.${prop.name}`;
-          const proProperties = this.getAllProperties(prop.type, newBasePropName);
-          _.forEach(proProperties, p => properties.push(p));
-        });
+          const props = await this.getAllProperties(prop.type, newBasePropName);
+
+          return [...prevProps, ...props];
+        }, Promise.resolve([]));
+
+        properties.push(...proProperties);
       }
     } else if (pathName) {
       const { identifierComponents } = getBaseIdentifiers(definition.identifier);

@@ -5,3 +5,5 @@ demo
 build
 __integrations__
 __test__
+.idea
+.tmp
