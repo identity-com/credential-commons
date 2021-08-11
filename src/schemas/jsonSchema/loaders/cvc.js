@@ -86,7 +86,7 @@ class CVCLoader {
       }
     }
 
-    return schema == null ? null :JSON.parse(schema);
+    return schema == null ? null : JSON.parse(schema);
   }
 
   /**
