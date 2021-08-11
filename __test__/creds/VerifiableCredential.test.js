@@ -11,6 +11,7 @@ const {
   CVCSchemaLoader,
 } = require('../../src');
 const filteredCredentialJson = require('./fixtures/filteredIdDocument-v2.json');
+const invalidEmailJson = require('./fixtures/CredentialEmailInvalid.json');
 
 // eslint-disable-next-line max-len
 const prvBase58 = 'xprv9s21ZrQH143K4aBUwUW6GVec7Y6oUEBqrt2WWaXyxjh2pjofNc1of44BLufn4p1t7Jq4EPzm5C9sRxCuBYJdHu62jhgfyPm544sNjtH7x8S';
@@ -733,6 +734,9 @@ describe('Unit tests for Verifiable Credentials', () => {
     const isValid = await VC.nonCryptographicallySecureVerify(credential);
     expect(isValid).toBeTruthy();
   });
+
+  it('Should fail verification of a VC with invalid cryptographic security',
+    async () => expect(VC.cryptographicallySecureVerify(invalidEmailJson)).resolves.toBeFalsy());
 
   it('Should verify an VC with cryptographic security', async (done) => {
     const credJSon = require('./fixtures/PhoneNumber.json'); // eslint-disable-line

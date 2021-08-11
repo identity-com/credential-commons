@@ -35,7 +35,9 @@ const getIdentifierPath = (identifier) => {
   } else {
     const parsedIdentifier = parseIdentifier(identifier);
 
-    identifierPath = `${parsedIdentifier[1]}/${parsedIdentifier[4]}/${parsedIdentifier[2]}`;
+    if (parsedIdentifier) {
+      identifierPath = `${parsedIdentifier[1]}/${parsedIdentifier[4]}/${parsedIdentifier[2]}`;
+    }
   }
 
   return identifierPath;
@@ -79,12 +81,12 @@ class CVCLoader {
     if (schema === null) {
       schema = await this.remote(identifier);
 
-      if (this.cache !== null) {
+      if (this.cache !== null && schema !== null) {
         this.cache.set(identifier, schema);
       }
     }
 
-    return JSON.parse(schema);
+    return schema == null ? null :JSON.parse(schema);
   }
 
   /**
@@ -94,6 +96,10 @@ class CVCLoader {
    */
   async remote(identifier) {
     const identifierPath = getIdentifierPath(identifier);
+
+    if (!identifierPath) {
+      return null;
+    }
 
     const uri = `${DEFAULT_SCHEMA_PATH}/${identifierPath}.schema.json`;
 

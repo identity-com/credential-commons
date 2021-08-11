@@ -252,7 +252,8 @@ async function nonCryptographicallySecureVerify(credential) {
  * @return true if verified, false otherwise.
  */
 async function cryptographicallySecureVerify(credential, verifyAttestationFunc, verifySignatureFunc) {
-  if (!nonCryptographicallySecureVerify(credential)) {
+  const nonCryptographicallyVerified = await nonCryptographicallySecureVerify(credential);
+  if (!nonCryptographicallyVerified) {
     return false;
   }
 
