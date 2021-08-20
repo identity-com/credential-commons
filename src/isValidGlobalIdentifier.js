@@ -1,14 +1,15 @@
 const _ = require('lodash');
-const { definitions } = require('@identity.com/uca');
-const vcDefinitions = require('./creds/definitions');
-const claimDefinitions = require('./claim/definitions');
+const { schemaLoader } = require('./schemas/jsonSchema');
 
-const validUCAIdentifiers = _.map(definitions, d => d.identifier);
-const validClaimIdentifiers = _.map(claimDefinitions, d => d.identifier);
-const validVCIdentifiers = _.map(vcDefinitions, d => d.identifier);
+const validUCAIdentifiers = schemaLoader.validIdentifiers;
+const validClaimIdentifiers = schemaLoader.validIdentifiers;
+const validVCIdentifiers = schemaLoader.validCredentialIdentifiers;
 const validPrefixes = ['claim', 'credential'];
 
-function isValidGlobalIdentifier(identifier) {
+async function isValidGlobalIdentifier(identifier) {
+  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
+  await schemaLoader.loadSchemaFromTitle(identifier);
+
   const splited = _.split(identifier, '-');
 
   if (splited.length !== 3) {

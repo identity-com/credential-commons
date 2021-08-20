@@ -16,6 +16,7 @@ const time = require('../timeHelper');
 const { CvcMerkleProof } = require('./CvcMerkleProof');
 const { ClaimModel } = require('./ClaimModel');
 const CredentialSignerVerifier = require('./CredentialSignerVerifier');
+const { schemaLoader } = require('../schemas/jsonSchema');
 
 // convert a time delta to a timestamp
 const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
@@ -170,7 +171,10 @@ function isDateStructure(obj) {
  * @param credential - A credential object with expirationDate, claim and proof
  * @return true if verified, false otherwise.
  */
-function nonCryptographicallySecureVerify(credential) {
+async function nonCryptographicallySecureVerify(credential) {
+  await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
+  await schemaLoader.loadSchemaFromTitle(credential.identifier);
+
   const expiry = _.clone(credential.expirationDate);
   const claims = _.clone(credential.claim);
   const signature = _.clone(credential.proof);
@@ -248,7 +252,8 @@ function nonCryptographicallySecureVerify(credential) {
  * @return true if verified, false otherwise.
  */
 async function cryptographicallySecureVerify(credential, verifyAttestationFunc, verifySignatureFunc) {
-  if (!nonCryptographicallySecureVerify(credential)) {
+  const nonCryptographicallyVerified = await nonCryptographicallySecureVerify(credential);
+  if (!nonCryptographicallyVerified) {
     return false;
   }
 
@@ -513,7 +518,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * Verify the Credential and return a verification level.
    * @return Any of VC.VERIFY_LEVELS
    */
-  this.verify = (higherVerifyLevel, options) => {
+  this.verify = async (higherVerifyLevel, options) => {
     const { requestorId, requestId, keyName } = options || {};
     const hVerifyLevel = !_.isNil(higherVerifyLevel) ? higherVerifyLevel : VERIFY_LEVELS.GRANTED;
     let verifiedlevel = VERIFY_LEVELS.INVALID;
@@ -521,7 +526,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.INVALID
       && hVerifyLevel >= VERIFY_LEVELS.PROOFS
-      && this.verifyProofs()) verifiedlevel = VERIFY_LEVELS.PROOFS;
+      && (await this.verifyProofs())) verifiedlevel = VERIFY_LEVELS.PROOFS;
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.PROOFS
@@ -741,12 +746,28 @@ VerifiableCredentialBaseConstructor.CREDENTIAL_META_FIELDS = CREDENTIAL_META_FIE
 VerifiableCredentialBaseConstructor.getCredentialMeta = getCredentialMeta;
 VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMeta;
 
+VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn, ucas, version, evidence,
+  signerVerifier = null) => {
+  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
+  await schemaLoader.loadSchemaFromTitle(identifier);
+
+  // Load the meta schema's from a source
+  await schemaLoader.loadSchemaFromTitle('cvc:Meta:issuer');
+  await schemaLoader.loadSchemaFromTitle('cvc:Meta:issuanceDate');
+  await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
+  await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
+
+  return new VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version, evidence, signerVerifier);
+};
+
 /**
  * Factory function that creates a new Verifiable Credential based on a JSON object
  * @param {*} verifiableCredentialJSON
  * @returns VerifiableCredentialBaseConstructor
  */
-VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON, partialPresentation = false) => {
+VerifiableCredentialBaseConstructor.fromJSON = async (verifiableCredentialJSON, partialPresentation = false) => {
+  await schemaLoader.loadSchemaFromTitle(verifiableCredentialJSON.identifier);
+
   const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.version);
 
@@ -754,8 +775,11 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON, partia
     verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
   }
 
-  const newObj = new VerifiableCredentialBaseConstructor(verifiableCredentialJSON.identifier,
-    verifiableCredentialJSON.issuer);
+  const newObj = await VerifiableCredentialBaseConstructor.create(
+    verifiableCredentialJSON.identifier,
+    verifiableCredentialJSON.issuer,
+  );
+
   newObj.id = _.clone(verifiableCredentialJSON.id);
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
   newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
@@ -771,17 +795,28 @@ VerifiableCredentialBaseConstructor.fromJSON = (verifiableCredentialJSON, partia
 /**
  * List all properties of a Verifiable Credential
  */
-VerifiableCredentialBaseConstructor.getAllProperties = (identifier) => {
+VerifiableCredentialBaseConstructor.getAllProperties = async (identifier) => {
+  await schemaLoader.loadSchemaFromTitle(identifier);
+
   const vcDefinition = _.find(definitions, { identifier });
   if (vcDefinition) {
-    const allProperties = [];
-    _.forEach(vcDefinition.depends, (ucaIdentifier) => {
-      allProperties.push(...Claim.getAllProperties(ucaIdentifier));
-    });
-    const excludesProperties = [];
-    _.forEach(vcDefinition.excludes, (ucaIdentifier) => {
-      excludesProperties.push(...Claim.getAllProperties(ucaIdentifier));
-    });
+    const allProperties = await vcDefinition.depends.reduce(async (prev, definition) => {
+      const prevProps = await prev;
+      const claimProps = await Claim.getAllProperties(definition);
+
+      return [...prevProps, ...claimProps];
+    }, Promise.resolve([]));
+
+    let excludesProperties = [];
+    if (vcDefinition.excludes) {
+      excludesProperties = await vcDefinition.excludes.reduce(async (prev, definition) => {
+        const prevProps = await prev;
+        const claimProps = await Claim.getAllProperties(definition);
+
+        return [...prevProps, ...claimProps];
+      }, Promise.resolve([]));
+    }
+
     return _.difference(allProperties, excludesProperties);
   }
   return null;
