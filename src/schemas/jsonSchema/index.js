@@ -367,7 +367,7 @@ class SchemaLoader {
       traverse(schema, {
         cb: (currentNode) => {
           if (currentNode.$ref !== undefined) {
-            // TODO: Prevent the same schema loaded multiple times
+            // Prevent the same schema loaded multiple times
             references.push(this.loadSchemaFromUri(currentNode.$ref));
           }
         },
@@ -378,7 +378,7 @@ class SchemaLoader {
       try {
         this.ajv.addSchema(schema);
       } catch (e) {
-        // TODO: This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
+        // This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
         return schema;
       }
 

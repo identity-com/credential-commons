@@ -427,8 +427,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(filtered).toBeDefined();
   });
 
-  // TODO: Check why there seems to be a conflict on the validation rule ith iddocument-v2 (some libs fail on the below)
-  it.skip('Should hydrate a partial presentation', async () => {
+  it('Should hydrate a partial presentation', async () => {
     const presentation = await VC.fromJSON(filteredCredentialJson, true);
     expect(presentation).toBeDefined();
 
@@ -1755,8 +1754,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(credential).toBeDefined();
   });
 
-  // TODO: Check why there seems to be a conflict on the validation rule (some libs fail on the below)
-  it.skip('Should throw exception on credential creation if required uca is missing', async () => {
+  it('Should throw exception on credential creation if required uca is missing', async () => {
     const type = await Claim.create('claim-cvc:Document.type-v1', 'passport', '1');
     const name = await Claim.create('claim-cvc:Document.name-v1', { givenNames: 'Maxime' }, '1');
     const issueCountry = await Claim.create('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
