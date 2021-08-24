@@ -362,15 +362,7 @@ class SchemaLoader {
         return null;
       }
 
-      try {
-        this.ajv.addSchema(schema);
-      } catch (e) {
-        // TODO: This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
-        return schema;
-      }
-
-      await this.addDefinition(schema);
-
+      // Loads all referenced schemas
       const references = [];
       traverse(schema, {
         cb: (currentNode) => {
@@ -382,6 +374,15 @@ class SchemaLoader {
       });
 
       await Promise.all(references);
+
+      try {
+        this.ajv.addSchema(schema);
+      } catch (e) {
+        // TODO: This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
+        return schema;
+      }
+
+      await this.addDefinition(schema);
 
       return schema;
     }
