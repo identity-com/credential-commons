@@ -100,7 +100,10 @@ class SummaryMapper {
       identifierComponents = _.split(identifier, ':');
       isNewIdentifier = false;
     }
-    return { identifierComponents, isNewIdentifier };
+    return {
+      identifierComponents,
+      isNewIdentifier,
+    };
   }
 
   static getPath(identifier) {
@@ -118,6 +121,16 @@ const getSchemaVersion = (identifier) => {
 
   return '1';
 };
+
+function transformUcaIdToClaimId(identifier) {
+  const identifierComponents = identifier.split(':');
+  return `claim-cvc:${identifierComponents[1]}.${identifierComponents[2]}-v1`;
+}
+
+function isDefinitionEqual(definition, ucaDefinition) {
+  return definition.identifier === transformUcaIdToClaimId(ucaDefinition)
+    || definition.identifier === ucaDefinition;
+}
 
 
 /**
@@ -232,7 +245,31 @@ class SchemaLoader {
     SummaryMapper.addCredentialDefinition(definition);
   }
 
+  async shouldAddClaimDefinition(schema) {
+    if (/^[^:]+:[^:]+:[^:]+$/.test(schema.title)) {
+      const transformed = transformUcaIdToClaimId(schema.title);
+      await this.loadSchemaFromTitle(transformed);
+
+      let found = false;
+      this.definitions.some((definition) => {
+        if (isDefinitionEqual(definition, schema.title)) {
+          found = true;
+        }
+        return found;
+      });
+      if (found) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   async addClaimDefinition(schema) {
+    if (!(await this.shouldAddClaimDefinition(schema))) {
+      return;
+    }
+
     const definition = {
       identifier: schema.title,
       version: getSchemaVersion(schema.title),
