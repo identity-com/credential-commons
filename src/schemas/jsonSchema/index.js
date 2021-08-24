@@ -144,6 +144,7 @@ class SchemaLoader {
     this.summaryMap = summaryMap;
     this.validIdentifiers = [];
     this.validCredentialIdentifiers = [];
+    this.ucaCompared = [];
     this.ajv = new Ajv({
       logger: console,
       allErrors: true,
@@ -248,7 +249,12 @@ class SchemaLoader {
   async shouldAddClaimDefinition(schema) {
     if (/^[^:]+:[^:]+:[^:]+$/.test(schema.title)) {
       const transformed = transformUcaIdToClaimId(schema.title);
-      await this.loadSchemaFromTitle(transformed);
+
+      if (!this.ucaCompared.includes(schema.title)) {
+        await this.loadSchemaFromTitle(transformed);
+      }
+
+      this.ucaCompared.push(schema.title);
 
       let found = false;
       this.definitions.some((definition) => {
@@ -257,6 +263,7 @@ class SchemaLoader {
         }
         return found;
       });
+
       if (found) {
         return false;
       }
