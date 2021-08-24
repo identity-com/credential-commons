@@ -298,6 +298,7 @@ describe('Claim Constructions tests', () => {
     expect(dateOfBirthClaim.value).toBeDefined();
     expect(dateOfBirthClaim.value.day).toBeDefined();
     expect(dateOfBirthClaim.value.day.value).toBe(20);
+    expect(dateOfBirthClaim.identifier).toBe('claim-cvc:Identity.dateOfBirth-v1');
   });
 
   test.skip('Transforming alias UCA to Claim', async () => {
