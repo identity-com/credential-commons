@@ -277,7 +277,7 @@ describe('Claim Constructions tests', () => {
     expect(uca.value).toBeDefined();
   });
 
-  test.skip('Transforming UCA to Claim', async () => {
+  test('Transforming UCA to Claim', async () => {
     const identifier = 'cvc:Identity:dateOfBirth';
     const value = {
       day: 20,
