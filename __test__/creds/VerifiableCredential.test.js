@@ -708,12 +708,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(await cred.verify()).toBeGreaterThanOrEqual(VC.VERIFY_LEVELS.PROOFS);
   });
 
-  it('Should verify an VC with no cryptographic security', async () => {
-    const credential = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
-    const isValid = await VC.nonCryptographicallySecureVerify(credential);
-    expect(isValid).toBeTruthy();
-  });
-
   it('Should verify an credential json with no cryptographic security', async () => {
     const credential = require('./fixtures/PhoneNumber.json'); // eslint-disable-line
     const isValid = await VC.nonCryptographicallySecureVerify(credential);
