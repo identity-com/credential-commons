@@ -301,7 +301,7 @@ describe('Claim Constructions tests', () => {
     expect(dateOfBirthClaim.identifier).toBe('claim-cvc:Identity.dateOfBirth-v1');
   });
 
-  test.skip('Transforming alias UCA to Claim', async () => {
+  test('Transforming alias UCA to Claim', async () => {
     const identifier = 'cvc:Document:evidences';
     const aliasIdentifier = 'cvc:Validation:evidences';
     const value = {
