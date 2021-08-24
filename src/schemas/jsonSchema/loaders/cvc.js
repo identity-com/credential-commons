@@ -73,20 +73,20 @@ class CVCLoader {
    */
   async loadSchema(identifier) {
     let schema = null;
-    if (this.cache !== null) {
+    if (this.cache) {
       schema = this.cache.get(identifier);
     }
 
     // Only load the schema remotely if a base url was provided and none was found locally
-    if (schema === null) {
+    if (!schema) {
       schema = await this.remote(identifier);
 
-      if (this.cache !== null && schema !== null) {
+      if (this.cache && schema) {
         this.cache.set(identifier, schema);
       }
     }
 
-    return schema == null ? null : JSON.parse(schema);
+    return !schema ? null : JSON.parse(schema);
   }
 
   /**
