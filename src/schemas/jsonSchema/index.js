@@ -100,7 +100,10 @@ class SummaryMapper {
       identifierComponents = _.split(identifier, ':');
       isNewIdentifier = false;
     }
-    return { identifierComponents, isNewIdentifier };
+    return {
+      identifierComponents,
+      isNewIdentifier,
+    };
   }
 
   static getPath(identifier) {
@@ -119,6 +122,16 @@ const getSchemaVersion = (identifier) => {
   return '1';
 };
 
+function transformUcaIdToClaimId(identifier) {
+  const identifierComponents = identifier.split(':');
+  return `claim-cvc:${identifierComponents[1]}.${identifierComponents[2]}-v1`;
+}
+
+function isDefinitionEqual(definition, ucaDefinition) {
+  return definition.identifier === transformUcaIdToClaimId(ucaDefinition)
+    || definition.identifier === ucaDefinition;
+}
+
 
 /**
  * This class loads the schema definitions as needed by using loaders provided by the
@@ -131,6 +144,7 @@ class SchemaLoader {
     this.summaryMap = summaryMap;
     this.validIdentifiers = [];
     this.validCredentialIdentifiers = [];
+    this.ucaCompared = [];
     this.ajv = new Ajv({
       logger: console,
       allErrors: true,
@@ -232,7 +246,37 @@ class SchemaLoader {
     SummaryMapper.addCredentialDefinition(definition);
   }
 
+  async shouldAddClaimDefinition(schema) {
+    if (/^[^:]+:[^:]+:[^:]+$/.test(schema.title)) {
+      const transformed = transformUcaIdToClaimId(schema.title);
+
+      if (!this.ucaCompared.includes(schema.title)) {
+        await this.loadSchemaFromTitle(transformed);
+      }
+
+      this.ucaCompared.push(schema.title);
+
+      let found = false;
+      this.definitions.some((definition) => {
+        if (isDefinitionEqual(definition, schema.title)) {
+          found = true;
+        }
+        return found;
+      });
+
+      if (found) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   async addClaimDefinition(schema) {
+    if (!(await this.shouldAddClaimDefinition(schema))) {
+      return;
+    }
+
     const definition = {
       identifier: schema.title,
       version: getSchemaVersion(schema.title),
@@ -362,26 +406,27 @@ class SchemaLoader {
         return null;
       }
 
-      try {
-        this.ajv.addSchema(schema);
-      } catch (e) {
-        // TODO: This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
-        return schema;
-      }
-
-      await this.addDefinition(schema);
-
+      // Loads all referenced schemas
       const references = [];
       traverse(schema, {
         cb: (currentNode) => {
           if (currentNode.$ref !== undefined) {
-            // TODO: Prevent the same schema loaded multiple times
+            // Prevent the same schema loaded multiple times
             references.push(this.loadSchemaFromUri(currentNode.$ref));
           }
         },
       });
 
       await Promise.all(references);
+
+      try {
+        this.ajv.addSchema(schema);
+      } catch (e) {
+        // This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
+        return schema;
+      }
+
+      await this.addDefinition(schema);
 
       return schema;
     }

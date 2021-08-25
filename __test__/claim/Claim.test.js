@@ -277,7 +277,7 @@ describe('Claim Constructions tests', () => {
     expect(uca.value).toBeDefined();
   });
 
-  test.skip('Transforming UCA to Claim', async () => {
+  test('Transforming UCA to Claim', async () => {
     const identifier = 'cvc:Identity:dateOfBirth';
     const value = {
       day: 20,
@@ -298,9 +298,10 @@ describe('Claim Constructions tests', () => {
     expect(dateOfBirthClaim.value).toBeDefined();
     expect(dateOfBirthClaim.value.day).toBeDefined();
     expect(dateOfBirthClaim.value.day.value).toBe(20);
+    expect(dateOfBirthClaim.identifier).toBe('claim-cvc:Identity.dateOfBirth-v1');
   });
 
-  test.skip('Transforming alias UCA to Claim', async () => {
+  test('Transforming alias UCA to Claim', async () => {
     const identifier = 'cvc:Document:evidences';
     const aliasIdentifier = 'cvc:Validation:evidences';
     const value = {
