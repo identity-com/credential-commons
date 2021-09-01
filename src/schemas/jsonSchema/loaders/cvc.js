@@ -47,9 +47,10 @@ const getIdentifierPath = (identifier) => {
  * This is a sample schema loader, to be used for testing or civic.com claims & credential implementations
  */
 class CVCLoader {
-  constructor(http = services.container.Http, cache) {
+  constructor(http = services.container.Http, cache, schemaPath = DEFAULT_SCHEMA_PATH) {
     this.http = http;
     this.cache = cache === undefined ? new FSSchemaCache() : null;
+    this.schemaPath = schemaPath;
   }
 
   /**
@@ -101,7 +102,7 @@ class CVCLoader {
       return null;
     }
 
-    const uri = `${DEFAULT_SCHEMA_PATH}/${identifierPath}.schema.json`;
+    const uri = `${this.schemaPath}/${identifierPath}.schema.json`;
 
     let response = null;
     try {
