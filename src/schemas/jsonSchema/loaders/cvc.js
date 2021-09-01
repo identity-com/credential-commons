@@ -3,7 +3,7 @@ const { parseIdentifier } = require('../../../lib/stringUtils');
 const { services } = require('../../../services');
 
 const rootUri = 'http://identity.com/schemas/';
-const DEFAULT_SCHEMA_PATH = 'http://test-schemas.civic.com.s3-website-us-east-1.amazonaws.com';
+const DEFAULT_SCHEMA_PATH = 'http://test-schemas.civic.com.s3-website-us-east-1.amazonaws.com/dev';
 
 class FSSchemaCache {
   constructor(cachePath = './.tmp/schemas') {
@@ -47,9 +47,9 @@ const getIdentifierPath = (identifier) => {
  * This is a sample schema loader, to be used for testing or civic.com claims & credential implementations
  */
 class CVCLoader {
-  constructor(http = services.container.Http, cache, schemaPath = DEFAULT_SCHEMA_PATH) {
+  constructor(http = services.container.Http, cache = new FSSchemaCache(), schemaPath = DEFAULT_SCHEMA_PATH) {
     this.http = http;
-    this.cache = cache === undefined ? new FSSchemaCache() : null;
+    this.cache = cache;
     this.schemaPath = schemaPath;
   }
 
