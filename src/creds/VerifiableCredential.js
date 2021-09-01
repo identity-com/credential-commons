@@ -517,6 +517,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   /**
    * Verify the Credential and return a verification level.
    * @return Any of VC.VERIFY_LEVELS
+   * @deprecated
    */
   this.verify = async (higherVerifyLevel, options) => {
     const { requestorId, requestId, keyName } = options || {};

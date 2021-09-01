@@ -699,7 +699,9 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(await cred.verifyProofs()).toBeTruthy();
   });
 
-  test('cred.verify(): with a valid cred without expirationDate, should return at least'
+
+  // This breaks VC.verify - verify has been deprecated
+  test.skip('cred.verify(): with a valid cred without expirationDate, should return at least'
     + ' VERIFY_LEVELS.PROOFS level', async () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = await VC.fromJSON(credJSon);
