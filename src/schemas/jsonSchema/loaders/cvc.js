@@ -3,7 +3,7 @@ const { parseIdentifier } = require('../../../lib/stringUtils');
 const { services } = require('../../../services');
 
 const rootUri = 'http://identity.com/schemas/';
-const DEFAULT_SCHEMA_PATH = 'http://test-schemas.civic.com.s3-website-us-east-1.amazonaws.com/dev';
+const DEFAULT_SCHEMA_PATH = 'http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com/dev';
 
 class FSSchemaCache {
   constructor(cachePath = './.tmp/schemas') {
