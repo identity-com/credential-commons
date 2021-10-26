@@ -1,4 +1,6 @@
-const { createLogger, format, transports } = require('winston');
+const BrowserConsole = require('winston-transport-browserconsole').default;
+
+const { createLogger, format } = require('winston');
 
 // Configure the Winston logger. For the complete documentation see https://github.com/winstonjs/winston
 const logger = createLogger({
@@ -9,7 +11,7 @@ const logger = createLogger({
     format.simple(),
   ),
   transports: [
-    new transports.Console(),
+    new BrowserConsole(),
   ],
 });
 
