@@ -1,28 +1,38 @@
-'use strict';
+"use strict";
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 /**
  * Current Anchor/Attester service
  *
  */
 const uuid = require('uuid/v4');
-const { HDNode, ECSignature } = require('bitcoinjs-lib');
-const sjcl = require('sjcl');
-const logger = require('../logger');
 
+const {
+  HDNode,
+  ECSignature
+} = require('bitcoinjs-lib');
+
+const sjcl = require('sjcl');
+
+const logger = require('../logger');
 /**
  * An Anchor/Attester implementation
  *
  * @param {*} config
  * @param {*} http
  */
+
+
 function DummyAnchorServiceImpl(config, http) {
   var _this = this;
 
   this.config = config;
   this.http = http;
-  const pollService = (() => {
+
+  const pollService = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator(function* (statusUrl) {
       try {
         const attestation = yield _this.http.request({
@@ -36,10 +46,12 @@ function DummyAnchorServiceImpl(config, http) {
           // eslint-disable-next-line no-unused-vars
           return yield pollService(statusUrl);
         }
+
         if (attestation && attestation.type !== 'permanent') {
           attestation.statusUrl = statusUrl;
           return attestation;
         }
+
         return attestation;
       } catch (error) {
         logger.error(`Error polling: ${statusUrl}`, JSON.stringify(error, null, 2));
@@ -50,9 +62,9 @@ function DummyAnchorServiceImpl(config, http) {
     return function pollService(_x) {
       return _ref.apply(this, arguments);
     };
-  })();
+  }();
 
-  this.anchor = (() => {
+  this.anchor = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator(function* (options = {}) {
       return Promise.resolve({
         subject: {
@@ -83,55 +95,67 @@ function DummyAnchorServiceImpl(config, http) {
     return function () {
       return _ref2.apply(this, arguments);
     };
-  })();
+  }();
 
-  this.update = (() => {
+  this.update = /*#__PURE__*/function () {
     var _ref3 = _asyncToGenerator(function* (tempAnchor) {
       tempAnchor.type = 'permanent'; // eslint-disable-line
+
       tempAnchor.value = new uuid(); // eslint-disable-line
+
       return Promise.resolve(tempAnchor);
     });
 
     return function (_x2) {
       return _ref3.apply(this, arguments);
     };
-  })();
+  }();
 
   this.verifySignature = (proof, pinnedPubKey) => {
-    const { subject } = proof.anchor;
+    const {
+      subject
+    } = proof.anchor;
     const anchorSubjectValidation = this.verifySubjectSignature(subject, pinnedPubKey);
     return anchorSubjectValidation && subject.data === proof.merkleRoot;
   };
-
   /**
    * This method checks if the subject signature matches the pub key
    * @param subject a json with label, data, signature, pub
    * @returns {*} true or false for the validation
    */
+
+
   this.verifySubjectSignature = (subject, pinnedPubKey) => {
     // Do not use JS destruct on the next line, We need to predict the JSON order
-    const toHash = JSON.stringify({ xpub: subject.pub, label: subject.label, data: subject.data });
+    const toHash = JSON.stringify({
+      xpub: subject.pub,
+      label: subject.label,
+      data: subject.data
+    });
     const hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(toHash));
     const subjectSignature = ECSignature.fromDER(Buffer.from(subject.signature, 'hex'));
     return HDNode.fromBase58(pinnedPubKey || subject.pub).keyPair.verify(Buffer.from(hash, 'hex'), subjectSignature);
   };
-
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
-  this.verifyAttestation = (() => {
+
+
+  this.verifyAttestation = /*#__PURE__*/function () {
     var _ref4 = _asyncToGenerator(function* (proof, offline = true) {
       const path = '/proof';
       const endpoint = `${_this.config.attestationService}${path}`;
-
       const requestOptions = {
         url: endpoint,
-        body: { attestation: proof.anchor, offline },
+        body: {
+          attestation: proof.anchor,
+          offline
+        },
         method: 'POST',
         json: true,
         simple: true // reject if not 2XX
-      };
 
+      };
       const response = yield _this.http.request(requestOptions);
       return response.valid;
     });
@@ -139,18 +163,19 @@ function DummyAnchorServiceImpl(config, http) {
     return function (_x3) {
       return _ref4.apply(this, arguments);
     };
-  })();
+  }();
 
-  this.revokeAttestation = (() => {
+  this.revokeAttestation = /*#__PURE__*/function () {
     var _ref5 = _asyncToGenerator(function* (signature) {
       signature.revoked = true; // eslint-disable-line
+
       return Promise.resolve(signature);
     });
 
     return function (_x4) {
       return _ref5.apply(this, arguments);
     };
-  })();
+  }();
 
   this.isRevoked = signature => signature.revoked ? signature.revoked : false;
 
