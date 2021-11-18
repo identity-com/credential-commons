@@ -132,6 +132,7 @@ function isDefinitionEqual(definition, ucaDefinition) {
     || definition.identifier === ucaDefinition;
 }
 
+const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
 
 /**
  * This class loads the schema definitions as needed by using loaders provided by the
@@ -140,9 +141,11 @@ class SchemaLoader {
   constructor() {
     this.loaders = [];
     this.definitions = definitions;
+    this.ucaDefinitions = [];
     this.credentialDefinitions = credentialDefinitions;
     this.summaryMap = summaryMap;
     this.validIdentifiers = [];
+    this.validUcaIdentifiers = [];
     this.validCredentialIdentifiers = [];
     this.ucaCompared = [];
     this.ajv = new Ajv({
@@ -163,10 +166,12 @@ class SchemaLoader {
   }
 
   reset() {
+    this.ucaDefinitions.length = 0;
     this.definitions.length = 0;
     this.credentialDefinitions.length = 0;
     this.validIdentifiers.length = 0;
     this.validCredentialIdentifiers.length = 0;
+    this.validUcaIdentifiers.length = 0;
     this.ajv.removeSchema(/.*/);
     summaryMap = {};
     this.summaryMap = {};
@@ -247,7 +252,7 @@ class SchemaLoader {
   }
 
   async shouldAddClaimDefinition(schema) {
-    if (/^[^:]+:[^:]+:[^:]+$/.test(schema.title)) {
+    if (isUCA(schema.title)) {
       const transformed = transformUcaIdToClaimId(schema.title);
 
       if (!this.ucaCompared.includes(schema.title)) {
@@ -273,10 +278,6 @@ class SchemaLoader {
   }
 
   async addClaimDefinition(schema) {
-    if (!(await this.shouldAddClaimDefinition(schema))) {
-      return;
-    }
-
     const definition = {
       identifier: schema.title,
       version: getSchemaVersion(schema.title),
@@ -314,9 +315,18 @@ class SchemaLoader {
       });
     }
 
-    this.definitions.push(definition);
+    if ((await this.shouldAddClaimDefinition(schema))) {
+      this.definitions.push(definition);
 
-    this.validIdentifiers.push(schema.title);
+      this.validIdentifiers.push(schema.title);
+    }
+
+    if (isUCA(schema.title)) {
+      this.ucaDefinitions.push(definition);
+
+      this.validUcaIdentifiers.push(schema.title);
+    }
+
     SummaryMapper.addDefinition(definition);
   }
 
