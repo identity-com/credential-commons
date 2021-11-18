@@ -72,8 +72,6 @@ All versions follow SemVer (https://semver.org/)
 - `npm run coverage` - run code coverage and generate report in the `coverage` folder
 - `npm test` - run all tests
 - `npm run test:watch` - run all tests in watch mode
-- `npm run generate-schema` - run the CLI command and generate all schemas
-
 
 ## Configuration
 
@@ -121,39 +119,15 @@ If you are not sure how to get those informations, see the tutorial down below.
 
 A "User Collectable Attribute" is **a unit of user-related data** (attribute or knowledge) with a specific identifier that can be captured from the user normally during mobile app. A Claim once verified can be part of a Credential as Claim with the same identifier.
 
-#### Defining new Claim
-
-Just add a new definition entry with the [format](http://) on the definitions [file](http://)
-
-#### Exporting Claim to the Claim Registry Services
-
-Claim definitions are packed inside this library but also are available for public consumption at the [Claim Registry](http://) to export new defined Claims just run:
-
-```
-npm run export-definitions 
-```  
-
 #### Using a Claim in javascript (with this library)
 
-##### creating Claim instances with the constructor
+##### creating Claim instances with the async `create` function
 
-`Claim(identifier, value, version)`
+`Claim.create(identifier, value)`
 
 Example
 ```
-const name = new Claim('claim-cvc:Identity.address-v1', {
-    street: 'Alameda dos Anjos',
-    unit: '102',
-    city: 'Belo Horizonte',
-    zipCode: '94103345',
-    state: 'Minas Gerais',
-    county: 'Sao Bento',
-    country: 'Brazil',
-}, '1');
-```
-Or use the shorthand
-```
-const name = new Claim.IdentityAddress({
+const name = await Claim.create('claim-cvc:Identity.address-v1', {
     street: 'Alameda dos Anjos',
     unit: '102',
     city: 'Belo Horizonte',
@@ -337,23 +311,15 @@ A Credential with an associated Proof. Every consumer of a verifiable Credential
 
 Just add a new definition entry with the [format](http://) on the definitions [file](http://)
 
-#### Exporting Claim to the Claim Registry Services
-
-Credentials definitions are packed inside this library but also are available for public consumption at the [Credential Registry](http://) to export new defined Credentials
- 
-```
-npm run export-definitions 
-``` 
-
 #### Using a VerifiableCredential in javascript (with this library)
 
 ##### creating VerifiableCredential instances with the constructor
 
 To construct a new VC you need first to get instances of all Claim dependencies
 ```
-const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-const cred = new VC('cvc:cred:Test', 'jest:test', null, [name, dob]);
+const name = await Claim.create('claim-cvc:Identity.name-v1', { first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
+const cred = await VC.create('cvc:cred:Test', 'jest:test', null, [name, dob]);
 ```
 
 ##### creating VerifiableCredential with evidence
@@ -362,8 +328,8 @@ Evidence can be included in a verifiable credential to provide the verifier with
 
 The evidence is an optional parameter on VC construction:
 ``` 
-const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
+const name = await Claim.create('claim-cvc:Identity.name-v1', { first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
 const evidence = {
   id: 'https://idv.civic.com/evidence/f2aeec97-fc0d-42bf-8ca7-0548192dxyzab',
   type: ['DocumentVerification'],
@@ -373,15 +339,15 @@ const evidence = {
   documentPresence: 'Digital',
 };
 
-const cred = new VC('cvc:cred:Test', 'jest:test', null, [name, dob], '1', evidence);
+const cred = await VC.create('cvc:cred:Test', 'jest:test', null, [name, dob], '1', evidence);
 ```
 
 ##### anchoring VerifiableCredential instances with the constructor
 To construct a new VC you need first to get instances of all Claim dependencies
 ```
-const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
+const name = await Claim.create('claim-cvc:Identity.name-v1', { first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
+const cred = await VC.create('cvc:cred:Test', 'jest:test', [name, dob]);
 cred.requestAnchor().then(() => {
   //The original instance is updated
 })
@@ -390,9 +356,9 @@ cred.requestAnchor().then(() => {
 ##### refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor
 To construct a new VC you need first to get instances of all Claim dependencies
 ```
-const name = new Claim.IdentityName({ first: 'Joao', middle: 'Barbosa', last: 'Santos' });
-const dob = new Claim.IdentityDateOfBirth({ day: 20, month: 3, year: 1978 });
-const cred = new VC('cvc:cred:Test', 'jest:test', [name, dob]);
+const name = await Claim.create('claim-cvc:Identity.name-v1', { first: 'Joao', middle: 'Barbosa', last: 'Santos' });
+const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
+const cred = await VC.create('cvc:cred:Test', 'jest:test', [name, dob]);
 cred.updateAnchor().then(() => {
   //The original instance is updated
 })
@@ -406,7 +372,7 @@ To prevent that to happen is important that the owner always grant the usage of 
 
 The library provide ways to do both.
 
-##### Grating
+##### Granting
 ```js
 cred.grantUsageFor(requestorId, requestId)
 ```
@@ -575,7 +541,7 @@ Where `options` may contatins:
 To construct a new VC given a JSON, just use the `.fromJSON` method:
 ```
 const credJSon = require('./ACred.json');
-const cred = VC.fromJSON(credJSon);
+const cred = await VC.fromJSON(credJSon);
 ```
 Now you can access any method of a `cred` instance, like `.updateAnchor()` or `.verify()`
 
@@ -586,7 +552,7 @@ Remember to check the section about configuration or else this part will fail.
 To verify a credential JSON, you can construct a VC using `.fromJSON` and call `.verify()` method:
 ```
 const credJSon = require('./ACred.json');
-const cred = VC.fromJSON(credJSon);
+const cred = await VC.fromJSON(credJSon);
 const verifiedLevel = cred.verify();
 ```
 
@@ -602,66 +568,30 @@ VERIFY_LEVELS = {
 ```
 
 
-## Schema Generator
+## Loading schemas
 
-The json schema generator will get a previous definition and build a sample JSON (with random values).
+Schema's can be loaded by providing a schema loader as follows:
 
-On top of the sample data and combining the identifier properties it will infer an JSON Schema for validating the data.
-
-A identifier like this:
-
-Example
 ```javascript
-const name = new Claim('claim-cvc:Identity.name-v1', {
-  first: 'Joao', 
-  middle: 'Barbosa', 
-  last: 'Santos'
-})
+const { schemaLoader } = require('@identity/credential-commons');
+schemaLoader.addLoader(new SchemaLoader())
 ```
 
-Will generate a JSON like this:
-
-
-```
-{
-  first: 'Joao', 
-  middle: 'Barbosa', 
-  last: 'Santos'
+The provided SchemaLoader needs to confirm to the following interface:
+```javascript
+interface SchemaLoader {
+  // Returns a boolean if the schema loader can load the supplied identitifier (in the case of multiple loaders)
+  valid(identifier);
+  
+  // Returns the schema id for the provided identifier (e.g. http://identity.com/schemas/claim-cvc:Identity.address-v1)
+  schemaId(identifier);
+  
+  // Load the schema based on the provided identifier and returns the schema as an object
+  async loadSchema(identifier)
 }
 ```
 
-The schema generator will generate an json schema like this:
-
-```json
-{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "claim-cvc:Identity.name-v1.first",
-  "type": "object",
-  "properties": {
-    "first": {
-      "type": "string"
-    }
-  },
-  "required": [
-    "first"
-  ],
-  "additionalProperties": false
-}
-```
-
-## Publishing schemas
-
-The Verifiable Credential Library has a script, avaiable in the *package.json*, to publish the generate schemas to a bucket in AWS. The following command will publish the schemas:
-```bash
-S3_BUCKET_SCHEMA_URL=<s3://your-bucket-url> npm run publish-schemas
-```
-
-There is also a script to check the published schemas:
-```bash
-S3_PUBLIC_SCHEMA_URL=<http://your-schem-url> npm run check-schemas
-```
-
-To publish and check the schemas it is required to have the environment variables for AWS credentials defined (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY).
+A default schema loaded is provided [here](/src/schemas/jsonSchema/loaders/cvc.js)
 
 
 ## Conventions:

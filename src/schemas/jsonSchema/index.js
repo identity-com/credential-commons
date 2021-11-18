@@ -174,7 +174,7 @@ class SchemaLoader {
     this.validUcaIdentifiers.length = 0;
     this.ajv.removeSchema(/.*/);
     summaryMap = {};
-    this.summaryMap = {};
+    this.summaryMap = summaryMap;
   }
 
   /**
