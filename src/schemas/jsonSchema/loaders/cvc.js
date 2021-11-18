@@ -17,13 +17,13 @@ class FSSchemaCache {
       return null;
     }
 
-    return fs.readFileSync(cachePath);
+    return fs.readFileSync(cachePath, { encoding: 'utf8' });
   }
 
   set(identifier, schema) {
     const cachePath = `${this.cachePath}/${identifier}.schema.json`;
 
-    fs.writeFileSync(cachePath, schema);
+    fs.writeFileSync(cachePath, schema, { encoding: 'utf8' });
   }
 }
 
@@ -87,7 +87,11 @@ class CVCLoader {
       }
     }
 
-    return !schema ? null : JSON.parse(schema);
+    try {
+      return !schema ? null : JSON.parse(schema);
+    } catch (e) {
+      return null;
+    }
   }
 
   /**

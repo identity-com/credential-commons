@@ -60,7 +60,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@identity.com/uca": "github:civicteam/uca",
+    "@identity.com/uca": "github:identity-com/uca#feature/IDCOM-1383__fix_definition_passthrough_bug",
     "ajv": "^7.2.4",
     "ajv-formats": "^2.0.2",
     "babel-runtime": "^6.26.0",

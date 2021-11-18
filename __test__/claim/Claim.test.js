@@ -1,6 +1,5 @@
-const { UserCollectableAttribute } = require('@identity.com/uca');
 const { Claim } = require('../../src/claim/Claim');
-const { schemaLoader, CVCSchemaLoader } = require('../../src');
+const { schemaLoader, CVCSchemaLoader, UserCollectableAttribute } = require('../../src');
 
 jest.setTimeout(30000);
 
@@ -285,7 +284,7 @@ describe('Claim Constructions tests', () => {
       year: 1978,
     };
 
-    const dateOfBirthUCA = new UserCollectableAttribute(identifier, value);
+    const dateOfBirthUCA = await UserCollectableAttribute.create(identifier, value);
     expect(dateOfBirthUCA).toBeDefined();
     expect(dateOfBirthUCA.value).toBeDefined();
     expect(dateOfBirthUCA.value.day).toBeDefined();
@@ -310,8 +309,8 @@ describe('Claim Constructions tests', () => {
       selfie: { algorithm: 'sha256', data: 'sha256(selfie)' },
     };
 
-    const evidencesUCA = new UserCollectableAttribute(identifier, value);
-    const evidencesAliasUCA = new UserCollectableAttribute(aliasIdentifier, value);
+    const evidencesUCA = await UserCollectableAttribute.create(identifier, value);
+    const evidencesAliasUCA = await UserCollectableAttribute.create(aliasIdentifier, value);
 
     // converting UCAs to Claims
     const evidencesClaim = await Claim.create(identifier, evidencesUCA.getPlainValue());
