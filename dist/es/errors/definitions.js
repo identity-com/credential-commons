@@ -4,9 +4,9 @@
  * @enum { string }
  */
 const ErrorCodes = {
+
   // IDV
   // Manual Review Tool
-
   /**
    * Reason: Manual Review detected that the provided document is invalid.
    * Troubleshooting: Make sure the provided document is a valid one.
@@ -48,8 +48,8 @@ const ErrorCodes = {
    * Troubleshooting: Make sure the provided document do fit the requirements.
    */
   ERROR_IDV_MRT_REQUIREMENTS_FAIL: 'error.idv.mrt.requirements.fail',
-  // Validation
 
+  // Validation
   /**
    * Reason: The IDV detected that the provided document is invalid.
    * Troubleshooting: Make sure the provided document is a valid one.
@@ -181,13 +181,6 @@ const ErrorCodes = {
   ERROR_IDV_CREDENTIAL_INVALID_SIGNATURE: 'error.idv.credential.invalid.signature',
 
   /**
-   * Reason: Could not anchor the credential,
-   * possibly caused by errors while connecting to an external provider
-   * Troubleshooting: Try again later
-   */
-  ERROR_IDV_CREDENTIAL_FAILED_ANCHORING: 'error.idv.credential.failed.anchoring',
-
-  /**
    * Reason: The credential has already been signed.
    * Troubleshooting: The credential is already signed. You must not sign it again
    */
@@ -272,6 +265,7 @@ const ErrorCodes = {
    * Troubleshooting: Make sure to provide the received token
    */
   ERROR_IDV_TOKEN_MISMATCH: 'error.idv.token.mismatch',
+
   // CW ERRORS
 
   /**
@@ -423,13 +417,14 @@ const ErrorCodes = {
    * Troubleshooting: Retry the network call again
    */
   ERROR_RETRYABLE_NETWORK_ERROR: 'error.retryable.network'
+
 };
+
 /**
  * Enum for ErrorContextTypes
  * @readonly
  * @enum { string }
  */
-
 const ErrorContextTypes = {
   MISSING_PROPERTY: 'missing_property',
   UCA_STATE: 'uca_state',
@@ -442,6 +437,7 @@ const ErrorContextTypes = {
   CREDENTIAL_ITEM: 'credential_item',
   UCA_ERROR: 'uca_error'
 };
+
 module.exports = {
   ErrorCodes,
   ErrorContextTypes

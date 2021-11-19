@@ -1,16 +1,14 @@
-"use strict";
+'use strict';
 
 const _ = require('lodash');
+
 /**
  * Transforms a list of UCAs into the claim property of the verifiable cliams
  */
-
-
 class ClaimModel {
   constructor(ucas) {
     _.forEach(ucas, uca => {
       const rootPropertyName = uca.getClaimRootPropertyName();
-
       if (!_.isEmpty(rootPropertyName)) {
         if (!this[rootPropertyName]) {
           this[rootPropertyName] = {};
@@ -22,9 +20,6 @@ class ClaimModel {
       }
     });
   }
-
 }
 
-module.exports = {
-  ClaimModel
-};
+module.exports = { ClaimModel };

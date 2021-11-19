@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const HeaderType = {
   EXTERNAL_ID_HEADER: 'X-External-ID',
