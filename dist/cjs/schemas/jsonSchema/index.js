@@ -517,9 +517,7 @@ class SchemaLoader {
 
         try {
           _this10.ajv.addSchema(schema);
-        } catch (e) {
-          // This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
-          return schema;
+        } catch (e) {// This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
         }
 
         yield _this10.addDefinition(schema);

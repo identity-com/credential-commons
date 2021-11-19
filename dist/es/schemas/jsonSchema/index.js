@@ -451,9 +451,7 @@ class SchemaLoader {
 
       try {
         this.ajv.addSchema(schema);
-      } catch (e) {
-        // This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
-        return schema;
+      } catch (e) {// This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
       }
 
       await this.addDefinition(schema);
