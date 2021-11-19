@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const Ajv = require('ajv').default;
 const traverse = require('json-schema-traverse');
+const {definitions: ucaDefinitions} = require('@identity.com/uca');
 const addFormats = require('ajv-formats').default;
 const definitions = require('../../claim/definitions');
 const credentialDefinitions = require('../../creds/definitions');
-
 let summaryMap = {};
 
 /**
@@ -107,7 +107,7 @@ class SummaryMapper {
   }
 
   static getPath(identifier) {
-    const { identifierComponents } = SummaryMapper.getBaseIdentifiers(identifier);
+    const {identifierComponents} = SummaryMapper.getBaseIdentifiers(identifier);
     const baseName = _.camelCase(identifierComponents[1]);
     return baseName !== 'type' ? `${baseName}.${identifierComponents[2]}` : identifierComponents[2];
   }
@@ -141,7 +141,7 @@ class SchemaLoader {
   constructor() {
     this.loaders = [];
     this.definitions = definitions;
-    this.ucaDefinitions = [];
+    this.ucaDefinitions = ucaDefinitions;
     this.credentialDefinitions = credentialDefinitions;
     this.summaryMap = summaryMap;
     this.validIdentifiers = [];
@@ -205,8 +205,8 @@ class SchemaLoader {
   }
 
   /**
-     * Adds a claim definition to be backwards compatible with the old schema structure.
-     */
+   * Adds a claim definition to be backwards compatible with the old schema structure.
+   */
   async addDefinition(schema) {
     if (/^credential-/.test(schema.title)) {
       await this.addCredentialDefinition(schema);
@@ -236,7 +236,7 @@ class SchemaLoader {
     const references = [];
     _.forEach(schema.properties.claim.properties, (vo) => {
       _.forEach(vo.properties, (vi, ki) => {
-        references.push({ ref: vo.properties[ki].$ref, property: ki });
+        references.push({ref: vo.properties[ki].$ref, property: ki});
       });
     });
 
@@ -331,8 +331,8 @@ class SchemaLoader {
   }
 
   async getPropertyValue(defProperties, property, name) {
-    const { deambiguify, items } = property;
-    let { type } = property;
+    const {deambiguify, items} = property;
+    let {type} = property;
 
     if (type === 'array' || (items && items.$ref)) {
       if (items.$ref) {
@@ -350,7 +350,7 @@ class SchemaLoader {
       type = schema.title;
     }
 
-    const defProperty = { name, type };
+    const defProperty = {name, type};
     if (deambiguify) {
       defProperty.deambiguify = deambiguify;
     }
@@ -366,7 +366,7 @@ class SchemaLoader {
       return this.getPropertyValue(defProperties, value, name);
     }, Promise.resolve());
 
-    return { properties: defProperties };
+    return {properties: defProperties};
   }
 
   /**
@@ -445,8 +445,8 @@ class SchemaLoader {
 
 
   /**
-     * Finds the correct schema loader based on the identifier
-     */
+   * Finds the correct schema loader based on the identifier
+   */
   findSchemaLoader(identifier) {
     return _.find(this.loaders, loader => loader.valid(identifier));
   }
@@ -485,4 +485,4 @@ class SchemaLoader {
 
 const schemaLoader = new SchemaLoader();
 
-module.exports = { schemaLoader };
+module.exports = {schemaLoader};

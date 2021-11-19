@@ -4,6 +4,10 @@ const Ajv = require('ajv').default;
 
 const traverse = require('json-schema-traverse');
 
+const {
+  definitions: ucaDefinitions
+} = require('@identity.com/uca');
+
 const addFormats = require('ajv-formats').default;
 
 const definitions = require('../../claim/definitions');
@@ -152,7 +156,7 @@ class SchemaLoader {
   constructor() {
     this.loaders = [];
     this.definitions = definitions;
-    this.ucaDefinitions = [];
+    this.ucaDefinitions = ucaDefinitions;
     this.credentialDefinitions = credentialDefinitions;
     this.summaryMap = summaryMap;
     this.validIdentifiers = [];
@@ -213,8 +217,8 @@ class SchemaLoader {
     }
   }
   /**
-     * Adds a claim definition to be backwards compatible with the old schema structure.
-     */
+   * Adds a claim definition to be backwards compatible with the old schema structure.
+   */
 
 
   async addDefinition(schema) {
@@ -461,8 +465,8 @@ class SchemaLoader {
     return existingSchema.schema;
   }
   /**
-     * Finds the correct schema loader based on the identifier
-     */
+   * Finds the correct schema loader based on the identifier
+   */
 
 
   findSchemaLoader(identifier) {
