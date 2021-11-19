@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "2.0.0-beta.12",
+  "version": "2.0.0-beta.13",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -60,7 +60,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@identity.com/uca": "github:identity-com/uca#feature/IDCOM-1383__fix_definition_passthrough_bug",
+    "@identity.com/uca": "github:identity-com/uca#v1.0.29",
     "ajv": "^7.2.4",
     "ajv-formats": "^2.0.2",
     "babel-runtime": "^6.26.0",
