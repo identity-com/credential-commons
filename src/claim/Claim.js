@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const sjcl = require('sjcl');
-const { UserCollectableAttribute } = require('@identity.com/uca');
+const { UserCollectableAttribute } = require('../uca/UCA');
 const { services } = require('../services');
 const definitions = require('./definitions');
 const { schemaLoader } = require('../schemas/jsonSchema');
@@ -67,10 +67,7 @@ class Claim extends UserCollectableAttribute {
     // Load the schema and it's references from a source to be used for validation and defining the schema definitions
     await schemaLoader.loadSchemaFromTitle(currentIdentifier);
 
-    const claim = new Claim(currentIdentifier, value, version);
-
-
-    return claim;
+    return new Claim(currentIdentifier, value, version);
   }
 
   initialize(identifier, value, version) {

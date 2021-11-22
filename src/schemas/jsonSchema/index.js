@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Ajv = require('ajv').default;
 const traverse = require('json-schema-traverse');
+const { definitions: ucaDefinitions } = require('@identity.com/uca');
 const addFormats = require('ajv-formats').default;
 const definitions = require('../../claim/definitions');
 const credentialDefinitions = require('../../creds/definitions');
@@ -132,6 +133,7 @@ function isDefinitionEqual(definition, ucaDefinition) {
     || definition.identifier === ucaDefinition;
 }
 
+const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
 
 /**
  * This class loads the schema definitions as needed by using loaders provided by the
@@ -140,9 +142,11 @@ class SchemaLoader {
   constructor() {
     this.loaders = [];
     this.definitions = definitions;
+    this.ucaDefinitions = ucaDefinitions;
     this.credentialDefinitions = credentialDefinitions;
     this.summaryMap = summaryMap;
     this.validIdentifiers = [];
+    this.validUcaIdentifiers = [];
     this.validCredentialIdentifiers = [];
     this.ucaCompared = [];
     this.ajv = new Ajv({
@@ -163,13 +167,15 @@ class SchemaLoader {
   }
 
   reset() {
+    this.ucaDefinitions.length = 0;
     this.definitions.length = 0;
     this.credentialDefinitions.length = 0;
     this.validIdentifiers.length = 0;
     this.validCredentialIdentifiers.length = 0;
+    this.validUcaIdentifiers.length = 0;
     this.ajv.removeSchema(/.*/);
     summaryMap = {};
-    this.summaryMap = {};
+    this.summaryMap = summaryMap;
   }
 
   /**
@@ -200,8 +206,8 @@ class SchemaLoader {
   }
 
   /**
-     * Adds a claim definition to be backwards compatible with the old schema structure.
-     */
+   * Adds a claim definition to be backwards compatible with the old schema structure.
+   */
   async addDefinition(schema) {
     if (/^credential-/.test(schema.title)) {
       await this.addCredentialDefinition(schema);
@@ -247,7 +253,7 @@ class SchemaLoader {
   }
 
   async shouldAddClaimDefinition(schema) {
-    if (/^[^:]+:[^:]+:[^:]+$/.test(schema.title)) {
+    if (isUCA(schema.title)) {
       const transformed = transformUcaIdToClaimId(schema.title);
 
       if (!this.ucaCompared.includes(schema.title)) {
@@ -273,10 +279,6 @@ class SchemaLoader {
   }
 
   async addClaimDefinition(schema) {
-    if (!(await this.shouldAddClaimDefinition(schema))) {
-      return;
-    }
-
     const definition = {
       identifier: schema.title,
       version: getSchemaVersion(schema.title),
@@ -314,9 +316,18 @@ class SchemaLoader {
       });
     }
 
-    this.definitions.push(definition);
+    if ((await this.shouldAddClaimDefinition(schema))) {
+      this.definitions.push(definition);
 
-    this.validIdentifiers.push(schema.title);
+      this.validIdentifiers.push(schema.title);
+    }
+
+    if (isUCA(schema.title)) {
+      this.ucaDefinitions.push(definition);
+
+      this.validUcaIdentifiers.push(schema.title);
+    }
+
     SummaryMapper.addDefinition(definition);
   }
 
@@ -423,7 +434,6 @@ class SchemaLoader {
         this.ajv.addSchema(schema);
       } catch (e) {
         // This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
-        return schema;
       }
 
       await this.addDefinition(schema);
@@ -436,8 +446,8 @@ class SchemaLoader {
 
 
   /**
-     * Finds the correct schema loader based on the identifier
-     */
+   * Finds the correct schema loader based on the identifier
+   */
   findSchemaLoader(identifier) {
     return _.find(this.loaders, loader => loader.valid(identifier));
   }

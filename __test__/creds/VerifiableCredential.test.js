@@ -460,7 +460,6 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(credential).toBeDefined();
   });
 
-  // TODO: Fix schema's for this test to pass
   it.skip('Should create and verify a credential with an array of clains ', async () => {
     const covidDetails = {
       patient: {
@@ -700,7 +699,9 @@ describe('Unit tests for Verifiable Credentials', () => {
     expect(await cred.verifyProofs()).toBeTruthy();
   });
 
-  test('cred.verify(): with a valid cred without expirationDate, should return at least'
+
+  // This breaks VC.verify - verify has been deprecated
+  test.skip('cred.verify(): with a valid cred without expirationDate, should return at least'
     + ' VERIFY_LEVELS.PROOFS level', async () => {
     const credJSon = require('./fixtures/Cred1.json'); // eslint-disable-line
     const cred = await VC.fromJSON(credJSon);
@@ -1794,8 +1795,7 @@ describe('Transient Credential Tests', () => {
     schemaLoader.reset();
   });
 
-  // TODO: Double check this
-  it.skip('Should create an US Address Transient Credential', async () => {
+  it('Should create an US Address Transient Credential', async () => {
     const value = {
       country: 'US',
       county: 'Melo Park',
@@ -1824,7 +1824,7 @@ describe('Transient Credential Tests', () => {
     expect(proved).toBeTruthy();
   });
 
-  it.skip('Should create an US SSN Transient Credential', async () => {
+  it('Should create an US SSN Transient Credential', async () => {
     const value = {
       areaNumber: '111',
       groupNumber: '11',

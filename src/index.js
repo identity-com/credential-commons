@@ -1,4 +1,5 @@
 const { Claim } = require('./claim/Claim');
+const { UserCollectableAttribute } = require('./uca/UCA');
 const VC = require('./creds/VerifiableCredential');
 const { initServices, services } = require('./services/index');
 const isValidGlobalIdentifier = require('./isValidGlobalIdentifier');
@@ -30,6 +31,7 @@ function CredentialCommons() {
   this.credentialDefinitions = credentialDefinitions;
   this.schemaLoader = schemaLoader;
   this.CVCSchemaLoader = CVCSchemaLoader;
+  this.UserCollectableAttribute = UserCollectableAttribute;
   return this;
 }
 

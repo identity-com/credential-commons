@@ -225,7 +225,7 @@ describe('schema loading tests', () => {
     .rejects
     .toThrow(/Missing required fields to claim-cvc:Identity.name-v1/));
 
-  it.skip('correctly loads an array type', async () => {
+  it('correctly loads an array type', async () => {
     const definition = {
       credentialItem: false,
       identifier: 'claim-cvc:Codes.records-v1',
