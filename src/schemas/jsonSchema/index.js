@@ -135,6 +135,12 @@ function isDefinitionEqual(definition, ucaDefinition) {
 
 const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
 
+/**
+ * Supporting both claim and credentialSubject
+ * TODO: remove this once backwards compatibility has been removed
+ * @param schema
+ * @returns {*|(() => Promise<void>)}
+ */
 const getCredentialSubjectProperties = schema => (
   schema.properties.credentialSubject ? schema.properties.credentialSubject : schema.properties.claim
 );

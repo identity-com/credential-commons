@@ -809,12 +809,6 @@ VerifiableCredentialBaseConstructor.fromJSON = async (verifiableCredentialJSON, 
   const newObj = await VerifiableCredentialBaseConstructor.create(
     verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.issuer,
-    null,
-    null,
-    null,
-    null,
-    null,
-    false,
   );
 
   newObj.id = _.clone(verifiableCredentialJSON.id);
