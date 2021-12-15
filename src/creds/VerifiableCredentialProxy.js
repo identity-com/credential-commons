@@ -68,7 +68,7 @@ class VerifiableCredentialProxy extends VerifiableCredential {
         issuanceDate: _.clone(this.issuanceDate),
         expirationDate: _.clone(this.expirationDate),
         version: _.clone(this.version),
-        type: _.clone(this.type),
+        type: ['Credential', this.identifier],
         claim: _.clone(this.credentialSubject),
         proof: _.clone(this.proof),
       };
@@ -80,8 +80,9 @@ class VerifiableCredentialProxy extends VerifiableCredential {
   }
 }
 
-VerifiableCredentialProxy.create = async (identifier, issuer, expiryIn, ucas, version, evidence,
-  signerVerifier = null) => {
+VerifiableCredentialProxy.create = async (
+  identifier, issuer, expiryIn, ucas, version, evidence, signerVerifier = null,
+) => {
   // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   const schema = await schemaLoader.loadSchemaFromTitle(identifier);
 
