@@ -7,6 +7,8 @@ const {
 const claimDefinitions = require('../src/claim/definitions');
 const credentialDefinitions = require('../src/creds/definitions');
 
+const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
+
 const { summaryMap } = schemaLoader;
 
 jest.setTimeout(30000);
@@ -108,7 +110,7 @@ describe('schema loading tests', () => {
       year: 1970,
     });
 
-    await VC.create('credential-cvc:Identity-v1', 'issuer', null, [name, dob]);
+    await VC.create('credential-cvc:Identity-v3', 'issuer', null, credentialSubject, [name, dob]);
 
     expect(credentialDefinitions)
       .toHaveLength(1);
@@ -116,8 +118,8 @@ describe('schema loading tests', () => {
     expect(credentialDefinitions)
       .toEqual(expect.arrayContaining([
         expect.objectContaining({
-          identifier: 'credential-cvc:Identity-v1',
-          version: '1',
+          identifier: 'credential-cvc:Identity-v3',
+          version: '3',
           depends: [
             'claim-cvc:Identity.name-v1',
             'claim-cvc:Identity.dateOfBirth-v1',
@@ -191,18 +193,18 @@ describe('schema loading tests', () => {
       year: 1970,
     });
 
-    await VC.create('credential-cvc:Identity-v1', 'issuer', null, [name, dob]);
+    await VC.create('credential-cvc:Identity-v3', 'issuer', null, credentialSubject, [name, dob]);
 
     expect(summaryMap)
       .toEqual(expect.objectContaining({
         'identity.credential': {
-          identifier: 'credential-cvc:Identity-v1',
+          identifier: 'credential-cvc:Identity-v3',
           textLabel: 'identity.credential',
           credentials: [
-            'credential-cvc:Identity-v1',
+            'credential-cvc:Identity-v3',
           ],
           labelFor: [
-            'credential-cvc:Identity-v1',
+            'credential-cvc:Identity-v3',
           ],
           changeable: true,
           claimPath: null,

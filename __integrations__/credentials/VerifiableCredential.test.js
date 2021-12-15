@@ -3,6 +3,8 @@ const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const { schemaLoader, CVCSchemaLoader } = require('../../src');
 
+const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
+
 jest.setTimeout(200000);
 
 describe('Integration Tests for Verifiable Credentials', () => {
@@ -19,7 +21,7 @@ describe('Integration Tests for Verifiable Credentials', () => {
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
 
     const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
-    const cred = await VC.create('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], 1);
+    const cred = await VC.create('credential-cvc:Identity-v3', uuidv4(), null, credentialSubject, [name, dob]);
     return cred.requestAnchor().then((updated) => {
       expect(updated.proof.anchor.type).toBe('temporary');
       expect(updated.proof.anchor.value).not.toBeDefined();
@@ -34,7 +36,7 @@ describe('Integration Tests for Verifiable Credentials', () => {
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
 
     const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
-    const cred = await VC.create('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], 1);
+    const cred = await VC.create('credential-cvc:Identity-v3', uuidv4(), null, credentialSubject, [name, dob]);
     return cred.requestAnchor().then((updated) => {
       expect(updated.proof.anchor).toBeDefined();
       return updated.updateAnchor().then((newUpdated) => {
@@ -50,7 +52,7 @@ describe('Integration Tests for Verifiable Credentials', () => {
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
 
     const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
-    const cred = await VC.create('credential-cvc:Identity-v1', uuidv4(), null, [name, dob], 1);
+    const cred = await VC.create('credential-cvc:Identity-v3', uuidv4(), null, credentialSubject, [name, dob]);
     await cred.requestAnchor();
     await cred.updateAnchor();
     const validation = await cred.verifyAttestation();

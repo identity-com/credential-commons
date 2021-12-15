@@ -115,7 +115,7 @@ class SummaryMapper {
 }
 
 const getSchemaVersion = (identifier) => {
-  const matches = identifier.match(/D-v([\d]+$)/);
+  const matches = identifier.match(/-v([\d]+$)/);
   if (matches && matches.length > 1) {
     return matches[1];
   }
@@ -135,6 +135,10 @@ function isDefinitionEqual(definition, ucaDefinition) {
 
 const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
 
+const getCredentialSubjectProperties = schema => (
+  schema.properties.credentialSubject ? schema.properties.credentialSubject : schema.properties.claim
+);
+
 /**
  * This class loads the schema definitions as needed by using loaders provided by the
  */
@@ -149,10 +153,14 @@ class SchemaLoader {
     this.validUcaIdentifiers = [];
     this.validCredentialIdentifiers = [];
     this.ucaCompared = [];
+
+    // allowUnionTypes is required because of the anchor in the proof can be a string/object (this should be changed)
     this.ajv = new Ajv({
       logger: console,
       allErrors: true,
       verbose: true,
+      strict: true,
+      allowUnionTypes: true,
     });
 
     // add data formats such as date-time
@@ -200,7 +208,9 @@ class SchemaLoader {
       definition.depends.push(propertySchema.title);
     }
 
-    if (schema.properties.claim.required && schema.properties.claim.required.includes(property)) {
+    const csProperties = getCredentialSubjectProperties(schema);
+
+    if (csProperties.required && csProperties.required.includes(property)) {
       definition.required.push(propertySchema.title);
     }
   }
@@ -230,12 +240,14 @@ class SchemaLoader {
       definition.transient = true;
     }
 
-    if (schema.properties.claim.required) {
+    const credentialSubjectDefinition = getCredentialSubjectProperties(schema);
+
+    if (credentialSubjectDefinition.required) {
       definition.required = [];
     }
 
     const references = [];
-    _.forEach(schema.properties.claim.properties, (vo) => {
+    _.forEach(credentialSubjectDefinition.properties, (vo) => {
       _.forEach(vo.properties, (vi, ki) => {
         references.push({ ref: vo.properties[ki].$ref, property: ki });
       });
@@ -421,7 +433,7 @@ class SchemaLoader {
       const references = [];
       traverse(schema, {
         cb: (currentNode) => {
-          if (currentNode.$ref !== undefined) {
+          if (currentNode.$ref !== undefined && !currentNode.$ref.startsWith('#')) {
             // Prevent the same schema loaded multiple times
             references.push(this.loadSchemaFromUri(currentNode.$ref));
           }
