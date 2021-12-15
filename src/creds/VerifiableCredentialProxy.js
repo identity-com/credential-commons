@@ -100,6 +100,13 @@ VerifiableCredentialProxy.create = async (
   return new VerifiableCredentialProxy(identifier, issuer, expiryIn, ucas, version, evidence, signerVerifier);
 };
 
+/**
+ * Factory function that creates a new Verifiable Credential based on a JSON object.
+ *
+ * This proxy function ensures that the VC is converted into the new format.
+ * @param {*} verifiableCredentialJSON
+ * @returns VerifiableCredentialBaseConstructor
+ */
 VerifiableCredentialProxy.fromJSON = async (verifiableCredentialJSON, partialPresentation = false) => {
   const newObj = await VerifiableCredentialProxy.create(
     verifiableCredentialJSON.identifier,
@@ -126,23 +133,36 @@ VerifiableCredentialProxy.fromJSON = async (verifiableCredentialJSON, partialPre
   return newObj;
 };
 
+/**
+ * Non cryptographically secure verify the Credential
+ * Performs a proofs verification only.
+ *
+ * This proxy function ensures that if the VC is provided as a value object, it is correctly converted
+ * @param credential - A credential object with expirationDate, claim and proof
+ * @return true if verified, false otherwise.
+ */
+VerifiableCredentialProxy.nonCryptographicallySecureVerify = async (credential) => {
+  const vc = await VerifiableCredentialProxy.fromJSON(credential);
 
-VerifiableCredentialProxy
+  return VerifiableCredential.nonCryptographicallySecureVerify(vc);
+};
 
-  .nonCryptographicallySecureVerify = async (credential) => {
-    const vc = await VerifiableCredentialProxy.fromJSON(credential);
+/**
+ * Cryptographically secure verify the Credential.
+ * Performs a non cryptographically secure verification, attestation check and signature validation.
+ *
+ * This proxy function ensures that if the VC is provided as a value object, it is correctly converted
+ * @param credential - A credential object with expirationDate, claim and proof
+ * @param verifyAttestationFunc - Async method to verify a credential attestation
+ * @param verifySignatureFunc - Async method to verify a credential signature
+ * @return true if verified, false otherwise.
+ */
+VerifiableCredentialProxy.cryptographicallySecureVerify = async (
+  credential, verifyAttestationFunc, verifySignatureFunc,
+) => {
+  const vc = await VerifiableCredentialProxy.fromJSON(credential);
 
-    return VerifiableCredential.nonCryptographicallySecureVerify(vc);
-  };
+  return VerifiableCredential.cryptographicallySecureVerify(vc, verifyAttestationFunc, verifySignatureFunc);
+};
 
-VerifiableCredentialProxy
-
-  .cryptographicallySecureVerify = async (credential, verifyAttestationFunc, verifySignatureFunc) => {
-    const vc = await VerifiableCredentialProxy.fromJSON(credential);
-
-    return VerifiableCredential.cryptographicallySecureVerify(vc, verifyAttestationFunc, verifySignatureFunc);
-  };
-
-module
-
-  .exports = VerifiableCredentialProxy;
+module.exports = VerifiableCredentialProxy;
