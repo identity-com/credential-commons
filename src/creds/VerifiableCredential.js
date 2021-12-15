@@ -657,6 +657,12 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
   };
 
   /**
+   * Serializes the VerifiableCredential to a JSON string
+   * @param space The number of spaces to indent the JSON with
+   */
+  this.toJSON = (space = null) => JSON.stringify(this, null, space);
+
+  /**
    * @param  {} requestorId
    * @param  {} requestId
    * @param  {} [keyName]
