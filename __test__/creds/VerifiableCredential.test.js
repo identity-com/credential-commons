@@ -10,7 +10,7 @@ const {
   schemaLoader,
   CVCSchemaLoader,
 } = require('../../src');
-const filteredCredentialJson = require('./fixtures/filteredIdDocument-v2.json');
+const filteredCredentialJson = require('./fixtures/filteredIdDocument-v3.json');
 const invalidEmailJson = require('./fixtures/CredentialEmailInvalid.json');
 
 // eslint-disable-next-line max-len
