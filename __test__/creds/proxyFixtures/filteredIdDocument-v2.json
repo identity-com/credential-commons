@@ -1,0 +1,53 @@
+{
+  "id": "f471b5f8-6ad6-4782-968d-f2924145fa54",
+  "issuer": "",
+  "issuanceDate": "2021-05-26T20:11:12.082Z",
+  "identifier": "credential-cvc:IdDocument-v2",
+  "expirationDate": null,
+  "version": "1",
+  "type": [
+    "Credential",
+    "credential-cvc:IdDocument-v2"
+  ],
+  "transient": false,
+  "claim": {
+    "document": {
+      "dateOfBirth": {
+        "day": 20,
+        "month": 3,
+        "year": 1978
+      }
+    }
+  },
+  "proof": {
+    "type": "CvcMerkleProof2018",
+    "merkleRoot": "9d424cbc30d418ed42f1b1031fa4fdef273e6b371637b4c8e5184a566b9d27cc",
+    "anchor": "TBD (Civic Blockchain Attestation)",
+    "leaves": [
+      {
+        "identifier": "claim-cvc:Document.dateOfBirth-v1",
+        "value": "urn:dateOfBirth.day:f0bbfa2a35fc0dfa27a2620691feedde6fff1c522817b546e730740f7339354d:20|urn:dateOfBirth.month:75e6e5fa1f03d6b985862e7ad1467405e0c482df64e6ed1692312aaba7d4d951:3|urn:dateOfBirth.year:c4d7200e945ef41009be24127cdd394d17a7bc0330d3b1b19270372543ff6517:1978|",
+        "claimPath": "document.dateOfBirth",
+        "targetHash": "3fdb18a8022d009da8eda7b353ebfdaad91ad4d6256f647e174ac16448d42f6d",
+        "node": [
+          {
+            "left": "72e6f2e8c817048bb82442371202c9c078cabbacb7739ce4781f68855b362ca8"
+          },
+          {
+            "right": "aae76d0dd2b272496a4ccc799cd60a329da4d78742b9e4f8792c4a3b4259d414"
+          },
+          {
+            "right": "9c4a9d7c1d1a76dd3c8aa274d6cf8de8cd5ed4658162c84db409e8c0dab422ea"
+          },
+          {
+            "left": "03024ff54437b7d65ad908229977e8603f3f5451a611ec88235775db23d522f5"
+          },
+          {
+            "right": "b8dc070cacd5d604ec328cfee7d396e3a6ba5011a616049126d37460f7280154"
+          }
+        ]
+      }
+    ]
+  },
+  "granted": null
+}
