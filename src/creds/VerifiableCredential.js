@@ -660,8 +660,34 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
    * Serializes the VerifiableCredential to a JSON string
    * @param space The number of spaces to indent the JSON with
    */
-  this.toJSON = (space = null) => JSON.stringify(this, null, space);
+  this.toJSON = () => {
+    const obj = _.pick(this, [
+      'id',
+      'identifier',
+      'issuer',
+      'issuanceDate',
+      'expirationDate',
+      'type',
+      'credentialSubject',
+      'proof',
+    ]);
 
+    // Remove undefined/null values
+    // eslint-disable-next-line no-restricted-syntax
+    for (const k in obj) {
+      if (obj[k] === null || obj[k] === undefined) {
+        delete obj[k];
+      }
+    }
+
+    return {
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+        `https://www.identity.com/credentials/v${version}`,
+      ],
+      ...obj,
+    };
+  };
   /**
    * @param  {} requestorId
    * @param  {} requestId
@@ -762,7 +788,7 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn
   );
 
   if (validate) {
-    await schemaLoader.validateSchema(identifier, JSON.parse(JSON.stringify(vc)));
+    await schemaLoader.validateSchema(identifier, vc.toJSON());
   }
 
   return vc;
