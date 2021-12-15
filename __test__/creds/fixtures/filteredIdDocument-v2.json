@@ -2,15 +2,15 @@
   "id": "f471b5f8-6ad6-4782-968d-f2924145fa54",
   "issuer": "",
   "issuanceDate": "2021-05-26T20:11:12.082Z",
-  "identifier": "credential-cvc:IdDocument-v2",
-  "expirationDate": null,
+  "identifier": "credential-cvc:IdDocument-v3",
   "version": "1",
   "type": [
-    "Credential",
-    "credential-cvc:IdDocument-v2"
+    "VerifiableCredential",
+    "IdentityCredential"
   ],
   "transient": false,
-  "claim": {
+  "credentialSubject": {
+    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
     "document": {
       "dateOfBirth": {
         "day": 20,
@@ -47,7 +47,7 @@
           }
         ]
       }
-    ]
-  },
-  "granted": null
+    ],
+    "granted": null
+  }
 }
