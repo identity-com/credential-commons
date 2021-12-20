@@ -1953,4 +1953,16 @@ describe('Referenced Schemas for Verifiable Credentials', () => {
     const filtered = credential.filter(['claim-cvc:Document.dateOfBirth-v1']);
     expect(filtered).toBeDefined();
   });
+
+  test('Validates a schema the contains a reference', async () => {
+    const type = await Claim.create('claim-cvc:Document.type-v1', 'passport', '1');
+    const number = await Claim.create('claim-cvc:Document.number-v1', 'FP12345', '1');
+
+    const createCredential = VC.create(
+      'credential-test:IdDocument-v1', '', null, [type, number], '1',
+    );
+
+    expect(createCredential).rejects.toThrow('Missing required claim(s): claim-cvc:Document.name-v1, '
+      + 'claim-cvc:Document.issueCountry-v1, claim-cvc:Document.dateOfBirth-v1, claim-cvc:Document.evidences-v1');
+  });
 });
