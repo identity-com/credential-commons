@@ -1900,3 +1900,57 @@ describe('Signned Verifiable Credentials', () => {
     expect(signerVerifier.isSignatureValid(dataOnlyCredential)).toBeTruthy();
   });
 });
+describe('Referenced Schemas for Verifiable Credentials', () => {
+  beforeAll(() => {
+    schemaLoader.addLoader(new TestSchemaLoader());
+    schemaLoader.addLoader(new CVCSchemaLoader());
+  });
+
+  test('Loads a schema the contains a reference', async () => {
+    const type = await Claim.create('claim-cvc:Document.type-v1', 'passport', '1');
+    const number = await Claim.create('claim-cvc:Document.number-v1', 'FP12345', '1');
+    const nameValue = {
+      givenNames: 'e8qhs4Iak1',
+      familyNames: 'e8qak1',
+      otherNames: 'qhs4I',
+    };
+    const name = await Claim.create('claim-cvc:Document.name-v1', nameValue, '1');
+    const gender = await Claim.create('claim-cvc:Document.gender-v1', 'M', '1');
+    const issueCountry = await Claim.create('claim-cvc:Document.issueCountry-v1', 'Brazil', '1');
+    const placeOfBirth = await Claim.create('claim-cvc:Document.placeOfBirth-v1', 'Belo Horizonte', '1');
+    const dateOfBirthValue = identityDateOfBirth;
+    const dateOfBirth = await Claim.create('claim-cvc:Document.dateOfBirth-v1', dateOfBirthValue, '1');
+    const dateOfExpiryValue = {
+      day: 12,
+      month: 2,
+      year: 2025,
+    };
+    const dateOfExpiry = await Claim.create('claim-cvc:Document.dateOfExpiry-v1', dateOfExpiryValue, '1');
+    const nationality = await Claim.create('claim-cvc:Document.nationality-v1', 'Brazilian', '1');
+
+    const evidencesValue = {
+      idDocumentFront: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+      idDocumentBack: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+      selfie: {
+        algorithm: 'sha256',
+        data: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      },
+    };
+    const evidences = await Claim.create('claim-cvc:Document.evidences-v1', evidencesValue, '1');
+
+    const credential = await VC.create(
+      'credential-test:IdDocument-v1', '', null, [type, number, name, gender,
+        issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality, evidences], '1',
+    );
+
+    expect(credential).toBeDefined();
+    const filtered = credential.filter(['claim-cvc:Document.dateOfBirth-v1']);
+    expect(filtered).toBeDefined();
+  });
+});
