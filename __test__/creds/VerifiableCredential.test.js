@@ -45,6 +45,24 @@ const signAttestationSubject = (subject, xprv, xpub) => {
   };
 };
 
+class TestSchemaLoader extends CVCSchemaLoader {
+  // eslint-disable-next-line class-methods-use-this
+  valid(identifier) {
+    return /^(claim|credential|type)-(test):.*$/.test(identifier);
+  }
+
+  async loadSchema(identifier) {
+    try {
+      // eslint-disable-next-line global-require,import/no-dynamic-require
+      return require(`../schema/fixtures/${identifier}.schema.json`);
+      // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+
+    return super.loadSchema(identifier);
+  }
+}
+
 describe('Unit tests for Verifiable Credentials', () => {
   beforeAll(() => {
     schemaLoader.addLoader(new CVCSchemaLoader());

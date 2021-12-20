@@ -200,7 +200,9 @@ class SchemaLoader {
       definition.depends.push(propertySchema.title);
     }
 
-    if (schema.properties.claim.required && schema.properties.claim.required.includes(property)) {
+    const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
+
+    if (schemaProperties.claim.required && schemaProperties.claim.required.includes(property)) {
       definition.required.push(propertySchema.title);
     }
   }
@@ -217,6 +219,40 @@ class SchemaLoader {
   }
 
   /**
+   * Flattens the properties of a schema if there are any referenced schemas
+   * @param schema
+   * @returns {Promise<*>}
+   */
+  async flattenCredentialSchemaProperties(schema) {
+    let properties = schema.properties ? schema.properties : {};
+
+    if (schema.allOf) {
+      const promises = schema.allOf.map(async (allOf) => {
+        if (allOf.$ref) {
+          const refSchema = await this.loadSchemaFromUri(allOf.$ref);
+          const refProperties = await this.flattenCredentialSchemaProperties(refSchema);
+
+          properties = {
+            ...properties,
+            ...refProperties,
+          };
+        }
+
+        if (allOf.properties) {
+          properties = {
+            ...properties,
+            ...allOf.properties,
+          };
+        }
+      });
+
+      await Promise.all(promises);
+    }
+
+    return properties;
+  }
+
+  /**
    * Adds a credential definition to be backwards compatible with the old schema structure.
    */
   async addCredentialDefinition(schema) {
@@ -230,12 +266,14 @@ class SchemaLoader {
       definition.transient = true;
     }
 
-    if (schema.properties.claim.required) {
+    const properties = await this.flattenCredentialSchemaProperties(schema);
+
+    if (properties.claim.required) {
       definition.required = [];
     }
 
     const references = [];
-    _.forEach(schema.properties.claim.properties, (vo) => {
+    _.forEach(properties.claim.properties, (vo) => {
       _.forEach(vo.properties, (vi, ki) => {
         references.push({ ref: vo.properties[ki].$ref, property: ki });
       });
