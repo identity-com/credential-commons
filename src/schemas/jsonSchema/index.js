@@ -141,9 +141,11 @@ const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
  * @param schema
  * @returns {*|(() => Promise<void>)}
  */
-const getCredentialSubjectProperties = schema => (
-  schema.properties.credentialSubject ? schema.properties.credentialSubject : schema.properties.claim
-);
+const getCredentialSubjectProperties = async (schema) => {
+  const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
+
+  return schemaProperties.credentialSubject ? schemaProperties.credentialSubject : schemaProperties.claim;
+};
 
 /**
  * This class loads the schema definitions as needed by using loaders provided by the
@@ -230,6 +232,40 @@ class SchemaLoader {
     } else {
       await this.addClaimDefinition(schema);
     }
+  }
+
+  /**
+   * Flattens the properties of a schema if there are any referenced schemas
+   * @param schema
+   * @returns {Promise<*>}
+   */
+  async flattenCredentialSchemaProperties(schema) {
+    let properties = schema.properties ? schema.properties : {};
+
+    if (schema.allOf) {
+      const promises = schema.allOf.map(async (allOf) => {
+        if (allOf.$ref) {
+          const refSchema = await this.loadSchemaFromUri(allOf.$ref);
+          const refProperties = await this.flattenCredentialSchemaProperties(refSchema);
+
+          properties = {
+            ...properties,
+            ...refProperties,
+          };
+        }
+
+        if (allOf.properties) {
+          properties = {
+            ...properties,
+            ...allOf.properties,
+          };
+        }
+      });
+
+      await Promise.all(promises);
+    }
+
+    return properties;
   }
 
   /**
