@@ -1908,8 +1908,9 @@ describe('Referenced Schemas for Verifiable Credentials', () => {
     const evidences = await Claim.create('claim-cvc:Document.evidences-v1', evidencesValue, '1');
 
     const credential = await VC.create(
-      'credential-test:IdDocument-v1', '', null, [type, number, name, gender,
-        issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality, evidences], '1',
+      'credential-test:IdDocument-v1', '', null, credentialSubject, [type, number, name, gender,
+      // 'credential-test:IdDocument-v1', '', null, credentialSubject, [type, number, name, gender,
+        issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality, evidences],
     );
 
     expect(credential).toBeDefined();
@@ -1922,10 +1923,9 @@ describe('Referenced Schemas for Verifiable Credentials', () => {
     const number = await Claim.create('claim-cvc:Document.number-v1', 'FP12345', '1');
 
     const createCredential = VC.create(
-      'credential-test:IdDocument-v1', '', null, [type, number], '1',
+      'credential-test:IdDocument-v1', '', null, credentialSubject, [type, number],
     );
 
-    expect(createCredential).rejects.toThrow('Missing required claim(s): claim-cvc:Document.name-v1, '
-      + 'claim-cvc:Document.issueCountry-v1, claim-cvc:Document.dateOfBirth-v1, claim-cvc:Document.evidences-v1');
+    return expect(createCredential).rejects.toThrow('Missing required fields to credential-test:IdDocument-v1');
   });
 });

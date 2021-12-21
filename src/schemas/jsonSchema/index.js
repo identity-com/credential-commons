@@ -136,18 +136,6 @@ function isDefinitionEqual(definition, ucaDefinition) {
 const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
 
 /**
- * Supporting both claim and credentialSubject
- * TODO: remove this once backwards compatibility has been removed
- * @param schema
- * @returns {*|(() => Promise<void>)}
- */
-const getCredentialSubjectProperties = async (schema) => {
-  const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
-
-  return schemaProperties.credentialSubject ? schemaProperties.credentialSubject : schemaProperties.claim;
-};
-
-/**
  * This class loads the schema definitions as needed by using loaders provided by the
  */
 class SchemaLoader {
@@ -216,7 +204,7 @@ class SchemaLoader {
       definition.depends.push(propertySchema.title);
     }
 
-    const csProperties = getCredentialSubjectProperties(schema);
+    const csProperties = await this.getCredentialSubjectProperties(schema);
 
     if (csProperties.required && csProperties.required.includes(property)) {
       definition.required.push(propertySchema.title);
@@ -224,14 +212,15 @@ class SchemaLoader {
   }
 
   /**
-   * Adds a claim definition to be backwards compatible with the old schema structure.
+   * Supporting both claim and credentialSubject
+   * TODO: remove this once backwards compatibility has been removed
+   * @param schema
+   * @returns {*|(() => Promise<void>)}
    */
-  async addDefinition(schema) {
-    if (/^credential-/.test(schema.title)) {
-      await this.addCredentialDefinition(schema);
-    } else {
-      await this.addClaimDefinition(schema);
-    }
+  async getCredentialSubjectProperties(schema) {
+    const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
+
+    return schemaProperties.credentialSubject ? schemaProperties.credentialSubject : schemaProperties.claim;
   }
 
   /**
@@ -268,6 +257,18 @@ class SchemaLoader {
     return properties;
   }
 
+
+  /**
+   * Adds a claim definition to be backwards compatible with the old schema structure.
+   */
+  async addDefinition(schema) {
+    if (/^credential-/.test(schema.title)) {
+      await this.addCredentialDefinition(schema);
+    } else {
+      await this.addClaimDefinition(schema);
+    }
+  }
+
   /**
    * Adds a credential definition to be backwards compatible with the old schema structure.
    */
@@ -282,7 +283,7 @@ class SchemaLoader {
       definition.transient = true;
     }
 
-    const credentialSubjectDefinition = getCredentialSubjectProperties(schema);
+    const credentialSubjectDefinition = await this.getCredentialSubjectProperties(schema);
 
     if (credentialSubjectDefinition.required) {
       definition.required = [];
@@ -439,8 +440,7 @@ class SchemaLoader {
 
     if (schema.type === 'object') {
       if (!_.isEmpty(schema.properties)) {
-        const values = await this.getPropertyValues(schema.properties);
-        return values;
+        return this.getPropertyValues(schema.properties);
       }
     }
 
