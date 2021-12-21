@@ -1887,3 +1887,107 @@ describe('Signned Verifiable Credentials', () => {
     expect(cred.credentialSubject).toBeDefined();
   });
 });
+
+describe('Verifiable Credential JSON serialization', () => {
+  // eslint-disable-next-line global-require
+  const idCredOld = require('./proxyFixtures/Identity.json');
+  // eslint-disable-next-line global-require
+  const idCredNew = require('./fixtures/Identity.json');
+
+  beforeAll(() => {
+    schemaLoader.addLoader(new CVCSchemaLoader());
+  });
+
+  it('serializes an "old" format VC to JSON', async () => {
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+    const cred = await VC.create('credential-cvc:Identity-v1', uuidv4(), null, [name, dob]);
+
+    // serialize the credential to JSON, then back to an object to be tested against
+    const credJSON = JSON.parse(JSON.stringify(cred));
+
+    expect(credJSON).toEqual(expect.objectContaining({
+      id: cred.id,
+      identifier: 'credential-cvc:Identity-v1',
+      issuer: cred.issuer,
+      issuanceDate: cred.issuanceDate,
+      type: ['Credential', 'credential-cvc:Identity-v1'],
+      claim: {
+        identity: {
+          name: {
+            familyNames: identityName.familyNames,
+            givenNames: identityName.givenNames,
+            otherNames: identityName.otherNames,
+          },
+          dateOfBirth: {
+            day: identityDateOfBirth.day,
+            month: identityDateOfBirth.month,
+            year: identityDateOfBirth.year,
+          },
+        },
+      },
+    }));
+  });
+
+  it('serializes a VC to W3C JSON', async () => {
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+    const cred = await VC.create('credential-cvc:Identity-v3', uuidv4(), null, [name, dob], null);
+
+    // serialize the credential to JSON, then back to an object to be tested against
+    const credJSON = JSON.parse(JSON.stringify(cred));
+
+    expect(credJSON).toEqual(expect.objectContaining({
+      '@context': ['https://www.w3.org/2018/credentials/v1', 'https://www.identity.com/credentials/v3'],
+      id: cred.id,
+      issuer: cred.issuer,
+      issuanceDate: cred.issuanceDate,
+      type: ['VerifiableCredential', 'IdentityCredential'],
+      credentialSubject: {
+        id: '',
+        identity: {
+          name: {
+            familyNames: identityName.familyNames,
+            givenNames: identityName.givenNames,
+            otherNames: identityName.otherNames,
+          },
+          dateOfBirth: {
+            day: identityDateOfBirth.day,
+            month: identityDateOfBirth.month,
+            year: identityDateOfBirth.year,
+          },
+        },
+      },
+    }));
+  });
+
+  it('deserializes and re-serializes an "old" VC format via the proxy class', async () => {
+    const cred = await VC.fromJSON(idCredOld);
+
+    const credJSON = JSON.parse(JSON.stringify(cred));
+
+    expect(credJSON).toEqual(expect.objectContaining({
+      id: idCredOld.id,
+      identifier: idCredOld.identifier,
+      issuer: idCredOld.issuer,
+      issuanceDate: idCredOld.issuanceDate,
+      type: idCredOld.type,
+      claim: idCredOld.claim,
+    }));
+  });
+
+  it('deserializes and re-serializes a W3C VC format via the proxy class', async () => {
+    const cred = await VC.fromJSON(idCredNew);
+
+    const credJSON = JSON.parse(JSON.stringify(cred));
+
+    expect(credJSON).toEqual(expect.objectContaining({
+      '@context': idCredNew['@context'],
+      id: idCredNew.id,
+      issuer: idCredNew.issuer,
+      issuanceDate: idCredNew.issuanceDate,
+      type: idCredNew.type,
+      credentialSubject: idCredNew.credentialSubject,
+    }));
+  });
+});

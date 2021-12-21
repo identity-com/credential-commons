@@ -108,6 +108,12 @@ VerifiableCredentialProxy.create = async (
  * @returns VerifiableCredentialBaseConstructor
  */
 VerifiableCredentialProxy.fromJSON = async (verifiableCredentialJSON, partialPresentation = false) => {
+  const schema = await schemaLoader.loadSchemaFromTitle(verifiableCredentialJSON.identifier);
+  const properties = await schemaLoader.flattenCredentialSchemaProperties(schema);
+  if (properties.credentialSubject) {
+    return VerifiableCredential.fromJSON(verifiableCredentialJSON);
+  }
+
   const newObj = await VerifiableCredentialProxy.create(
     verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.issuer,

@@ -1831,7 +1831,7 @@ describe('Transient Credential Tests', () => {
   });
 });
 
-describe('Signned Verifiable Credentials', () => {
+describe('Signed Verifiable Credentials', () => {
   beforeAll(() => {
     schemaLoader.addLoader(new CVCSchemaLoader());
   });
@@ -1909,7 +1909,6 @@ describe('Referenced Schemas for Verifiable Credentials', () => {
 
     const credential = await VC.create(
       'credential-test:IdDocument-v1', '', null, credentialSubject, [type, number, name, gender,
-      // 'credential-test:IdDocument-v1', '', null, credentialSubject, [type, number, name, gender,
         issueCountry, placeOfBirth, dateOfBirth, dateOfExpiry, nationality, evidences],
     );
 
@@ -1927,5 +1926,43 @@ describe('Referenced Schemas for Verifiable Credentials', () => {
     );
 
     return expect(createCredential).rejects.toThrow('Missing required fields to credential-test:IdDocument-v1');
+  });
+});
+
+describe('Verifiable Credential JSON serialization', () => {
+  beforeAll(() => {
+    schemaLoader.addLoader(new CVCSchemaLoader());
+  });
+
+  it('serializes a VC to JSON', async () => {
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+    const cred = await VC.create('credential-cvc:Identity-v3', uuidv4(), null, credentialSubject, [name, dob], null);
+
+    // serialize the credential to JSON, then back to an object to be tested against
+    const credJSON = JSON.parse(JSON.stringify(cred));
+
+    expect(credJSON).toEqual(expect.objectContaining({
+      '@context': ['https://www.w3.org/2018/credentials/v1', 'https://www.identity.com/credentials/v3'],
+      id: cred.id,
+      issuer: cred.issuer,
+      issuanceDate: cred.issuanceDate,
+      type: ['VerifiableCredential', 'IdentityCredential'],
+      credentialSubject: {
+        id: credentialSubject,
+        identity: {
+          name: {
+            familyNames: identityName.familyNames,
+            givenNames: identityName.givenNames,
+            otherNames: identityName.otherNames,
+          },
+          dateOfBirth: {
+            day: identityDateOfBirth.day,
+            month: identityDateOfBirth.month,
+            year: identityDateOfBirth.year,
+          },
+        },
+      },
+    }));
   });
 });
