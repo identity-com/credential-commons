@@ -114,41 +114,6 @@ class SummaryMapper {
   }
 }
 
-/**
- * Flattens the properties of a schema if there are any referenced schemas
- * @param schema
- * @returns {Promise<*>}
- */
-const flattenCredentialSchemaProperties = async (schema) => {
-  let properties = schema.properties ? schema.properties : {};
-
-  if (schema.allOf) {
-    const promises = schema.allOf.map(async (allOf) => {
-      if (allOf.$ref) {
-        const refSchema = await this.loadSchemaFromUri(allOf.$ref);
-        const refProperties = await flattenCredentialSchemaProperties(refSchema);
-
-        properties = {
-          ...properties,
-          ...refProperties,
-        };
-      }
-
-      if (allOf.properties) {
-        properties = {
-          ...properties,
-          ...allOf.properties,
-        };
-      }
-    });
-
-    await Promise.all(promises);
-  }
-
-  return properties;
-};
-
-
 const getSchemaVersion = (identifier) => {
   const matches = identifier.match(/-v([\d]+$)/);
   if (matches && matches.length > 1) {
@@ -169,18 +134,6 @@ function isDefinitionEqual(definition, ucaDefinition) {
 }
 
 const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
-
-/**
- * Supporting both claim and credentialSubject
- * TODO: remove this once backwards compatibility has been removed
- * @param schema
- * @returns {*|(() => Promise<void>)}
- */
-const getCredentialSubjectProperties = async (schema) => {
-  const schemaProperties = await flattenCredentialSchemaProperties(schema);
-
-  return schemaProperties.credentialSubject ? schemaProperties.credentialSubject : schemaProperties.claim;
-};
 
 /**
  * This class loads the schema definitions as needed by using loaders provided by the
@@ -251,12 +204,59 @@ class SchemaLoader {
       definition.depends.push(propertySchema.title);
     }
 
-    const csProperties = getCredentialSubjectProperties(schema);
+    const csProperties = await this.getCredentialSubjectProperties(schema);
 
     if (csProperties.required && csProperties.required.includes(property)) {
       definition.required.push(propertySchema.title);
     }
   }
+
+  /**
+   * Supporting both claim and credentialSubject
+   * TODO: remove this once backwards compatibility has been removed
+   * @param schema
+   * @returns {*|(() => Promise<void>)}
+   */
+  async getCredentialSubjectProperties(schema) {
+    const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
+
+    return schemaProperties.credentialSubject ? schemaProperties.credentialSubject : schemaProperties.claim;
+  }
+
+  /**
+   * Flattens the properties of a schema if there are any referenced schemas
+   * @param schema
+   * @returns {Promise<*>}
+   */
+  async flattenCredentialSchemaProperties(schema) {
+    let properties = schema.properties ? schema.properties : {};
+
+    if (schema.allOf) {
+      const promises = schema.allOf.map(async (allOf) => {
+        if (allOf.$ref) {
+          const refSchema = await this.loadSchemaFromUri(allOf.$ref);
+          const refProperties = await this.flattenCredentialSchemaProperties(refSchema);
+
+          properties = {
+            ...properties,
+            ...refProperties,
+          };
+        }
+
+        if (allOf.properties) {
+          properties = {
+            ...properties,
+            ...allOf.properties,
+          };
+        }
+      });
+
+      await Promise.all(promises);
+    }
+
+    return properties;
+  }
+
 
   /**
    * Adds a claim definition to be backwards compatible with the old schema structure.
@@ -283,7 +283,7 @@ class SchemaLoader {
       definition.transient = true;
     }
 
-    const credentialSubjectDefinition = getCredentialSubjectProperties(schema);
+    const credentialSubjectDefinition = await this.getCredentialSubjectProperties(schema);
 
     if (credentialSubjectDefinition.required) {
       definition.required = [];
@@ -440,8 +440,7 @@ class SchemaLoader {
 
     if (schema.type === 'object') {
       if (!_.isEmpty(schema.properties)) {
-        const values = await this.getPropertyValues(schema.properties);
-        return values;
+        return this.getPropertyValues(schema.properties);
       }
     }
 
