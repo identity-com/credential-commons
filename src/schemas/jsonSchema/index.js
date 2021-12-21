@@ -114,6 +114,41 @@ class SummaryMapper {
   }
 }
 
+/**
+ * Flattens the properties of a schema if there are any referenced schemas
+ * @param schema
+ * @returns {Promise<*>}
+ */
+const flattenCredentialSchemaProperties = async (schema) => {
+  let properties = schema.properties ? schema.properties : {};
+
+  if (schema.allOf) {
+    const promises = schema.allOf.map(async (allOf) => {
+      if (allOf.$ref) {
+        const refSchema = await this.loadSchemaFromUri(allOf.$ref);
+        const refProperties = await flattenCredentialSchemaProperties(refSchema);
+
+        properties = {
+          ...properties,
+          ...refProperties,
+        };
+      }
+
+      if (allOf.properties) {
+        properties = {
+          ...properties,
+          ...allOf.properties,
+        };
+      }
+    });
+
+    await Promise.all(promises);
+  }
+
+  return properties;
+};
+
+
 const getSchemaVersion = (identifier) => {
   const matches = identifier.match(/-v([\d]+$)/);
   if (matches && matches.length > 1) {
@@ -142,7 +177,7 @@ const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
  * @returns {*|(() => Promise<void>)}
  */
 const getCredentialSubjectProperties = async (schema) => {
-  const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
+  const schemaProperties = await flattenCredentialSchemaProperties(schema);
 
   return schemaProperties.credentialSubject ? schemaProperties.credentialSubject : schemaProperties.claim;
 };
@@ -232,40 +267,6 @@ class SchemaLoader {
     } else {
       await this.addClaimDefinition(schema);
     }
-  }
-
-  /**
-   * Flattens the properties of a schema if there are any referenced schemas
-   * @param schema
-   * @returns {Promise<*>}
-   */
-  async flattenCredentialSchemaProperties(schema) {
-    let properties = schema.properties ? schema.properties : {};
-
-    if (schema.allOf) {
-      const promises = schema.allOf.map(async (allOf) => {
-        if (allOf.$ref) {
-          const refSchema = await this.loadSchemaFromUri(allOf.$ref);
-          const refProperties = await this.flattenCredentialSchemaProperties(refSchema);
-
-          properties = {
-            ...properties,
-            ...refProperties,
-          };
-        }
-
-        if (allOf.properties) {
-          properties = {
-            ...properties,
-            ...allOf.properties,
-          };
-        }
-      });
-
-      await Promise.all(promises);
-    }
-
-    return properties;
   }
 
   /**
