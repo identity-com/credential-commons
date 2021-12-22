@@ -2,15 +2,14 @@
   "id": "41ab3aaa-7ebd-4f02-a1e4-815ba6054cdd",
   "issuer": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD",
   "issuanceDate": "2018-11-14T08:59:12.241Z",
-  "identifier": "credential-cvc:Address-v3",
+  "identifier": "credential-cvc:Address-v1",
   "expirationDate": "2008-11-13T22:51:32.241Z",
   "version": "1",
   "type": [
-    "VerifiableCredential",
-    "IdentityCredential"
+    "Credential",
+    "credential-cvc:Address-v1"
   ],
-  "credentialSubject": {
-    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
+  "claim": {
     "identity": {
       "address": {
         "city": "Belo Horizonte",
@@ -262,7 +261,6 @@
           }
         ]
       }
-    ],
-    "granted": null
+    ]
   }
 }

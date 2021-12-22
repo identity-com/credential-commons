@@ -2,13 +2,14 @@
   "id": "3636227c-5adf-4135-b81c-6dd1da53fd67",
   "issuer": "",
   "issuanceDate": "2018-11-13T18:54:11.665Z",
-  "identifier": "credential-cvc:Email-v3",
+  "identifier": "credential-cvc:Email-v1",
+  "expirationDate": null,
+  "version": "1",
   "type": [
-    "VerifiableCredential",
-    "IdentityCredential"
+    "Credential",
+    "credential-cvc:Email-v1"
   ],
-  "credentialSubject": {
-    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
+  "claim": {
     "contact": {
       "email": {
         "domain": {
@@ -26,12 +27,12 @@
     "leaves": [
       {
         "identifier": "claim-cvc:Contact.email-v1",
-        "value": "urn:email.domain.name:65572f78625ca98197745bd560fc5d8e6a7be7d8d9fcf6344947b697b73cd676:UTpHKFyaB|urn:email.domain.tld:199c3b2cbc991cf024860f3cdfb71c956f0dea1fe397efb10ad1d8621163a9a1:oVaPsceZ4C|urn:email.username:705e41988a3659d943eeaaa5e6c91cc8de401674c4e130a7c44f5b4b2e8d7736:ZcMpCBQ0lE|",
+        "value": "urn:email.domain.name:65572f78625ca98197745bd560fc5d8e6a7be7d8d9fcf6344947b697b73cd676:UTpHKFyaaB|urn:email.domain.tld:199c3b2cbc991cf024860f3cdfb71c956f0dea1fe397efb10ad1d8621163a9a1:oVaPsceZ4C|urn:email.username:705e41988a3659d943eeaaa5e6c91cc8de401674c4e130a7c44f5b4b2e8d7736:ZcMpCBQ0lE|",
         "claimPath": "contact.email",
         "targetHash": "dbd7c2e9f6369bdc1653cd29484b23324bac5cc2681bc956d5621163d10c82e7",
         "node": [
           {
-            "right": "e3662aeff5df76694848bf529ec9e52f4a981d5a0afa27e48bfeae37992d7"
+            "right": "e3662aeff5df76f0a694848bf529ec9e52f4a981d5a0afa27e48bfeae37992d7"
           },
           {
             "right": "43a08a21a85219f2964a5473e270698296aeda22c08299ba61523d6b51bab102"
@@ -97,7 +98,7 @@
         "identifier": "cvc:Meta:issuanceDate",
         "value": "urn:issuanceDate:0029acb02ff26faf7775883957e9a5271b358f56734496b7ffde2760ace9ddce:2018-11-13T18:54:11.665Z|",
         "claimPath": "meta.issuanceDate",
-        "targetHash": "2820718fc34e3e07c40c4c0c098937a193a63839695768f38630acfbecaf85d",
+        "targetHash": "2820718fc34e3e07c40c4c0c0985937a193a63839695768f38630acfbecaf85d",
         "node": [
           {
             "left": "321c8608ee0b80eab76db4d753e1f5311e722d0d77468e376bc25a78b8560b1b"
@@ -139,7 +140,6 @@
           }
         ]
       }
-    ],
-    "granted": null
+    ]
   }
 }

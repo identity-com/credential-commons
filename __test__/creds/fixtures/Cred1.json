@@ -2,14 +2,14 @@
   "id": "3636227c-5adf-4135-b81c-6dd1da53fd67",
   "issuer": "",
   "issuanceDate": "2018-11-13T18:54:11.665Z",
-  "identifier": "credential-cvc:Email-v1",
-  "expirationDate": null,
+  "identifier": "credential-cvc:Email-v3",
   "version": "1",
   "type": [
-    "Credential",
-    "credential-cvc:Email-v1"
+    "VerifiableCredential",
+    "IdentityCredential"
   ],
-  "claim": {
+  "credentialSubject": {
+    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
     "contact": {
       "email": {
         "domain": {
@@ -140,6 +140,7 @@
           }
         ]
       }
-    ]
+    ],
+    "granted": null
   }
 }
