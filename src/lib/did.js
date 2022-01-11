@@ -2,11 +2,9 @@ const { findVerificationMethod } = require('@digitalbazaar/did-io');
 // TODO: Fix the CachedResolver loading issue in jest
 const didIo = require('did-io');
 const didSol = require('@identity.com/did-io-driver-sol').default;
-const { Keypair } = require('@solana/web3.js');
 
-const kp = Keypair.generate();
-// no payer is needed as we are only resolving documents
-didIo.use('sol', didSol.driver({ payer: kp.secretKey }));
+// no payer needed as we are only resolving documents
+didIo.use('sol', didSol.driver({ payer: null }));
 
 module.exports = {
   /**
