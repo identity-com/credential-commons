@@ -12,7 +12,10 @@ const definitions = schemaLoader.credentialDefinitions;
 function getCredentialDefinition(identifier, version) {
   let definition;
   if (version) {
-    definition = _.find(definitions, { identifier, version: `${version}` });
+    definition = _.find(definitions, {
+      identifier,
+      version: `${version}`,
+    });
   } else {
     definition = _.find(definitions, { identifier });
   }
@@ -86,9 +89,15 @@ VerifiableCredentialProxy.create = async (
   // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   const schema = await schemaLoader.loadSchemaFromTitle(identifier);
 
+  // Wrap the old signer verifier for backwards compatibility
+  let signer;
+  if (signerVerifier) {
+    signer = { signer: signerVerifier };
+  }
+
   // If it has a credentialSubject, use the new VC format
   if (schema && schema.properties.credentialSubject) {
-    return VerifiableCredential.create(identifier, issuer, expiryIn, '', ucas, evidence, signerVerifier);
+    return VerifiableCredential.create(identifier, issuer, expiryIn, '', ucas, evidence, signer);
   }
 
   // Load the meta schema's from a source
@@ -97,7 +106,7 @@ VerifiableCredentialProxy.create = async (
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
   await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
 
-  return new VerifiableCredentialProxy(identifier, issuer, expiryIn, ucas, version, evidence, signerVerifier);
+  return new VerifiableCredentialProxy(identifier, issuer, expiryIn, ucas, version, evidence, signer);
 };
 
 /**
