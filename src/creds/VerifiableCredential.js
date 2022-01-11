@@ -9,6 +9,7 @@ const MerkleTools = require('merkle-tools');
 
 const { sha256 } = require('../lib/crypto');
 const { Claim } = require('../claim/Claim');
+const didUtil = require('../lib/did');
 
 const definitions = require('./definitions');
 const { services } = require('../services');
@@ -18,8 +19,11 @@ const { ClaimModel } = require('./ClaimModel');
 const CredentialSignerVerifier = require('./CredentialSignerVerifier');
 const { schemaLoader } = require('../schemas/jsonSchema');
 const { parseIdentifier } = require('../lib/stringUtils');
+const signerVerifier = require('../lib/signerVerifier');
+
 // convert a time delta to a timestamp
-const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
+const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta)
+  .getTime() / 1000;
 
 function validIdentifiers() {
   const vi = _.map(definitions, d => d.identifier);
@@ -192,7 +196,8 @@ async function nonCryptographicallySecureVerify(credential) {
   const invalidValues = [];
   const invalidHashs = [];
   const invalidProofs = [];
-  _.forEach(_.keys(claimsWithFlatKeys).filter(key => key !== 'id'), (claimKey) => {
+  _.forEach(_.keys(claimsWithFlatKeys)
+    .filter(key => key !== 'id'), (claimKey) => {
     // check if `claimKey` has a `claimPath` proof
     const leaveIdx = _.indexOf(leavesClaimPaths, claimKey);
     // if not found
@@ -345,7 +350,10 @@ function verifyRequiredClaims(definition, ucas) {
 function getCredentialDefinition(identifier, version) {
   let definition;
   if (version) {
-    definition = _.find(definitions, { identifier, version: `${version}` });
+    definition = _.find(definitions, {
+      identifier,
+      version: `${version}`,
+    });
   } else {
     definition = _.find(definitions, { identifier });
   }
@@ -363,8 +371,7 @@ function getCredentialDefinition(identifier, version) {
  * @param {*} version
  * @param {*} [evidence]
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subject, ucas,
-  evidence, signerVerifier = null) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subject, ucas, evidence, signerOptions) {
   const parsedIdentifier = parseIdentifier(identifier);
   const version = parsedIdentifier ? parsedIdentifier[4] : '1';
 
@@ -374,7 +381,8 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
   this.issuanceDate = (new Date()).toISOString();
   const issuanceDateUCA = new Claim('cvc:Meta:issuanceDate', this.issuanceDate);
   this.identifier = identifier;
-  this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
+  this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn))
+    .toISOString() : null;
   const expiryUCA = new Claim('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
 
   const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA)
@@ -404,7 +412,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
       ...this.credentialSubject,
       ...new ClaimModel(ucas),
     };
-    this.proof = new CvcMerkleProof(proofUCAs, signerVerifier);
+    this.proof = new CvcMerkleProof(proofUCAs, signerOptions ? signerOptions.signer : null);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
@@ -514,24 +522,34 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
    * @deprecated
    */
   this.verify = async (higherVerifyLevel, options) => {
-    const { requestorId, requestId, keyName } = options || {};
+    const {
+      requestorId,
+      requestId,
+      keyName,
+    } = options || {};
     const hVerifyLevel = !_.isNil(higherVerifyLevel) ? higherVerifyLevel : VERIFY_LEVELS.GRANTED;
     let verifiedlevel = VERIFY_LEVELS.INVALID;
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.INVALID
       && hVerifyLevel >= VERIFY_LEVELS.PROOFS
-      && (await this.verifyProofs())) verifiedlevel = VERIFY_LEVELS.PROOFS;
+      && (await this.verifyProofs())) {
+      verifiedlevel = VERIFY_LEVELS.PROOFS;
+    }
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.PROOFS
       && hVerifyLevel >= VERIFY_LEVELS.ANCHOR
-      && this.verifyAttestation()) verifiedlevel = VERIFY_LEVELS.ANCHOR;
+      && this.verifyAttestation()) {
+      verifiedlevel = VERIFY_LEVELS.ANCHOR;
+    }
 
     // Test next level
     if (verifiedlevel === VERIFY_LEVELS.ANCHOR
       && hVerifyLevel >= VERIFY_LEVELS.GRANTED
-      && this.verifyGrant(requestorId, requestId, keyName)) verifiedlevel = VERIFY_LEVELS.GRANTED;
+      && this.verifyGrant(requestorId, requestId, keyName)) {
+      verifiedlevel = VERIFY_LEVELS.GRANTED;
+    }
 
     return verifiedlevel;
   };
@@ -627,7 +645,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
    * @param  {string} option.keyName - A keyName - if CryptoManager is been used.
    * @param  {string} option.pvtKey - A pvtKey in base58 format (default impl).
    */
-  this.grantUsageFor = (requestorId, requestId, { keyName, pvtKey }) => {
+  this.grantUsageFor = (requestorId, requestId, {
+    keyName,
+    pvtKey,
+  }) => {
     if (_.isEmpty(_.get(this.proof, 'anchor.subject.label')) || _.isEmpty(_.get(this.proof, 'anchor.subject.data'))) {
       throw new Error('Invalid credential attestation/anchor');
     }
@@ -772,8 +793,25 @@ VerifiableCredentialBaseConstructor.CREDENTIAL_META_FIELDS = CREDENTIAL_META_FIE
 VerifiableCredentialBaseConstructor.getCredentialMeta = getCredentialMeta;
 VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMeta;
 
-VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn, subject, ucas, evidence,
-  signerVerifier = null, validate = true) => {
+/**
+ * Creates a Verifiable Credential
+ *
+ * @param identifier The identifier for the VC (e.g. credential-cvc:Identity-v1)
+ * @param issuerDid The issuer DID
+ * @param expiryIn The credential expiry date (nullable)
+ * @param subject The subject DID
+ * @param ucas An array of UCAs
+ * @param evidence The evidence for the credential
+ * @param signerOptions Signer options:
+ * @param signerOptions.verificationMethod The verificationMethod for the signing key
+ * @param signerOptions.keypair The keypair to sign with
+ *    or
+ * @param signerOptions.privateKey The private key to sign with
+ *    or
+ * @param signerOptions.signer An object implementing a `sign(CvcMerkleProof)` method
+ */
+VerifiableCredentialBaseConstructor.create = async (identifier, issuerDid, expiryIn, subject, ucas, evidence,
+  signerOptions = null, validate = true) => {
   // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(identifier);
 
@@ -783,8 +821,21 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
   await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
 
+  let signer;
+
+  if (signerOptions) {
+    const canSignForIssuer = await didUtil.canSign(issuerDid, signerOptions.verificationMethod);
+    if (!canSignForIssuer) {
+      throw new Error(
+        `The verificationMethod ${signerOptions.verificationMethod} is not allowed to sign for ${issuerDid}`,
+      );
+    }
+
+    signer = await signerVerifier.signer(signerOptions);
+  }
+
   const vc = new VerifiableCredentialBaseConstructor(
-    identifier, issuer, expiryIn, subject, ucas, evidence, signerVerifier,
+    identifier, issuerDid, expiryIn, subject, ucas, evidence, signer,
   );
 
   if (validate) {

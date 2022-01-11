@@ -13,17 +13,17 @@ class CvcMerkleProof {
     return 16;
   }
 
-  constructor(ucas, credentialSigner = null) {
+  constructor(ucas, signer = null) {
     const withRandomUcas = CvcMerkleProof.padTree(ucas);
     this.type = 'CvcMerkleProof2018';
     this.merkleRoot = null;
     this.anchor = 'TBD (Civic Blockchain Attestation)';
     this.leaves = CvcMerkleProof.getAllAttestableValue(withRandomUcas);
-    this.buildMerkleTree(credentialSigner);
+    this.buildMerkleTree(signer);
     this.granted = null;
   }
 
-  buildMerkleTree(credentialSigner = null) {
+  buildMerkleTree(signer = null) {
     const merkleTools = new MerkleTools();
     const hashes = _.map(this.leaves, n => sha256(n.value));
     merkleTools.addLeaves(hashes);
@@ -35,8 +35,8 @@ class CvcMerkleProof {
     this.leaves = _.filter(this.leaves, el => !(el.identifier === 'cvc:Random:node'));
     this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
 
-    if (credentialSigner) {
-      this.merkleRootSignature = credentialSigner.sign(this);
+    if (signer) {
+      this.merkleRootSignature = signer.sign(this);
     }
   }
 
