@@ -12,10 +12,7 @@ const definitions = schemaLoader.credentialDefinitions;
 function getCredentialDefinition(identifier, version) {
   let definition;
   if (version) {
-    definition = _.find(definitions, {
-      identifier,
-      version: `${version}`,
-    });
+    definition = _.find(definitions, { identifier, version: `${version}` });
   } else {
     definition = _.find(definitions, { identifier });
   }
