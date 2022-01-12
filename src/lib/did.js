@@ -25,7 +25,7 @@ module.exports = {
 
     // if the verificationMethod DID is for the document DID
     if (verificationMethodDid === did) {
-      return document.capabilityInvocation.includes(verificationMethod);
+      return this.findVerificationMethod(document, verificationMethod) !== null;
     }
 
     if (!document.controller.includes(verificationMethodDid)) {
@@ -35,7 +35,7 @@ module.exports = {
 
     // Check if the verificationMethod exists on the controller DID document
     const controllerDocument = await this.resolve(verificationMethodDid);
-    return controllerDocument.capabilityInvocation.includes(verificationMethod);
+    return this.findVerificationMethod(controllerDocument, verificationMethod) !== null;
   },
 
   /**
@@ -48,12 +48,16 @@ module.exports = {
   },
 
   /**
-   * Finds the verificationMethod in a document (if it exists and is part of the capabilityInvocation)
+   * Finds the verificationMethod in a document (or if the VM is valid on the controller of a document)
    *
    * @param document The document to search through
    * @param verificationMethod The verification method to return
    */
   findVerificationMethod(document, verificationMethod) {
+    if (document.keyAgreement && document.keyAgreement.length > 0) {
+      return document.keyAgreement.find(agreement => agreement.id === verificationMethod);
+    }
+
     if (!document.capabilityInvocation.includes(verificationMethod)) {
       return null;
     }
