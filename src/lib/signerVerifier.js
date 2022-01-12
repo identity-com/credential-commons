@@ -1,5 +1,6 @@
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
+const { TextEncoder } = require('util');
 const didUtil = require('./did');
 
 const textEncoder = new TextEncoder();

@@ -1,10 +1,13 @@
-const { findVerificationMethod } = require('@digitalbazaar/did-io');
-// TODO: Fix the CachedResolver loading issue in jest
-const didIo = require('did-io');
+const {
+  findVerificationMethod,
+  CachedResolver,
+} = require('@digitalbazaar/did-io');
 const didSol = require('@identity.com/did-io-driver-sol').default;
 
+const resolver = new CachedResolver();
+
 // no payer needed as we are only resolving documents
-didIo.use('sol', didSol.driver({ payer: null }));
+resolver.use(didSol.driver({ payer: null }));
 
 module.exports = {
   /**
@@ -41,7 +44,7 @@ module.exports = {
    * @param did The DID to resolve the document for
    */
   async resolve(did) {
-    return didIo.get({ did });
+    return resolver.get({ did });
   },
 
   /**

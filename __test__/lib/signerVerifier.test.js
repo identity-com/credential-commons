@@ -1,4 +1,5 @@
 const nacl = require('tweetnacl');
+const { TextEncoder } = require('util');
 const signerVerifier = require('../../src/lib/signerVerifier');
 const didUtil = require('../../src/lib/did');
 const {
