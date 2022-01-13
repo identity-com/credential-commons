@@ -1863,7 +1863,37 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred.proof.merkleRootSignature.signature).toBeDefined();
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
 
-    expect(await cred.verifyMerkletreeSignature()).toBeTruthy();
+    expect(await cred.verifyMerkletreeSignature()).toBe(true);
+  });
+
+
+  test('Should fail to verify a signature if the issuer didn\'t sign', async () => {
+    const verificationMethod = `${didTestUtil.DID_SPARSE}#default`;
+    const keypair = didTestUtil.keyPair(didTestUtil.DID_SPARSE);
+
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+
+    const cred = await VC.create(
+      'credential-cvc:Identity-v3',
+      didTestUtil.DID_SPARSE,
+      null,
+      credentialSubject,
+      [name, dob],
+      null,
+      {
+        verificationMethod,
+        keypair,
+      },
+    );
+
+    expect(cred).toBeDefined();
+    expect(cred.proof.merkleRootSignature.signature).toBeDefined();
+    expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
+
+    cred.issuer = didTestUtil.DID_CONTROLLER;
+
+    expect(await cred.verifyMerkletreeSignature()).toBe(false);
   });
 
   test('Should not be able to sign with a removed key', async () => {
