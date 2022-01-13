@@ -11,8 +11,8 @@ class Ed25519Signer {
     this.verificationMethod = verificationMethod;
   }
 
-  sign(data) {
-    const signed = nacl.sign.detached(textEncoder.encode(data), bs58.decode(this.key));
+  sign(proof) {
+    const signed = nacl.sign.detached(textEncoder.encode(proof.merkleRoot), bs58.decode(this.key));
     const signature = Buffer.from(signed).toString('hex');
 
     return {
@@ -39,10 +39,10 @@ const signer = async (options) => {
   }
 
   const { verificationMethod } = options;
-  let { signer: providedSigner } = options;
+  let { signer: signerImpl } = options;
 
   // Create a signer from keypair/key
-  if (!providedSigner) {
+  if (!signerImpl) {
     const [did] = verificationMethod.split('#');
 
     const document = await didUtil.resolve(did);
@@ -61,17 +61,14 @@ const signer = async (options) => {
     switch (foundMethod.type) {
       case 'Ed25519VerificationKey2018':
       case 'Ed25519VerificationKey2020':
-        providedSigner = new Ed25519Signer(privateKey, verificationMethod);
+        signerImpl = new Ed25519Signer(privateKey, verificationMethod);
         break;
       default:
         throw new Error(`Unsupported type ${foundMethod.type}`);
     }
   }
 
-  return {
-    verificationMethod,
-    signer: providedSigner,
-  };
+  return signerImpl;
 };
 
 module.exports = {

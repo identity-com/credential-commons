@@ -802,8 +802,6 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuerDid, expir
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
   await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
 
-  let signer;
-
   if (signerOptions) {
     const canSignForIssuer = await didUtil.canSign(issuerDid, signerOptions.verificationMethod);
     if (!canSignForIssuer) {
@@ -812,11 +810,12 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuerDid, expir
       );
     }
 
-    signer = await signerVerifier.signer(signerOptions);
+    // eslint-disable-next-line no-param-reassign
+    signerOptions.signer = await signerVerifier.signer(signerOptions);
   }
 
   const vc = new VerifiableCredentialBaseConstructor(
-    identifier, issuerDid, expiryIn, subject, ucas, evidence, signer,
+    identifier, issuerDid, expiryIn, subject, ucas, evidence, signerOptions,
   );
 
   if (validate) {
