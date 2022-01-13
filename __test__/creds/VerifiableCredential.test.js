@@ -1861,9 +1861,8 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature.signature).toBeDefined();
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
-
     // TODO: re-activate this once verify is done
-    // expect(cred.verifyMerkletreeSignature(pubBase58)).toBeTruthy();
+    expect(await cred.verifyMerkletreeSignature()).toBeTruthy();
   });
 
   test('Should not be able to sign with a removed key', async () => {

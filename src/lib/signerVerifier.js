@@ -12,13 +12,27 @@ class Ed25519Signer {
   }
 
   sign(data) {
-    const signed = nacl.sign.detached(textEncoder.encode(data), bs58.decode(this.key));
+    const signed = nacl.sign.detached(textEncoder.encode(data.merkleRoot), bs58.decode(this.key));
     const signature = Buffer.from(signed).toString('hex');
 
     return {
       signature,
       verificationMethod: this.verificationMethod,
     };
+  }
+}
+
+class Ed25519Verifier {
+  constructor(key) {
+    this.key = key;
+  }
+
+  verify(vc) {
+    return nacl.sign.detached.verify(
+      textEncoder.encode(vc.proof.merkleRoot),
+      Uint8Array.from(Buffer.from(vc.proof.merkleRootSignature.signature, 'hex')),
+      bs58.decode(this.key),
+    );
   }
 }
 
@@ -74,6 +88,32 @@ const signer = async (options) => {
   };
 };
 
+const verifier = async (did, verificationMethod) => {
+  const canSignFor = await didUtil.canSign(did, verificationMethod);
+  if (!canSignFor) {
+    // always return false if the vm cannot sign for the
+    return {
+      verify() {
+        return false;
+      },
+    };
+  }
+
+  const [vmDid] = verificationMethod.split('#');
+  const document = await didUtil.resolve(vmDid);
+  const foundMethod = didUtil.findVerificationMethod(document, verificationMethod);
+
+  // Check the type is supported and assign the appropriate verifier
+  switch (foundMethod.type) {
+    case 'Ed25519VerificationKey2018':
+    case 'Ed25519VerificationKey2020':
+      return new Ed25519Verifier(foundMethod.publicKeyBase58);
+    default:
+      throw new Error(`Unsupported type ${foundMethod.type}`);
+  }
+};
+
 module.exports = {
   signer,
+  verifier,
 };

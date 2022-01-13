@@ -30,7 +30,9 @@ describe('signerVerifier', () => {
       privateKey: privateKeyBase58(DID_SPARSE),
     });
 
-    const signed = signer.sign(SIGN_DATA);
+    const signed = signer.sign({
+      merkleRoot: SIGN_DATA,
+    });
 
     expect(signed).toBeTruthy();
 

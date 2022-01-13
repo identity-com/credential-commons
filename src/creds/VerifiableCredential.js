@@ -553,10 +553,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
    * This methods check the stand alone merkletreeSiganture
    * return true or false for the validation
    */
-  this.verifyMerkletreeSignature = (pubBase58) => {
-    if (_.isEmpty(pubBase58)) return false;
-    const verifier = new CredentialSignerVerifier({ pubBase58 });
-    return verifier.isSignatureValid(this);
+  this.verifyMerkletreeSignature = async () => {
+    const verifier = await signerVerifier.verifier(this.issuer, this.proof.merkleRootSignature.verificationMethod);
+
+    return verifier.verify(this);
   };
 
   /**
@@ -802,7 +802,7 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuerDid, expir
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
   await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
 
-  let signer;
+  let signer, verifier;
 
   if (signerOptions) {
     const canSignForIssuer = await didUtil.canSign(issuerDid, signerOptions.verificationMethod);
