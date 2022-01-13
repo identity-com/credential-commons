@@ -68,7 +68,7 @@
   "dependencies": {
     "@digitalbazaar/did-io": "^1.1.0",
     "@digitalbazaar/did-method-key": "^2.0.0",
-    "@identity.com/did-io-driver-sol": "file:/Users/william/Work/identity.com/sol-did/drivers/did-io",
+    "@identity.com/did-io-driver-sol": "file:/Users/william/Work/identity.com/sol-did-refresh/drivers/did-io",
     "@identity.com/uca": "github:identity-com/uca#v1.0.30",
     "ajv": "^7.2.4",
     "ajv-formats": "^2.0.2",

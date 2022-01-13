@@ -47,7 +47,7 @@ const mockDids = () => {
 };
 
 /**
- * Returns a private key for one of the above DIDs
+ * Returns a keyPair for one of the above DIDs
  * @param did
  * @returns {nacl.SignKeyPair}
  */
@@ -57,6 +57,9 @@ const keyPair = (did) => {
   return nacl.sign.keyPair.fromSecretKey(bs58.decode(pk));
 };
 
+/**
+ * Returns the base58 encoded private key for one of the above DIDs
+ */
 const privateKeyBase58 = did => DOCUMENTS[did][1];
 
 module.exports = {

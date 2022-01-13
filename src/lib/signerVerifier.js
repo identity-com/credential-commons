@@ -35,7 +35,7 @@ class Ed25519Signer {
  */
 const signer = async (options) => {
   if (!options.signer && !options.keypair && !options.privateKey) {
-    throw new Error('Either a signer, keypair or private key is required');
+    throw new Error('Either a signer, keypair or privateKey is required');
   }
 
   const { verificationMethod } = options;

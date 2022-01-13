@@ -1,18 +1,12 @@
 const nacl = require('tweetnacl');
 const { TextEncoder } = require('util');
 const signerVerifier = require('../../src/lib/signerVerifier');
-const didUtil = require('../../src/lib/did');
 const {
   mockDids,
   DID_SPARSE,
   privateKeyBase58,
   keyPair,
 } = require('./util/did');
-
-const originalResolve = didUtil.resolve;
-didUtil.resolve = jest.fn()
-  .mockImplementation(did => originalResolve(did))
-  .bind(didUtil);
 
 const textEncoder = new TextEncoder();
 
@@ -86,12 +80,10 @@ describe('signerVerifier', () => {
 
     const signed = signer.sign(SIGN_DATA);
 
-    expect(signed)
-      .toBeTruthy();
+    expect(signed).toBeTruthy();
 
     const verified = verify(SIGN_DATA, signed.signature, keypair.publicKey);
 
-    expect(verified)
-      .toBe(true);
+    expect(verified).toBe(true);
   });
 });
