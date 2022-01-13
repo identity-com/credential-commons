@@ -1863,7 +1863,7 @@ describe('Signned Verifiable Credentials', () => {
       new CredentialSignerVerifier({ prvBase58 }));
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature).toBeDefined();
-    expect(cred.verifyMerkletreeSignature(pubBase58)).toBeTruthy();
+    expect(cred.verifyMerkletreeSignature(pubBase58)).toBe(true);
   });
 
   test('Should verify credential(data only) signature', async () => {
