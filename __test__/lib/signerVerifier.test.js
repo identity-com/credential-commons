@@ -25,14 +25,12 @@ describe('signerVerifier', () => {
   it('creates a signer from a private key', async () => {
     const keypair = keyPair(DID_SPARSE);
 
-    const { signer } = await signerVerifier.signer({
+    const signer = await signerVerifier.signer({
       verificationMethod: `${DID_SPARSE}#default`,
       privateKey: privateKeyBase58(DID_SPARSE),
     });
 
-    const signed = signer.sign({
-      merkleRoot: SIGN_DATA,
-    });
+    const signed = signer.sign({ merkleRoot: SIGN_DATA });
 
     expect(signed).toBeTruthy();
 
@@ -44,12 +42,12 @@ describe('signerVerifier', () => {
   it('creates a signer from a keypair', async () => {
     const keypair = keyPair(DID_SPARSE);
 
-    const { signer } = await signerVerifier.signer({
+    const signer = await signerVerifier.signer({
       verificationMethod: `${DID_SPARSE}#default`,
       keypair,
     });
 
-    const signed = signer.sign(SIGN_DATA);
+    const signed = signer.sign({ merkleRoot: SIGN_DATA });
 
     expect(signed).toBeTruthy();
 
@@ -63,8 +61,8 @@ describe('signerVerifier', () => {
     const keypair = keyPair(DID_SPARSE);
 
     const customSigner = {
-      sign(data) {
-        const encodedData = textEncoder.encode(data);
+      sign(proof) {
+        const encodedData = textEncoder.encode(proof.merkleRoot);
 
         const signature = nacl.sign.detached(encodedData, keypair.secretKey);
 
@@ -75,12 +73,12 @@ describe('signerVerifier', () => {
       },
     };
 
-    const { signer } = await signerVerifier.signer({
+    const signer = await signerVerifier.signer({
       verificationMethod,
       signer: customSigner,
     });
 
-    const signed = signer.sign(SIGN_DATA);
+    const signed = signer.sign({ merkleRoot: SIGN_DATA });
 
     expect(signed).toBeTruthy();
 
