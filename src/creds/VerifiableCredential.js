@@ -16,7 +16,6 @@ const { services } = require('../services');
 const time = require('../timeHelper');
 const { CvcMerkleProof } = require('./CvcMerkleProof');
 const { ClaimModel } = require('./ClaimModel');
-const CredentialSignerVerifier = require('./CredentialSignerVerifier');
 const { schemaLoader } = require('../schemas/jsonSchema');
 const { parseIdentifier } = require('../lib/stringUtils');
 const signerVerifier = require('../lib/signerVerifier');

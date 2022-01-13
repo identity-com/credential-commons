@@ -12,38 +12,40 @@ const textEncoder = new TextEncoder();
 
 const SIGN_DATA = 'dummy_data_to_sign';
 
-// TODO: Replace verify with new implementation once ready
-const verify = (data, signature, publicKey) => nacl.sign.detached.verify(
-  textEncoder.encode(data),
-  Uint8Array.from(Buffer.from(signature, 'hex')),
-  publicKey,
-);
-
 describe('signerVerifier', () => {
   beforeAll(mockDids);
 
   it('creates a signer from a private key', async () => {
-    const keypair = keyPair(DID_SPARSE);
+    const privateKey = privateKeyBase58(DID_SPARSE);
+    const verificationMethod = `${DID_SPARSE}#default`;
 
     const signer = await signerVerifier.signer({
-      verificationMethod: `${DID_SPARSE}#default`,
-      privateKey: privateKeyBase58(DID_SPARSE),
+      verificationMethod,
+      privateKey,
     });
 
     const signed = signer.sign({ merkleRoot: SIGN_DATA });
 
     expect(signed).toBeTruthy();
 
-    const verified = verify(SIGN_DATA, signed.signature, keypair.publicKey);
+    const verifier = await signerVerifier.verifier(DID_SPARSE, verificationMethod);
+    const verified = verifier.verify({
+      issuer: DID_SPARSE,
+      proof: {
+        merkleRoot: SIGN_DATA,
+        merkleRootSignature: signed,
+      },
+    });
 
     expect(verified).toBe(true);
   });
 
   it('creates a signer from a keypair', async () => {
     const keypair = keyPair(DID_SPARSE);
+    const verificationMethod = `${DID_SPARSE}#default`;
 
     const signer = await signerVerifier.signer({
-      verificationMethod: `${DID_SPARSE}#default`,
+      verificationMethod,
       keypair,
     });
 
@@ -51,7 +53,14 @@ describe('signerVerifier', () => {
 
     expect(signed).toBeTruthy();
 
-    const verified = verify(SIGN_DATA, signed.signature, keypair.publicKey);
+    const verifier = await signerVerifier.verifier(DID_SPARSE, verificationMethod);
+    const verified = verifier.verify({
+      issuer: DID_SPARSE,
+      proof: {
+        merkleRoot: SIGN_DATA,
+        merkleRootSignature: signed,
+      },
+    });
 
     expect(verified).toBe(true);
   });
@@ -82,7 +91,14 @@ describe('signerVerifier', () => {
 
     expect(signed).toBeTruthy();
 
-    const verified = verify(SIGN_DATA, signed.signature, keypair.publicKey);
+    const verifier = await signerVerifier.verifier(DID_SPARSE, verificationMethod);
+    const verified = verifier.verify({
+      issuer: DID_SPARSE,
+      proof: {
+        merkleRoot: SIGN_DATA,
+        merkleRootSignature: signed,
+      },
+    });
 
     expect(verified).toBe(true);
   });

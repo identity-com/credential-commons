@@ -13,6 +13,7 @@ const {
 } = require('../../src');
 const filteredCredentialJson = require('./fixtures/filteredIdDocument-v3.json');
 const invalidEmailJson = require('./fixtures/CredentialEmailInvalid.json');
+const signerVerifier = require('../../src/lib/signerVerifier');
 
 const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
 
@@ -1861,7 +1862,7 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature.signature).toBeDefined();
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
-    // TODO: re-activate this once verify is done
+
     expect(await cred.verifyMerkletreeSignature()).toBeTruthy();
   });
 
@@ -1915,8 +1916,7 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
   });
 
-  // TODO: re-activate this once verify is done
-  test.skip('Should verify credential(data only) signature', async () => {
+  test('Should verify credential(data only) signature', async () => {
     const verificationMethod = `${didTestUtil.DID_SPARSE}#default`;
 
     const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
@@ -1938,9 +1938,9 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature).toBeDefined();
 
-    // TODO: re-actiate this once verify is done
-    // const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
-    // expect(signerVerifier.isSignatureValid(dataOnlyCredential)).toBeTruthy();
+    const verifier = await signerVerifier.verifier(didTestUtil.DID_SPARSE, verificationMethod);
+    const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
+    expect(verifier.verify(dataOnlyCredential)).toBeTruthy();
   });
 });
 describe('Referenced Schemas for Verifiable Credentials', () => {
