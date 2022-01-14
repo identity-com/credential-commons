@@ -36,26 +36,26 @@ describe('DIDs', () => {
   });
 
   it('verificationMethod can sign for a DID', async () => {
-    const hasAuthority = await didUtil.canSign(DID_SPARSE, `${DID_SPARSE}#default`);
+    const canSign = await didUtil.canSign(DID_SPARSE, `${DID_SPARSE}#default`);
 
-    expect(hasAuthority).toBeTruthy();
+    expect(canSign).toBeTruthy();
   });
 
   it('verificationMethod can not sign for a DID if the key does not exist', async () => {
-    const hasAuthority = await didUtil.canSign(DID_SPARSE, `${DID_SPARSE}#key2`);
+    const canSign = await didUtil.canSign(DID_SPARSE, `${DID_SPARSE}#key2`);
 
-    expect(hasAuthority).toBeFalsy();
+    expect(canSign).toBeFalsy();
   });
 
   it('verificationMethod can not sign for a DID where the default key is removed', async () => {
-    const hasAuthority = await didUtil.canSign(DID_WITH_NO_DEFAULT, `${DID_WITH_NO_DEFAULT}#default`);
+    const canSign = await didUtil.canSign(DID_WITH_NO_DEFAULT, `${DID_WITH_NO_DEFAULT}#default`);
 
-    expect(hasAuthority).toBeFalsy();
+    expect(canSign).toBeFalsy();
   });
 
   it('verificationMethod can sign for a DID it is a controller of', async () => {
-    const hasAuthority = await didUtil.canSign(DID_CONTROLLED, `${DID_CONTROLLER}#default`);
+    const canSign = await didUtil.canSign(DID_CONTROLLED, `${DID_CONTROLLER}#default`);
 
-    expect(hasAuthority).toBeTruthy();
+    expect(canSign).toBeTruthy();
   });
 });
