@@ -10,7 +10,7 @@ const {
 
 const textEncoder = new TextEncoder();
 
-const SIGN_DATA = 'dummy_data_to_sign';
+const DUMMY_MERKLE_ROOT = 'aa4149dda8fd2fac435898372f1de399140f6c50dbc3d40585c913701ce902c4';
 
 // TODO: Replace verify with new implementation once ready
 const verify = (data, signature, publicKey) => nacl.sign.detached.verify(
@@ -30,11 +30,11 @@ describe('signerVerifier', () => {
       privateKey: privateKeyBase58(DID_SPARSE),
     });
 
-    const signed = signer.sign({ merkleRoot: SIGN_DATA });
+    const signed = signer.sign({ merkleRoot: DUMMY_MERKLE_ROOT });
 
     expect(signed).toBeTruthy();
 
-    const verified = verify(SIGN_DATA, signed.signature, keypair.publicKey);
+    const verified = verify(DUMMY_MERKLE_ROOT, signed.signature, keypair.publicKey);
 
     expect(verified).toBe(true);
   });
@@ -47,11 +47,11 @@ describe('signerVerifier', () => {
       keypair,
     });
 
-    const signed = signer.sign({ merkleRoot: SIGN_DATA });
+    const signed = signer.sign({ merkleRoot: DUMMY_MERKLE_ROOT });
 
     expect(signed).toBeTruthy();
 
-    const verified = verify(SIGN_DATA, signed.signature, keypair.publicKey);
+    const verified = verify(DUMMY_MERKLE_ROOT, signed.signature, keypair.publicKey);
 
     expect(verified).toBe(true);
   });
@@ -78,11 +78,11 @@ describe('signerVerifier', () => {
       signer: customSigner,
     });
 
-    const signed = signer.sign({ merkleRoot: SIGN_DATA });
+    const signed = signer.sign({ merkleRoot: DUMMY_MERKLE_ROOT });
 
     expect(signed).toBeTruthy();
 
-    const verified = verify(SIGN_DATA, signed.signature, keypair.publicKey);
+    const verified = verify(DUMMY_MERKLE_ROOT, signed.signature, keypair.publicKey);
 
     expect(verified).toBe(true);
   });
