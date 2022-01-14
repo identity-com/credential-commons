@@ -24,7 +24,7 @@ describe('signerVerifier', () => {
       privateKey,
     });
 
-    const signed = signer.sign({ merkleRoot: SIGN_DATA });
+    const signed = signer.sign({ merkleRoot: DUMMY_MERKLE_ROOT });
 
     expect(signed).toBeTruthy();
 
@@ -32,7 +32,7 @@ describe('signerVerifier', () => {
     const verified = verifier.verify({
       issuer: DID_SPARSE,
       proof: {
-        merkleRoot: SIGN_DATA,
+        merkleRoot: DUMMY_MERKLE_ROOT,
         merkleRootSignature: signed,
       },
     });
@@ -57,7 +57,7 @@ describe('signerVerifier', () => {
     const verified = verifier.verify({
       issuer: DID_SPARSE,
       proof: {
-        merkleRoot: SIGN_DATA,
+        merkleRoot: DUMMY_MERKLE_ROOT,
         merkleRootSignature: signed,
       },
     });
@@ -95,7 +95,7 @@ describe('signerVerifier', () => {
     const verified = verifier.verify({
       issuer: DID_SPARSE,
       proof: {
-        merkleRoot: SIGN_DATA,
+        merkleRoot: DUMMY_MERKLE_ROOT,
         merkleRootSignature: signed,
       },
     });
