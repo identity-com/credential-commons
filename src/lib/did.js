@@ -48,7 +48,7 @@ module.exports = {
   },
 
   /**
-   * Finds the verificationMethod in a document (or if the VM is valid on the controller of a document)
+   * Finds the verificationMethod in a document
    *
    * @param document The document to search through
    * @param verificationMethod The verification method to return

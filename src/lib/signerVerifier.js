@@ -56,30 +56,30 @@ const signer = async (options) => {
   let { signer: signerImpl } = options;
 
   // Create a signer from keypair/key
-  if (!signerImpl) {
-    const [did] = verificationMethod.split('#');
+  if (signerImpl) return signerImpl;
 
-    const document = await didUtil.resolve(did);
+  const [did] = verificationMethod.split('#');
 
-    let { privateKey } = options;
-    if (!privateKey) {
-      privateKey = bs58.encode(options.keypair.secretKey);
-    }
+  const document = await didUtil.resolve(did);
 
-    const foundMethod = didUtil.findVerificationMethod(document, verificationMethod);
-    if (!foundMethod) {
-      throw new Error('The provided verificationMethod is not valid on the DID document');
-    }
+  let { privateKey } = options;
+  if (!privateKey) {
+    privateKey = bs58.encode(options.keypair.secretKey);
+  }
 
-    // Check the type is supported and assign the appropriate signer
-    switch (foundMethod.type) {
-      case 'Ed25519VerificationKey2018':
-      case 'Ed25519VerificationKey2020':
-        signerImpl = new Ed25519Signer(privateKey, verificationMethod);
-        break;
-      default:
-        throw new Error(`Unsupported type ${foundMethod.type}`);
-    }
+  const foundMethod = didUtil.findVerificationMethod(document, verificationMethod);
+  if (!foundMethod) {
+    throw new Error('The provided verificationMethod is not valid on the DID document');
+  }
+
+  // Check the type is supported and assign the appropriate signer
+  switch (foundMethod.type) {
+    case 'Ed25519VerificationKey2018':
+    case 'Ed25519VerificationKey2020':
+      signerImpl = new Ed25519Signer(privateKey, verificationMethod);
+      break;
+    default:
+      throw new Error(`Unsupported type ${foundMethod.type}`);
   }
 
   return signerImpl;
