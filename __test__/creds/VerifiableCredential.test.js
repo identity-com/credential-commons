@@ -5,18 +5,14 @@ const sjcl = require('sjcl');
 const { Claim } = require('../../src/claim/Claim');
 const VC = require('../../src/creds/VerifiableCredential');
 const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
-const CredentialSignerVerifier = require('../../src/creds/CredentialSignerVerifier');
+const didTestUtil = require('../lib/util/did');
+
 const {
   schemaLoader,
   CVCSchemaLoader,
 } = require('../../src');
 const filteredCredentialJson = require('./fixtures/filteredIdDocument-v3.json');
 const invalidEmailJson = require('./fixtures/CredentialEmailInvalid.json');
-
-// eslint-disable-next-line max-len
-const prvBase58 = 'xprv9s21ZrQH143K4aBUwUW6GVec7Y6oUEBqrt2WWaXyxjh2pjofNc1of44BLufn4p1t7Jq4EPzm5C9sRxCuBYJdHu62jhgfyPm544sNjtH7x8S';
-// eslint-disable-next-line max-len
-const pubBase58 = 'xpub661MyMwAqRbcH4Fx3W36ddbLfZwHsguhE6x7JxwbX5E1hY8ov9L4CrNfCCQpV8pVK64CVqkhYQ9QLFgkVAUqkRThkTY1R4GiWHNZtAFSVpD';
 
 const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
 
@@ -1834,6 +1830,8 @@ describe('Transient Credential Tests', () => {
 describe('Signed Verifiable Credentials', () => {
   beforeAll(() => {
     schemaLoader.addLoader(new CVCSchemaLoader());
+
+    didTestUtil.mockDids();
   });
 
   beforeEach(() => {
@@ -1841,26 +1839,109 @@ describe('Signed Verifiable Credentials', () => {
   });
 
   test('Should create a verifiable credential instance', async () => {
+    const verificationMethod = `${didTestUtil.DID_SPARSE}#default`;
+    const keypair = didTestUtil.keyPair(didTestUtil.DID_SPARSE);
+
     const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
     const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
-    const cred = await VC.create('credential-cvc:Identity-v3', uuidv4(), null, credentialSubject, [name, dob], null,
-      new CredentialSignerVerifier({ prvBase58 }));
+
+    const cred = await VC.create(
+      'credential-cvc:Identity-v3',
+      didTestUtil.DID_SPARSE,
+      null,
+      credentialSubject,
+      [name, dob],
+      null,
+      {
+        verificationMethod,
+        keypair,
+      },
+    );
+
     expect(cred).toBeDefined();
-    expect(cred.proof.merkleRootSignature).toBeDefined();
-    expect(cred.verifyMerkletreeSignature(pubBase58)).toBeTruthy();
+    expect(cred.proof.merkleRootSignature.signature).toBeDefined();
+    expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
+
+    // TODO: re-activate this once verify is done (IDCOM-1428)
+    // expect(cred.verifyMerkletreeSignature(pubBase58)).toBeTruthy();
   });
 
-  test('Should verify credential(data only) signature', async () => {
+  test('Should not be able to sign with a removed key', async () => {
+    const verificationMethod = `${didTestUtil.DID_WITH_NO_DEFAULT}#default`;
+    const keypair = didTestUtil.keyPair(didTestUtil.DID_WITH_NO_DEFAULT);
+
     const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
     const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
-    const signerVerifier = new CredentialSignerVerifier({ prvBase58 });
-    const cred = await VC.create('credential-cvc:Identity-v3', uuidv4(), null, credentialSubject, [name, dob], null,
-      signerVerifier);
+
+    const credCreate = VC.create(
+      'credential-cvc:Identity-v3',
+      didTestUtil.DID_WITH_NO_DEFAULT,
+      null,
+      credentialSubject,
+      [name, dob],
+      null,
+      {
+        verificationMethod,
+        keypair,
+      },
+    );
+
+    return expect(credCreate).rejects.toThrow(
+      `The verificationMethod ${verificationMethod} is not allowed to sign for ${didTestUtil.DID_WITH_NO_DEFAULT}`,
+    );
+  });
+
+  test('Should be able to sign as a controller of the issuer did', async () => {
+    const verificationMethod = `${didTestUtil.DID_CONTROLLER}#default`;
+    const keypair = didTestUtil.keyPair(didTestUtil.DID_CONTROLLER);
+
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+
+    const cred = await VC.create(
+      'credential-cvc:Identity-v3',
+      didTestUtil.DID_CONTROLLED,
+      null,
+      credentialSubject,
+      [name, dob],
+      null,
+      {
+        verificationMethod,
+        keypair,
+      },
+    );
+
+    expect(cred).toBeDefined();
+    expect(cred.proof.merkleRootSignature.signature).toBeDefined();
+    expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
+  });
+
+  // TODO: re-activate this once verify is done (IDCOM-1428)
+  test.skip('Should verify credential(data only) signature', async () => {
+    const verificationMethod = `${didTestUtil.DID_SPARSE}#default`;
+
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+
+    const cred = await VC.create(
+      'credential-cvc:Identity-v3',
+      didTestUtil.DID_SPARSE,
+      null,
+      credentialSubject,
+      [name, dob],
+      null,
+      {
+        verificationMethod,
+        keypair: didTestUtil.keyPair(didTestUtil.DID_SPARSE),
+      },
+    );
+
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature).toBeDefined();
 
-    const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
-    expect(signerVerifier.isSignatureValid(dataOnlyCredential)).toBeTruthy();
+    // TODO: re-actiate this once verify is done (IDCOM-1428)
+    // const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
+    // expect(signerVerifier.isSignatureValid(dataOnlyCredential)).toBeTruthy();
   });
 });
 describe('Referenced Schemas for Verifiable Credentials', () => {

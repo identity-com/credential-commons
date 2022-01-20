@@ -9,6 +9,7 @@ const MerkleTools = require('merkle-tools');
 
 const { sha256 } = require('../lib/crypto');
 const { Claim } = require('../claim/Claim');
+const didUtil = require('../lib/did');
 
 const definitions = require('./definitions');
 const { services } = require('../services');
@@ -18,6 +19,8 @@ const { ClaimModel } = require('./ClaimModel');
 const CredentialSignerVerifier = require('./CredentialSignerVerifier');
 const { schemaLoader } = require('../schemas/jsonSchema');
 const { parseIdentifier } = require('../lib/stringUtils');
+const signerVerifier = require('../lib/signerVerifier');
+
 // convert a time delta to a timestamp
 const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
 
@@ -363,8 +366,7 @@ function getCredentialDefinition(identifier, version) {
  * @param {*} version
  * @param {*} [evidence]
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subject, ucas,
-  evidence, signerVerifier = null) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subject, ucas, evidence, signerOptions) {
   const parsedIdentifier = parseIdentifier(identifier);
   const version = parsedIdentifier ? parsedIdentifier[4] : '1';
 
@@ -404,7 +406,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
       ...this.credentialSubject,
       ...new ClaimModel(ucas),
     };
-    this.proof = new CvcMerkleProof(proofUCAs, signerVerifier);
+    this.proof = new CvcMerkleProof(proofUCAs, signerOptions ? signerOptions.signer : null);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
@@ -772,8 +774,25 @@ VerifiableCredentialBaseConstructor.CREDENTIAL_META_FIELDS = CREDENTIAL_META_FIE
 VerifiableCredentialBaseConstructor.getCredentialMeta = getCredentialMeta;
 VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMeta;
 
-VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn, subject, ucas, evidence,
-  signerVerifier = null, validate = true) => {
+/**
+ * Creates a Verifiable Credential
+ *
+ * @param identifier The identifier for the VC (e.g. credential-cvc:Identity-v1)
+ * @param issuerDid The issuer DID
+ * @param expiryIn The credential expiry date (nullable)
+ * @param subject The subject DID
+ * @param ucas An array of UCAs
+ * @param evidence The evidence for the credential
+ * @param signerOptions Signer options:
+ * @param signerOptions.verificationMethod The verificationMethod for the signing key
+ * @param signerOptions.keypair The keypair to sign with
+ *    or
+ * @param signerOptions.privateKey The private key to sign with
+ *    or
+ * @param signerOptions.signer An object implementing a `sign(CvcMerkleProof)` method
+ */
+VerifiableCredentialBaseConstructor.create = async (identifier, issuerDid, expiryIn, subject, ucas, evidence,
+  signerOptions = null, validate = true) => {
   // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(identifier);
 
@@ -783,8 +802,20 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
   await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
 
+  if (signerOptions) {
+    const canSignForIssuer = await didUtil.canSign(issuerDid, signerOptions.verificationMethod);
+    if (!canSignForIssuer) {
+      throw new Error(
+        `The verificationMethod ${signerOptions.verificationMethod} is not allowed to sign for ${issuerDid}`,
+      );
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    signerOptions.signer = await signerVerifier.signer(signerOptions);
+  }
+
   const vc = new VerifiableCredentialBaseConstructor(
-    identifier, issuer, expiryIn, subject, ucas, evidence, signerVerifier,
+    identifier, issuerDid, expiryIn, subject, ucas, evidence, signerOptions,
   );
 
   if (validate) {
