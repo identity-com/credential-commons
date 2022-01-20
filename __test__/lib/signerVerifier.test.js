@@ -12,7 +12,7 @@ const textEncoder = new TextEncoder();
 
 const DUMMY_MERKLE_ROOT = 'aa4149dda8fd2fac435898372f1de399140f6c50dbc3d40585c913701ce902c4';
 
-// TODO: Replace verify with new implementation once ready
+// TODO: Replace verify with new implementation once ready (IDCOM-1428)
 const verify = (data, signature, publicKey) => nacl.sign.detached.verify(
   textEncoder.encode(data),
   Uint8Array.from(Buffer.from(signature, 'hex')),

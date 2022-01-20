@@ -1862,7 +1862,7 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred.proof.merkleRootSignature.signature).toBeDefined();
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
 
-    // TODO: re-activate this once verify is done
+    // TODO: re-activate this once verify is done (IDCOM-1428)
     // expect(cred.verifyMerkletreeSignature(pubBase58)).toBeTruthy();
   });
 
@@ -1916,7 +1916,7 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
   });
 
-  // TODO: re-activate this once verify is done
+  // TODO: re-activate this once verify is done (IDCOM-1428)
   test.skip('Should verify credential(data only) signature', async () => {
     const verificationMethod = `${didTestUtil.DID_SPARSE}#default`;
 
@@ -1939,7 +1939,7 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature).toBeDefined();
 
-    // TODO: re-actiate this once verify is done
+    // TODO: re-actiate this once verify is done (IDCOM-1428)
     // const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
     // expect(signerVerifier.isSignatureValid(dataOnlyCredential)).toBeTruthy();
   });
