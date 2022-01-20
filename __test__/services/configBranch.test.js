@@ -1,6 +1,7 @@
 // do not put these tests on the same file as config.test.js or else jest will fail coverage
 // (describe.beforeEach scope not working)
 
+// the original platform is stored to temporarily stub win32 platform to test failing in the tests temporarily
 const originalPlatform = process.platform;
 
 describe('Test process platform', () => {
