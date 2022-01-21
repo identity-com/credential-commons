@@ -85,14 +85,17 @@ const signer = async (options) => {
   return signerImpl;
 };
 
+/**
+ * Creates a verifier based on the information provided
+ * @param did The issuer DID
+ * @param verificationMethod The verification method used to lookup the key
+ */
 const verifier = async (did, verificationMethod) => {
   const canSignFor = await didUtil.canSign(did, verificationMethod);
   if (!canSignFor) {
-    // always return false if the vm cannot sign for the
+    // always return false
     return {
-      verify() {
-        return false;
-      },
+      verify: () => false,
     };
   }
 

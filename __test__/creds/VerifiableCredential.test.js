@@ -1891,6 +1891,7 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred.proof.merkleRootSignature.signature).toBeDefined();
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
 
+    // change the issuer DID on the VC
     cred.issuer = didTestUtil.DID_CONTROLLER;
 
     expect(await cred.verifyMerkletreeSignature()).toBe(false);
