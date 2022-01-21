@@ -79,6 +79,7 @@ class VerifiableCredentialProxy extends VerifiableCredential {
       return obj;
     };
 
+    // maintains the old verification process for the older VC format
     this.verifyMerkletreeSignature = (pubBase58) => {
       if (_.isEmpty(pubBase58)) return false;
       const verifier = new CredentialSignerVerifier({ pubBase58 });
