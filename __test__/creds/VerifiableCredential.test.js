@@ -1945,6 +1945,8 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature.signature).toBeDefined();
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
+
+    expect(await cred.verifyMerkletreeSignature()).toBe(true);
   });
 
   test('Should verify credential(data only) signature', async () => {
