@@ -16,7 +16,6 @@ const { services } = require('../services');
 const time = require('../timeHelper');
 const { CvcMerkleProof } = require('./CvcMerkleProof');
 const { ClaimModel } = require('./ClaimModel');
-const CredentialSignerVerifier = require('./CredentialSignerVerifier');
 const { schemaLoader } = require('../schemas/jsonSchema');
 const { parseIdentifier } = require('../lib/stringUtils');
 const signerVerifier = require('../lib/signerVerifier');
@@ -553,10 +552,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
    * This methods check the stand alone merkletreeSiganture
    * return true or false for the validation
    */
-  this.verifyMerkletreeSignature = (pubBase58) => {
-    if (_.isEmpty(pubBase58)) return false;
-    const verifier = new CredentialSignerVerifier({ pubBase58 });
-    return verifier.isSignatureValid(this);
+  this.verifyMerkletreeSignature = async () => {
+    const verifier = await signerVerifier.verifier(this.issuer, this.proof.merkleRootSignature.verificationMethod);
+
+    return verifier.verify(this);
   };
 
   /**

@@ -22,6 +22,20 @@ class Ed25519Signer {
   }
 }
 
+class Ed25519Verifier {
+  constructor(key) {
+    this.key = key;
+  }
+
+  verify(vc) {
+    return nacl.sign.detached.verify(
+      textEncoder.encode(vc.proof.merkleRoot),
+      Uint8Array.from(Buffer.from(vc.proof.merkleRootSignature.signature, 'hex')),
+      bs58.decode(this.key),
+    );
+  }
+}
+
 /**
  * Creates a signer from the provided information
  *
@@ -71,6 +85,35 @@ const signer = async (options) => {
   return signerImpl;
 };
 
+/**
+ * Creates a verifier based on the information provided
+ * @param did The issuer DID
+ * @param verificationMethod The verification method used to lookup the key
+ */
+const verifier = async (did, verificationMethod) => {
+  const canSignFor = await didUtil.canSign(did, verificationMethod);
+  if (!canSignFor) {
+    // always return false
+    return {
+      verify: () => false,
+    };
+  }
+
+  const [vmDid] = verificationMethod.split('#');
+  const document = await didUtil.resolve(vmDid);
+  const foundMethod = didUtil.findVerificationMethod(document, verificationMethod);
+
+  // Check the type is supported and assign the appropriate verifier
+  switch (foundMethod.type) {
+    case 'Ed25519VerificationKey2018':
+    case 'Ed25519VerificationKey2020':
+      return new Ed25519Verifier(foundMethod.publicKeyBase58);
+    default:
+      throw new Error(`Unsupported type ${foundMethod.type}`);
+  }
+};
+
 module.exports = {
   signer,
+  verifier,
 };

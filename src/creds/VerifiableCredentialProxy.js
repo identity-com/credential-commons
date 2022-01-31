@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const VerifiableCredential = require('./VerifiableCredential');
 const { schemaLoader } = require('../schemas/jsonSchema');
+const CredentialSignerVerifier = require('./CredentialSignerVerifier');
 
 const definitions = schemaLoader.credentialDefinitions;
 
@@ -76,6 +77,13 @@ class VerifiableCredentialProxy extends VerifiableCredential {
       if (obj.claim) delete obj.claim.id;
 
       return obj;
+    };
+
+    // maintains the old verification process for the older VC format
+    this.verifyMerkletreeSignature = (pubBase58) => {
+      if (_.isEmpty(pubBase58)) return false;
+      const verifier = new CredentialSignerVerifier({ pubBase58 });
+      return verifier.isSignatureValid(this);
     };
   }
 }

@@ -13,6 +13,7 @@ const {
 } = require('../../src');
 const filteredCredentialJson = require('./fixtures/filteredIdDocument-v3.json');
 const invalidEmailJson = require('./fixtures/CredentialEmailInvalid.json');
+const signerVerifier = require('../../src/lib/signerVerifier');
 
 const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
 
@@ -1862,8 +1863,38 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred.proof.merkleRootSignature.signature).toBeDefined();
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
 
-    // TODO: re-activate this once verify is done (IDCOM-1428)
-    // expect(cred.verifyMerkletreeSignature(pubBase58)).toBeTruthy();
+    expect(await cred.verifyMerkletreeSignature()).toBe(true);
+  });
+
+
+  test('Should fail to verify a signature if the issuer didn\'t sign', async () => {
+    const verificationMethod = `${didTestUtil.DID_SPARSE}#default`;
+    const keypair = didTestUtil.keyPair(didTestUtil.DID_SPARSE);
+
+    const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
+    const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', identityDateOfBirth);
+
+    const cred = await VC.create(
+      'credential-cvc:Identity-v3',
+      didTestUtil.DID_SPARSE,
+      null,
+      credentialSubject,
+      [name, dob],
+      null,
+      {
+        verificationMethod,
+        keypair,
+      },
+    );
+
+    expect(cred).toBeDefined();
+    expect(cred.proof.merkleRootSignature.signature).toBeDefined();
+    expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
+
+    // change the issuer DID on the VC
+    cred.issuer = didTestUtil.DID_CONTROLLER;
+
+    expect(await cred.verifyMerkletreeSignature()).toBe(false);
   });
 
   test('Should not be able to sign with a removed key', async () => {
@@ -1914,10 +1945,11 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature.signature).toBeDefined();
     expect(cred.proof.merkleRootSignature.verificationMethod).toBe(verificationMethod);
+
+    expect(await cred.verifyMerkletreeSignature()).toBe(true);
   });
 
-  // TODO: re-activate this once verify is done (IDCOM-1428)
-  test.skip('Should verify credential(data only) signature', async () => {
+  test('Should verify credential(data only) signature', async () => {
     const verificationMethod = `${didTestUtil.DID_SPARSE}#default`;
 
     const name = await Claim.create('claim-cvc:Identity.name-v1', identityName);
@@ -1939,9 +1971,9 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature).toBeDefined();
 
-    // TODO: re-actiate this once verify is done (IDCOM-1428)
-    // const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
-    // expect(signerVerifier.isSignatureValid(dataOnlyCredential)).toBeTruthy();
+    const verifier = await signerVerifier.verifier(didTestUtil.DID_SPARSE, verificationMethod);
+    const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
+    expect(verifier.verify(dataOnlyCredential)).toBeTruthy();
   });
 });
 describe('Referenced Schemas for Verifiable Credentials', () => {
