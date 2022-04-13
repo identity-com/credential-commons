@@ -931,7 +931,7 @@ describe('Unit tests for Verifiable Credential Proxy', () => {
     const receivedCred = await VC.fromJSON(JSON.parse(transmittedCred));
     expect(receivedCred.granted).not.toBeNull();
 
-    const verifyGrant = receivedCred.verifyGrant(requestorId, requestId);
+    const verifyGrant = await receivedCred.verifyGrant(requestorId, requestId);
     expect(verifyGrant).toEqual(true);
 
     done();
@@ -964,7 +964,7 @@ describe('Unit tests for Verifiable Credential Proxy', () => {
     // eslint-disable-next-line
     receivedCred.granted = '304502210085f6baceefcddefff535416df0eda6c9b8a01dcba592c599ec2c83cce7171dd802204473f5a15b3904dbf0fc309fe812fbf449948714938fb4871196d338ef38f1d1';
 
-    const verifyGrant = receivedCred.verifyGrant(requestorId, requestId);
+    const verifyGrant = await receivedCred.verifyGrant(requestorId, requestId);
     expect(verifyGrant).toEqual(false);
 
     done();
@@ -991,8 +991,9 @@ describe('Unit tests for Verifiable Credential Proxy', () => {
     expect(transmittedCred.granted).not.toBeNull();
 
     const credentialObj = JSON.parse(transmittedCred);
+    console.log(JSON.stringify(credentialObj, null, 2));
 
-    const verifyGrant = VC.requesterGrantVerify(credentialObj, requestorId, requestId);
+    const verifyGrant = await VC.requesterGrantVerify(credentialObj, requestorId, requestId);
     expect(verifyGrant).toEqual(true);
 
     done();
@@ -1024,7 +1025,7 @@ describe('Unit tests for Verifiable Credential Proxy', () => {
     // eslint-disable-next-line max-len
     credentialObj.proof.granted = '304502210085f6baceefcddefff535416df0eda6c9b8a01dcba592c599ec2c83cce7171dd802204473f5a15b3904dbf0fc309fe812fbf449948714938fb4871196d338ef38f1d1';
 
-    const verifyGrant = VC.requesterGrantVerify(credentialObj, requestorId, requestId);
+    const verifyGrant = await VC.requesterGrantVerify(credentialObj, requestorId, requestId);
     expect(verifyGrant).toEqual(false);
 
     done();

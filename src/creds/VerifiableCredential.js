@@ -280,7 +280,7 @@ async function cryptographicallySecureVerify(credential, verifyAttestationFunc, 
  * @param credential - A credential object with expirationDate, claim and proof
  * @return true if verified, false otherwise.
  */
-function requesterGrantVerify(credential, requesterId, requestId, keyName) {
+async function requesterGrantVerify(credential, requesterId, requestId, keyName) {
   const label = _.get(credential.proof, 'anchor.subject.label');
   const anchorPubKey = _.get(credential.proof, 'anchor.subject.pub');
   const anchorData = _.get(credential.proof, 'anchor.subject.data');
@@ -345,12 +345,7 @@ function verifyRequiredClaims(definition, ucas) {
  * @param {*} [version] - definition version
  */
 function getCredentialDefinition(identifier, version) {
-  let definition;
-  if (version) {
-    definition = _.find(definitions, { identifier, version: `${version}` });
-  } else {
-    definition = _.find(definitions, { identifier });
-  }
+  const definition = _.find(definitions, { identifier });
   if (!definition) {
     throw new Error(`Credential definition for ${identifier} v${version} not found`);
   }

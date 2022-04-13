@@ -11,12 +11,8 @@ const definitions = schemaLoader.credentialDefinitions;
  * @param {*} [version] - definition version
  */
 function getCredentialDefinition(identifier, version) {
-  let definition;
-  if (version) {
-    definition = _.find(definitions, { identifier, version: `${version}` });
-  } else {
-    definition = _.find(definitions, { identifier });
-  }
+  const definition = _.find(definitions, { identifier });
+
   if (!definition) {
     throw new Error(`Credential definition for ${identifier} v${version} not found`);
   }
@@ -183,6 +179,11 @@ VerifiableCredentialProxy.cryptographicallySecureVerify = async (
   const vc = await VerifiableCredentialProxy.fromJSON(credential);
 
   return VerifiableCredential.cryptographicallySecureVerify(vc, verifyAttestationFunc, verifySignatureFunc);
+};
+
+VerifiableCredentialProxy.requesterGrantVerify = async (credential, requesterId, requestId, keyName) => {
+  const vc = await VerifiableCredentialProxy.fromJSON(credential);
+  return VerifiableCredential.requesterGrantVerify(vc, requesterId, requestId, keyName);
 };
 
 module.exports = VerifiableCredentialProxy;

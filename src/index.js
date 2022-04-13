@@ -11,7 +11,7 @@ const credentialDefinitions = require('./creds/definitions');
 const aggregate = require('./AggregationHandler');
 const { schemaLoader } = require('./schemas/jsonSchema');
 const CVCSchemaLoader = require('./schemas/jsonSchema/loaders/cvc');
-
+const VCCompat = require('./creds/VerifiableCredentialProxy');
 /**
  * Entry Point for Civic Credential Commons
  * @returns {CredentialCommons}
@@ -19,7 +19,7 @@ const CVCSchemaLoader = require('./schemas/jsonSchema/loaders/cvc');
  */
 function CredentialCommons() {
   this.Claim = Claim;
-  this.VC = VC;
+
   this.init = initServices;
   this.isValidGlobalIdentifier = isValidGlobalIdentifier;
   this.isClaimRelated = isClaimRelated;
@@ -32,6 +32,8 @@ function CredentialCommons() {
   this.schemaLoader = schemaLoader;
   this.CVCSchemaLoader = CVCSchemaLoader;
   this.UserCollectableAttribute = UserCollectableAttribute;
+  this.VC = VC;
+  this.VCCompat = VCCompat;
   return this;
 }
 

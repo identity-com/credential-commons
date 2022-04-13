@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "2.0.2",
+  "version": "3.0.0-beta.4",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -72,7 +72,7 @@
     "ajv": "^7.2.4",
     "ajv-formats": "^2.0.2",
     "babel-runtime": "^6.26.0",
-    "bitcoinjs-lib": "git+https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
+    "bitcoinjs-lib": "https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
     "bottlejs": "^1.7.1",
     "bs58": "^4.0.1",
     "did-io": "^0.8.3",

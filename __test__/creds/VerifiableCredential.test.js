@@ -921,7 +921,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     const receivedCred = await VC.fromJSON(JSON.parse(transmittedCred));
     expect(receivedCred.proof.granted).not.toBeNull();
 
-    const verifyGrant = receivedCred.verifyGrant(requestorId, requestId);
+    const verifyGrant = await receivedCred.verifyGrant(requestorId, requestId);
     expect(verifyGrant).toEqual(true);
 
     done();
@@ -954,7 +954,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     // eslint-disable-next-line
     receivedCred.proof.granted = '304502210085f6baceefcddefff535416df0eda6c9b8a01dcba592c599ec2c83cce7171dd802204473f5a15b3904dbf0fc309fe812fbf449948714938fb4871196d338ef38f1d1';
 
-    const verifyGrant = receivedCred.verifyGrant(requestorId, requestId);
+    const verifyGrant = await receivedCred.verifyGrant(requestorId, requestId);
     expect(verifyGrant).toEqual(false);
 
     done();
@@ -982,7 +982,7 @@ describe('Unit tests for Verifiable Credentials', () => {
 
     const credentialObj = JSON.parse(transmittedCred);
 
-    const verifyGrant = VC.requesterGrantVerify(credentialObj, requestorId, requestId);
+    const verifyGrant = await VC.requesterGrantVerify(credentialObj, requestorId, requestId);
     expect(verifyGrant).toEqual(true);
 
     done();
@@ -1014,7 +1014,7 @@ describe('Unit tests for Verifiable Credentials', () => {
     // eslint-disable-next-line max-len
     credentialObj.proof.granted = '304502210085f6baceefcddefff535416df0eda6c9b8a01dcba592c599ec2c83cce7171dd802204473f5a15b3904dbf0fc309fe812fbf449948714938fb4871196d338ef38f1d1';
 
-    const verifyGrant = VC.requesterGrantVerify(credentialObj, requestorId, requestId);
+    const verifyGrant = await VC.requesterGrantVerify(credentialObj, requestorId, requestId);
     expect(verifyGrant).toEqual(false);
 
     done();
@@ -1690,6 +1690,9 @@ describe('Unit tests for Verifiable Credentials', () => {
   });
 
   it('Should create credential if all claims are provided', async () => {
+    const verificationMethod = `${didTestUtil.DID_CONTROLLER}#default`;
+    const keypair = didTestUtil.keyPair(didTestUtil.DID_CONTROLLER);
+
     const type = await Claim.create('claim-cvc:Document.type-v1', 'passport', '1');
     const number = await Claim.create('claim-cvc:Document.number-v1', '123', '1');
     const name = await Claim.create('claim-cvc:Document.name-v1', { givenNames: 'Maxime' }, '1');
@@ -1723,8 +1726,12 @@ describe('Unit tests for Verifiable Credentials', () => {
     const ucas = [
       type, number, name, gender, issueCountry, placeOfBirth, dateOfBirth, nationality, dateOfExpiry, evidences,
     ];
-    const credential = await VC.create('credential-cvc:IdDocument-v3', '', null, credentialSubject, ucas);
+    const credential = await VC.create('credential-cvc:IdDocument-v3', didTestUtil.DID_CONTROLLER, null, credentialSubject, ucas, null, {
+      verificationMethod,
+      keypair,
+    });
     expect(credential).toBeDefined();
+    expect(await cred.verifyMerkletreeSignature()).toBe(true);
   });
 
   it('Should throw exception on credential creation if required uca is missing', async () => {
