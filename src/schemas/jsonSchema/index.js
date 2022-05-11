@@ -371,6 +371,10 @@ class SchemaLoader {
       });
     }
 
+    if(schema.title === 'cvc:Meta:expirationDate') {
+      console.log("?");
+    }
+
     if ((await this.shouldAddClaimDefinition(schema))) {
       this.definitions.push(definition);
 
@@ -484,13 +488,13 @@ class SchemaLoader {
 
       await Promise.all(references);
 
+      await this.addDefinition(schema);
+
       try {
         this.ajv.addSchema(schema);
       } catch (e) {
         // This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
       }
-
-      await this.addDefinition(schema);
 
       return schema;
     }
