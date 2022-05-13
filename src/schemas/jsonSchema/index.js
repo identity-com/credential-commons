@@ -371,10 +371,6 @@ class SchemaLoader {
       });
     }
 
-    if(schema.title === 'cvc:Meta:expirationDate') {
-      console.log("?");
-    }
-
     if ((await this.shouldAddClaimDefinition(schema))) {
       this.definitions.push(definition);
 
