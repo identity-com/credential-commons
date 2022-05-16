@@ -2,14 +2,14 @@
   "id": "e3dc1ceb-3899-454f-a80c-52c97a0cc9d8",
   "issuer": "jest:test:fe07c3d0-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.862Z",
-  "identifier": "credential-cvc:Email-v1",
-  "expirationDate": null,
+  "identifier": "credential-cvc:Email-v3",
   "version": "1",
   "type": [
-    "Credential",
-    "credential-cvc:Email-v1"
+    "VerifiableCredential",
+    "IdentityCredential"
   ],
-  "claim": {
+  "credentialSubject": {
+    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
     "contact": {
       "email": {
         "domain": {
@@ -44,7 +44,7 @@
         "path": "/"
       },
       "coin": "dummycoin",
-      "tx": {},
+      "tx": "",
       "network": "dummynet",
       "type": "permanent",
       "civicAsPrimary": false,
@@ -167,6 +167,7 @@
           }
         ]
       }
-    ]
+    ],
+    "granted": null
   }
 }

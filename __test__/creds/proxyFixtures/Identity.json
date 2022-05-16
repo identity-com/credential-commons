@@ -1,0 +1,244 @@
+{
+  "id": "e24b2c57-3d78-42c3-9111-aaabcab8006d",
+  "issuer": "jest:test:fe0ca5d0-e8b0-11e8-8a40-7fe4d191eb47",
+  "issuanceDate": "2018-11-15T08:32:30.893Z",
+  "identifier": "credential-cvc:Identity-v1",
+  "expirationDate": null,
+  "version": "1",
+  "type": [
+    "Credential",
+    "credential-cvc:Identity-v1"
+  ],
+  "claim": {
+    "identity": {
+      "name": {
+        "familyNames": "sWYglHZ6Ry",
+        "givenNames": "1otj7GaELc",
+        "otherNames": "0QpdyidiaF"
+      },
+      "dateOfBirth": {
+        "day": 2.138220070139745,
+        "month": 9.54655376259586,
+        "year": 1947.6347555235777
+      }
+    }
+  },
+  "proof": {
+    "type": "CvcMerkleProof2018",
+    "merkleRoot": "6b15fdc326568870aed3adfe73683ee6e91f1a5af11835647aec55e9c7bdd5f7",
+    "anchor": {
+      "subject": {
+        "pub": "xpub:dummy",
+        "label": "credential-cvc:Identity-v1",
+        "data": "6b15fdc326568870aed3adfe73683ee6e91f1a5af11835647aec55e9c7bdd5f7",
+        "signature": "signed:dummy"
+      },
+      "walletId": "none",
+      "cosigners": [
+        {
+          "pub": "xpub:dummy"
+        },
+        {
+          "pub": "xpub:dummy"
+        }
+      ],
+      "authority": {
+        "pub": "xpub:dummy",
+        "path": "/"
+      },
+      "coin": "dummycoin",
+      "tx": "",
+      "network": "dummynet",
+      "type": "permanent",
+      "civicAsPrimary": false,
+      "schema": "dummy-20180201",
+      "value": {}
+    },
+    "leaves": [
+      {
+        "identifier": "claim-cvc:Identity.name-v1",
+        "value": "urn:name.familyNames:b9aaf1b43b90a6636909e884977ea4e853dcc794098a7d9016094057aa0ecbbd:sWYglHZ6Ry|urn:name.givenNames:65b4fd7d6d2e99b9108c68f0d0a239a0aa6ecaa50658f2705788a9965ca3f7cf:1otj7GaELc|urn:name.otherNames:75d5ffd2e6466e5a6b6497cda5a9118676af7df99c8e00a4870b1af1adb9b451:0QpdyidiaF|",
+        "claimPath": "identity.name",
+        "targetHash": "741c9b32c0e46c7335ee6bfea3819e6df80cb49f48fe87132574a39ed8910ba2",
+        "node": [
+          {
+            "right": "325c544bc8d3e303473da4cf8b9a9edb86838a3897da8f5af961ec1536e88af0"
+          },
+          {
+            "right": "7b90deaaa228466fde5fdc49ac27367b705302b21c3fc4b67bf6817409a3f886"
+          },
+          {
+            "right": "786ef34a150627e8245c6cfe320424b987bb40c0f811d5dbcf3a2722bce378d6"
+          },
+          {
+            "right": "04bef12661f9a409d18cbbb52bc58651f65e286abd8bc140e1344594841a14ed"
+          },
+          {
+            "right": "da4d8a5e274061369782e64bbb86f213271f67ea21d096437bc15b05d91508f9"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Name.givenNames-v1",
+        "value": "urn:givenNames:65b4fd7d6d2e99b9108c68f0d0a239a0aa6ecaa50658f2705788a9965ca3f7cf:1otj7GaELc|",
+        "claimPath": "identity.name.givenNames",
+        "targetHash": "325c544bc8d3e303473da4cf8b9a9edb86838a3897da8f5af961ec1536e88af0",
+        "node": [
+          {
+            "left": "741c9b32c0e46c7335ee6bfea3819e6df80cb49f48fe87132574a39ed8910ba2"
+          },
+          {
+            "right": "7b90deaaa228466fde5fdc49ac27367b705302b21c3fc4b67bf6817409a3f886"
+          },
+          {
+            "right": "786ef34a150627e8245c6cfe320424b987bb40c0f811d5dbcf3a2722bce378d6"
+          },
+          {
+            "right": "04bef12661f9a409d18cbbb52bc58651f65e286abd8bc140e1344594841a14ed"
+          },
+          {
+            "right": "da4d8a5e274061369782e64bbb86f213271f67ea21d096437bc15b05d91508f9"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Name.familyNames-v1",
+        "value": "urn:familyNames:b9aaf1b43b90a6636909e884977ea4e853dcc794098a7d9016094057aa0ecbbd:sWYglHZ6Ry|",
+        "claimPath": "identity.name.familyNames",
+        "targetHash": "2e1a69df77b5abbbc0c30b1eb73a010ec5b15826417119ce001504efe16fdc52",
+        "node": [
+          {
+            "right": "cee7323edd25b8d6f329854eb4b81c7eeace99609eea28db528f626da3a5ba85"
+          },
+          {
+            "left": "c5cce935d2e38c9e15eab57ba3125b3b11a8062fd62786612d2b1420cff4fe10"
+          },
+          {
+            "right": "786ef34a150627e8245c6cfe320424b987bb40c0f811d5dbcf3a2722bce378d6"
+          },
+          {
+            "right": "04bef12661f9a409d18cbbb52bc58651f65e286abd8bc140e1344594841a14ed"
+          },
+          {
+            "right": "da4d8a5e274061369782e64bbb86f213271f67ea21d096437bc15b05d91508f9"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Name.otherNames-v1",
+        "value": "urn:otherNames:75d5ffd2e6466e5a6b6497cda5a9118676af7df99c8e00a4870b1af1adb9b451:0QpdyidiaF|",
+        "claimPath": "identity.name.otherNames",
+        "targetHash": "cee7323edd25b8d6f329854eb4b81c7eeace99609eea28db528f626da3a5ba85",
+        "node": [
+          {
+            "left": "2e1a69df77b5abbbc0c30b1eb73a010ec5b15826417119ce001504efe16fdc52"
+          },
+          {
+            "left": "c5cce935d2e38c9e15eab57ba3125b3b11a8062fd62786612d2b1420cff4fe10"
+          },
+          {
+            "right": "786ef34a150627e8245c6cfe320424b987bb40c0f811d5dbcf3a2722bce378d6"
+          },
+          {
+            "right": "04bef12661f9a409d18cbbb52bc58651f65e286abd8bc140e1344594841a14ed"
+          },
+          {
+            "right": "da4d8a5e274061369782e64bbb86f213271f67ea21d096437bc15b05d91508f9"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Identity.dateOfBirth-v1",
+        "value": "urn:dateOfBirth.day:fa11c23cdf7383160eaea4d9407ecce905d447ba9e7f29b1ea779c35fe3c304b:2.138220070139745|urn:dateOfBirth.month:5f5d7db849b9929a4c1691b7f3e4a0a61a77a5719bb199e3d07ee57d448cb62e:9.54655376259586|urn:dateOfBirth.year:2a07dbbde111ac2a9a62f92ad22ba9a7aa418446ae2c5cad03e5d689ff8e72bd:1947.6347555235777|",
+        "claimPath": "identity.dateOfBirth",
+        "targetHash": "028ab3dc56ff0bf8a421b666968a24efb8360283d35e5fa572f22eb399b266d8",
+        "node": [
+          {
+            "right": "32402efef3cd6155a1762e4017c30960127f5ac371276fa98b4071de9e4167e2"
+          },
+          {
+            "right": "b7abb6a07c3d34f93481b1640a2737b58083cb625c76cc033c082a35eeb03561"
+          },
+          {
+            "left": "1a90f7b369d4110b4268715692b1d3c896476ba06b4e7c48c98452536eb5471b"
+          },
+          {
+            "right": "04bef12661f9a409d18cbbb52bc58651f65e286abd8bc140e1344594841a14ed"
+          },
+          {
+            "right": "da4d8a5e274061369782e64bbb86f213271f67ea21d096437bc15b05d91508f9"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuer",
+        "value": "urn:issuer:2477fdbab78769105cfd637c53b5fe4500f1b528b4917ca371e25e32ba27ad79:jest:test:fe0ca5d0-e8b0-11e8-8a40-7fe4d191eb47|",
+        "claimPath": "meta.issuer",
+        "targetHash": "32402efef3cd6155a1762e4017c30960127f5ac371276fa98b4071de9e4167e2",
+        "node": [
+          {
+            "left": "028ab3dc56ff0bf8a421b666968a24efb8360283d35e5fa572f22eb399b266d8"
+          },
+          {
+            "right": "b7abb6a07c3d34f93481b1640a2737b58083cb625c76cc033c082a35eeb03561"
+          },
+          {
+            "left": "1a90f7b369d4110b4268715692b1d3c896476ba06b4e7c48c98452536eb5471b"
+          },
+          {
+            "right": "04bef12661f9a409d18cbbb52bc58651f65e286abd8bc140e1344594841a14ed"
+          },
+          {
+            "right": "da4d8a5e274061369782e64bbb86f213271f67ea21d096437bc15b05d91508f9"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuanceDate",
+        "value": "urn:issuanceDate:ca2c56221898ce1dc364c8f4cf153f5b61d3c03b4505daede5cb23a22cd6f9ba:2018-11-15T08:32:30.893Z|",
+        "claimPath": "meta.issuanceDate",
+        "targetHash": "a6b536e9d69c7fbe30017c4d89de2e1e4501532e2f1de145a28dff904ac7fb67",
+        "node": [
+          {
+            "right": "e4f5675ab686ed53b7d5fa60bc0c412e59cc312648c515cf8ff88497b0e6e971"
+          },
+          {
+            "left": "dfa31fa614a9cef75da528036a11e5ca09ad521a5483b8c709d5408aaac6bd11"
+          },
+          {
+            "left": "1a90f7b369d4110b4268715692b1d3c896476ba06b4e7c48c98452536eb5471b"
+          },
+          {
+            "right": "04bef12661f9a409d18cbbb52bc58651f65e286abd8bc140e1344594841a14ed"
+          },
+          {
+            "right": "da4d8a5e274061369782e64bbb86f213271f67ea21d096437bc15b05d91508f9"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:expirationDate",
+        "value": "urn:expirationDate:27d69dde4c16a4f841236ae17d4e5839667ddcff19a6bb99e679fe64be301006:null|",
+        "claimPath": "meta.expirationDate",
+        "targetHash": "e4f5675ab686ed53b7d5fa60bc0c412e59cc312648c515cf8ff88497b0e6e971",
+        "node": [
+          {
+            "left": "a6b536e9d69c7fbe30017c4d89de2e1e4501532e2f1de145a28dff904ac7fb67"
+          },
+          {
+            "left": "dfa31fa614a9cef75da528036a11e5ca09ad521a5483b8c709d5408aaac6bd11"
+          },
+          {
+            "left": "1a90f7b369d4110b4268715692b1d3c896476ba06b4e7c48c98452536eb5471b"
+          },
+          {
+            "right": "04bef12661f9a409d18cbbb52bc58651f65e286abd8bc140e1344594841a14ed"
+          },
+          {
+            "right": "da4d8a5e274061369782e64bbb86f213271f67ea21d096437bc15b05d91508f9"
+          }
+        ]
+      }
+    ]
+  }
+}

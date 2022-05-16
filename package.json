@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -19,7 +19,7 @@
   "scripts": {
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "npm run lint -- --fix",
-    "test": "cross-env NODE_ENV=false jest",
+    "test": "cross-env NODE_ENV=test jest",
     "test:watch": "jest --watch",
     "check": "npm run lint && npm run test",
     "generate-civic-config": "cross-env NODE_ENV=test node scripts/configuration.js",
@@ -44,7 +44,9 @@
     "audit-ci": "^3.2.0",
     "babel-jest": "^27.0.6",
     "babel-minify": "^0.5.1",
-    "eslint": "^4.19.1",
+    "clear": "^0.1.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
     "eslint-config-airbnb": "^17.0.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-loader": "^2.0.0",
@@ -52,25 +54,26 @@
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-react": "^7.23.2",
+    "figlet": "^1.5.0",
     "husky": "^1.1.2",
+    "inquirer": "^7.3.3",
     "jest": "^25.5.4",
     "jest-html-reporter": "^2.3.0",
     "npm": "^6.14.13",
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2",
-    "cross-env": "^7.0.3",
-    "shelljs": "^0.8.4",
-    "figlet": "^1.5.0",
-    "inquirer": "^7.3.3",
-    "clear": "^0.1.0"
+    "shelljs": "^0.8.4"
   },
   "dependencies": {
+    "@digitalbazaar/did-io": "^1.1.0",
+    "@identity.com/did-io-driver-sol": "^1.0.0-beta.0",
     "@identity.com/uca": "github:identity-com/uca#v1.0.30",
     "ajv": "^7.2.4",
     "ajv-formats": "^2.0.2",
     "babel-runtime": "^6.26.0",
-    "bitcoinjs-lib": "git+https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
+    "bitcoinjs-lib": "https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
     "bottlejs": "^1.7.1",
+    "bs58": "^4.0.1",
     "dotenv": "^8.6.0",
     "flat": "^4.1.0",
     "json-schema-traverse": "^1.0.0",
@@ -83,6 +86,7 @@
     "request-promise-native": "^1.0.9",
     "sift": "^13.5.4",
     "sjcl": "github:civicteam/sjcl#v1.0.8-ecc",
+    "tweetnacl": "^1.0.3",
     "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
     "uuid": "^3.3.2",
@@ -112,7 +116,16 @@
     "coverageDirectory": "reports/coverage",
     "collectCoverage": true,
     "testResultsProcessor": "./node_modules/jest-html-reporter",
-    "verbose": true
+    "verbose": true,
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(@digitalbazaar/did-io|@digitalbazaar/lru-memoize|@digitalbazaar/ed25519-verification-key-2018|@digitalbazaar/did-io|base58-universal))"
+    ],
+    "moduleNameMapper": {
+      "@digitalbazaar/did-io": "@digitalbazaar/did-io/lib/main.js",
+      "@digitalbazaar/lru-memoize": "@digitalbazaar/lru-memoize/lib/main.js",
+      "@digitalbazaar/ed25519-verification-key-2018": "@digitalbazaar/ed25519-verification-key-2018/src/main.js",
+      "base58-universal": "base58-universal/main.js"
+    }
   },
   "jest-html-reporter": {
     "pageTitle": "Verifiable Credential and Attestation Library Test Suite",

@@ -7,7 +7,6 @@ const { services } = require('../services');
 
 /**
  * Transforms a list of UCAs into the signature property of the verifiable claims
-
  */
 class CvcMerkleProof {
   static get PADDING_INCREMENTS() {
@@ -21,6 +20,7 @@ class CvcMerkleProof {
     this.anchor = 'TBD (Civic Blockchain Attestation)';
     this.leaves = CvcMerkleProof.getAllAttestableValue(withRandomUcas);
     this.buildMerkleTree(credentialSigner);
+    this.granted = null;
   }
 
   buildMerkleTree(credentialSigner = null) {

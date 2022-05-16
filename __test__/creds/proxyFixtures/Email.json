@@ -1,0 +1,172 @@
+{
+  "id": "e3dc1ceb-3899-454f-a80c-52c97a0cc9d8",
+  "issuer": "jest:test:fe07c3d0-e8b0-11e8-8a40-7fe4d191eb47",
+  "issuanceDate": "2018-11-15T08:32:30.862Z",
+  "identifier": "credential-cvc:Email-v1",
+  "expirationDate": null,
+  "version": "1",
+  "type": [
+    "Credential",
+    "credential-cvc:Email-v1"
+  ],
+  "claim": {
+    "contact": {
+      "email": {
+        "domain": {
+          "name": "X6gQFO3QYg",
+          "tld": "PSsiuGIgez"
+        },
+        "username": "b6J7B5pCWo"
+      }
+    }
+  },
+  "proof": {
+    "type": "CvcMerkleProof2018",
+    "merkleRoot": "03e9bccbf5109b7b70154eddd95b089a24896d0a6b46f52549d8471febd83a3d",
+    "anchor": {
+      "subject": {
+        "pub": "xpub:dummy",
+        "label": "credential-cvc:Email-v1",
+        "data": "03e9bccbf5109b7b70154eddd95b089a24896d0a6b46f52549d8471febd83a3d",
+        "signature": "signed:dummy"
+      },
+      "walletId": "none",
+      "cosigners": [
+        {
+          "pub": "xpub:dummy"
+        },
+        {
+          "pub": "xpub:dummy"
+        }
+      ],
+      "authority": {
+        "pub": "xpub:dummy",
+        "path": "/"
+      },
+      "coin": "dummycoin",
+      "tx": "",
+      "network": "dummynet",
+      "type": "permanent",
+      "civicAsPrimary": false,
+      "schema": "dummy-20180201",
+      "value": {}
+    },
+    "leaves": [
+      {
+        "identifier": "claim-cvc:Contact.email-v1",
+        "value": "urn:email.domain.name:d8ca1591c2526a1b03e8ab9be02f32036c112b1b347e3cd7ae6bf5079ab249a2:X6gQFO3QYg|urn:email.domain.tld:58f18dc6fe5a24b3626fbd9a03548864dc380114a17f346f0d97d3b9cb0700d5:PSsiuGIgez|urn:email.username:3e19732ba77e798b6b85f55e3d5321e58108c758b865614a60b3198fb10c0d69:b6J7B5pCWo|",
+        "claimPath": "contact.email",
+        "targetHash": "1952a3a7260b286d1251f40db511d9b5cf78960a414791c96ac6437b2968a190",
+        "node": [
+          {
+            "right": "5478af59d9d5633434dbcac0c4d98d65c3c23dd80fb008081aabd5c95ea40642"
+          },
+          {
+            "right": "070c1ad44f28450390cd89e482bc4b8af8a41b4b1a5e112d9218bea051f6ad26"
+          },
+          {
+            "right": "b826226710e04f3cfbab3e877e574489a79c84ad3acffe651cd7e95cd3e6ac60"
+          },
+          {
+            "right": "b0ce0c779bce746b589a4fca78d14dc482aa1e66bf015a15321644c0cceb4735"
+          },
+          {
+            "right": "322500cf2d9c6b3a1dc8a9c4cf9c0bfaddf244678395429f9f74806055224d81"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Email.domain-v1",
+        "value": "urn:domain.name:d8ca1591c2526a1b03e8ab9be02f32036c112b1b347e3cd7ae6bf5079ab249a2:X6gQFO3QYg|urn:domain.tld:58f18dc6fe5a24b3626fbd9a03548864dc380114a17f346f0d97d3b9cb0700d5:PSsiuGIgez|",
+        "claimPath": "contact.email.domain",
+        "targetHash": "5478af59d9d5633434dbcac0c4d98d65c3c23dd80fb008081aabd5c95ea40642",
+        "node": [
+          {
+            "left": "1952a3a7260b286d1251f40db511d9b5cf78960a414791c96ac6437b2968a190"
+          },
+          {
+            "right": "070c1ad44f28450390cd89e482bc4b8af8a41b4b1a5e112d9218bea051f6ad26"
+          },
+          {
+            "right": "b826226710e04f3cfbab3e877e574489a79c84ad3acffe651cd7e95cd3e6ac60"
+          },
+          {
+            "right": "b0ce0c779bce746b589a4fca78d14dc482aa1e66bf015a15321644c0cceb4735"
+          },
+          {
+            "right": "322500cf2d9c6b3a1dc8a9c4cf9c0bfaddf244678395429f9f74806055224d81"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuer",
+        "value": "urn:issuer:572ac63d41247d7b2cb3f8f344447b51e1898e11206b38750261250f976fbedf:jest:test:fe07c3d0-e8b0-11e8-8a40-7fe4d191eb47|",
+        "claimPath": "meta.issuer",
+        "targetHash": "3e2858af4f6365227b60e562e6633c48f4c11665e0f80454a88591c71d3b1983",
+        "node": [
+          {
+            "right": "d20fab7ea0835b15ce3bc78118f0a044ce1f2da4fcaf06f2df465964811168b0"
+          },
+          {
+            "left": "f4688dcbf2bcd091b274227f1ffcd7a55a125526871caeda08b9ca344303fec6"
+          },
+          {
+            "right": "b826226710e04f3cfbab3e877e574489a79c84ad3acffe651cd7e95cd3e6ac60"
+          },
+          {
+            "right": "b0ce0c779bce746b589a4fca78d14dc482aa1e66bf015a15321644c0cceb4735"
+          },
+          {
+            "right": "322500cf2d9c6b3a1dc8a9c4cf9c0bfaddf244678395429f9f74806055224d81"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuanceDate",
+        "value": "urn:issuanceDate:34618d06738b071a224f2cf0236def1022dcfaf23827b85050cf653d27001635:2018-11-15T08:32:30.862Z|",
+        "claimPath": "meta.issuanceDate",
+        "targetHash": "d20fab7ea0835b15ce3bc78118f0a044ce1f2da4fcaf06f2df465964811168b0",
+        "node": [
+          {
+            "left": "3e2858af4f6365227b60e562e6633c48f4c11665e0f80454a88591c71d3b1983"
+          },
+          {
+            "left": "f4688dcbf2bcd091b274227f1ffcd7a55a125526871caeda08b9ca344303fec6"
+          },
+          {
+            "right": "b826226710e04f3cfbab3e877e574489a79c84ad3acffe651cd7e95cd3e6ac60"
+          },
+          {
+            "right": "b0ce0c779bce746b589a4fca78d14dc482aa1e66bf015a15321644c0cceb4735"
+          },
+          {
+            "right": "322500cf2d9c6b3a1dc8a9c4cf9c0bfaddf244678395429f9f74806055224d81"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:expirationDate",
+        "value": "urn:expirationDate:629bc2bb479244a518ead46215278d86241cf206a4c32d5fff0eff3ef9f881ab:null|",
+        "claimPath": "meta.expirationDate",
+        "targetHash": "56eb2aa57e7d904e37bbe4cf4d9e34cd068ceeb1a18fd09d7be56bc9f715dfd0",
+        "node": [
+          {
+            "right": "856e21db11d11e74c7ca39b02adb7373283eaf205670b11a9dec9dc03f97c606"
+          },
+          {
+            "right": "740f2a0682cca1c44a1973a81fa24c3eaf81cb50f4effdcc7b1d76bc0f9da60c"
+          },
+          {
+            "left": "5cb4049edfe5a169032dbb4a66d01c59c64b50ef7d40ec2690d24429afd87ea4"
+          },
+          {
+            "right": "b0ce0c779bce746b589a4fca78d14dc482aa1e66bf015a15321644c0cceb4735"
+          },
+          {
+            "right": "322500cf2d9c6b3a1dc8a9c4cf9c0bfaddf244678395429f9f74806055224d81"
+          }
+        ]
+      }
+    ]
+  }
+}

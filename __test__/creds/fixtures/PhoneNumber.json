@@ -2,14 +2,13 @@
   "id": "c409433d-53a0-413b-ab36-cf223ef11261",
   "issuer": "jest:test:fe097180-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.872Z",
-  "identifier": "credential-cvc:PhoneNumber-v1",
-  "expirationDate": null,
-  "version": "1",
+  "identifier": "credential-cvc:PhoneNumber-v3",
   "type": [
-    "Credential",
-    "credential-cvc:PhoneNumber-v1"
+    "VerifiableCredential",
+    "IdentityCredential"
   ],
-  "claim": {
+  "credentialSubject": {
+    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
     "contact": {
       "phoneNumber": {
         "country": "Y1kbIF49uq",
@@ -44,7 +43,7 @@
         "path": "/"
       },
       "coin": "dummycoin",
-      "tx": {},
+      "tx": "",
       "network": "dummynet",
       "type": "permanent",
       "civicAsPrimary": false,
@@ -236,6 +235,7 @@
           }
         ]
       }
-    ]
+    ],
+    "granted": null
   }
 }

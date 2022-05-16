@@ -1,0 +1,266 @@
+{
+  "id": "8a842560-40fc-4dcf-ae7f-23148a108829",
+  "issuer": "did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD",
+  "issuanceDate": "2018-11-14T09:00:43.439Z",
+  "identifier": "credential-cvc:Address-v1",
+  "expirationDate": "2028-11-13T19:08:23.439Z",
+  "version": "1",
+  "type": [
+    "Credential",
+    "credential-cvc:Address-v1"
+  ],
+  "claim": {
+    "identity": {
+      "address": {
+        "city": "Belo Horizonte",
+        "country": "Brazil",
+        "county": "Sao Bento",
+        "postalCode": "94103345",
+        "state": "Minas Gerais",
+        "street": "Alameda dos Anjos",
+        "unit": "500"
+      }
+    }
+  },
+  "proof": {
+    "type": "CvcMerkleProof2018",
+    "merkleRoot": "b9714602a25118942d5aa1e4865aabd8238c4f6b2bb74c746b2a954c9fd1b9ea",
+    "anchor": {
+      "subject": {
+        "pub": "xpub:dummy",
+        "label": "credential-cvc:Address-v1",
+        "data": "b9714602a25118942d5aa1e4865aabd8238c4f6b2bb74c746b2a954c9fd1b9ea",
+        "signature": "signed:dummy"
+      },
+      "walletId": "none",
+      "cosigners": [
+        {
+          "pub": "xpub:dummy"
+        },
+        {
+          "pub": "xpub:dummy"
+        }
+      ],
+      "authority": {
+        "pub": "xpub:dummy",
+        "path": "/"
+      },
+      "coin": "dummycoin",
+      "tx": "",
+      "network": "dummynet",
+      "type": "permanent",
+      "civicAsPrimary": false,
+      "schema": "dummy-20180201",
+      "value": {}
+    },
+    "leaves": [
+      {
+        "identifier": "claim-cvc:Identity.address-v1",
+        "value": "urn:address.city:ee7831025d001c630566afd1f4067e90f28caa23823e764c6295f41dff89e18a:Belo Horizonte|urn:address.country:75c6faa83a9621b3cf6e05762d1440be1a58c857faee4fab50d0c62575a3e7e6:Brazil|urn:address.county:e18f114049b5e5a37958c662a61ea27817fb69c7123bdc16c196dd460151b16a:Sao Bento|urn:address.postalCode:5bc128e2161a7cc971cca3d32da2af201d87fa7b2f236549d1d28b2dce7af318:94103345|urn:address.state:6ff19a2a4928c2d8b8c3265d44206290d686068a3ed1ae551caf4d8762a77c33:Minas Gerais|urn:address.street:e9bed36fda0902eb92c9661b4f525855105a400e7fc08083564e379befc7414d:Alameda dos Anjos|urn:address.unit:78783212de2926fc1221870bcca846d7e9378b5b750d6104b773ce776eefa961:500|",
+        "claimPath": "identity.address",
+        "targetHash": "514fc789cc8a37abd2dfdcb11017051f51cc84ae7878d2da8b190c3c5074b329",
+        "node": [
+          {
+            "right": "adbded73c3db76bb49d718184588184547b511737419e51cbec04ae1be0847ac"
+          },
+          {
+            "right": "cad620d70c72ef671ace60e756875d22332469924f48be0da14078d9e5814d9c"
+          },
+          {
+            "right": "f7cf58c4223a7f2368e9d7bf913abd88c06ef7525ec59c45f03ebc5c9be5ac5a"
+          },
+          {
+            "right": "93185bcd8244aa98c885b3ae2d8eecf01661c633fd8ed3743b31605e2fd66e55"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Address.city-v1",
+        "value": "urn:city:ee7831025d001c630566afd1f4067e90f28caa23823e764c6295f41dff89e18a:Belo Horizonte|",
+        "claimPath": "identity.address.city",
+        "targetHash": "adbded73c3db76bb49d718184588184547b511737419e51cbec04ae1be0847ac",
+        "node": [
+          {
+            "left": "514fc789cc8a37abd2dfdcb11017051f51cc84ae7878d2da8b190c3c5074b329"
+          },
+          {
+            "right": "cad620d70c72ef671ace60e756875d22332469924f48be0da14078d9e5814d9c"
+          },
+          {
+            "right": "f7cf58c4223a7f2368e9d7bf913abd88c06ef7525ec59c45f03ebc5c9be5ac5a"
+          },
+          {
+            "right": "93185bcd8244aa98c885b3ae2d8eecf01661c633fd8ed3743b31605e2fd66e55"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Address.postalCode-v1",
+        "value": "urn:postalCode:5bc128e2161a7cc971cca3d32da2af201d87fa7b2f236549d1d28b2dce7af318:94103345|",
+        "claimPath": "identity.address.postalCode",
+        "targetHash": "c8a2719635d2eb4d4dfcee2d04ec4651318c8a9406ccebd12345ca644c75b51d",
+        "node": [
+          {
+            "right": "e7f430e61b6d5ac758f35e881289077978cd59ed648b841f0d8b09671bf697dd"
+          },
+          {
+            "left": "7d3d13f8af2e7fffe78c393b5c2683aa0daa3495fec3197f9a8a5308ab9f233e"
+          },
+          {
+            "right": "f7cf58c4223a7f2368e9d7bf913abd88c06ef7525ec59c45f03ebc5c9be5ac5a"
+          },
+          {
+            "right": "93185bcd8244aa98c885b3ae2d8eecf01661c633fd8ed3743b31605e2fd66e55"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Address.state-v1",
+        "value": "urn:state:6ff19a2a4928c2d8b8c3265d44206290d686068a3ed1ae551caf4d8762a77c33:Minas Gerais|",
+        "claimPath": "identity.address.state",
+        "targetHash": "e7f430e61b6d5ac758f35e881289077978cd59ed648b841f0d8b09671bf697dd",
+        "node": [
+          {
+            "left": "c8a2719635d2eb4d4dfcee2d04ec4651318c8a9406ccebd12345ca644c75b51d"
+          },
+          {
+            "left": "7d3d13f8af2e7fffe78c393b5c2683aa0daa3495fec3197f9a8a5308ab9f233e"
+          },
+          {
+            "right": "f7cf58c4223a7f2368e9d7bf913abd88c06ef7525ec59c45f03ebc5c9be5ac5a"
+          },
+          {
+            "right": "93185bcd8244aa98c885b3ae2d8eecf01661c633fd8ed3743b31605e2fd66e55"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Address.county-v1",
+        "value": "urn:county:e18f114049b5e5a37958c662a61ea27817fb69c7123bdc16c196dd460151b16a:Sao Bento|",
+        "claimPath": "identity.address.county",
+        "targetHash": "cba237895ec0aa51ded88b320b727114472e5dfd7a70651bf51c619bdfd787e2",
+        "node": [
+          {
+            "right": "ac2e07db0f6c4923e1cb67dcd387af07150d6043fcdd12ba7c884d72709b724b"
+          },
+          {
+            "right": "e63c76842c514b0e9280fa7511605340eee0e9f17359643f16fa0a9fc372bb22"
+          },
+          {
+            "left": "2f895fbd920dadd74aec18fb24dcb28a74caa32c0d4079250a98ba734a0ed156"
+          },
+          {
+            "right": "93185bcd8244aa98c885b3ae2d8eecf01661c633fd8ed3743b31605e2fd66e55"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:Address.county-v1",
+        "value": "urn:country:75c6faa83a9621b3cf6e05762d1440be1a58c857faee4fab50d0c62575a3e7e6:Brazil|",
+        "claimPath": "identity.address.country",
+        "targetHash": "ac2e07db0f6c4923e1cb67dcd387af07150d6043fcdd12ba7c884d72709b724b",
+        "node": [
+          {
+            "left": "cba237895ec0aa51ded88b320b727114472e5dfd7a70651bf51c619bdfd787e2"
+          },
+          {
+            "right": "e63c76842c514b0e9280fa7511605340eee0e9f17359643f16fa0a9fc372bb22"
+          },
+          {
+            "left": "2f895fbd920dadd74aec18fb24dcb28a74caa32c0d4079250a98ba734a0ed156"
+          },
+          {
+            "right": "93185bcd8244aa98c885b3ae2d8eecf01661c633fd8ed3743b31605e2fd66e55"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuer",
+        "value": "urn:issuer:fd95eb174ddb8a0ec545894995a7ee542430fd9ce20da3117b35d8fbe29b7dcb:did:ethr:0xaf9482c84De4e2a961B98176C9f295F9b6008BfD|",
+        "claimPath": "meta.issuer",
+        "targetHash": "fdc74b079604ba0a45cfdb771e677b3ae426d07d8536d18d6a1b98e5781be56a",
+        "node": [
+          {
+            "right": "a286fc2a5baef447725b08cf55466589e31990038ee42269fd43d59cf186d613"
+          },
+          {
+            "left": "d0d888ba93cadb3e89ab97b6fb3a08c6de2b416a83b6b492bb58253906a0fcd6"
+          },
+          {
+            "left": "2f895fbd920dadd74aec18fb24dcb28a74caa32c0d4079250a98ba734a0ed156"
+          },
+          {
+            "right": "93185bcd8244aa98c885b3ae2d8eecf01661c633fd8ed3743b31605e2fd66e55"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuanceDate",
+        "value": "urn:issuanceDate:08df34a6cea04496033a2e467019e57c17f63c730c6599a57238e77d9d842577:2018-11-14T09:00:43.439Z|",
+        "claimPath": "meta.issuanceDate",
+        "targetHash": "a286fc2a5baef447725b08cf55466589e31990038ee42269fd43d59cf186d613",
+        "node": [
+          {
+            "left": "fdc74b079604ba0a45cfdb771e677b3ae426d07d8536d18d6a1b98e5781be56a"
+          },
+          {
+            "left": "d0d888ba93cadb3e89ab97b6fb3a08c6de2b416a83b6b492bb58253906a0fcd6"
+          },
+          {
+            "left": "2f895fbd920dadd74aec18fb24dcb28a74caa32c0d4079250a98ba734a0ed156"
+          },
+          {
+            "right": "93185bcd8244aa98c885b3ae2d8eecf01661c633fd8ed3743b31605e2fd66e55"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:expirationDate",
+        "value": "urn:expirationDate:330447afa605c5d0dfc277489c3cc8cf7fb78552376629d47c2eb56eafa791cc:2028-11-13T19:08:23.439Z|",
+        "claimPath": "meta.expirationDate",
+        "targetHash": "17a922e8326ede33f3b9ce28077a6ab0babf541419b3d991842a0fbd4ce53124",
+        "node": [
+          {
+            "right": "cb660f250ca9b3531adb83fa60f38d296bad4dd9c43125581c149b19e60f5e40"
+          },
+          {
+            "right": "e3f1503236f58e01e0f09de72417ab3d615b55987bc22291ba8c2b8cdfe9a4af"
+          },
+          {
+            "right": "6a818422c060cfb057ff8328c03f558e3f7ebdf7a69aadafee592ac061941f68"
+          },
+          {
+            "left": "e9856ae68eda3f8697efc54c455430a2bbd323fa3a9cf723931b77a077db401f"
+          },
+          {
+            "right": "5131392d9fc303b956cf03855a147a732aebc9ab70fab32828ddad319b7dd6eb"
+          }
+        ]
+      }
+    ]
+  }
+}

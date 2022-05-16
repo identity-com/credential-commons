@@ -2,14 +2,13 @@
   "id": "31cd46c4-7165-42bd-8a31-c20c1dc0a629",
   "issuer": "",
   "issuanceDate": "2019-06-05T19:20:30.688Z",
-  "identifier": "credential-cvc:IdDocument-v1",
-  "expirationDate": null,
-  "version": "1",
+  "identifier": "credential-cvc:IdDocument-v3",
   "type": [
-    "Credential",
-    "credential-cvc:IdDocument-v1"
+    "VerifiableCredential",
+    "IdentityCredential"
   ],
-  "claim": {
+  "credentialSubject": {
+    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
     "document": {
       "type": "Passport",
       "name": {
@@ -184,7 +183,7 @@
           }
         ]
       }
-    ]
-  },
-  "granted": null
+    ],
+    "granted": null
+  }
 }
