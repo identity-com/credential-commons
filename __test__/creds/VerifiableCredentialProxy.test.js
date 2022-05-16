@@ -991,7 +991,6 @@ describe('Unit tests for Verifiable Credential Proxy', () => {
     expect(transmittedCred.granted).not.toBeNull();
 
     const credentialObj = JSON.parse(transmittedCred);
-    console.log(JSON.stringify(credentialObj, null, 2));
 
     const verifyGrant = await VC.requesterGrantVerify(credentialObj, requestorId, requestId);
     expect(verifyGrant).toEqual(true);

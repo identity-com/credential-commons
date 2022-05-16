@@ -66,6 +66,8 @@ class TestSchemaLoader extends CVCSchemaLoader {
 describe('Unit tests for Verifiable Credentials', () => {
   beforeAll(() => {
     schemaLoader.addLoader(new CVCSchemaLoader());
+
+    didTestUtil.mockDids();
   });
 
   beforeEach(() => {
@@ -1726,12 +1728,18 @@ describe('Unit tests for Verifiable Credentials', () => {
     const ucas = [
       type, number, name, gender, issueCountry, placeOfBirth, dateOfBirth, nationality, dateOfExpiry, evidences,
     ];
-    const credential = await VC.create('credential-cvc:IdDocument-v3', didTestUtil.DID_CONTROLLER, null, credentialSubject, ucas, null, {
-      verificationMethod,
-      keypair,
-    });
+    const credential = await VC.create('credential-cvc:IdDocument-v3',
+      didTestUtil.DID_CONTROLLER,
+      null,
+      credentialSubject,
+      ucas,
+      null,
+      {
+        verificationMethod,
+        keypair,
+      });
     expect(credential).toBeDefined();
-    expect(await cred.verifyMerkletreeSignature()).toBe(true);
+    expect(await credential.verifyMerkletreeSignature()).toBe(true);
   });
 
   it('Should throw exception on credential creation if required uca is missing', async () => {
