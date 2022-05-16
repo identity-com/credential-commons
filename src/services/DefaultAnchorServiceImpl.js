@@ -16,6 +16,7 @@ const logger = require('../logger');
 function DummyAnchorServiceImpl(config, http) {
   this.config = config;
   this.http = http;
+  // eslint-disable-next-line no-unused-vars
   const pollService = async (statusUrl) => {
     try {
       const attestation = await this.http.request({
