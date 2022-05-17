@@ -115,7 +115,7 @@ class SummaryMapper {
 }
 
 const getSchemaVersion = (identifier) => {
-  const matches = identifier.match(/D-v([\d]+$)/);
+  const matches = identifier.match(/-v([\d]+$)/);
   if (matches && matches.length > 1) {
     return matches[1];
   }
@@ -149,10 +149,14 @@ class SchemaLoader {
     this.validUcaIdentifiers = [];
     this.validCredentialIdentifiers = [];
     this.ucaCompared = [];
+
+    // allowUnionTypes is required because of the anchor in the proof can be a string/object (this should be changed)
     this.ajv = new Ajv({
       logger: console,
       allErrors: true,
       verbose: true,
+      strict: true,
+      allowUnionTypes: true,
     });
 
     // add data formats such as date-time
@@ -200,22 +204,23 @@ class SchemaLoader {
       definition.depends.push(propertySchema.title);
     }
 
-    const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
+    const csProperties = await this.getCredentialSubjectProperties(schema);
 
-    if (schemaProperties.claim.required && schemaProperties.claim.required.includes(property)) {
+    if (csProperties.required && csProperties.required.includes(property)) {
       definition.required.push(propertySchema.title);
     }
   }
 
   /**
-   * Adds a claim definition to be backwards compatible with the old schema structure.
+   * Supporting both claim and credentialSubject
+   * TODO: remove this once backwards compatibility has been removed
+   * @param schema
+   * @returns {*|(() => Promise<void>)}
    */
-  async addDefinition(schema) {
-    if (/^credential-/.test(schema.title)) {
-      await this.addCredentialDefinition(schema);
-    } else {
-      await this.addClaimDefinition(schema);
-    }
+  async getCredentialSubjectProperties(schema) {
+    const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
+
+    return schemaProperties.credentialSubject ? schemaProperties.credentialSubject : schemaProperties.claim;
   }
 
   /**
@@ -252,6 +257,18 @@ class SchemaLoader {
     return properties;
   }
 
+
+  /**
+   * Adds a claim definition to be backwards compatible with the old schema structure.
+   */
+  async addDefinition(schema) {
+    if (/^credential-/.test(schema.title)) {
+      await this.addCredentialDefinition(schema);
+    } else {
+      await this.addClaimDefinition(schema);
+    }
+  }
+
   /**
    * Adds a credential definition to be backwards compatible with the old schema structure.
    */
@@ -266,14 +283,14 @@ class SchemaLoader {
       definition.transient = true;
     }
 
-    const properties = await this.flattenCredentialSchemaProperties(schema);
+    const credentialSubjectDefinition = await this.getCredentialSubjectProperties(schema);
 
-    if (properties.claim.required) {
+    if (credentialSubjectDefinition.required) {
       definition.required = [];
     }
 
     const references = [];
-    _.forEach(properties.claim.properties, (vo) => {
+    _.forEach(credentialSubjectDefinition.properties, (vo) => {
       _.forEach(vo.properties, (vi, ki) => {
         references.push({ ref: vo.properties[ki].$ref, property: ki });
       });
@@ -423,8 +440,7 @@ class SchemaLoader {
 
     if (schema.type === 'object') {
       if (!_.isEmpty(schema.properties)) {
-        const values = await this.getPropertyValues(schema.properties);
-        return values;
+        return this.getPropertyValues(schema.properties);
       }
     }
 
@@ -459,7 +475,7 @@ class SchemaLoader {
       const references = [];
       traverse(schema, {
         cb: (currentNode) => {
-          if (currentNode.$ref !== undefined) {
+          if (currentNode.$ref !== undefined && !currentNode.$ref.startsWith('#')) {
             // Prevent the same schema loaded multiple times
             references.push(this.loadSchemaFromUri(currentNode.$ref));
           }
@@ -468,13 +484,13 @@ class SchemaLoader {
 
       await Promise.all(references);
 
+      await this.addDefinition(schema);
+
       try {
         this.ajv.addSchema(schema);
       } catch (e) {
         // This could only happen if we have a cyclic dependency, or the same ref multiple times in the schema...
       }
-
-      await this.addDefinition(schema);
 
       return schema;
     }

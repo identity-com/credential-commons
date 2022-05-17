@@ -1,15 +1,18 @@
 {
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://www.identity.com/credentials/v3"
+  ],
   "id": "e24b2c57-3d78-42c3-9111-aaabcab8006d",
   "issuer": "jest:test:fe0ca5d0-e8b0-11e8-8a40-7fe4d191eb47",
   "issuanceDate": "2018-11-15T08:32:30.893Z",
-  "identifier": "credential-cvc:Identity-v1",
-  "expirationDate": null,
-  "version": "1",
+  "identifier": "credential-cvc:Identity-v3",
   "type": [
-    "Credential",
-    "credential-cvc:Identity-v1"
+    "VerifiableCredential",
+    "IdentityCredential"
   ],
-  "claim": {
+  "credentialSubject": {
+    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
     "identity": {
       "name": {
         "familyNames": "sWYglHZ6Ry",
@@ -47,7 +50,7 @@
         "path": "/"
       },
       "coin": "dummycoin",
-      "tx": {},
+      "tx": "",
       "network": "dummynet",
       "type": "permanent",
       "civicAsPrimary": false,
@@ -239,6 +242,7 @@
           }
         ]
       }
-    ]
+    ],
+    "granted": null
   }
 }

@@ -2,14 +2,15 @@
   "id": null,
   "issuer": "jest:test",
   "issuanceDate": "2018-06-19T21:52:47.512Z",
-  "identifier": "credential-cvc:TestWithExcludes-v1",
+  "identifier": "credential-cvc:TestWithExcludes-v3",
   "expirationDate": "2028-06-19T08:04:47.512Z",
   "version": 1,
   "type": [
-    "Credential",
-    "civ:Credential:TestWithExcludes"
+    "VerifiableCredential",
+    "IdentityCredential"
   ],
-  "claim": {
+  "credentialSubject": {
+    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
     "identity": {
       "name": {
         "first": "Joao",
@@ -215,6 +216,7 @@
           }
         ]
       }
-    ]
+    ],
+    "granted": null
   }
 }

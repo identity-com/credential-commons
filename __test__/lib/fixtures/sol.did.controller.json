@@ -1,0 +1,32 @@
+{
+  "@context": [
+    "https://w3id.org/did/v1.0",
+    "https://w3id.org/sol/v1"
+  ],
+  "id": "did:sol:localnet:DY5HzWG9GJGTw3cfkFndMapGGMXpPVBhRe9jEJjX25u9",
+  "controller": [],
+  "verificationMethod": [
+    {
+      "id": "did:sol:localnet:DY5HzWG9GJGTw3cfkFndMapGGMXpPVBhRe9jEJjX25u9#default",
+      "type": "Ed25519VerificationKey2018",
+      "controller": "did:sol:localnet:DY5HzWG9GJGTw3cfkFndMapGGMXpPVBhRe9jEJjX25u9",
+      "publicKeyBase58": "DY5HzWG9GJGTw3cfkFndMapGGMXpPVBhRe9jEJjX25u9"
+    }
+  ],
+  "authentication": [],
+  "assertionMethod": [],
+  "keyAgreement": [],
+  "capabilityInvocation": [
+    "did:sol:localnet:DY5HzWG9GJGTw3cfkFndMapGGMXpPVBhRe9jEJjX25u9#default"
+  ],
+  "capabilityDelegation": [],
+  "service": [],
+  "publicKey": [
+    {
+      "id": "did:sol:localnet:DY5HzWG9GJGTw3cfkFndMapGGMXpPVBhRe9jEJjX25u9#default",
+      "type": "Ed25519VerificationKey2018",
+      "controller": "did:sol:localnet:DY5HzWG9GJGTw3cfkFndMapGGMXpPVBhRe9jEJjX25u9",
+      "publicKeyBase58": "DY5HzWG9GJGTw3cfkFndMapGGMXpPVBhRe9jEJjX25u9"
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "id": "c409433d-53a0-413b-ab36-cf223ef11261",
+  "issuer": "jest:test:fe097180-e8b0-11e8-8a40-7fe4d191eb47",
+  "issuanceDate": "2018-11-15T08:32:30.872Z",
+  "identifier": "credential-cvc:PhoneNumber-v1",
+  "expirationDate": null,
+  "version": "1",
+  "type": [
+    "Credential",
+    "credential-cvc:PhoneNumber-v1"
+  ],
+  "claim": {
+    "contact": {
+      "phoneNumber": {
+        "country": "Y1kbIF49uq",
+        "countryCode": "LN0V7AMZ1R",
+        "extension": "MNPIrwwpt4",
+        "lineType": "pmu0Mibtod",
+        "number": "PPWP1gUyxx"
+      }
+    }
+  },
+  "proof": {
+    "type": "CvcMerkleProof2018",
+    "merkleRoot": "724ae5eef62ff52a72f21b613ab05024b4d52bc3c6dc64c64af242c670e85fff",
+    "anchor": {
+      "subject": {
+        "pub": "xpub:dummy",
+        "label": "credential-cvc:PhoneNumber-v1",
+        "data": "724ae5eef62ff52a72f21b613ab05024b4d52bc3c6dc64c64af242c670e85fff",
+        "signature": "signed:dummy"
+      },
+      "walletId": "none",
+      "cosigners": [
+        {
+          "pub": "xpub:dummy"
+        },
+        {
+          "pub": "xpub:dummy"
+        }
+      ],
+      "authority": {
+        "pub": "xpub:dummy",
+        "path": "/"
+      },
+      "coin": "dummycoin",
+      "tx": "",
+      "network": "dummynet",
+      "type": "permanent",
+      "civicAsPrimary": false,
+      "schema": "dummy-20180201",
+      "value": {}
+    },
+    "leaves": [
+      {
+        "identifier": "claim-cvc:Contact.phoneNumber-v1",
+        "value": "urn:phoneNumber.country:9a27746e2c234c14d80874f647ed69f491e5e19f4aee6c89f0cc8105747c2dcb:Y1kbIF49uq|urn:phoneNumber.countryCode:932d51a15a2e3079f3922d4ee77a7bb763ddda6515a790b4b79bb7c0dda8a4fd:LN0V7AMZ1R|urn:phoneNumber.extension:e22172ed0cece05274bab12d0944270c54c88203d205aae62ea3cf81fecf35c9:MNPIrwwpt4|urn:phoneNumber.lineType:65b327d40d8a19cae121a278d1fcb5dd9f89019c2eaf27544dc751c5f1bb4e2c:pmu0Mibtod|urn:phoneNumber.number:4fa664bf00f78628a95750172c4460d427cb66314504dd24dacd1e37cb560a22:PPWP1gUyxx|",
+        "claimPath": "contact.phoneNumber",
+        "targetHash": "ed75e2a2456b606010f54fc5a946e3c43d06eb2b3b6580ed180b927bcdd23342",
+        "node": [
+          {
+            "right": "fa1c0349205f0afac38aa71fcab8ffc9314a05f06d17579ef5293340f21f4afd"
+          },
+          {
+            "right": "17a1351eccf90d8c03ea88b6833b1ab559df152df76a0ec27444f3eec5a53355"
+          },
+          {
+            "right": "1558c61d73086831c4638bbe226e8c5ed815bcac60fb543df42f1b743ed8b4ab"
+          },
+          {
+            "right": "d255628334cca0a257bdf60d0a5788060223e70adeb8eb7b75bccfe5bfc0f135"
+          },
+          {
+            "right": "e0f44c7674b99460957856b11daf7ffead8aa4c5af9e96b1452bdd4b8b8560ad"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:PhoneNumber.countryCode-v1",
+        "value": "urn:countryCode:932d51a15a2e3079f3922d4ee77a7bb763ddda6515a790b4b79bb7c0dda8a4fd:LN0V7AMZ1R|",
+        "claimPath": "contact.phoneNumber.countryCode",
+        "targetHash": "fa1c0349205f0afac38aa71fcab8ffc9314a05f06d17579ef5293340f21f4afd",
+        "node": [
+          {
+            "left": "ed75e2a2456b606010f54fc5a946e3c43d06eb2b3b6580ed180b927bcdd23342"
+          },
+          {
+            "right": "17a1351eccf90d8c03ea88b6833b1ab559df152df76a0ec27444f3eec5a53355"
+          },
+          {
+            "right": "1558c61d73086831c4638bbe226e8c5ed815bcac60fb543df42f1b743ed8b4ab"
+          },
+          {
+            "right": "d255628334cca0a257bdf60d0a5788060223e70adeb8eb7b75bccfe5bfc0f135"
+          },
+          {
+            "right": "e0f44c7674b99460957856b11daf7ffead8aa4c5af9e96b1452bdd4b8b8560ad"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:PhoneNumber.number-v1",
+        "value": "urn:number:4fa664bf00f78628a95750172c4460d427cb66314504dd24dacd1e37cb560a22:PPWP1gUyxx|",
+        "claimPath": "contact.phoneNumber.number",
+        "targetHash": "7926d2d136e715d11cf39e1200542733f6808bd93eff9eadd2f3b811c4367372",
+        "node": [
+          {
+            "right": "ae91bfc54716606456a96f3d2c4ca8c1467b295cad5fe5f37fc960c804ea292d"
+          },
+          {
+            "left": "913277555b0fe34e4c35a150365d259861a6c974a6b3354f48e6c67f26a9b43f"
+          },
+          {
+            "right": "1558c61d73086831c4638bbe226e8c5ed815bcac60fb543df42f1b743ed8b4ab"
+          },
+          {
+            "right": "d255628334cca0a257bdf60d0a5788060223e70adeb8eb7b75bccfe5bfc0f135"
+          },
+          {
+            "right": "e0f44c7674b99460957856b11daf7ffead8aa4c5af9e96b1452bdd4b8b8560ad"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:PhoneNumber.extension-v1",
+        "value": "urn:extension:e22172ed0cece05274bab12d0944270c54c88203d205aae62ea3cf81fecf35c9:MNPIrwwpt4|",
+        "claimPath": "contact.phoneNumber.extension",
+        "targetHash": "ae91bfc54716606456a96f3d2c4ca8c1467b295cad5fe5f37fc960c804ea292d",
+        "node": [
+          {
+            "left": "7926d2d136e715d11cf39e1200542733f6808bd93eff9eadd2f3b811c4367372"
+          },
+          {
+            "left": "913277555b0fe34e4c35a150365d259861a6c974a6b3354f48e6c67f26a9b43f"
+          },
+          {
+            "right": "1558c61d73086831c4638bbe226e8c5ed815bcac60fb543df42f1b743ed8b4ab"
+          },
+          {
+            "right": "d255628334cca0a257bdf60d0a5788060223e70adeb8eb7b75bccfe5bfc0f135"
+          },
+          {
+            "right": "e0f44c7674b99460957856b11daf7ffead8aa4c5af9e96b1452bdd4b8b8560ad"
+          }
+        ]
+      },
+      {
+        "identifier": "claim-cvc:PhoneNumber.lineType-v1",
+        "value": "urn:lineType:65b327d40d8a19cae121a278d1fcb5dd9f89019c2eaf27544dc751c5f1bb4e2c:pmu0Mibtod|",
+        "claimPath": "contact.phoneNumber.lineType",
+        "targetHash": "43b6ae3e8cab63b818106d18fafeed21eeb3c95018a0a4ddd630148c5bf7e357",
+        "node": [
+          {
+            "right": "06576c1526b1fc221bb481158fa57ef0896207240b21d183db7b4cec2bc45e58"
+          },
+          {
+            "right": "714d0da1745522318318f3efebb2d0ec16aee0753d659133d0561a2360f44d5e"
+          },
+          {
+            "left": "c09f9f8fa44d9685c82ec2807e9add5498557df66aa06c2e90fb813fc6a93395"
+          },
+          {
+            "right": "d255628334cca0a257bdf60d0a5788060223e70adeb8eb7b75bccfe5bfc0f135"
+          },
+          {
+            "right": "e0f44c7674b99460957856b11daf7ffead8aa4c5af9e96b1452bdd4b8b8560ad"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuer",
+        "value": "urn:issuer:e22a7aacb5e25cccf68f98c4287c6fa977048b4588a5a667a6b5007c25a09cb8:jest:test:fe097180-e8b0-11e8-8a40-7fe4d191eb47|",
+        "claimPath": "meta.issuer",
+        "targetHash": "06576c1526b1fc221bb481158fa57ef0896207240b21d183db7b4cec2bc45e58",
+        "node": [
+          {
+            "left": "43b6ae3e8cab63b818106d18fafeed21eeb3c95018a0a4ddd630148c5bf7e357"
+          },
+          {
+            "right": "714d0da1745522318318f3efebb2d0ec16aee0753d659133d0561a2360f44d5e"
+          },
+          {
+            "left": "c09f9f8fa44d9685c82ec2807e9add5498557df66aa06c2e90fb813fc6a93395"
+          },
+          {
+            "right": "d255628334cca0a257bdf60d0a5788060223e70adeb8eb7b75bccfe5bfc0f135"
+          },
+          {
+            "right": "e0f44c7674b99460957856b11daf7ffead8aa4c5af9e96b1452bdd4b8b8560ad"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:issuanceDate",
+        "value": "urn:issuanceDate:1a9383edbc7a0d8e4bcd791bcbbfc0c4ad79a2a4c0fef6e534c24bd618517f40:2018-11-15T08:32:30.872Z|",
+        "claimPath": "meta.issuanceDate",
+        "targetHash": "ac9a76b08f65e397bec51050f7ba9a7dd5580a858aed6e8d6745118ab98a17ac",
+        "node": [
+          {
+            "right": "4e9539df672c8789b924dc5eaf4d457ba75452e259edca9543e30130600e38f9"
+          },
+          {
+            "left": "5d9dd28239cbab651e5fa085d13ac480a46c527dc9958fe65c3e0bac85e7c84d"
+          },
+          {
+            "left": "c09f9f8fa44d9685c82ec2807e9add5498557df66aa06c2e90fb813fc6a93395"
+          },
+          {
+            "right": "d255628334cca0a257bdf60d0a5788060223e70adeb8eb7b75bccfe5bfc0f135"
+          },
+          {
+            "right": "e0f44c7674b99460957856b11daf7ffead8aa4c5af9e96b1452bdd4b8b8560ad"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Meta:expirationDate",
+        "value": "urn:expirationDate:73719558c8aa661f54267f5b5aa25c334e85fd95e3decba2a196eff5e0ac3f78:null|",
+        "claimPath": "meta.expirationDate",
+        "targetHash": "4e9539df672c8789b924dc5eaf4d457ba75452e259edca9543e30130600e38f9",
+        "node": [
+          {
+            "left": "ac9a76b08f65e397bec51050f7ba9a7dd5580a858aed6e8d6745118ab98a17ac"
+          },
+          {
+            "left": "5d9dd28239cbab651e5fa085d13ac480a46c527dc9958fe65c3e0bac85e7c84d"
+          },
+          {
+            "left": "c09f9f8fa44d9685c82ec2807e9add5498557df66aa06c2e90fb813fc6a93395"
+          },
+          {
+            "right": "d255628334cca0a257bdf60d0a5788060223e70adeb8eb7b75bccfe5bfc0f135"
+          },
+          {
+            "right": "e0f44c7674b99460957856b11daf7ffead8aa4c5af9e96b1452bdd4b8b8560ad"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -9,14 +9,16 @@ const MerkleTools = require('merkle-tools');
 
 const { sha256 } = require('../lib/crypto');
 const { Claim } = require('../claim/Claim');
+const didUtil = require('../lib/did');
 
 const definitions = require('./definitions');
 const { services } = require('../services');
 const time = require('../timeHelper');
 const { CvcMerkleProof } = require('./CvcMerkleProof');
 const { ClaimModel } = require('./ClaimModel');
-const CredentialSignerVerifier = require('./CredentialSignerVerifier');
 const { schemaLoader } = require('../schemas/jsonSchema');
+const { parseIdentifier } = require('../lib/stringUtils');
+const signerVerifier = require('../lib/signerVerifier');
 
 // convert a time delta to a timestamp
 const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
@@ -45,13 +47,16 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
   // 1. verify valid targetHashs
   // 1.1 "leave.value" should be equal claim values
   const ucaValue = new Claim(leave.identifier, { attestableValue: leave.value });
+  let providedClaimValue = _.get(claims, leave.claimPath);
+  if (!providedClaimValue) providedClaimValue = null;
+
   if (ucaValue.type === 'String' || ucaValue.type === 'Number') {
-    if (ucaValue.value !== _.get(claims, leave.claimPath)) {
+    if (ucaValue.value !== providedClaimValue) {
       invalidValues.push(leave.value);
     }
   } else if (ucaValue.type === 'Object') {
     const ucaValueValue = ucaValue.value;
-    const innerClaimValue = _.get(claims, leave.claimPath);
+    const innerClaimValue = providedClaimValue;
     const claimPathSufix = _.last(_.split(leave.claimPath, '.'));
 
     const claimValue = {};
@@ -64,7 +69,7 @@ function verifyLeave(leave, merkleTools, claims, signature, invalidValues, inval
       }
     });
   } else if (ucaValue.type === 'Array') {
-    const innerClaimValue = _.get(claims, leave.claimPath);
+    const innerClaimValue = providedClaimValue;
 
     _.forEach(ucaValue.value, (arrayItem, idx) => {
       const itemInnerClaimValue = innerClaimValue[idx];
@@ -176,7 +181,7 @@ async function nonCryptographicallySecureVerify(credential) {
   await schemaLoader.loadSchemaFromTitle(credential.identifier);
 
   const expiry = _.clone(credential.expirationDate);
-  const claims = _.clone(credential.claim);
+  const claims = _.clone(credential.credentialSubject);
   const signature = _.clone(credential.proof);
   const signLeaves = _.get(signature, 'leaves');
   let valid = false;
@@ -189,7 +194,7 @@ async function nonCryptographicallySecureVerify(credential) {
   const invalidValues = [];
   const invalidHashs = [];
   const invalidProofs = [];
-  _.forEach(_.keys(claimsWithFlatKeys), (claimKey) => {
+  _.forEach(_.keys(claimsWithFlatKeys).filter(key => key !== 'id'), (claimKey) => {
     // check if `claimKey` has a `claimPath` proof
     const leaveIdx = _.indexOf(leavesClaimPaths, claimKey);
     // if not found
@@ -275,12 +280,12 @@ async function cryptographicallySecureVerify(credential, verifyAttestationFunc, 
  * @param credential - A credential object with expirationDate, claim and proof
  * @return true if verified, false otherwise.
  */
-function requesterGrantVerify(credential, requesterId, requestId, keyName) {
+async function requesterGrantVerify(credential, requesterId, requestId, keyName) {
   const label = _.get(credential.proof, 'anchor.subject.label');
   const anchorPubKey = _.get(credential.proof, 'anchor.subject.pub');
   const anchorData = _.get(credential.proof, 'anchor.subject.data');
 
-  if (_.isEmpty(credential.granted) || _.isEmpty(label) || _.isEmpty(anchorPubKey)) {
+  if (_.isEmpty(credential.proof.granted) || _.isEmpty(label) || _.isEmpty(anchorPubKey)) {
     return false;
   }
 
@@ -298,7 +303,7 @@ function requesterGrantVerify(credential, requesterId, requestId, keyName) {
     cryptoManager.installKey(verifyKey, anchorPubKey);
   }
 
-  return cryptoManager.verify(verifyKey, hexHash, credential.granted);
+  return cryptoManager.verify(verifyKey, hexHash, credential.proof.granted);
 }
 
 /**
@@ -335,34 +340,12 @@ function verifyRequiredClaims(definition, ucas) {
 }
 
 /**
- * Throws exception if the definition has missing required claims
- * @param {*} definition - the credential definition
- * @param {*} verifiableCredentialJSON - the verifiable credential JSON
- */
-function verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON) {
-  const leaves = _.get(verifiableCredentialJSON, 'proof.leaves');
-
-  if (!_.isEmpty(definition.required) && leaves) {
-    const identifiers = leaves.map(leave => leave.identifier);
-    const missings = _.difference(definition.required, identifiers);
-    if (!_.isEmpty(missings)) {
-      throw new Error(`Missing required claim(s): ${_.join(missings, ', ')}`);
-    }
-  }
-}
-
-/**
  * Retrieves the credential definition
  * @param {string} identifier - credential identifier
  * @param {*} [version] - definition version
  */
 function getCredentialDefinition(identifier, version) {
-  let definition;
-  if (version) {
-    definition = _.find(definitions, { identifier, version: `${version}` });
-  } else {
-    definition = _.find(definitions, { identifier });
-  }
+  const definition = _.find(definitions, { identifier });
   if (!definition) {
     throw new Error(`Credential definition for ${identifier} v${version} not found`);
   }
@@ -377,8 +360,10 @@ function getCredentialDefinition(identifier, version) {
  * @param {*} version
  * @param {*} [evidence]
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
-  version, evidence, signerVerifier = null) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subject, ucas, evidence, signerOptions) {
+  const parsedIdentifier = parseIdentifier(identifier);
+  const version = parsedIdentifier ? parsedIdentifier[4] : '1';
+
   this.id = uuidv4();
   this.issuer = issuer;
   const issuerUCA = new Claim('cvc:Meta:issuer', this.issuer);
@@ -396,33 +381,38 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   }
 
   const definition = getCredentialDefinition(identifier, version);
-  this.version = `${version}` || definition.version;
-  this.type = ['Credential', identifier];
+  // this.version = `${version}` || definition.version;
+  this.type = ['VerifiableCredential', 'IdentityCredential'];
   this.transient = definition.transient || false;
 
   if (evidence) {
     this.evidence = serializeEvidence(evidence);
   }
 
+  this.credentialSubject = {
+    id: subject,
+  };
+
   // ucas can be empty here if it is been constructed from JSON
   if (!_.isEmpty(ucas)) {
     verifyRequiredClaims(definition, ucas);
-    this.claim = new ClaimModel(ucas);
-    this.proof = new CvcMerkleProof(proofUCAs, signerVerifier);
+    this.credentialSubject = {
+      ...this.credentialSubject,
+      ...new ClaimModel(ucas),
+    };
+    this.proof = new CvcMerkleProof(proofUCAs, signerOptions ? signerOptions.signer : null);
     if (!_.isEmpty(definition.excludes)) {
       const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
       _.forEach(removed, (r) => {
-        _.unset(this.claim, r.claimPath);
+        _.unset(this.credentialSubject, r.claimPath);
       });
     }
-    // The VC Grantted session (see .grantUsageFor)
-    this.granted = null;
   }
 
   /**
    * Returns the global identifier of the Credential
    */
-  this.getGlobalIdentifier = () => (`credential-${this.identifier}-${this.version}`);
+  this.getGlobalIdentifier = () => (`credential-${this.identifier}-${version}`);
 
   /**
    * Creates a filtered credential exposing only the requested claims
@@ -432,9 +422,9 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     const filtered = _.cloneDeep(this);
     _.remove(filtered.proof.leaves, el => !_.includes(requestedClaims, el.identifier));
 
-    filtered.claim = {};
+    filtered.credentialSubject = {};
     _.forEach(filtered.proof.leaves, (el) => {
-      _.set(filtered.claim, el.claimPath, _.get(this.claim, el.claimPath));
+      _.set(filtered.credentialSubject, el.claimPath, _.get(this.credentialSubject, el.claimPath));
     });
 
     return filtered;
@@ -557,10 +547,10 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
    * This methods check the stand alone merkletreeSiganture
    * return true or false for the validation
    */
-  this.verifyMerkletreeSignature = (pubBase58) => {
-    if (_.isEmpty(pubBase58)) return false;
-    const verifier = new CredentialSignerVerifier({ pubBase58 });
-    return verifier.isSignatureValid(this);
+  this.verifyMerkletreeSignature = async () => {
+    const verifier = await signerVerifier.verifier(this.issuer, this.proof.merkleRootSignature.verificationMethod);
+
+    return verifier.verify(this);
   };
 
   /**
@@ -602,7 +592,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
   const convertTimestampIfString = obj => (_.isString(obj) ? convertDeltaToTimestamp(obj) : obj);
 
   this.isMatch = (constraints) => {
-    const claims = _.cloneDeep(this.claim);
+    const claims = _.cloneDeep(this.credentialSubject);
     const siftCompatibleConstraints = transformConstraint(constraints);
 
     const claimsMatchConstraint = (constraint) => {
@@ -659,9 +649,41 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas,
     }
 
     const hexSign = cryptoManager.sign(signKey, hexHash);
-    this.granted = hexSign;
+    this.proof.granted = hexSign;
   };
 
+  /**
+   * Serializes the VerifiableCredential to a JSON string
+   * @param space The number of spaces to indent the JSON with
+   */
+  this.toJSON = () => {
+    const obj = _.pick(this, [
+      'id',
+      'identifier',
+      'issuer',
+      'issuanceDate',
+      'expirationDate',
+      'type',
+      'credentialSubject',
+      'proof',
+    ]);
+
+    // Remove undefined/null values
+    // eslint-disable-next-line no-restricted-syntax
+    for (const k in obj) {
+      if (obj[k] === null || obj[k] === undefined) {
+        delete obj[k];
+      }
+    }
+
+    return {
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+        `https://www.identity.com/credentials/v${version}`,
+      ],
+      ...obj,
+    };
+  };
   /**
    * @param  {} requestorId
    * @param  {} requestId
@@ -681,7 +703,6 @@ const CREDENTIAL_META_FIELDS = [
   'issuer',
   'issuanceDate',
   'expirationDate',
-  'version',
   'type',
 ];
 
@@ -747,8 +768,25 @@ VerifiableCredentialBaseConstructor.CREDENTIAL_META_FIELDS = CREDENTIAL_META_FIE
 VerifiableCredentialBaseConstructor.getCredentialMeta = getCredentialMeta;
 VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMeta;
 
-VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn, ucas, version, evidence,
-  signerVerifier = null) => {
+/**
+ * Creates a Verifiable Credential
+ *
+ * @param identifier The identifier for the VC (e.g. credential-cvc:Identity-v1)
+ * @param issuerDid The issuer DID
+ * @param expiryIn The credential expiry date (nullable)
+ * @param subject The subject DID
+ * @param ucas An array of UCAs
+ * @param evidence The evidence for the credential
+ * @param signerOptions Signer options:
+ * @param signerOptions.verificationMethod The verificationMethod for the signing key
+ * @param signerOptions.keypair The keypair to sign with
+ *    or
+ * @param signerOptions.privateKey The private key to sign with
+ *    or
+ * @param signerOptions.signer An object implementing a `sign(CvcMerkleProof)` method
+ */
+VerifiableCredentialBaseConstructor.create = async (identifier, issuerDid, expiryIn, subject, ucas, evidence,
+  signerOptions = null, validate = true) => {
   // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(identifier);
 
@@ -758,7 +796,27 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn
   await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
   await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
 
-  return new VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, ucas, version, evidence, signerVerifier);
+  if (signerOptions) {
+    const canSignForIssuer = await didUtil.canSign(issuerDid, signerOptions.verificationMethod);
+    if (!canSignForIssuer) {
+      throw new Error(
+        `The verificationMethod ${signerOptions.verificationMethod} is not allowed to sign for ${issuerDid}`,
+      );
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    signerOptions.signer = await signerVerifier.signer(signerOptions);
+  }
+
+  const vc = new VerifiableCredentialBaseConstructor(
+    identifier, issuerDid, expiryIn, subject, ucas, evidence, signerOptions,
+  );
+
+  if (validate) {
+    await schemaLoader.validateSchema(identifier, vc.toJSON());
+  }
+
+  return vc;
 };
 
 /**
@@ -769,11 +827,8 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuer, expiryIn
 VerifiableCredentialBaseConstructor.fromJSON = async (verifiableCredentialJSON, partialPresentation = false) => {
   await schemaLoader.loadSchemaFromTitle(verifiableCredentialJSON.identifier);
 
-  const definition = getCredentialDefinition(verifiableCredentialJSON.identifier,
-    verifiableCredentialJSON.version);
-
   if (!partialPresentation) {
-    verifyRequiredClaimsFromJSON(definition, verifiableCredentialJSON);
+    await schemaLoader.validateSchema(verifiableCredentialJSON.identifier, verifiableCredentialJSON);
   }
 
   const newObj = await VerifiableCredentialBaseConstructor.create(
@@ -785,13 +840,13 @@ VerifiableCredentialBaseConstructor.fromJSON = async (verifiableCredentialJSON, 
   newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
   newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
   newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
-  newObj.version = _.clone(verifiableCredentialJSON.version);
   newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
-  newObj.claim = _.cloneDeep(verifiableCredentialJSON.claim);
+  newObj.credentialSubject = _.cloneDeep(verifiableCredentialJSON.credentialSubject);
   newObj.proof = _.cloneDeep(verifiableCredentialJSON.proof);
-  newObj.granted = _.clone(verifiableCredentialJSON.granted) || null;
+
   return newObj;
 };
+
 
 /**
  * List all properties of a Verifiable Credential
