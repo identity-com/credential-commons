@@ -26,7 +26,7 @@ class Ed25519Verifier {
 
   verify(vc) {
     return nacl.sign.detached.verify(
-      Buffer.of(vc.proof.merkleRoot),
+      Buffer.from(vc.proof.merkleRoot, 'hex'),
       Uint8Array.from(Buffer.from(vc.proof.merkleRootSignature.signature, 'hex')),
       bs58.decode(this.key),
     );
