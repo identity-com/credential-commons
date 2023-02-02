@@ -7,8 +7,12 @@ const request = require('request-promise-native'); // uncomment to debug request
 
 function HttpServiceConstructor() {
   this.request = async (uri, options) => {
-    const response = await request(uri, options);
-    return response;
+    try {
+      const response = await request(uri, options);
+      return response;
+    } catch (e) {
+      return null;
+    }
   };
 
   return this;
