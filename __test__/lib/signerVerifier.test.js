@@ -1,5 +1,4 @@
 const nacl = require('tweetnacl');
-const { TextEncoder } = require('util');
 const signerVerifier = require('../../src/lib/signerVerifier');
 const {
   mockDids,
@@ -7,8 +6,6 @@ const {
   privateKeyBase58,
   keyPair,
 } = require('./util/did');
-
-const textEncoder = new TextEncoder();
 
 const DUMMY_MERKLE_ROOT = 'aa4149dda8fd2fac435898372f1de399140f6c50dbc3d40585c913701ce902c4';
 
@@ -71,7 +68,7 @@ describe('signerVerifier', () => {
 
     const customSigner = {
       sign(proof) {
-        const encodedData = textEncoder.encode(proof.merkleRoot);
+        const encodedData = Buffer.from(proof.merkleRoot, 'hex');
 
         const signature = nacl.sign.detached(encodedData, keypair.secretKey);
 
