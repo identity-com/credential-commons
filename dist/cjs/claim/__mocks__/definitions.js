@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const definitions = [{
   identifier: 'civ:Mock:booleans',
@@ -29,5 +29,4 @@ const definitions = [{
   exclusiveMinimum: false,
   minimum: 5
 }];
-
 module.exports = definitions;

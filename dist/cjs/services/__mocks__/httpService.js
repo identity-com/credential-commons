@@ -1,19 +1,29 @@
-'use strict';
+"use strict";
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 /* eslint-disable max-len */
-
 const _ = require('lodash');
+
 const logger = require('../../logger');
 
 function HttpServiceConstructor() {
   this.name = 'mockHttp';
-  this.request = (() => {
+
+  this.request = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator(function* (uri, options) {
-      logger.debug(`Mocking request for: ${JSON.stringify({ uri, options }, null, 2)}`);
-      const params = _.isString(uri) ? { url: uri } : uri;
+      logger.debug(`Mocking request for: ${JSON.stringify({
+        uri,
+        options
+      }, null, 2)}`);
+      const params = _.isString(uri) ? {
+        url: uri
+      } : uri;
+
       _.assign(params, options);
+
       const responses = [{
         path: '/registry',
         response: {
@@ -24,13 +34,19 @@ function HttpServiceConstructor() {
         }
       }, {
         path: '/jwt',
-        response: { jwt: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJqdGkiOiIyYzdlNjQ4YS1hNDhmLTQxNTgtOGZmMS02MTY0YzM5OWNlNDMiLCJpYXQiOjE1Mjg4MjE1ODUuNDM0LCJleHAiOjE1Mjg4MjE3NjUuNDM0LCJpc3MiOiJodHRwczovL2FwaS5jaXZpYy5jb20vand0IiwiYXVkIjoiQXR0ZXN0ZXJTZXJ2aWNlIiwic3ViIjoiYzhhNjRhODE4NWRlMzNkMTlkZTgwMjFmYmUyMjhkMmE1YTc3YzExMTdkYjc1NDJlZDE0ODM1NGNiZjdkNGVmMSIsImRhdGEiOnsibWV0aG9kIjoiUE9TVCIsInBhdGgiOiJodHRwczovL2Rldi5hcGkuY2l2aWMuY29tL3JlcXVlc3QtYXR0ZXN0YXRpb24tdGJjaC9yZXF1ZXN0QXR0ZXN0YXRpb24ifX0.2Rp8XLTLvzu51raTQRpce8kIiilsMeiPZeWAsuNv5n7hFZGl-ce-fx9DgxsZ0OTaIUgo8frbiGmHjQh0WlUG7A' }
+        response: {
+          jwt: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJqdGkiOiIyYzdlNjQ4YS1hNDhmLTQxNTgtOGZmMS02MTY0YzM5OWNlNDMiLCJpYXQiOjE1Mjg4MjE1ODUuNDM0LCJleHAiOjE1Mjg4MjE3NjUuNDM0LCJpc3MiOiJodHRwczovL2FwaS5jaXZpYy5jb20vand0IiwiYXVkIjoiQXR0ZXN0ZXJTZXJ2aWNlIiwic3ViIjoiYzhhNjRhODE4NWRlMzNkMTlkZTgwMjFmYmUyMjhkMmE1YTc3YzExMTdkYjc1NDJlZDE0ODM1NGNiZjdkNGVmMSIsImRhdGEiOnsibWV0aG9kIjoiUE9TVCIsInBhdGgiOiJodHRwczovL2Rldi5hcGkuY2l2aWMuY29tL3JlcXVlc3QtYXR0ZXN0YXRpb24tdGJjaC9yZXF1ZXN0QXR0ZXN0YXRpb24ifX0.2Rp8XLTLvzu51raTQRpce8kIiilsMeiPZeWAsuNv5n7hFZGl-ce-fx9DgxsZ0OTaIUgo8frbiGmHjQh0WlUG7A'
+        }
       }, {
         path: '/requestAttestation',
-        response: { statusUrl: '/status/372091f0-6e5f-11e8-ab04-8d6f9c9b4e5a' }
+        response: {
+          statusUrl: '/status/372091f0-6e5f-11e8-ab04-8d6f9c9b4e5a'
+        }
       }, {
         path: '/requestAttestation',
-        response: { statusUrl: '/status/372091f0-6e5f-11e8-ab04-8d6f9c9b4e5a' }
+        response: {
+          statusUrl: '/status/372091f0-6e5f-11e8-ab04-8d6f9c9b4e5a'
+        }
       }, {
         path: '/status',
         response: {
@@ -54,27 +70,28 @@ function HttpServiceConstructor() {
           type: 'temporary',
           network: 'testnet'
         }
-
       }];
-      const res = _.find(responses, function (r) {
-        return _.includes(params.url, r.path);
-      });
+
+      const res = _.find(responses, r => _.includes(params.url, r.path));
+
       if (res) {
         return Promise.resolve(res.response);
       }
+
       return Promise.reject();
     });
 
     return function (_x, _x2) {
       return _ref.apply(this, arguments);
     };
-  })();
+  }();
+
   return this;
 }
 
 logger.debug('Using Mock HTTP Service');
 const http = new HttpServiceConstructor();
 http.request('/status').then(console.log); // eslint-disable-line
-logger.debug(`HTTP Service instance ${JSON.stringify(http, null, 2)}`);
 
+logger.debug(`HTTP Service instance ${JSON.stringify(http, null, 2)}`);
 module.exports = http;
