@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "3.0.1-alpha.1",
+  "version": "3.0.1",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -69,7 +69,7 @@
     "@identity.com/did-io-driver-sol": "^1.0.0-beta.0",
     "@identity.com/uca": "github:identity-com/uca#v1.0.30",
     "ajv": "^7.2.4",
-    "ajv-formats": "^2.0.2",
+    "ajv-formats": "^1.6.1",
     "babel-runtime": "^6.26.0",
     "bitcoinjs-lib": "https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
     "bottlejs": "^1.7.1",
