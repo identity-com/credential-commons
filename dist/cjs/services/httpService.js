@@ -14,12 +14,8 @@ const request = require('request-promise-native'); // uncomment to debug request
 function HttpServiceConstructor() {
   this.request = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator(function* (uri, options) {
-      try {
-        const response = yield request(uri, options);
-        return response;
-      } catch (e) {
-        return null;
-      }
+      const response = yield request(uri, options);
+      return response;
     });
 
     return function (_x, _x2) {
