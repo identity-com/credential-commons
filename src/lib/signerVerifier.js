@@ -1,9 +1,6 @@
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
-const { TextEncoder } = require('util');
 const didUtil = require('./did');
-
-const textEncoder = new TextEncoder();
 
 class Ed25519Signer {
   constructor(key, verificationMethod) {
@@ -12,7 +9,7 @@ class Ed25519Signer {
   }
 
   sign(proof) {
-    const signed = nacl.sign.detached(textEncoder.encode(proof.merkleRoot), bs58.decode(this.key));
+    const signed = nacl.sign.detached(Buffer.from(proof.merkleRoot, 'hex'), bs58.decode(this.key));
     const signature = Buffer.from(signed).toString('hex');
 
     return {
@@ -29,7 +26,7 @@ class Ed25519Verifier {
 
   verify(vc) {
     return nacl.sign.detached.verify(
-      textEncoder.encode(vc.proof.merkleRoot),
+      Buffer.from(vc.proof.merkleRoot, 'hex'),
       Uint8Array.from(Buffer.from(vc.proof.merkleRootSignature.signature, 'hex')),
       bs58.decode(this.key),
     );

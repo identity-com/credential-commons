@@ -56,7 +56,7 @@ jobs:
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-      - run: sudo npm install -g npm
+      - run: sudo npm install -g npm@6.14.13
       - run: npm ci
       - save_cache:
           paths:

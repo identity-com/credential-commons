@@ -3,17 +3,20 @@
  *
  */
 const uuid = require('uuid/v4');
-const logger = require('../logger');
 
+const logger = require('../logger');
 /**
  * An Anchor/Attester implementation
  *
  * @param {*} config
  * @param {*} http
  */
+
+
 function DummyAnchorServiceImpl(config, http) {
   this.config = config;
-  this.http = http;
+  this.http = http; // eslint-disable-next-line no-unused-vars
+
   const pollService = async statusUrl => {
     try {
       const attestation = await this.http.request({
@@ -27,10 +30,12 @@ function DummyAnchorServiceImpl(config, http) {
         // eslint-disable-next-line no-unused-vars
         return await pollService(statusUrl);
       }
+
       if (attestation && attestation.type !== 'permanent') {
         attestation.statusUrl = statusUrl;
         return attestation;
       }
+
       return attestation;
     } catch (error) {
       logger.error(`Error polling: ${statusUrl}`, JSON.stringify(error, null, 2));
@@ -56,7 +61,8 @@ function DummyAnchorServiceImpl(config, http) {
       path: '/'
     },
     coin: 'dummycoin',
-    tx: new uuid(), // eslint-disable-line
+    tx: new uuid(),
+    // eslint-disable-line
     network: 'dummynet',
     type: 'temporary',
     civicAsPrimary: false,
@@ -65,23 +71,25 @@ function DummyAnchorServiceImpl(config, http) {
 
   this.update = async tempAnchor => {
     // eslint-disable-next-line no-param-reassign
-    tempAnchor.type = 'permanent';
-    // eslint-disable-next-line no-param-reassign
+    tempAnchor.type = 'permanent'; // eslint-disable-next-line no-param-reassign
+
     tempAnchor.value = uuid();
     return Promise.resolve(tempAnchor);
   };
 
   this.verifySignature = () => true;
-
   /**
    * This method checks if the subject signature matches the pub key
    * @returns {*} true or false for the validation
    */
-  this.verifySubjectSignature = () => true;
 
+
+  this.verifySubjectSignature = () => true;
   /**
    * This method checks that the attestation / anchor exists on the BC
    */
+
+
   this.verifyAttestation = async () => true;
 
   this.revokeAttestation = async signature => {
