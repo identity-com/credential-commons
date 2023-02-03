@@ -1,7 +1,9 @@
-'use strict';
+"use strict";
 
-const { HDNode, ECSignature } = require('bitcoinjs-lib');
-
+const {
+  HDNode,
+  ECSignature
+} = require('bitcoinjs-lib');
 /**
  * MiniCryptoManagerImpl - A minimal CryptoManagerImpl for the portable CryptoManagerInterface
  * to provide only default sign() and verify() functions to credential-commons with minimal dependencies.
@@ -16,16 +18,19 @@ const { HDNode, ECSignature } = require('bitcoinjs-lib');
  *     You should `installKey` a PVT key or a PUB key (verify only) before call `sign()` or `verify()`.
  *     The installed key is removed after `sign()` or `verify()` function was called.
  */
+
+
 class MiniCryptoManagerImpl {
   constructor() {
     this.KEY_STORAGE = {};
   }
-
   /**
    * Install a pvt or a pub key on a keyName to be used on `sign()` or `verify()` function later.
    * @param  {} keyName - name of the key to be installed.
    * @param  {} key - a pvt or a pub key in base58 format.
    */
+
+
   installKey(keyName, key) {
     try {
       // Test if key is a valid HDNode key
@@ -35,7 +40,6 @@ class MiniCryptoManagerImpl {
       throw new Error(`Invalid key format: ${err.message}`);
     }
   }
-
   /**
    * Return input data signed using the specified key.
    *
@@ -44,20 +48,18 @@ class MiniCryptoManagerImpl {
    * @param { string } keyName - name of the key to be used to sign.
    * @param { string } hexHash - hex string representation of the hash
    */
+
+
   sign(keyName, hexHash) {
     const privateKey = this.KEY_STORAGE[keyName];
     const keyPair = HDNode.fromBase58(privateKey);
-
     const hash = Buffer.from(hexHash, 'hex');
     const signature = keyPair.sign(hash);
-    const hexSignature = signature.toDER().toString('hex');
+    const hexSignature = signature.toDER().toString('hex'); // keys are volatile in this impl, removes
 
-    // keys are volatile in this impl, removes
     delete this.KEY_STORAGE[keyName];
-
     return hexSignature;
   }
-
   /**
    * Return true if signature has been verified, false otherwise.
    *
@@ -65,19 +67,19 @@ class MiniCryptoManagerImpl {
    * @param { string } hexHash - hex string representation of the hash
    * @param { string } hexSignature - DER encoded signature.
    */
+
+
   verify(keyName, hexHash, hexSignature) {
     const key = this.KEY_STORAGE[keyName];
     const keyPair = HDNode.fromBase58(key);
-
     const hash = Buffer.from(hexHash, 'hex');
     const signature = Buffer.from(hexSignature, 'hex');
-    const ecSignature = ECSignature.fromDER(signature);
+    const ecSignature = ECSignature.fromDER(signature); // keys are volatile in this impl, removes
 
-    // keys are volatile in this impl, removes
     delete this.KEY_STORAGE[keyName];
-
     return keyPair.verify(hash, ecSignature);
   }
+
 }
 
 module.exports = MiniCryptoManagerImpl;

@@ -27,5 +27,4 @@ const definitions = [{
   exclusiveMinimum: false,
   minimum: 5
 }];
-
 module.exports = definitions;

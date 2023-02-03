@@ -1,33 +1,32 @@
-'use strict';
+"use strict";
 
 const path = require('path');
+
 const os = require('os');
+
 const fs = require('fs');
 
 const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
-
 if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
 
 if (process.env.APP_ENV !== 'browser' && !isBrowser) {
   const CONFIG_FILE = 'config';
-
   const CONFIG_PATH = {
     BOX: '/etc/civic',
     USER: path.join(`${os.homedir()}`, '.civic')
   };
-
   const userConfigFile = path.join(CONFIG_PATH.USER, CONFIG_FILE);
   const boxConfigFile = path.join(CONFIG_PATH.BOX, CONFIG_FILE);
-
   const configFile = fs.existsSync(userConfigFile) ? userConfigFile : boxConfigFile;
-
   /* eslint-disable global-require */
+
   if (fs.existsSync(userConfigFile)) {
     require('dotenv').config({
       path: configFile
     });
   }
   /* eslint-ebable global-require */
+
 }
 
 const config = {
@@ -41,10 +40,11 @@ const config = {
     }
   },
   passphrase: process.env.CIVIC_PASSPHRASE,
-  keychain: { prv: process.env.CIVIC_KEYCHAIN },
+  keychain: {
+    prv: process.env.CIVIC_KEYCHAIN
+  },
   accessToken: process.env.CLIENT_ACCESS_TOKEN,
   walletId: process.env.CLIENT_WALLET_ID,
   walletPassphrase: process.env.CLIENT_WALLET_PASSPHRASE
 };
-
 module.exports = config;

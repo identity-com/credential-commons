@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const definitions = [{
   identifier: 'civ:Credential:SimpleIdentity',
@@ -14,5 +14,4 @@ const definitions = [{
   depends: ['civ:Identity:name', 'civ:Identity:DateOfBirth'],
   excludes: ['civ:Identity:name.middle']
 }];
-
 module.exports = definitions;
