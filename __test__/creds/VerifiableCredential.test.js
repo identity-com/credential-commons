@@ -2,18 +2,18 @@ const _ = require('lodash');
 const fs = require('fs');
 const uuidv4 = require('uuid/v4');
 const sjcl = require('sjcl');
-const { Claim } = require('../../src/claim/Claim');
-const VC = require('../../src/creds/VerifiableCredential');
-const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
+const { Claim } = require('claim/Claim');
+const VC = require('creds/VerifiableCredential');
+const MiniCryptoManagerImpl = require('services/MiniCryptoManagerImpl');
 const didTestUtil = require('../lib/util/did');
 
 const {
   schemaLoader,
   CVCSchemaLoader,
-} = require('../../src');
+} = require('index');
 const filteredCredentialJson = require('./fixtures/filteredIdDocument-v3.json');
 const invalidEmailJson = require('./fixtures/CredentialEmailInvalid.json');
-const signerVerifier = require('../../src/lib/signerVerifier');
+const signerVerifier = require('lib/signerVerifier');
 
 const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
 

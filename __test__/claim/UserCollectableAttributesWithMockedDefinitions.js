@@ -1,4 +1,4 @@
-const Claim = require('../../src/claim/Claim');
+const Claim = require('claim/Claim');
 
 describe('Claim Constructions tests', () => {
   test('Wrong type', () => {

@@ -1,4 +1,4 @@
-const aggregate = require('../../src/AggregationHandler');
+const aggregate = require('AggregationHandler');
 
 describe('Aggregation Service', () => {
   it('should throw Invalid Operator', () => {

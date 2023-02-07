@@ -1,4 +1,4 @@
-const SecureRandom = require('../src/SecureRandom');
+const SecureRandom = require('SecureRandom');
 
 describe('Secure Random Tests', () => {
   it('should generate an random word', () => {

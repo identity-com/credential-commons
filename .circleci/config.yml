@@ -62,11 +62,11 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+      - run: npm run build
       - run:
           name: run tests incl coverage
           command: npm run test
       - run: npm run lint
-      - run: npm run build
       - run: npm run audit-ci -- --pass-enoaudit
       - persist_to_workspace:
           root: ~/repo
@@ -91,11 +91,11 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
+      - run: npm run build
       - run:
           name: run tests incl coverage
           command: npm run test
       - run: npm run lint
-      - run: npm run build
       - run:
           name: git config
           command: |

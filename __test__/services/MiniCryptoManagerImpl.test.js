@@ -1,5 +1,5 @@
 const sjcl = require('sjcl');
-const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
+const MiniCryptoManagerImpl = require('services/MiniCryptoManagerImpl');
 
 const XPVT = 'xprvA1yULd2DFYnQRVbLiAKrFdftVLsANiC3rqLvp8iiCbnchcWqd6kJPoaV3sy7R6CjHM8RbpoNdWVgiPZLVa1EmneRLtwiitNpWgwyVmjvay7'; // eslint-disable-line
 const XPUB = 'xpub6Expk8Z75vLhdyfopBrrcmcd3NhenAuuE4GXcX8KkwKbaQqzAe4Ywbtxu9F95hRHj79PvdtYEJcoR6gesbZ79fS4bLi1PQtm81rjxAHeLL9'; // eslint-disable-line

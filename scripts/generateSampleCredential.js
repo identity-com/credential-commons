@@ -1,4 +1,4 @@
-const VC = require('../src/creds/VerifiableCredential');
+const VC = require('../dist/ts-generated/creds/VerifiableCredential');
 const UCA = require('../src/uca/UserCollectableAttribute');
 
 const generateSampleBasicCredentials = async () => {

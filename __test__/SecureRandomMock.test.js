@@ -1,4 +1,4 @@
-const SecureRandom = require('../src/SecureRandom');
+const SecureRandom = require('SecureRandom');
 // jest babel hoist the mock to the top of the file
 // do not mock the other SecureRandom.test.js or else you won't be able to unmock
 jest.mock('crypto');

@@ -2,14 +2,14 @@ const _ = require('lodash');
 const fs = require('fs');
 const uuidv4 = require('uuid/v4');
 const sjcl = require('sjcl');
-const { Claim } = require('../../src/claim/Claim');
-const VC = require('../../src/creds/VerifiableCredentialProxy');
-const MiniCryptoManagerImpl = require('../../src/services/MiniCryptoManagerImpl');
-const CredentialSignerVerifier = require('../../src/creds/CredentialSignerVerifier');
+const { Claim } = require('claim/Claim');
+const VC = require('creds/VerifiableCredentialProxy');
+const MiniCryptoManagerImpl = require('services/MiniCryptoManagerImpl');
+const CredentialSignerVerifier = require('creds/CredentialSignerVerifier');
 const {
   schemaLoader,
   CVCSchemaLoader,
-} = require('../../src');
+} = require('index');
 const filteredCredentialJson = require('./proxyFixtures/filteredIdDocument-v2.json');
 const invalidEmailJson = require('./proxyFixtures/CredentialEmailInvalid.json');
 

@@ -1,5 +1,5 @@
-const isClaimRelated = require('../src/isClaimRelated');
-const { schemaLoader, CVCSchemaLoader } = require('../src');
+const isClaimRelated = require('isClaimRelated');
+const { schemaLoader, CVCSchemaLoader } = require('index');
 
 jest.setTimeout(30000);
 

@@ -5,7 +5,7 @@ const {
   DID_CONTROLLER,
   DID_CONTROLLED,
 } = require('./util/did');
-const didUtil = require('../../src/lib/did');
+const didUtil = require('lib/did');
 
 describe('DIDs', () => {
   beforeAll(mockDids);

@@ -1,5 +1,5 @@
 const nacl = require('tweetnacl');
-const signerVerifier = require('../../src/lib/signerVerifier');
+const signerVerifier = require('lib/signerVerifier');
 const {
   mockDids,
   DID_SPARSE,

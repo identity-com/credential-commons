@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 
 const { HDNode } = require('bitcoinjs-lib');
-const CredentialSignerVerifier = require('../src/creds/CredentialSignerVerifier');
+const CredentialSignerVerifier = require('creds/CredentialSignerVerifier');
 
 const SEED = 'f6d466fd58c20ff964673522083efebf';
 const prvBase58 = 'xprv9s21ZrQH143K4aBUwUW6GVec7Y6oUEBqrt2WWaXyxjh2pjofNc1of44BLufn4p1t7Jq4EPzm5C9sRxCuBYJdHu62jhgfyPm544sNjtH7x8S';

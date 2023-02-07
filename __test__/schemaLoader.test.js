@@ -3,9 +3,9 @@ const {
   VC,
   schemaLoader,
   CVCSchemaLoader,
-} = require('../src/index');
-const claimDefinitions = require('../src/claim/definitions');
-const credentialDefinitions = require('../src/creds/definitions');
+} = require('index');
+const claimDefinitions = require('claim/definitions');
+const credentialDefinitions = require('creds/definitions');
 
 const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
 
