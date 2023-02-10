@@ -1,1 +1,0 @@
-"use strict";var headers=require("./headers");module.exports={headers:headers};
