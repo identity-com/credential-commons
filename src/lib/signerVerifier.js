@@ -25,8 +25,24 @@ class Ed25519Verifier {
   }
 
   verify(vc) {
+    // eslint-disable-next-line no-bitwise
+    return this.verifyHex(vc) | this.verifyUtf(vc);
+  }
+
+  verifyHex(vc) {
     return nacl.sign.detached.verify(
       Buffer.from(vc.proof.merkleRoot, 'hex'),
+      Uint8Array.from(Buffer.from(vc.proof.merkleRootSignature.signature, 'hex')),
+      bs58.decode(this.key),
+    );
+  }
+
+  /**
+   * Legacy support for older VCs
+   */
+  verifyUtf(vc) {
+    return nacl.sign.detached.verify(
+      Buffer.from(vc.proof.merkleRoot, 'utf-8'),
       Uint8Array.from(Buffer.from(vc.proof.merkleRootSignature.signature, 'hex')),
       bs58.decode(this.key),
     );
