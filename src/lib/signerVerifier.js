@@ -25,8 +25,15 @@ class Ed25519Verifier {
   }
 
   verify(vc) {
+    return this.verifyEncoding(vc, 'hex') || this.verifyEncoding(vc, 'utf-8');
+  }
+
+  /**
+   * Verifies a VC that was signed with a specific encoding
+   */
+  verifyEncoding(vc, encoding) {
     return nacl.sign.detached.verify(
-      Buffer.from(vc.proof.merkleRoot, 'hex'),
+      Buffer.from(vc.proof.merkleRoot, encoding),
       Uint8Array.from(Buffer.from(vc.proof.merkleRootSignature.signature, 'hex')),
       bs58.decode(this.key),
     );
