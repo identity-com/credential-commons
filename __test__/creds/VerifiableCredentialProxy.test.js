@@ -1886,6 +1886,15 @@ describe('Signned Verifiable Credentials', () => {
 
     expect(cred.credentialSubject).toBeDefined();
   });
+
+  it('Should verify an old schema signature', async () => {
+    const credJSon = require('./fixtures/emailCredentialOld.json'); // eslint-disable-line
+    const cred = await VC.fromJSON(credJSon);
+
+    expect(await cred.verifyMerkletreeSignature(
+      'xpub661MyMwAqRbcH4Fx3W36ddbLfZwHsguhE6x7JxwbX5E1hY8ov9L4CrNfCCQpV8pVK64CVqkhYQ9QLFgkVAUqkRThkTY1R4GiWHNZtAFSVpD',
+    )).toBe(true);
+  });
 });
 
 describe('Verifiable Credential JSON serialization', () => {
