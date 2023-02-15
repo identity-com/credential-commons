@@ -1,4 +1,4 @@
-const CredentialCommons = require('../src/index');
+const CredentialCommons = require('index');
 
 describe('CredentialCommons.aggregate', () => {
   it('should throw Invalid Operator', () => {

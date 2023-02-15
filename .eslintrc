@@ -1,5 +1,4 @@
 {
-  "extends": "airbnb-base",
   "env": {
     "browser": true,
     "commonjs": true,
@@ -7,9 +6,15 @@
     "jest": true
   },
   "plugins": [
-    "no-only-tests"
+    "no-only-tests",
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "max-len": ["warn", 120]
+    "max-len": ["warn", 130]
   }
 }

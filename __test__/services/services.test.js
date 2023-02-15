@@ -1,5 +1,5 @@
-const { services, initServices } = require('../../src/services/index');
-const httpMock = require('../../src/services/__mocks__/httpService');
+const { services, initServices } = require('services/index');
+const httpMock = require('services/__mocks__/httpService');
 
 describe('Services Container  Tests', () => {
   test('Has HTTP Service', () => {

@@ -1,4 +1,4 @@
-const { IDVErrorCodes } = require('../../src/errors/idvErrors');
+const { IDVErrorCodes } = require('errors/idvErrors');
 
 describe('IDV Errors', () => {
   it('Should have IDV Error Codes', () => {

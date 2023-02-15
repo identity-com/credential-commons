@@ -1,7 +1,7 @@
 const uuidv4 = require('uuid/v4');
-const { Claim } = require('../../src/claim/Claim');
-const VC = require('../../src/creds/VerifiableCredential');
-const { schemaLoader, CVCSchemaLoader } = require('../../src');
+const { Claim } = require('claim/Claim');
+const VC = require('creds/VerifiableCredential');
+const { schemaLoader, CVCSchemaLoader } = require('index');
 
 const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
 

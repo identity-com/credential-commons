@@ -1,6 +1,6 @@
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
-const didUtil = require('../../../src/lib/did');
+const didUtil = require('lib/did');
 
 // A default sparse DID document
 const DID_SPARSE = 'did:sol:localnet:6ffRJDKb3Ve83A9SsJmjyYk5Ef3LXcRkZAT6hXhBBrHf';

@@ -1,5 +1,5 @@
-const { Claim } = require('../../src/claim/Claim');
-const { schemaLoader, CVCSchemaLoader, UserCollectableAttribute } = require('../../src');
+const { Claim } = require('claim/Claim');
+const { schemaLoader, CVCSchemaLoader, UserCollectableAttribute } = require('index');
 
 jest.setTimeout(30000);
 

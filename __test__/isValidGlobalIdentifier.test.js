@@ -1,6 +1,5 @@
-const isGlobalIdentifier = require('../src/isValidGlobalIdentifier');
-const { schemaLoader, CVCSchemaLoader } = require('../src');
-
+const isGlobalIdentifier = require('isValidGlobalIdentifier');
+const { schemaLoader, CVCSchemaLoader } = require('index');
 
 describe('isGlobalIdentifier Tests', () => {
   beforeAll(() => {

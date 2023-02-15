@@ -15,7 +15,7 @@ describe('Test process platform', () => {
     // it's not linting because we need to test branching of this config file
     try {
       // eslint-disable-next-line no-trailing-spaces,global-require
-      require('../../src/services/config');
+      require('services/config');
     } catch (err) {
       expect(err.message).toBe('Unsupported platform: win32');
     }

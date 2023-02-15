@@ -1,5 +1,5 @@
-const CredentialCommons = require('../src/index');
-const httpMock = require('../src/services/__mocks__/httpService');
+const CredentialCommons = require('index');
+const httpMock = require('services/__mocks__/httpService');
 
 const { Claim, VC } = CredentialCommons;
 
