@@ -7,6 +7,7 @@ import bs58 from 'bs58';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import didUtil from './did';
+import {IDiDResolver} from "./resolver";
 
 interface MerkleProof {
     merkleRoot: string
@@ -93,7 +94,7 @@ class Ed25519Verifier {
  *    or
  * @param options.signer An object implementing a `sign(CvcMerkleProof)` method
  */
-const signer = async (options: SignerOptions) => {
+const signer = async (options: SignerOptions, didResolver: IDiDResolver) => {
     if (!options.signer && !options.keypair && !options.privateKey) {
         throw new Error('Either a signer, keypair or privateKey is required');
     }
@@ -106,8 +107,10 @@ const signer = async (options: SignerOptions) => {
 
     const [did] = verificationMethod.split('#');
 
-    const document = await didUtil.resolve(did);
-
+    const document = await didResolver.resolve(did);
+    if (!document) {
+        throw new Error(`Unable to resolve document for ${did}`);
+    }
     let {privateKey} = options;
     if (!privateKey) {
         privateKey = bs58.encode(options.keypair.secretKey);
@@ -136,7 +139,7 @@ const signer = async (options: SignerOptions) => {
  * @param did The issuer DID
  * @param verificationMethod The verification method used to lookup the key
  */
-const verifier = async (did: string, verificationMethod: string) => {
+const verifier = async (did: string, verificationMethod: string, didResolver: IDiDResolver) => {
     const canSignFor = await didUtil.canSign(did, verificationMethod);
     if (!canSignFor) {
         // always return false
@@ -146,7 +149,11 @@ const verifier = async (did: string, verificationMethod: string) => {
     }
 
     const [vmDid] = verificationMethod.split('#');
-    const document = await didUtil.resolve(vmDid);
+    const document = await didResolver.resolve(vmDid);
+    if (document === null) {
+        // TODO: Replace with custom exception
+        throw new Error(`Unable to resolve ${did}`);
+    }
     const foundMethod = didUtil.findVerificationMethod(document, verificationMethod);
 
     // Check the type is supported and assign the appropriate verifier

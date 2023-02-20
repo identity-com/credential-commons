@@ -6,6 +6,7 @@ const { Claim } = require('claim/Claim');
 const VC = require('creds/VerifiableCredential');
 const MiniCryptoManagerImpl = require('services/MiniCryptoManagerImpl');
 const didTestUtil = require('../lib/util/did');
+const solResolver = require('lib/did');
 
 const {
   schemaLoader,
@@ -1986,11 +1987,12 @@ describe('Signed Verifiable Credentials', () => {
     expect(cred).toBeDefined();
     expect(cred.proof.merkleRootSignature).toBeDefined();
 
-    const verifier = await signerVerifier.verifier(didTestUtil.DID_SPARSE, verificationMethod);
+    const verifier = await signerVerifier.verifier(didTestUtil.DID_SPARSE, verificationMethod, solResolver);
     const dataOnlyCredential = JSON.parse(JSON.stringify(cred));
     expect(verifier.verify(dataOnlyCredential)).toBeTruthy();
   });
 });
+
 describe('Referenced Schemas for Verifiable Credentials', () => {
   beforeAll(() => {
     schemaLoader.addLoader(new TestSchemaLoader());

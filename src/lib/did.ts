@@ -2,16 +2,7 @@
 // @ts-ignore
 import {findVerificationMethod as bazaarFindVerificationMethod, CachedResolver} from '@digitalbazaar/did-io';
 import didSol from '@identity.com/did-io-driver-sol';
-
-interface DidDocument {
-    id: string
-    keyAgreement: Array<VerificationMethod>
-    capabilityInvocation: Array<string>
-}
-
-interface VerificationMethod {
-    id: string
-}
+import {DIDDocument} from "did-resolver";
 
 const resolver = new CachedResolver();
 
@@ -24,11 +15,11 @@ export = {
     /**
      * Checks if a verificationMethod can sign for the DID document
      *
-     * @param didOrDocument A DID (string) or DID document (object)
+     * @param didOrDocument A DID (string) or DIDDocument (object)
      * @param verificationMethod The verification method to check
      * @returns {Promise<boolean>} True if the verification method can sign
      */
-    async canSign(didOrDocument: string | DidDocument, verificationMethod: string) {
+    async canSign(didOrDocument: string | DIDDocument, verificationMethod: string) {
         const [verificationMethodDid] = verificationMethod.split('#');
         const document = typeof didOrDocument === 'string' ? (await this.resolve(didOrDocument)) : didOrDocument;
 
@@ -64,12 +55,22 @@ export = {
      * @param document The document to search through
      * @param verificationMethod The verification method to return
      */
-    findVerificationMethod(document: DidDocument, verificationMethod: string) {
+    findVerificationMethod(document: DIDDocument, verificationMethod: string) {
         if (document.keyAgreement && document.keyAgreement.length > 0) {
-            return document.keyAgreement.find(agreement => agreement.id === verificationMethod);
+            return document.keyAgreement.find(agreement => {
+                // TODO: Remove this check as part of IDCOM-2323
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                if ("id" in agreement && agreement.id) {
+                    return agreement.id === verificationMethod;
+                }
+
+
+                return agreement === verificationMethod;
+            });
         }
 
-        if (!document.capabilityInvocation.includes(verificationMethod)) {
+        if (!document.capabilityInvocation?.includes(verificationMethod)) {
             return null;
         }
 
