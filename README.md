@@ -1,65 +1,38 @@
 # Identity.com Verifiable Credential Library
 
-*Warning:* this still is a working in progress and is not ready for usage yet. Please feel free to explore the code but don't integrate yet. We expect API changes before the 1st release.
-
 [![CircleCI](https://circleci.com/gh/identity-com/credential-commons.svg?style=svg)](https://circleci.com/gh/identity-com/credential-commons)
 [![NPM](https://img.shields.io/npm/v/%40identity.com/credential-commons.svg)](https://www.npmjs.com/package/@identity.com/credential-commons)
 
-
-## Summary
-
-This Javascript Library provides functionality around Verifiable Credentials (VC), a W3C standard. Enables Validators to issue, Credential Wallets to verify, filter and Requesters to verify credentials.
-
 ## Contents
-
-- [Prerequisites](#prerequisites)
+- [Summary](#summary)
 - [Installation](#installation)
 - [Commands](#commands)
-- [Configuration](#configuration)
-  * [Etc Config File /etc/civic/config](#etc-config-file--etc-civic-config)
-  * [User Config File ~/.civic/config](#user-config-file---civic-config)
 - [Features](#features)
-  * [User Collectable Attributes](#user-collectable-attributes)
-    + [Defining new Claim](#defining-new-claim)
-    + [Exporting Claim to the Claim Registry Services](#exporting-claim-to-the-claim-registry-services)
-    + [Using a Claim in javascript (with this library)](#using-a-claim-in-javascript--with-this-library-)
-      - [creating Claim instances with the constructor](#creating-claim-instances-with-the-constructor)
-  * [Credentials](#credentials)
-    + [Defining new Claim](#defining-new-claim-1)
-    + [Exporting Claim to the Claim Registry Services](#exporting-claim-to-the-claim-registry-services-1)
-    + [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript--with-this-library-)
+  - [User Collectable Attributes](#user-collectable-attributes)
+    - [Using a Claim in javascript (with this library)](#using-a-claim-in-javascript-with-this-library)
+      - [Creating Claim instances with the async create function](#creating-claim-instances-with-the-async-create-function)
+  - [Credentials](#credentials)
+    - [Using a VerifiableCredential in javascript (with this library)](#using-a-verifiablecredential-in-javascript-with-this-library)
       - [creating VerifiableCredential instances with the constructor](#creating-verifiablecredential-instances-with-the-constructor)
-      - [anchoring VerifiableCredential instances with the constructor](#anchoring-verifiablecredential-instances-with-the-constructor)
-      - [refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor](#refreshing-an-anchor--temp----permanent--verifiablecredential-instances-with-the-constructor)
+      - [creating VerifiableCredential with evidence](#creating-verifiablecredential-with-evidence)
+      - [Anchoring VerifiableCredential instances with the constructor](#anchoring-verifiablecredential-instances-with-the-constructor)
+      - [Refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor](#refreshing-an-anchor-temp--permanent-verifiablecredential-instances-with-the-constructor)
+    - [Granting the Credential Usage(for single user) from the owner](#granting-the-credential-usagefor-single-user-from-the-owner)
+      - [Granting](#granting)
+      - [Verify if is Granted](#verify-if-is-granted)
       - [Verifiable Credential Sample](#verifiable-credential-sample)
       - [Construting a VerifiableCredential from a JSON](#construting-a-verifiablecredential-from-a-json)
       - [Verifying a Verifiable Credential](#verifying-a-verifiable-credential)
-- [Schema Generator](#schema-generator)
-
-- [Conventions:](#conventions-)
-  * [Publishing schemas](#publishing-schemas)
-- [Commands](#commands)
-- [Integration with CCS Libraries](#integration-with-ccs-libraries)
-- [ES5 and ES6 definitions](#es5-and-es6-definitions)
-- [Node vs React usage of this library](#node-vs-react-usage-of-this-library)
+- [Loading schemas](#loading-schemas)
+- [Conventions:](#conventions)
 - [Releases](#releases)
 
-## Prerequisites
+## Summary
 
-[![npm][npm]][npm-url]
-      
-- [Node.js](https://nodejs.org/en/)
-- SJCL library with ECC binary. Please refer how to build with support after the `npm i` here: https://github.com/bitwiseshiftleft/sjcl/wiki/Getting-Started
-- Decrypt the XPrv
+This Javascript Library provides functionality around Verifiable Credentials (VC), a W3C standard. Enables Validators 
+to issue, Credential Wallets to verify, filter and Requesters to verify credentials.
 
-```
-git clone git@github.com:masonicGIT/sjcl-cli.git
-cd sjcl-cli
-npm install
-node src/index.js decrypt
-```
-
-## Installation 
+## Installation
 Credential commons is an open-source library that has its binary package published on NPM.
 Projects that depend on credential-commons must install the dependency following this way:
 `npm install --save @identity.com/credential-commons`
@@ -72,46 +45,7 @@ All versions follow SemVer (https://semver.org/)
 - `npm run coverage` - run code coverage and generate report in the `coverage` folder
 - `npm test` - run all tests
 - `npm run test:watch` - run all tests in watch mode
-
-## Configuration
-
-This library depends on some configuration settings to work properly.
-The configuration is made in three different ways that override each other: 
-* etc config file
-* user config file
-* environment's variables, in code (not recommended as you can push that to your repo)
- 
-There is an utility on cli folder, the configuration.js, just run it:
-
-```bash
-node cli/configuration.js
-```
-
-And it will store the file like below:
-
-### Etc Config File /etc/civic/config
-### User Config File ~/.civic/config
-
-### incode
-```
-const CCC = require('credential-commons-js');
-const ccc = new CCC({
-  sipSecurityService: "",
-  attestationService: "",
-  clientConfig: {
-    id: "",
-    signingKeys: {
-      hexpub: "",
-      hexsec: "",
-    },
-  },
-  passphrase: "",
-  keychain: { prv: "" },
-})
- 
-```
-
-If you are not sure how to get those informations, see the tutorial down below.
+- `npm run audit-ci` - run audit checks
 
 ## Features
 
@@ -121,7 +55,7 @@ A "User Collectable Attribute" is **a unit of user-related data** (attribute or 
 
 #### Using a Claim in javascript (with this library)
 
-##### creating Claim instances with the async `create` function
+##### Creating Claim instances with the async `create` function
 
 `Claim.create(identifier, value)`
 
@@ -158,165 +92,18 @@ const name = await Claim.create('claim-cvc:Identity.address-v1', {
 }
 ```
 
-JSON String
- 
-```json
-{
-  "id": null,
-  "issuer": "did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
-  "issuanceDate": "2018-09-25T21:51:56.511Z",
-  "identifier": "cvc:Credential:Address",
-  "expirationDate": "+132017-07-11T05:51:56.512Z",
-  "version": "1",
-  "type": [
-    "Credential",
-    "cvc:Credential:Address"
-  ],
-  "claim": {
-    "type": {
-      "address": {
-        "city": "Belo Horizonte",
-        "country": "Brazil",
-        "county": "Sao Bento",
-        "state": "Minas Gerais",
-        "street": "Alameda dos Anjos",
-        "unit": "102",
-        "zipCode": "94103345"
-      }
-    }
-  },
-  "proof": {
-    "type": "CivicMerkleProof2018",
-    "merkleRoot": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
-    "anchor": {
-      "subject": {
-        "pub": "xpub:dummy",
-        "label": "cvc:Credential:Address",
-        "data": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
-        "signature": "signed:dummy"
-      },
-      "walletId": "none",
-      "cosigners": [
-        {
-          "pub": "xpub:dummy"
-        },
-        {
-          "pub": "xpub:dummy"
-        }
-      ],
-      "authority": {
-        "pub": "xpub:dummy",
-        "path": "/"
-      },
-      "coin": "dummycoin",
-      "tx": {},
-      "network": "dummynet",
-      "type": "permanent",
-      "civicAsPrimary": false,
-      "schema": "dummy-20180201",
-      "value": {}
-    },
-    "leaves": [
-      {
-        "identifier": "claim-cvc:Identity.address-v1",
-        "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
-        "claimPath": "type.address",
-        "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
-        "node": [
-          {
-            "right": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482"
-          },
-          {
-            "right": "e0dbcf542838280f07d49c2b7c9a4bf9e681b43fc6a55ff7db1973d17b44c37c"
-          },
-          {
-            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
-          },
-          {
-            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
-          }
-        ]
-      },
-      {
-        "identifier": "cvc:Meta:issuer",
-        "value": "urn:issuer:a68ed1b5f92ee8ce1e142b232dcb4ca0e2733f51f9893383e6adc3c53887e2fd:did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
-        "claimPath": "meta.issuer",
-        "targetHash": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482",
-        "node": [
-          {
-            "left": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d"
-          },
-          {
-            "right": "e0dbcf542838280f07d49c2b7c9a4bf9e681b43fc6a55ff7db1973d17b44c37c"
-          },
-          {
-            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
-          },
-          {
-            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
-          }
-        ]
-      },
-      {
-        "identifier": "cvc:Meta:issuanceDate",
-        "value": "urn:issuanceDate:c3b9798fe98020b041b4bd20027eee5c2895ff47b3fb0c5a4e8d1d061ae2733d:2018-09-25T21:51:56.511Z",
-        "claimPath": "meta.issuanceDate",
-        "targetHash": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08",
-        "node": [
-          {
-            "right": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312"
-          },
-          {
-            "left": "9dbba3ce114413f76478581417768af3d2f2e6517513c5257b6c5313824f6e68"
-          },
-          {
-            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
-          },
-          {
-            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
-          }
-        ]
-      },
-      {
-        "identifier": "cvc:Meta:expirationDate",
-        "value": "urn:expirationDate:7388ed27d10476f47cd9c68a732a9b9eccfd44598cdcb2f785f5131c33991f5b:+132017-07-11T05:51:56.512Z",
-        "claimPath": "meta.expirationDate",
-        "targetHash": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312",
-        "node": [
-          {
-            "left": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08"
-          },
-          {
-            "left": "9dbba3ce114413f76478581417768af3d2f2e6517513c5257b6c5313824f6e68"
-          },
-          {
-            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
-          },
-          {
-            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
-          }
-        ]
-      }
-    ]
-  }
-}
-
-```
-
 ### Credentials
 
-A Credential with an associated Proof. Every consumer of a verifiable Credentials must be able to verify those independently. Holders of Credentials (aka Mobile Phones) are creating "Verifiable Credentials" for Inspectors (aka Requesters).
-
-#### Defining new Claim
-
-Just add a new definition entry with the [format](http://) on the definitions [file](http://)
+A Credential with an associated Proof. Every consumer of a verifiable Credentials must be able to verify those 
+independently. Holders of Credentials (aka Mobile Phones) are creating "Verifiable Credentials" for Inspectors 
+(aka Requesters).
 
 #### Using a VerifiableCredential in javascript (with this library)
 
 ##### creating VerifiableCredential instances with the constructor
 
 To construct a new VC you need first to get instances of all Claim dependencies
-```
+```javascript
 const name = await Claim.create('claim-cvc:Identity.name-v1', { first: 'Joao', middle: 'Barbosa', last: 'Santos' });
 const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
 const cred = await VC.create('cvc:cred:Test', 'jest:test', null, [name, dob]);
@@ -327,7 +114,7 @@ const cred = await VC.create('cvc:cred:Test', 'jest:test', null, [name, dob]);
 Evidence can be included in a verifiable credential to provide the verifier with additional supporting information. For more details, please refer to the [Evidence session in Verifiable Credential Data Model 1.0](https://www.w3.org/TR/verifiable-claims-data-model/#evidence).
 
 The evidence is an optional parameter on VC construction:
-``` 
+```javascript
 const name = await Claim.create('claim-cvc:Identity.name-v1', { first: 'Joao', middle: 'Barbosa', last: 'Santos' });
 const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
 const evidence = {
@@ -342,9 +129,9 @@ const evidence = {
 const cred = await VC.create('cvc:cred:Test', 'jest:test', null, [name, dob], '1', evidence);
 ```
 
-##### anchoring VerifiableCredential instances with the constructor
+##### Anchoring VerifiableCredential instances with the constructor
 To construct a new VC you need first to get instances of all Claim dependencies
-```
+```javascript
 const name = await Claim.create('claim-cvc:Identity.name-v1', { first: 'Joao', middle: 'Barbosa', last: 'Santos' });
 const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
 const cred = await VC.create('cvc:cred:Test', 'jest:test', [name, dob]);
@@ -353,9 +140,9 @@ cred.requestAnchor().then(() => {
 })
 ```
 
-##### refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor
+##### Refreshing an anchor (temp => permanent) VerifiableCredential instances with the constructor
 To construct a new VC you need first to get instances of all Claim dependencies
-```
+```javascript
 const name = await Claim.create('claim-cvc:Identity.name-v1', { first: 'Joao', middle: 'Barbosa', last: 'Santos' });
 const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
 const cred = await VC.create('cvc:cred:Test', 'jest:test', [name, dob]);
@@ -368,21 +155,22 @@ cred.updateAnchor().then(() => {
 Since the Verifiable Credential is an immutable structure that is anchored on an immutable database(blockchain), 
 someone can ask "What if someone else gets a copy of the VC and tries to use it later as if they are the owner?"
 
-To prevent that to happen is important that the owner always grant the usage of the credential *for a single time only*. And the entity that is receiving the VC has always to verify if the credential is granted for that specific request.
+To prevent that to happen is important that the owner always grant the usage of the credential *for a single time only*.
+And the entity that is receiving the VC has always to verify if the credential is granted for that specific request.
 
 The library provide ways to do both.
 
 ##### Granting
-```js
+```javascript
 cred.grantUsageFor(requestorId, requestId)
 ```
 this updates the credential with a `granted` section. where: 
-```js
+```javascript
 granted = hex_encoded(sign(SHA256(`${cred.proof.anchor.subject.label}${cred.proof.anchor.subject.data}${requestorId}${requestId}`)))
 ````
  
 ##### Verify if is Granted
-````js
+````javascript
 cred.verify(VERIFY_LEVELS.GRANTED | VERIFY_LEVELS.BLOCKCHAIN), options)
 ````
 Where `options` may contatins:
@@ -395,39 +183,37 @@ Where `options` may contatins:
 ```
 
 ##### Verifiable Credential Sample
-```
+```json
 {
-  "id": null,
-  "issuer": "did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
-  "issuanceDate": "2018-09-25T21:51:56.511Z",
-  "identifier": "cvc:Credential:Address",
-  "expirationDate": "+132017-07-11T05:51:56.512Z",
+  "id": "fc60be8f-ea01-4881-a6e9-b4ae9a63e55e",
+  "issuer": "jest:test:9ff1e700-dd46-11e8-958d-e5793374641e",
+  "issuanceDate": "2018-10-31T19:53:23.568Z",
+  "identifier": "credential-cvc:PhoneNumber-v3",
   "version": "1",
   "type": [
-    "Credential",
-    "cvc:Credential:Address"
+    "VerifiableCredential",
+    "IdentityCredential"
   ],
-  "claim": {
-    "type": {
-      "address": {
-        "city": "Belo Horizonte",
-        "country": "Brazil",
-        "county": "Sao Bento",
-        "state": "Minas Gerais",
-        "street": "Alameda dos Anjos",
-        "unit": "102",
-        "zipCode": "94103345"
+  "credentialSubject": {
+    "id": "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V",
+    "contact": {
+      "phoneNumber": {
+        "country": "WTYqO3zRU0",
+        "countryCode": "nmQfVTPkEM",
+        "extension": "lo6CoXdj2N",
+        "lineType": "zkdkjiX1eP",
+        "number": "h7CrPkWRoA"
       }
     }
   },
   "proof": {
     "type": "CivicMerkleProof2018",
-    "merkleRoot": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
+    "merkleRoot": "77ca9a60724d007173136465fa6bdcaa27d12a1801b1d1e8ab974552344d2e39",
     "anchor": {
       "subject": {
         "pub": "xpub:dummy",
-        "label": "cvc:Credential:Address",
-        "data": "c81c5b22438916f2bd75e2966df989b9302ce65887813dd1661f9f24407c5dfe",
+        "label": "credential-cvc:PhoneNumber-v1",
+        "data": "77ca9a60724d007173136465fa6bdcaa27d12a1801b1d1e8ab974552344d2e39",
         "signature": "signed:dummy"
       },
       "walletId": "none",
@@ -453,93 +239,198 @@ Where `options` may contatins:
     },
     "leaves": [
       {
-        "identifier": "claim-cvc:Identity.address-v1",
-        "value": "urn:city:508e6c84091b405587f755eb5e0d9dbd15f4f7f69642adc18d2d2d8fe9c93366:Belo Horizonte|urn:country:f53c0e02620611705f5dfab2abe8320679f183f7eaa01b50340b6f0f0579638f:Brazil|urn:county:a9d100b24769843e15d8fff52efc5d15f57150e1c252d99c0ea7f8d6ed740e4a:Sao Bento|urn:state:73d0477e24c5b3498addf6877c52ae5916b7cf9fbcaea2e2d440167e4745fab2:Minas Gerais|urn:street:71cb22a895ee6264ed2f0cc851a9e17c5326f70bfd94e945e319d03f361d47d9:Alameda dos Anjos|urn:unit:887eb71750da1837101eb64c821f0a0a58e7ab3254eeed1b6bf2cec72b7a4174:102|urn:zipCode:dc671959502dfa65de57a0a8176da15437493c37497670445268e286a035bea8:94103345|",
-        "claimPath": "type.address",
-        "targetHash": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d",
+        "identifier": "credential-cvc:PhoneNumber-v1",
+        "value": "urn:country:ca3bce5c4b3256888c8fa9937d3025516b49b422112bd99cdaf9be66087984e9:WTYqO3zRU0|urn:countryCode:81a228f771ef72126b22d6d17f08222f4241efedf5f13fbb635d8568686a0b6f:nmQfVTPkEM|urn:extension:42cab0927b370d5ee047152aaf52c902f80d7de312bdeca6e4c4e3d4c6603abc:lo6CoXdj2N|urn:lineType:0a71c9a31246f2f6ecfd76a7c71f34a6f741cef3afb2466cc88017bdc16d95a7:zkdkjiX1eP|urn:number:53a8ba743f83a16e533d5572c24dad080820baef958e80c39899838ba1cdd674:h7CrPkWRoA|",
+        "claimPath": "contact.phoneNumber",
+        "targetHash": "cc8f00eaf13969a880fe5d57204b509dd7cc087b99019af1c6e678d4fe072499",
         "node": [
           {
-            "right": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482"
+            "right": "082eeee25eae17f13a74b4d0801d182f9e490ddd70969d1b1a23a709fe87a184"
           },
           {
-            "right": "e0dbcf542838280f07d49c2b7c9a4bf9e681b43fc6a55ff7db1973d17b44c37c"
+            "right": "cd0013b49b3d52aa5c6bf6ac854e77fcac1eab934d4c388ae5837f70172ee91e"
           },
           {
-            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
+            "right": "a1d95e970de891aa6d227426d071a28f3440ee0a3e99f2a76c1a49193cd999f8"
           },
           {
-            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
+            "right": "ac9e75c2d832091f3b18e974dc224ed5ef970673ed679ff931c1f4a33db3f929"
+          },
+          {
+            "right": "3b2728ce00cdc42c8c524574ab20a8ea1e78efa805bba6e988c10e0c13f77d3f"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Phone:countryCode",
+        "value": "urn:countryCode:81a228f771ef72126b22d6d17f08222f4241efedf5f13fbb635d8568686a0b6f:nmQfVTPkEM",
+        "claimPath": "phone.countryCode",
+        "targetHash": "082eeee25eae17f13a74b4d0801d182f9e490ddd70969d1b1a23a709fe87a184",
+        "node": [
+          {
+            "left": "cc8f00eaf13969a880fe5d57204b509dd7cc087b99019af1c6e678d4fe072499"
+          },
+          {
+            "right": "cd0013b49b3d52aa5c6bf6ac854e77fcac1eab934d4c388ae5837f70172ee91e"
+          },
+          {
+            "right": "a1d95e970de891aa6d227426d071a28f3440ee0a3e99f2a76c1a49193cd999f8"
+          },
+          {
+            "right": "ac9e75c2d832091f3b18e974dc224ed5ef970673ed679ff931c1f4a33db3f929"
+          },
+          {
+            "right": "3b2728ce00cdc42c8c524574ab20a8ea1e78efa805bba6e988c10e0c13f77d3f"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Phone:number",
+        "value": "urn:number:53a8ba743f83a16e533d5572c24dad080820baef958e80c39899838ba1cdd674:h7CrPkWRoA",
+        "claimPath": "phone.number",
+        "targetHash": "bf6403908a22f3e8c5d477498d6828411801280128289ecd8680ea8496a92d4d",
+        "node": [
+          {
+            "right": "1b52b0600694813ce1992fafe6d106d10ecef752721f7c79aae6db6be8eede54"
+          },
+          {
+            "left": "a9cb50eddf122581028336ac675bd83d681eaeda754aced0630e8c765914a656"
+          },
+          {
+            "right": "a1d95e970de891aa6d227426d071a28f3440ee0a3e99f2a76c1a49193cd999f8"
+          },
+          {
+            "right": "ac9e75c2d832091f3b18e974dc224ed5ef970673ed679ff931c1f4a33db3f929"
+          },
+          {
+            "right": "3b2728ce00cdc42c8c524574ab20a8ea1e78efa805bba6e988c10e0c13f77d3f"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Phone:extension",
+        "value": "urn:extension:42cab0927b370d5ee047152aaf52c902f80d7de312bdeca6e4c4e3d4c6603abc:lo6CoXdj2N",
+        "claimPath": "phone.extension",
+        "targetHash": "1b52b0600694813ce1992fafe6d106d10ecef752721f7c79aae6db6be8eede54",
+        "node": [
+          {
+            "left": "bf6403908a22f3e8c5d477498d6828411801280128289ecd8680ea8496a92d4d"
+          },
+          {
+            "left": "a9cb50eddf122581028336ac675bd83d681eaeda754aced0630e8c765914a656"
+          },
+          {
+            "right": "a1d95e970de891aa6d227426d071a28f3440ee0a3e99f2a76c1a49193cd999f8"
+          },
+          {
+            "right": "ac9e75c2d832091f3b18e974dc224ed5ef970673ed679ff931c1f4a33db3f929"
+          },
+          {
+            "right": "3b2728ce00cdc42c8c524574ab20a8ea1e78efa805bba6e988c10e0c13f77d3f"
+          }
+        ]
+      },
+      {
+        "identifier": "cvc:Phone:lineType",
+        "value": "urn:lineType:0a71c9a31246f2f6ecfd76a7c71f34a6f741cef3afb2466cc88017bdc16d95a7:zkdkjiX1eP",
+        "claimPath": "phone.lineType",
+        "targetHash": "90891289e7dd6c36dd1fc38187fce024899bdd1c20bf857ff1fe439b2bd18754",
+        "node": [
+          {
+            "right": "059d1df65ffdc8a1c0cff86412f716745531466cdd1c9c2c1264364bba325e01"
+          },
+          {
+            "right": "7d167b4360413c5016d7bdf6b080767275e925e07c18f0a16729b882ef245ace"
+          },
+          {
+            "left": "0d4f56aae6f29bab5d8f83fb595673bdc629d5d0973e78b53ad43a1bb1dd9515"
+          },
+          {
+            "right": "ac9e75c2d832091f3b18e974dc224ed5ef970673ed679ff931c1f4a33db3f929"
+          },
+          {
+            "right": "3b2728ce00cdc42c8c524574ab20a8ea1e78efa805bba6e988c10e0c13f77d3f"
           }
         ]
       },
       {
         "identifier": "cvc:Meta:issuer",
-        "value": "urn:issuer:a68ed1b5f92ee8ce1e142b232dcb4ca0e2733f51f9893383e6adc3c53887e2fd:did:ethr:0x1ddcbae835c47c8d9159756c167994931a5f01e8",
+        "value": "urn:issuer:5bd06324dc242c17e811f56c8d449b4c8f966503811abc1f5a0ff35b876fee2d:jest:test:9ff1e700-dd46-11e8-958d-e5793374641e",
         "claimPath": "meta.issuer",
-        "targetHash": "f97fe9f193a485120e2eef5ee57132b05d7b9c02c53fcf7617663d99b9b6d482",
+        "targetHash": "059d1df65ffdc8a1c0cff86412f716745531466cdd1c9c2c1264364bba325e01",
         "node": [
           {
-            "left": "c1b096d40d2ac94c095ebea67af8d2ffb6788a9d0367ffef0010e0c40dd5157d"
+            "left": "90891289e7dd6c36dd1fc38187fce024899bdd1c20bf857ff1fe439b2bd18754"
           },
           {
-            "right": "e0dbcf542838280f07d49c2b7c9a4bf9e681b43fc6a55ff7db1973d17b44c37c"
+            "right": "7d167b4360413c5016d7bdf6b080767275e925e07c18f0a16729b882ef245ace"
           },
           {
-            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
+            "left": "0d4f56aae6f29bab5d8f83fb595673bdc629d5d0973e78b53ad43a1bb1dd9515"
           },
           {
-            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
+            "right": "ac9e75c2d832091f3b18e974dc224ed5ef970673ed679ff931c1f4a33db3f929"
+          },
+          {
+            "right": "3b2728ce00cdc42c8c524574ab20a8ea1e78efa805bba6e988c10e0c13f77d3f"
           }
         ]
       },
       {
         "identifier": "cvc:Meta:issuanceDate",
-        "value": "urn:issuanceDate:c3b9798fe98020b041b4bd20027eee5c2895ff47b3fb0c5a4e8d1d061ae2733d:2018-09-25T21:51:56.511Z",
+        "value": "urn:issuanceDate:b8b3000ae66079b85aaadb9adfe6658ae09452f77fb8eefeddf96c40692c8bd7:2018-10-31T19:53:23.568Z",
         "claimPath": "meta.issuanceDate",
-        "targetHash": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08",
+        "targetHash": "93c37224a3cd5e6dd47a98e55f42854ee5b3b9fda63f60b8076c57a59bd84f0b",
         "node": [
           {
-            "right": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312"
+            "right": "292ed3b6a33a406ae43bf0d43d159a04a5417e1a244017c174194889898de1e1"
           },
           {
-            "left": "9dbba3ce114413f76478581417768af3d2f2e6517513c5257b6c5313824f6e68"
+            "left": "785d97b0b9fe7809bf55803fc3ded62180e9b01fac15a488ac84e6238eb466f3"
           },
           {
-            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
+            "left": "0d4f56aae6f29bab5d8f83fb595673bdc629d5d0973e78b53ad43a1bb1dd9515"
           },
           {
-            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
+            "right": "ac9e75c2d832091f3b18e974dc224ed5ef970673ed679ff931c1f4a33db3f929"
+          },
+          {
+            "right": "3b2728ce00cdc42c8c524574ab20a8ea1e78efa805bba6e988c10e0c13f77d3f"
           }
         ]
       },
       {
         "identifier": "cvc:Meta:expirationDate",
-        "value": "urn:expirationDate:7388ed27d10476f47cd9c68a732a9b9eccfd44598cdcb2f785f5131c33991f5b:+132017-07-11T05:51:56.512Z",
+        "value": "urn:expirationDate:a43b2ec05674437f2e440be5c72cfcee323fe544c88e212f4bc6c463a8c35dda:null",
         "claimPath": "meta.expirationDate",
-        "targetHash": "5bb75bfee07b5ed5ead3d96ae21d420ce3f8419c8b2ca287eca358507f834312",
+        "targetHash": "292ed3b6a33a406ae43bf0d43d159a04a5417e1a244017c174194889898de1e1",
         "node": [
           {
-            "left": "d3706f4891c1fbfcfa208e7b662858460a992bc547141ee69f7c778681eeab08"
+            "left": "93c37224a3cd5e6dd47a98e55f42854ee5b3b9fda63f60b8076c57a59bd84f0b"
           },
           {
-            "left": "9dbba3ce114413f76478581417768af3d2f2e6517513c5257b6c5313824f6e68"
+            "left": "785d97b0b9fe7809bf55803fc3ded62180e9b01fac15a488ac84e6238eb466f3"
           },
           {
-            "right": "207f569aa16908c29cd1bf590f5e3745d6a433119cf31f024e8c1cbb680d4e41"
+            "left": "0d4f56aae6f29bab5d8f83fb595673bdc629d5d0973e78b53ad43a1bb1dd9515"
           },
           {
-            "right": "9a09e4b79ec54507896892ac23d8b5d707786b075ead58a69d51c4376805e9c1"
+            "right": "ac9e75c2d832091f3b18e974dc224ed5ef970673ed679ff931c1f4a33db3f929"
+          },
+          {
+            "right": "3b2728ce00cdc42c8c524574ab20a8ea1e78efa805bba6e988c10e0c13f77d3f"
           }
         ]
       }
-    ]
+    ],
+    "granted": null
   }
 }
 ```
 
-##### Construting a VerifiableCredential from a JSON
+##### Constructing a VerifiableCredential from a JSON
 To construct a new VC given a JSON, just use the `.fromJSON` method:
-```
+```javascript
 const credJSon = require('./ACred.json');
 const cred = await VC.fromJSON(credJSon);
 ```
@@ -550,14 +441,14 @@ Now you can access any method of a `cred` instance, like `.updateAnchor()` or `.
 Remember to check the section about configuration or else this part will fail.
 
 To verify a credential JSON, you can construct a VC using `.fromJSON` and call `.verify()` method:
-```
+```javascript
 const credJSon = require('./ACred.json');
 const cred = await VC.fromJSON(credJSon);
 const verifiedLevel = cred.verify();
 ```
 
 The `.verify(VC.VERIFY_LEVELS.*, options)` method return the hiehighest level verified, follow the `VC.VERIFY_LEVELS` constant:
-```
+```javascript
 VERIFY_LEVELS = {
   INVALID: -1, // Verifies if the VC structure and/or signature proofs is not valid, or credential is expired
   PROOFS: 0, // Verifies if the VC structure  and/or signature proofs are valid, including the expiry
@@ -567,129 +458,44 @@ VERIFY_LEVELS = {
 };
 ```
 
-
 ## Loading schemas
 
-Schema's can be loaded by providing a schema loader as follows:
+All claims and credentials are validated against a JSON schemas. The source of these schema's and how they are loaded
+needs to be provided. One of more schea loader can be provided as follows:
 
 ```javascript
 const { schemaLoader } = require('@identity/credential-commons');
-schemaLoader.addLoader(new SchemaLoader())
+schemaLoader.addLoader(new SchemaLoader1())
+schemaLoader.addLoader(new SchemaLoader2())
 ```
 
-The provided SchemaLoader needs to confirm to the following interface:
-```javascript
+The provided SchemaLoader needs to conform to the following interface:
+```typescript
 interface SchemaLoader {
   // Returns a boolean if the schema loader can load the supplied identitifier (in the case of multiple loaders)
-  valid(identifier);
+  valid(identifier): boolean;
   
   // Returns the schema id for the provided identifier (e.g. http://identity.com/schemas/claim-cvc:Identity.address-v1)
-  schemaId(identifier);
+  schemaId(identifier): string;
   
   // Load the schema based on the provided identifier and returns the schema as an object
-  async loadSchema(identifier)
+  loadSchema(identifier): Promise<any | null>
 }
 ```
 
 A default schema loaded is provided [here](/src/schemas/jsonSchema/loaders/cvc.js)
 
-
 ## Conventions:
 
--We use draft 7 for json schema generation
+* We use draft 7 for the json schemas
 
--Values that can have null, must have `type : ['null','string']` or else they fail validation if you only send null or if you send an value
+* Values that can have null, must have `type : ['null','string']` or else they fail validation if you only send null or if you send an value
 
--All simple objects String, Number are required as default
+* All simple objects String, Number are required as default
 
--Accepted json schema keywords on identifiers: pattern, maximum, minimum, exclusiveMinimum, exclusiveMaximum, required
+* Accepted json schema keywords on identifiers: pattern, maximum, minimum, exclusiveMinimum, exclusiveMaximum, required
 
--If an identifier has a pattern it must be an Javascript Regex, the generated value will generate the random value using this
-
--Additional properties are not enabled by default
-
-## ES5 and ES6 definitions
-
-The project structure is made like this:
-
-```
-|_ __tests__
-|_ __integration__
-|_ src
-|_ dist
-|__ cjs
-|__ es
-|__ browser
-|_ reports
-|__ coverage
-```
-
-* Tests and Integration folder contains jest tests
-* src contains all ES6 non-transpiled source
-* dist contains all transpiled code in CJS, ES, BROWSER presets of Babel
-* also the package.json has the three fields main, module, browser, that allow packers to change the file of the entry point
-* reports and coverage are all related to JEST tests
-
-The released browser version is minified.
-
-The main entry point targets CJS, all legacy code should work with this.
-
-Sip-hosted-api is tested with this and it works right out of the box, without any other configuration.
-
-Browser projects should bundle the dependencies, so we are not bundling it here.
-
-The browser transpiled version only guarantees the profile we want to target and not leave this task to the user, since any other different transpilation, could result in bugs.
-
-But as pointed out before, if the target project is ES6 compliant, the pkg.module will point out to the ES version.
-
-## Node vs React usage of this library
-
-Put this in your webpack config under plugins if you are running an Webpack Node App
-```js
-new webpack.DefinePlugin({
-    'process.env': {
-        NODE_ENV: 'production',
-        APP_ENV: false
-    }
-})
-```
-
-If you are on a React app add this:
-
-```js
-new webpack.DefinePlugin({
-    'process.env': {
-        NODE_ENV: false,
-        APP_ENV: 'browser'
-    }
-})
-```
-
-With that you can check if you're running in a browser or not this way:
-
-```js
-
-if (process.env.APP_ENV === 'browser') {
-    const doSomething = require('./browser-only-js');
-    doSomething();
-} else {
-    const somethingServer = require('./server-only-js');
-    somethingServer();
-}
-
-if (process.env.APP_ENV !== 'browser') {
-    const somethingServer = require('./server-only-js');
-    somethingServer();
-}
-```
-
-Because these environment variables get replaced during the build, Webpack will not include resources that are server-only. You should always do these kinds of things in an easy way, with a simple, direct compare. Uglify will remove all dead code.
-
-Since you used a function before and the function is not evaluated during build, Webpack wasn't able to know what requires it could skip.
-
-(The NODE_ENV-variable should always be set to production in production mode, since many libraries including React use it for optimisations.)
-
-This is used on this library on src/services/config.js
+* If an identifier has a pattern it must be an Javascript Regex
 
 ## Releases
 
