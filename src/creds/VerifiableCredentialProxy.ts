@@ -6,6 +6,7 @@ import _ from 'lodash'
 import VerifiableCredential from './VerifiableCredential'
 import {schemaLoader} from '../schemas/jsonSchema'
 import CredentialSignerVerifier from './CredentialSignerVerifier';
+import {IDiDResolver} from "../lib/resolver";
 
 const definitions = schemaLoader.credentialDefinitions;
 
@@ -53,8 +54,16 @@ class VerifiableCredentialProxy extends VerifiableCredential {
         this.proof.granted = granted;
     }
 
-    constructor(identifier, issuer, expiryIn, ucas, version, evidence, signerVerifier = null) {
-        super(identifier, issuer, expiryIn, null, ucas, evidence, signerVerifier);
+    constructor(identifier,
+                issuer,
+                expiryIn,
+                ucas,
+                version,
+                evidence,
+                signerVerifier = null,
+                didResolver: IDiDResolver = undefined
+    ) {
+        super(identifier, issuer, expiryIn, null, ucas, evidence, undefined, signerVerifier, didResolver);
 
         this.version = version;
 

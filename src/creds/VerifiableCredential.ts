@@ -23,6 +23,7 @@ import {ClaimModel} from './ClaimModel';
 import {schemaLoader} from '../schemas/jsonSchema';
 import {parseIdentifier} from '../lib/stringUtils';
 import * as signerVerifier from '../lib/signerVerifier';
+import {IDiDResolver} from "../lib/resolver";
 
 // convert a time delta to a timestamp
 const convertDeltaToTimestamp = delta => time.applyDeltaToDate(delta).getTime() / 1000;
@@ -360,11 +361,14 @@ function getCredentialDefinition(identifier, version) {
  * Creates a new Verifiable Credential based on an well-known identifier and it's claims dependencies
  * @param {*} identifier
  * @param {*} issuer
+ * @param {*} expiryIn
+ * @param {*} subject
  * @param {*} ucas
- * @param {*} version
  * @param {*} [evidence]
+ * @param {*} didResolver
+ * @param {*} signerOptions
  */
-function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subject, ucas, evidence, signerOptions) {
+function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subject, ucas, evidence, didResolver, signerOptions) {
     const parsedIdentifier = parseIdentifier(identifier);
     const version = parsedIdentifier ? parsedIdentifier[4] : '1';
 
@@ -376,6 +380,7 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
     this.identifier = identifier;
     this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
     const expiryUCA = new Claim('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
+    this.didResolver = didResolver;
 
     const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA)
         : _.concat(ucas, issuerUCA, issuanceDateUCA);
@@ -552,7 +557,11 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
      * return true or false for the validation
      */
     this.verifyMerkletreeSignature = async () => {
-        const verifier = await signerVerifier.verifier(this.issuer, this.proof.merkleRootSignature.verificationMethod);
+        const verifier = await signerVerifier.verifier(
+            this.issuer,
+            this.proof.merkleRootSignature.verificationMethod,
+            this.didResolver
+        );
 
         return verifier.verify(this);
     };
@@ -781,6 +790,7 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
  * @param subject The subject DID
  * @param ucas An array of UCAs
  * @param evidence The evidence for the credential
+ * @param resolver The did resolver to use
  * @param signerOptions Signer options:
  * @param signerOptions.verificationMethod The verificationMethod for the signing key
  * @param signerOptions.keypair The keypair to sign with
@@ -789,8 +799,16 @@ VerifiableCredentialBaseConstructor.isMatchCredentialMeta = isMatchCredentialMet
  *    or
  * @param signerOptions.signer An object implementing a `sign(CvcMerkleProof)` method
  */
-VerifiableCredentialBaseConstructor.create = async (identifier, issuerDid, expiryIn, subject, ucas, evidence,
-                                                    signerOptions = null, validate = true) => {
+VerifiableCredentialBaseConstructor.create = async (identifier,
+                                                    issuerDid,
+                                                    expiryIn,
+                                                    subject,
+                                                    ucas,
+                                                    evidence,
+                                                    signerOptions = null,
+                                                    resolver: IDiDResolver = didUtil,
+                                                    validate = true
+) => {
     // Load the schema and it's references from a source to be used for validation and defining the schema definitions
     await schemaLoader.loadSchemaFromTitle(identifier);
 
@@ -809,11 +827,11 @@ VerifiableCredentialBaseConstructor.create = async (identifier, issuerDid, expir
         }
 
         // eslint-disable-next-line no-param-reassign
-        signerOptions.signer = await signerVerifier.signer(signerOptions);
+        signerOptions.signer = await signerVerifier.signer(signerOptions, resolver);
     }
 
     const vc = new VerifiableCredentialBaseConstructor(
-        identifier, issuerDid, expiryIn, subject, ucas, evidence, signerOptions,
+        identifier, issuerDid, expiryIn, subject, ucas, evidence, resolver, signerOptions,
     );
 
     if (validate) {
