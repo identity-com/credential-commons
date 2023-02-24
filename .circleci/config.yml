@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:12.19.0
+    - image: circleci/node:14.17.0
 
 workflows:
   version: 2
@@ -122,3 +122,13 @@ jobs:
       - run:
           name: Publish package
           command: npm publish --access=public
+Update the signing and verification of credentials to be pluggable
+
+With the support for pluggable DIDs, there is also a need to support
+additional methods of signing and verifying. This update will default to
+ED25519 and allow the user to override this behaviour when constructing
+a credential
+
+PR:
+
+Signed-off-by: William Brooks <william@identity.org>
