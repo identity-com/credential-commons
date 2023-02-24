@@ -7,6 +7,8 @@ import VerifiableCredential from './VerifiableCredential'
 import {schemaLoader} from '../schemas/jsonSchema'
 import CredentialSignerVerifier from './CredentialSignerVerifier';
 import {IDiDResolver} from "../lib/resolver";
+import {CvcMerkleProof} from "./CvcMerkleProof";
+import {Claim} from "../claim/Claim";
 
 const definitions = schemaLoader.credentialDefinitions;
 
@@ -120,7 +122,17 @@ VerifiableCredentialProxy.create = async (
     await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
     await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
 
-    return new VerifiableCredentialProxy(identifier, issuer, expiryIn, ucas, version, evidence, signer);
+    const vc = new VerifiableCredentialProxy(identifier, issuer, expiryIn, ucas, version, evidence, signer);
+
+    const issuerUCA = new Claim('cvc:Meta:issuer', vc.issuer);
+    const expiryUCA = new Claim('cvc:Meta:expirationDate', vc.expirationDate ? vc.expirationDate : 'null');
+    const issuanceDateUCA = new Claim('cvc:Meta:issuanceDate', vc.issuanceDate);
+    const proofUCAs = expiryUCA ? _.concat(ucas ? ucas : [], issuerUCA, issuanceDateUCA, expiryUCA)
+        : _.concat(ucas, issuerUCA, issuanceDateUCA);
+    vc.proof = new CvcMerkleProof(proofUCAs);
+    await vc.proof.buildMerkleTree(signerVerifier);
+
+    return vc;
 };
 
 /**

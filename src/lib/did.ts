@@ -3,6 +3,7 @@
 import {findVerificationMethod as bazaarFindVerificationMethod, CachedResolver} from '@digitalbazaar/did-io';
 import didSol from '@identity.com/did-io-driver-sol';
 import {DIDDocument} from "did-resolver";
+import {IDiDResolver} from "./resolver";
 
 const resolver = new CachedResolver();
 
@@ -19,9 +20,9 @@ export = {
      * @param verificationMethod The verification method to check
      * @returns {Promise<boolean>} True if the verification method can sign
      */
-    async canSign(didOrDocument: string | DIDDocument, verificationMethod: string) {
+    async canSign(didOrDocument: string | DIDDocument, verificationMethod: string, didResolver: IDiDResolver|undefined) {
         const [verificationMethodDid] = verificationMethod.split('#');
-        const document = typeof didOrDocument === 'string' ? (await this.resolve(didOrDocument)) : didOrDocument;
+        const document = typeof didOrDocument === 'string' ? (await this.resolve(didOrDocument, didResolver)) : didOrDocument;
 
         const did = document.id;
 
@@ -30,13 +31,13 @@ export = {
             return this.findVerificationMethod(document, verificationMethod) !== null;
         }
 
-        if (!document.controller.includes(verificationMethodDid)) {
+        if (!document.controller || !document.controller.includes(verificationMethodDid)) {
             // If the verification method DID is not a controller of the provided DID
             return false;
         }
 
         // Check if the verificationMethod exists on the controller DID document
-        const controllerDocument = await this.resolve(verificationMethodDid);
+        const controllerDocument = await this.resolve(verificationMethodDid, didResolver);
         return this.findVerificationMethod(controllerDocument, verificationMethod) !== null;
     },
 
@@ -45,8 +46,8 @@ export = {
      *
      * @param did The DID to resolve the document for
      */
-    async resolve(did: string) {
-        return resolver.get({did});
+    async resolve(did: string, didResolver: IDiDResolver|undefined) {
+        return didResolver ? didResolver.resolve(did) : resolver.get({did});
     },
 
     /**
@@ -59,14 +60,11 @@ export = {
         if (document.keyAgreement && document.keyAgreement.length > 0) {
             return document.keyAgreement.find(agreement => {
                 // TODO: Remove this check as part of IDCOM-2323
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                if ("id" in agreement && agreement.id) {
-                    return agreement.id === verificationMethod;
+                if(typeof agreement === "string") {
+                    return agreement == verificationMethod
                 }
 
-
-                return agreement === verificationMethod;
+                return agreement.id === verificationMethod;
             });
         }
 
