@@ -7,26 +7,23 @@ const {
     schemaLoader,
     CVCSchemaLoader,
 } = require('index');
-const bs58 = require("bs58");
 
 schemaLoader.addLoader(new CVCSchemaLoader());
 
-jest.setTimeout(100000);
-
 describe("DiDResolver", () => {
-    const mockResolveMethod = jest.fn();
-
-    const mockDidMethods = {
-        mock: mockResolveMethod
-    };
-
-    const didResolver = new DiDResolver(mockDidMethods);
-
-    afterEach(() => {
-        jest.resetAllMocks();
-    });
-
     describe("resolve", () => {
+        const mockResolveMethod = jest.fn();
+
+        const mockDidMethods = {
+            mock: mockResolveMethod
+        };
+
+        const didResolver = new DiDResolver(mockDidMethods);
+
+        afterEach(() => {
+            jest.resetAllMocks();
+        });
+
         it("should resolve a DID", async () => {
             // Assemble
             const mockDID = "did:mock:12345";
