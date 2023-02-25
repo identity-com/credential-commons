@@ -140,7 +140,7 @@ const signer = async (options: SignerOptions, didResolver: IDiDResolver) => {
  * @param verificationMethod The verification method used to lookup the key
  */
 const verifier = async (did: string, verificationMethod: string, didResolver: IDiDResolver) => {
-    const canSignFor = await didUtil.canSign(did, verificationMethod);
+    const canSignFor = await didUtil.canSign(did, verificationMethod, didResolver);
     if (!canSignFor) {
         // always return false
         return {

@@ -374,16 +374,9 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
 
     this.id = uuidv4();
     this.issuer = issuer;
-    const issuerUCA = new Claim('cvc:Meta:issuer', this.issuer);
     this.issuanceDate = (new Date()).toISOString();
-    const issuanceDateUCA = new Claim('cvc:Meta:issuanceDate', this.issuanceDate);
     this.identifier = identifier;
     this.expirationDate = expiryIn ? timestamp.toDate(timestamp.now(expiryIn)).toISOString() : null;
-    const expiryUCA = new Claim('cvc:Meta:expirationDate', this.expirationDate ? this.expirationDate : 'null');
-    this.didResolver = didResolver;
-
-    const proofUCAs = expiryUCA ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA)
-        : _.concat(ucas, issuerUCA, issuanceDateUCA);
 
     if (!_.includes(validIdentifiers(), identifier)) {
         throw new Error(`${identifier} is not defined`);
@@ -409,7 +402,6 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
             ...this.credentialSubject,
             ...new ClaimModel(ucas),
         };
-        this.proof = new CvcMerkleProof(proofUCAs, signerOptions ? signerOptions.signer : null);
         if (!_.isEmpty(definition.excludes)) {
             const removed = _.remove(this.proof.leaves, el => _.includes(definition.excludes, el.identifier));
             _.forEach(removed, (r) => {
@@ -557,10 +549,23 @@ function VerifiableCredentialBaseConstructor(identifier, issuer, expiryIn, subje
      * return true or false for the validation
      */
     this.verifyMerkletreeSignature = async () => {
+        // This check is required to support older non-w3c VC formats (TODO: Consider removing IDCOM-2323)
+        if(signerOptions && signerOptions.verificationMethod) {
+            // If the issuer can't sign they can't verify
+            const canSign = await didUtil.canSign(this.issuer, signerOptions.verificationMethod, didResolver);
+            if (!canSign) return false;
+        }
+
+
+        if(signerOptions && signerOptions.signer && signerOptions.signer.verify) {
+            return signerOptions.signer.verify(this);
+        }
+
+        // TODO: defaults to the "built-in" verifier (will be removed with IDCOM-2323)
         const verifier = await signerVerifier.verifier(
             this.issuer,
             this.proof.merkleRootSignature.verificationMethod,
-            this.didResolver
+            didResolver
         );
 
         return verifier.verify(this);
@@ -819,7 +824,7 @@ VerifiableCredentialBaseConstructor.create = async (identifier,
     await schemaLoader.loadSchemaFromTitle('cvc:Random:node');
 
     if (signerOptions) {
-        const canSignForIssuer = await didUtil.canSign(issuerDid, signerOptions.verificationMethod);
+        const canSignForIssuer = await didUtil.canSign(issuerDid, signerOptions.verificationMethod, resolver);
         if (!canSignForIssuer) {
             throw new Error(
                 `The verificationMethod ${signerOptions.verificationMethod} is not allowed to sign for ${issuerDid}`,
@@ -833,6 +838,14 @@ VerifiableCredentialBaseConstructor.create = async (identifier,
     const vc = new VerifiableCredentialBaseConstructor(
         identifier, issuerDid, expiryIn, subject, ucas, evidence, resolver, signerOptions,
     );
+
+    const issuerUCA = new Claim('cvc:Meta:issuer', vc.issuer);
+    const expiryUCA = new Claim('cvc:Meta:expirationDate', vc.expirationDate ? vc.expirationDate : 'null');
+    const issuanceDateUCA = new Claim('cvc:Meta:issuanceDate', vc.issuanceDate);
+    const proofUCAs = expiryUCA ? _.concat(ucas ? ucas : [], issuerUCA, issuanceDateUCA, expiryUCA)
+        : _.concat(ucas, issuerUCA, issuanceDateUCA);
+    vc.proof = new CvcMerkleProof(proofUCAs);
+    await vc.proof.buildMerkleTree(signerOptions ? signerOptions.signer : null)
 
     if (validate) {
         await schemaLoader.validateSchema(identifier, vc.toJSON());

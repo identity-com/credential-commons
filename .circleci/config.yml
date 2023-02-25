@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:12.19.0
+    - image: circleci/node:14.17.0
 
 workflows:
   version: 2

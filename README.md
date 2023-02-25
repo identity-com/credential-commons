@@ -129,6 +129,43 @@ const evidence = {
 const cred = await VC.create('cvc:cred:Test', 'jest:test', null, [name, dob], '1', evidence);
 ```
 
+##### Custom DID resolution
+Currently this library supports `did:sol` by default. This behaviour can be overriden by providing a custom
+resolver that conforms to the [IDidResolver](src/lib/resolver.ts) interface.
+```javascript
+
+const customResolver = {
+    async resolve(did) {
+        // custom did resolution
+    }
+}
+
+const vc = await VC.create('credential-cvc:Example-v3', 
+        issuer, expiry, subject, claims, evidences, undefined, customResolver);
+```
+
+##### Custom signing of the merkle proof
+Currently, ED25519 is supported in the library by default. It is possible to override this providing
+a custom signer.
+
+```javascript
+const signer = {
+    async sign(proof) {
+        // sign the merkle proof
+    },
+    async verify(credential) {
+      // verify the credential
+    }
+}
+
+const vc = await VC.create('credential-cvc:Example-v3', issuer, expiry, subject, claims, evidences,
+        {
+          verificationMethod,
+          signer
+        }
+);
+```
+
 ##### Anchoring VerifiableCredential instances with the constructor
 To construct a new VC you need first to get instances of all Claim dependencies
 ```javascript
