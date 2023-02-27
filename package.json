@@ -1,6 +1,6 @@
 {
   "name": "@identity.com/credential-commons",
-  "version": "3.0.2",
+  "version": "3.1.0-beta.0",
   "author": "Identity.com Community",
   "license": "MIT",
   "description": "Verifiable Credential and Attestation Library",
@@ -60,7 +60,6 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-react": "^7.32.2",
-    "ethr-did-resolver": "^8.0.0",
     "figlet": "^1.5.0",
     "husky": "^1.1.2",
     "inquirer": "^7.3.3",
@@ -70,16 +69,13 @@
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2",
     "shelljs": "^0.8.4",
-    "typescript": "^4.9.5",
-    "web-did-resolver": "^2.0.21"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@digitalbazaar/did-io": "^1.1.0",
-    "@identity.com/did-io-driver-sol": "^1.0.0-beta.0",
+    "@identity.com/sol-did-client": "^3.3.0",
     "@identity.com/uca": "github:identity-com/uca#v1.0.30",
     "ajv": "^7.2.4",
     "ajv-formats": "^1.6.1",
-    "babel-runtime": "^6.26.0",
     "bitcoinjs-lib": "https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
     "bottlejs": "^1.7.1",
     "bs58": "^4.0.1",
@@ -90,14 +86,11 @@
     "lodash": "^4.17.21",
     "merkle-tools": "^1.4.1",
     "moment-mini": "^2.24.0",
-    "randexp": "^0.5.3",
-    "randomstring": "^1.2.1",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
     "sift": "^13.5.4",
     "sjcl": "github:civicteam/sjcl#v1.0.8-ecc",
     "tweetnacl": "^1.0.3",
-    "type-of-is": "^3.5.1",
     "unix-timestamp": "^0.2.0",
     "uuid": "^3.3.2",
     "valid-url": "^1.0.9"
@@ -122,6 +115,7 @@
         "statements": 85
       }
     },
+    "testEnvironment": "node",
     "coverageDirectory": "reports/coverage",
     "collectCoverage": true,
     "testResultsProcessor": "./node_modules/jest-html-reporter",
