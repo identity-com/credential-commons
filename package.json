@@ -97,15 +97,14 @@
   },
   "jest": {
     "modulePathIgnorePatterns": [
-      "<rootDir>/dist/"
+      "dist/ts-generated/services/DummyAnchorServiceImpl.js.js",
+      "dist/ts-generated/test-utils/",
+      "node_modules/",
+      "build/",
+      "vendor/"
     ],
     "collectCoverageFrom": [
-      "**/src/**/*.{js}",
-      "!**/node_modules/**",
-      "!**/build/**",
-      "!**/vendor/**",
-      "!src/services/DummyAnchorServiceImpl.js",
-      "!src/services/anchorService.js"
+      "dist/ts-generated/**/*.js"
     ],
     "coverageThreshold": {
       "global": {
