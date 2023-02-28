@@ -1,16 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {findVerificationMethod as bazaarFindVerificationMethod, CachedResolver} from '@digitalbazaar/did-io';
-import didSol from '@identity.com/did-io-driver-sol';
-import {DIDDocument} from "did-resolver";
+import {DIDDocument, } from "did-resolver";
 import {IDiDResolver} from "./resolver";
+import {DidSolIdentifier, DidSolService} from "@identity.com/sol-did-client";
+import {findVerificationMethod} from "./did/findVerificationMethod";
 
-const resolver = new CachedResolver();
-
-// no payer needed as we are only resolving documents
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore // TODO: Amend the driver function to accept a nullable payer
-resolver.use(didSol.driver({payer: null}));
+const resolveSolDid = (did: string): Promise<DIDDocument> => {
+    return DidSolService.build(
+        DidSolIdentifier.parse(did),
+    ).resolve()
+}
 
 export = {
     /**
@@ -23,6 +22,10 @@ export = {
     async canSign(didOrDocument: string | DIDDocument, verificationMethod: string, didResolver: IDiDResolver|undefined) {
         const [verificationMethodDid] = verificationMethod.split('#');
         const document = typeof didOrDocument === 'string' ? (await this.resolve(didOrDocument, didResolver)) : didOrDocument;
+
+        if(!document) {
+            throw new Error("Unable to resolve document");
+        }
 
         const did = document.id;
 
@@ -38,6 +41,12 @@ export = {
 
         // Check if the verificationMethod exists on the controller DID document
         const controllerDocument = await this.resolve(verificationMethodDid, didResolver);
+
+        if(!controllerDocument) {
+            throw new Error(`Unable to resolve document for ${verificationMethodDid}`);
+        }
+
+
         return this.findVerificationMethod(controllerDocument, verificationMethod) !== null;
     },
 
@@ -47,7 +56,7 @@ export = {
      * @param did The DID to resolve the document for
      */
     async resolve(did: string, didResolver: IDiDResolver|undefined) {
-        return didResolver ? didResolver.resolve(did) : resolver.get({did});
+        return didResolver ? didResolver.resolve(did) : (await resolveSolDid(did));
     },
 
     /**
@@ -72,9 +81,10 @@ export = {
             return null;
         }
 
-        return bazaarFindVerificationMethod({
+        return findVerificationMethod({
             doc: document,
             methodId: verificationMethod,
+            purpose: null
         });
     }
 }
