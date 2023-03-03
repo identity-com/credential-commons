@@ -2,5 +2,15 @@
   "low": true,
   "package-manager": "auto",
   "report": true,
-  "allowlist": [1086436, 1088664, 1088811, 1088828, 1088948, 1089128, 1089129, 1089152, 1089185, 1089513, 1090135, 1090532, 1091168]
+  "allowlist": [
+    "GHSA-5fw9-fq32-wv5p",
+    "GHSA-p9pc-299p-vxgp",
+    "GHSA-w573-4hg7-7wgq",
+    "GHSA-pfrx-2q88-qq97",
+    "GHSA-2j2x-2gpw-g8fm",
+    "GHSA-f4c9-cqv8-9v98",
+    "GHSA-896r-f27r-55mw",
+    "GHSA-hrpp-h998-j3pp",
+    "GHSA-rc47-6667-2j5j"
+  ]
 }
