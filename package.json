@@ -68,7 +68,7 @@
     "npm": "^6.14.13",
     "request-debug": "^0.2.0",
     "rimraf": "^2.6.2",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "typescript": "^4.9.5"
   },
   "dependencies": {
