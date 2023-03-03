@@ -16,7 +16,7 @@ describe('Integration Tests for Verifiable Credentials', () => {
     schemaLoader.reset();
   });
 
-  it('should request an anchor for Credential and return an temporary attestation', async (done) => {
+  it('should request an anchor for Credential and return an temporary attestation', async () => {
     const name = await Claim.create('claim-cvc:Identity.name-v1',
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
 
@@ -27,11 +27,10 @@ describe('Integration Tests for Verifiable Credentials', () => {
       expect(updated.proof.anchor.value).not.toBeDefined();
       expect(updated.proof.anchor).toBeDefined();
       expect(updated.proof.anchor.schema).toBe('dummy-20180201');
-      done();
     });
   });
 
-  it('should refresh an temporary anchoring with an permanent one', async (done) => {
+  it('should refresh an temporary anchoring with an permanent one', async () => {
     const name = await Claim.create('claim-cvc:Identity.name-v1',
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
 
@@ -43,11 +42,10 @@ describe('Integration Tests for Verifiable Credentials', () => {
         expect(newUpdated.proof.anchor.type).toBe('permanent');
         expect(newUpdated.proof.anchor).toBeDefined();
         expect(newUpdated.proof.anchor.value).toBeDefined();
-        done();
       });
     });
   });
-  it('should revoke the permanent anchor and succed verification', async (done) => {
+  it('should revoke the permanent anchor and succed verification', async () => {
     const name = await Claim.create('claim-cvc:Identity.name-v1',
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
 
@@ -60,6 +58,5 @@ describe('Integration Tests for Verifiable Credentials', () => {
       const isRevoked = await cred.revokeAttestation();
       expect(isRevoked).toBeTruthy();
     }
-    done();
   });
 });

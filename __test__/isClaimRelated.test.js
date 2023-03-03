@@ -13,23 +13,21 @@ describe('isClaimRelated Tests', () => {
   });
 
   it('Should validate a claim path against UCA definitions '
-    + 'and VC definitions and succeed', async (done) => {
+    + 'and VC definitions and succeed', async () => {
     const uca = 'claim-claim-cvc:Document.name-v1-1';
     const claim = 'document.name.givenNames';
     const credential = 'credential-cvc:GenericDocumentId-v1';
     const validation = await isClaimRelated(claim, uca, credential);
     expect(validation).toBeTruthy();
-    done();
   });
 
   it('Should validate a claim path against UCA definitions and VC definitions and '
-    + 'succeed returning false for an non existent dependency', async (done) => {
+    + 'succeed returning false for an non existent dependency', async () => {
     const uca = 'claim-claim-cvc:Contact.phoneNumber-v1-1';
     const claim = 'contact.phoneNumber.number';
     const credential = 'credential-cvc:GenericDocumentId-v1';
     const validation = await isClaimRelated(claim, uca, credential);
     expect(validation).toBeFalsy();
-    done();
   });
 
   it('Should fail validation of a wrong defined uca global identifier', () => expect(isClaimRelated(
