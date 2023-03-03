@@ -75,7 +75,7 @@
     "@identity.com/sol-did-client": "^3.3.0",
     "@identity.com/uca": "github:identity-com/uca#v1.0.30",
     "ajv": "^7.2.4",
-    "ajv-formats": "^1.6.1",
+    "ajv-formats": "^2.1.1",
     "bitcoinjs-lib": "https://github.com/dabura667/bitcoinjs-lib.git#bcash330",
     "bottlejs": "^1.7.1",
     "bs58": "^4.0.1",
