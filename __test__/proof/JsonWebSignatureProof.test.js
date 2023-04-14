@@ -59,7 +59,7 @@ describe('Verifiable Credentials signed with JsonWebSignatureProof', () => {
         expect(verified).toBe(true);
     });
 
-    it.only('Should fail to verify tampered a credential signed with JsonWebSignatureProof', async () => {
+    it('Should fail to verify tampered a credential signed with JsonWebSignatureProof', async () => {
         const ed25519KeyPair = await Ed25519KeyPair.generate({
             secureRandom: () => new Uint8Array(32)
         });

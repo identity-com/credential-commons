@@ -10,7 +10,7 @@ import {
 } from "@transmute/json-web-signature";
 import {verifiable} from "@transmute/vc.js";
 import {IDiDResolver} from "../lib/resolver";
-import Proof from "./Proof";
+import {AbstractProof} from "./Proof";
 
 // The credential context that includes additional properties
 const credentialContext = {
@@ -85,8 +85,9 @@ export const contexts: any = {
 
 type ProofFormat = "vc" | "vc-jwt";
 
-export default class JsonWebSignatureProof implements Proof<JsonWebKey2020> {
+export default class JsonWebSignatureProof extends AbstractProof<JsonWebKey2020> {
     constructor(private resolver: IDiDResolver, private format: ProofFormat = "vc") {
+        super();
     }
 
     async sign(credential: VerifiableCredential, key: JsonWebKey2020): Promise<VerifiableCredential> {

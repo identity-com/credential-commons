@@ -4,9 +4,8 @@ import sec from "@transmute/security-context";
 import did from "@transmute/did-context";
 import {verifiable} from "@transmute/vc.js";
 import {IDiDResolver} from "../lib/resolver";
-import Proof from "./Proof";
+import {AbstractProof} from "./Proof";
 import {EcdsaSecp256k1RecoveryMethod2020, EcdsaSecp256k1RecoverySignature2020} from "@transmute/lds-ecdsa-secp256k1-recovery2020"
-import {JsonWebKey2020} from "@transmute/json-web-signature";
 
 const credentialContext = {
     '@context': {
@@ -186,8 +185,9 @@ export const contexts: any = {
 
 type ProofFormat = "vc" | "vc-jwt";
 
-export default class EcdsaSecp256k1RecoverySignature2020Proof implements Proof<any> {
+export default class EcdsaSecp256k1RecoverySignature2020Proof extends AbstractProof<any> {
     constructor(private resolver: IDiDResolver, private format: ProofFormat = "vc") {
+        super()
     }
 
     async sign(credential: VerifiableCredential, key: any): Promise<VerifiableCredential> {

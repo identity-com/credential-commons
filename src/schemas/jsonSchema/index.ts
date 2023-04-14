@@ -514,6 +514,7 @@ class SchemaLoader {
      * Validates the schema based on identifier and supplied data.
      */
     async validateSchema(identifier, data) {
+        if(data.version) delete data.version;
         const loader = this.findSchemaLoader(identifier);
 
         await this.loadSchemaFromTitle(identifier);
@@ -533,6 +534,7 @@ class SchemaLoader {
         if (!valid) {
             _.forEach(validateSchema.errors, (error) => {
                 if (error.params && error.params.missingProperty) {
+                    console.error(error.params);
                     throw new Error(`Missing required fields to ${validateSchema.schema.title}`);
                 }
             });
