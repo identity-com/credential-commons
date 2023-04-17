@@ -1,3 +1,5 @@
+// TODO: Remove this disable as part of IDCOM-2356
+/* eslint-disable */
 const {schemaLoader} = require("../schemas/jsonSchema");
 const {Claim} = require("../claim/Claim");
 const {ClaimModel} = require("../creds/ClaimModel");

@@ -1,3 +1,5 @@
+// TODO: Remove this disable as part of IDCOM-2356
+/* eslint-disable */
 import {VerifiableCredential} from "../vc/VerifiableCredential";
 import cre from "@transmute/credentials-context";
 import sec from "@transmute/security-context";
@@ -11,6 +13,7 @@ import {
 import {verifiable} from "@transmute/vc.js";
 import {IDiDResolver} from "../lib/resolver";
 import Proof from "./Proof";
+import {VerificationMethod} from "did-resolver";
 
 // The credential context that includes additional properties
 const credentialContext = {
@@ -33,23 +36,12 @@ const credentialContext = {
                     '@id': 'cvc:version',
                     '@type': 'xsd:decimal',
                 },
-                // TODO: see comment below in the updateCredentialContext method
-                // credentialSubject: {
-                //     "@id": "cvc:credentialSubject",
-                //     "@context": {
-                //         contact: {
-                //             '@id': 'cvc:contact',
-                //             '@type': '@json',
-                //         },
-                //     }
-                // }
             },
         },
     },
 };
 
 const updateCredentialContext = (context: any) => {
-    // TODO: Feels hacky? The context for https://www.w3.org/2018/credentials/v1 provided doesn't allow adding any properties on the credential subject?
     context["@context"].VerifiableCredential["@context"].credentialSubject = {
         '@id': 'cred:credentialSubject',
         '@type': '@json'
@@ -142,7 +134,7 @@ export default class JsonWebSignatureProof implements Proof<JsonWebKey2020> {
             throw new Error(`No document found for  ${did}`)
         }
 
-        const foundKey = doc.verificationMethod?.find((pk: any) => pk.id.startsWith(iri));
+        const foundKey = doc.verificationMethod?.find((pk: VerificationMethod) => pk.id.startsWith(iri));
 
         if(!foundKey) {
             throw new Error(`No Verification Method found for ${iri}`);
