@@ -144,7 +144,10 @@ export default class JsonWebSignatureProof implements Proof<JsonWebKey2020> {
 
         const foundKey = doc.verificationMethod?.find((pk: any) => pk.id.startsWith(iri));
 
-        // TODO: Should we provide support for alternative proof mechanisms
+        if(!foundKey) {
+            throw new Error(`No Verification Method found for ${iri}`);
+        }
+
         const key = await JsonWebKey.from(foundKey as Ed25519VerificationKey2018);
 
         const vm = await key.export({type: 'JsonWebKey2020'});
