@@ -3,6 +3,7 @@ const DidKeyResolver = require("./util/didKeyResolver");
 const {Ed25519KeyPair} = require('@transmute/ed25519-key-pair');
 const {Secp256k1KeyPair} = require('@transmute/secp256k1-key-pair');
 const {Claim, VC} = require("index");
+const {generateKeypairAndDid} = require('./util/did');
 const {
     schemaLoader,
     CVCSchemaLoader,
@@ -56,22 +57,6 @@ describe("DiDResolver", () => {
     });
 
     describe('did:key signing and resolution', () => {
-        const SEED = "4f66b355aa7b0980ff901f2295b9c562ac3061be4df86703eb28c612faae6578";
-
-        const generateKeypairAndDid = async (type) => {
-            const keypair = await type.generate({
-                secureRandom: () => {
-                    return Buffer.from(
-                        SEED,
-                        'hex'
-                    );
-                },
-            });
-            const did = `did:key:${await keypair.fingerprint()}`;
-
-            return {keypair, did};
-        }
-
         const createSigner = (document, keypair) => {
             return {
                 async sign(proof) {
