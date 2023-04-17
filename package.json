@@ -30,7 +30,7 @@
     "build:browser:after": "minify dist/prebrowser -d dist/browser",
     "build:browser:clean": "rimraf dist/prebrowser",
     "build:browser": "npm run build:browser:before && npm run build:browser:after && npm run build:browser:clean",
-    "build": "npm run build:ts && npm run build:browser && npm run build:cjs && npm run build:es",
+    "build": "rimraf build && npm run build:ts && npm run build:browser && npm run build:cjs && npm run build:es",
     "pretag": "git fetch --tags",
     "tag": "git tag v$npm_package_version && git push --tags origin master",
     "precommit": "npm run lint",
