@@ -102,6 +102,8 @@ export default class CvcMerkleProof extends AbstractProof<void> {
     }
 
     async sign(credential: VerifiableCredential): Promise<VerifiableCredential> {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const withRandomUcas = CvcMerkleProof.padTree(credential.getClaimMeta());
         const leaves = CvcMerkleProof.getAllAttestableValue(withRandomUcas);
 

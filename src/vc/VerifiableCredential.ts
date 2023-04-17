@@ -170,7 +170,7 @@ export class VerifiableCredential {
     public type: string[];
     public credentialSubject: CredentialSubject;
     public proof?: any;
-    private _claimMeta: any[];
+    // private _claimMeta: any[];
 
     public evidence?: any[];
 
@@ -217,7 +217,7 @@ export class VerifiableCredential {
         const expiryClaim = new Claim('cvc:Meta:expirationDate', expiryDate ? expiryDate.toISOString() : 'null');
         const issuanceDateClaim = new Claim('cvc:Meta:issuanceDate', new Date().toISOString());
 
-        this._claimMeta = [...[issuerClaim, expiryClaim, issuanceDateClaim], ...claims];
+        // this._claimMeta = [...[issuerClaim, expiryClaim, issuanceDateClaim], ...claims];
     }
 
     static async create(params: CreateParams) {
@@ -243,9 +243,9 @@ export class VerifiableCredential {
         return credential;
     }
 
-    public getClaimMeta() {
-        return this._claimMeta;
-    }
+    // public getClaimMeta() {
+    //     return this._claimMeta;
+    // }
 
     public toJSON() {
         // If including the proof (even null/undefined), the JSON-LD signing fails
@@ -277,27 +277,27 @@ export class VerifiableCredential {
         }
     }
 
-    isMatch = (constraints: any) => {
-        const claims = _.cloneDeep(this.credentialSubject);
-        const siftCompatibleConstraints = transformConstraint(constraints);
-
-        const claimsMatchConstraint = (constraint: any) => {
-            const path = _.keys(constraint)[0];
-            const pathValue = _.get(claims, path);
-            if (isDateStructure(pathValue)) {
-                _.set(claims, path, transformDate(pathValue));
-                // transforms delta values like "-18y" to a proper timestamp
-                _.set(constraint, path, _.mapValues(constraint[path], convertTimestampIfString));
-            }
-            // The Constraints are ANDed here - if one is false, the entire
-            return sift(constraint)([claims]);
-        };
-
-        return siftCompatibleConstraints.reduce(
-            (matchesAllConstraints, nextConstraint) => matchesAllConstraints && claimsMatchConstraint(nextConstraint),
-            true,
-        );
-    };
+    // isMatch = (constraints: any) => {
+    //     const claims = _.cloneDeep(this.credentialSubject);
+    //     const siftCompatibleConstraints = transformConstraint(constraints);
+    //
+    //     const claimsMatchConstraint = (constraint: any) => {
+    //         const path = _.keys(constraint)[0];
+    //         const pathValue = _.get(claims, path);
+    //         if (isDateStructure(pathValue)) {
+    //             _.set(claims, path, transformDate(pathValue));
+    //             // transforms delta values like "-18y" to a proper timestamp
+    //             _.set(constraint, path, _.mapValues(constraint[path], convertTimestampIfString));
+    //         }
+    //         // The Constraints are ANDed here - if one is false, the entire
+    //         return sift(constraint)([claims]);
+    //     };
+    //
+    //     return siftCompatibleConstraints.reduce(
+    //         (matchesAllConstraints, nextConstraint) => matchesAllConstraints && claimsMatchConstraint(nextConstraint),
+    //         true,
+    //     );
+    // };
 
     static getAllProperties = async (identifier: string) => {
         await schemaLoader.loadSchemaFromTitle(identifier);
