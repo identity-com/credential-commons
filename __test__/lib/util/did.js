@@ -62,6 +62,20 @@ const keyPair = (did) => {
  */
 const privateKeyBase58 = did => DOCUMENTS[did][1];
 
+const DID_KEY_SEED = "4f66b355aa7b0980ff901f2295b9c562ac3061be4df86703eb28c612faae6578";
+
+const generateKeypairAndDid = async (type) => {
+  const keypair = await type.generate({
+    secureRandom: () => Buffer.from(
+          DID_KEY_SEED,
+          'hex'
+      )
+  });
+  const did = `did:key:${await keypair.fingerprint()}`;
+
+  return {keypair, did};
+}
+
 module.exports = {
   DID_WITH_NO_DEFAULT,
   DID_CONTROLLER,
@@ -70,4 +84,5 @@ module.exports = {
   mockDids,
   keyPair,
   privateKeyBase58,
+  generateKeypairAndDid
 };
