@@ -4,6 +4,19 @@ const {Ed25519KeyPair} = require('@transmute/ed25519-key-pair');
 const {Secp256k1KeyPair} = require('@transmute/secp256k1-key-pair');
 const {Claim, VC} = require("index");
 const {generateKeypairAndDid} = require('./util/did');
+const {Ed25519SignerVerifier} = require("proof/CvcMerkleProof/Ed25519SignerVerifier");
+const {VerifiableCredential} = require('vc/VerifiableCredential')
+const didTestUtil = require('../lib/util/did');
+
+const CvcMerkleProof = require('proof/CvcMerkleProof').default;
+
+const keyResolver = new DidKeyResolver(Ed25519KeyPair);
+
+
+const cvcMerkleProof = new CvcMerkleProof(new Ed25519SignerVerifier(
+    keyResolver,
+    `${didTestUtil.DID_CONTROLLER}#default`,
+    didTestUtil.keyPair(didTestUtil.DID_CONTROLLER)));
 const {
     schemaLoader,
     CVCSchemaLoader,
@@ -70,6 +83,7 @@ describe("DiDResolver", () => {
                 },
 
                 async verify(vc) {
+                    console.log(keypair);
                     const verifier = keypair.verifier();
                     return verifier.verify({
                         data: vc.proof.merkleRoot,
@@ -79,7 +93,7 @@ describe("DiDResolver", () => {
             }
         }
 
-        const createCredential = async(document, signer, resolver) => {
+        const createCredential = async(document, proof) => {
             const did = document.id;
 
             const emailClaim = await Claim.create('claim-cvc:Contact.email-v1', {
@@ -90,10 +104,17 @@ describe("DiDResolver", () => {
                 username: 'testing',
             });
 
-            return await VC.create('credential-cvc:Email-v3', did, null, did, [emailClaim], null, {
-                verificationMethod: document.verificationMethod[0].id,
-                signer,
-            }, resolver);
+            const unsignedCred = await VerifiableCredential.create({
+                issuer: did,
+                identifier: 'credential-cvc:Email-v3',
+                subject: did,
+                claims: [emailClaim],
+                expiry: null,
+            });
+
+            const cred = await proof.sign(unsignedCred);
+
+            return cred;
         }
 
         it('Resolves a did:key Ed25519 document', async () => {
@@ -123,9 +144,11 @@ describe("DiDResolver", () => {
 
             const signer = createSigner(document, keypair);
 
-            const credential = await createCredential(document, signer, keyResolver);
+            const cvcMerkleProof = new CvcMerkleProof(signer);
 
-            const verified = await credential.verifyMerkletreeSignature();
+            const credential = await createCredential(document, cvcMerkleProof);
+
+            const verified = await cvcMerkleProof.verify(credential);
 
             expect(verified).toBe(true);
         })
@@ -137,9 +160,11 @@ describe("DiDResolver", () => {
 
             const signer = createSigner(document, keypair);
 
-            const credential = await createCredential(document, signer, keyResolver);
+            const cvcMerkleProof = new CvcMerkleProof(signer);
 
-            const verified = await credential.verifyMerkletreeSignature();
+            const credential = await createCredential(document, cvcMerkleProof);
+
+            const verified = await cvcMerkleProof.verify(credential);
 
             expect(verified).toBe(true);
         });
@@ -152,12 +177,14 @@ describe("DiDResolver", () => {
 
             const signer = createSigner(document, keypair);
 
-            const emailCredential = await createCredential(document, signer, keyResolver);
+            const cvcMerkleProof = new CvcMerkleProof(signer);
+
+            const emailCredential = await createCredential(document, cvcMerkleProof);
 
             // change the issuer to tamper with the VC
             emailCredential.issuer = "did:key:zQ3shtxV1FrJfhqE1dvxYRcCknWNjHc3c5X1y3ZSoPDi2aur2";
 
-            const verified = await emailCredential.verifyMerkletreeSignature();
+            const verified = await cvcMerkleProof.verify(emailCredential);
 
             expect(verified).toBe(false);
         });

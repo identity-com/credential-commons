@@ -1,3 +1,4 @@
+/* eslint-disable */
 import sift from "sift";
 
 const _ = require('lodash');
@@ -115,6 +116,14 @@ const convertDeltaToTimestamp = (delta: any) => time.applyDeltaToDate(delta).get
 
 const convertTimestampIfString = (obj: any) => (_.isString(obj) ? convertDeltaToTimestamp(obj) : obj);
 
+function getCredentialDefinition(identifier: string, version: number) {
+    const definition = _.find(definitions, {identifier});
+    if (!definition) {
+        throw new Error(`Credential definition for ${identifier} v${version} not found`);
+    }
+    return definition;
+}
+
 export type Evidence = {}
 
 export type CreateParams = {
@@ -148,6 +157,7 @@ export type CreateParams = {
     validate?: boolean,
 }
 
+
 type CredentialSubject = {
     id: string
 }
@@ -168,21 +178,25 @@ export class VerifiableCredential {
     public expirationDate?: string | null;
     public version: number;
     public type: string[];
+
+
     public credentialSubject: CredentialSubject;
     public proof?: any;
-    // private _claimMeta: any[];
+    private _claimMeta: any[];
 
     public evidence?: any[];
 
-    public transient?: boolean;
+    public transient: boolean;
 
     private constructor(
         identifier: string,
+        version: number,
         claims: any[],
         issuer: string,
         subject: string,
         expiryDate: Date | undefined,
         evidence?: any[],
+        transient?: boolean
     ) {
         this["@context"] = [
             "https://www.w3.org/2018/credentials/v1",
@@ -194,6 +208,7 @@ export class VerifiableCredential {
         this.issuanceDate = new Date().toISOString();
         this.identifier = identifier;
         this.expirationDate = expiryDate ? expiryDate.toISOString() : null;
+        this.transient = transient ? true : false;
 
         if (evidence) {
             this.evidence = serializeEvidence(evidence);
@@ -203,8 +218,7 @@ export class VerifiableCredential {
             throw new Error(`${identifier} is not defined`);
         }
 
-        const parsedIdentifier = parseIdentifier(identifier);
-        this.version = parseInt(parsedIdentifier[4]);
+        this.version = version;
 
         this.type = CREDENTIAL_TYPE;
 
@@ -217,7 +231,7 @@ export class VerifiableCredential {
         const expiryClaim = new Claim('cvc:Meta:expirationDate', expiryDate ? expiryDate.toISOString() : 'null');
         const issuanceDateClaim = new Claim('cvc:Meta:issuanceDate', new Date().toISOString());
 
-        // this._claimMeta = [...[issuerClaim, expiryClaim, issuanceDateClaim], ...claims];
+        this._claimMeta = [...[issuerClaim, expiryClaim, issuanceDateClaim], ...claims];
     }
 
     static async create(params: CreateParams) {
@@ -230,22 +244,35 @@ export class VerifiableCredential {
         await schemaLoader.loadSchemaFromTitle('cvc:Meta:expirationDate');
         await schemaLoader.loadSchemaFromTitle('cvc:Random:node')
 
-        const credential = new VerifiableCredential(params.identifier, params.claims, params.issuer, params.subject, params.expiry, params.evidence);
+        if (!_.includes(validIdentifiers(), params.identifier)) {
+            throw new Error(`${params.identifier} is not defined`);
+        }
+
+        const parsedIdentifier = parseIdentifier(params.identifier);
+        const version = parseInt(parsedIdentifier[4]);
+        const definition = getCredentialDefinition(params.identifier, version);
+
+        const credential = new VerifiableCredential(
+            params.identifier,
+            version,
+            params.claims,
+            params.issuer,
+            params.subject,
+            params.expiry,
+            params.evidence,
+            definition.transient ?? false
+        );
 
         if (params.validate !== false) {
-            const cred = credential.toJSON();
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            // delete cred.version;
-            // await schemaLoader.validateSchema(params.identifier, credential.toJSON());
-            // await schemaLoader.validateSchema(params.identifier, cred);
+            await schemaLoader.validateSchema(params.identifier, credential.toJSON());
         }
+
         return credential;
     }
 
-    // public getClaimMeta() {
-    //     return this._claimMeta;
-    // }
+    public getClaimMeta() {
+        return this._claimMeta;
+    }
 
     public toJSON() {
         // If including the proof (even null/undefined), the JSON-LD signing fails
@@ -277,27 +304,27 @@ export class VerifiableCredential {
         }
     }
 
-    // isMatch = (constraints: any) => {
-    //     const claims = _.cloneDeep(this.credentialSubject);
-    //     const siftCompatibleConstraints = transformConstraint(constraints);
-    //
-    //     const claimsMatchConstraint = (constraint: any) => {
-    //         const path = _.keys(constraint)[0];
-    //         const pathValue = _.get(claims, path);
-    //         if (isDateStructure(pathValue)) {
-    //             _.set(claims, path, transformDate(pathValue));
-    //             // transforms delta values like "-18y" to a proper timestamp
-    //             _.set(constraint, path, _.mapValues(constraint[path], convertTimestampIfString));
-    //         }
-    //         // The Constraints are ANDed here - if one is false, the entire
-    //         return sift(constraint)([claims]);
-    //     };
-    //
-    //     return siftCompatibleConstraints.reduce(
-    //         (matchesAllConstraints, nextConstraint) => matchesAllConstraints && claimsMatchConstraint(nextConstraint),
-    //         true,
-    //     );
-    // };
+    isMatch = (constraints: any) => {
+        const claims = _.cloneDeep(this.credentialSubject);
+        const siftCompatibleConstraints = transformConstraint(constraints);
+
+        const claimsMatchConstraint = (constraint: any) => {
+            const path = _.keys(constraint)[0];
+            const pathValue = _.get(claims, path);
+            if (isDateStructure(pathValue)) {
+                _.set(claims, path, transformDate(pathValue));
+                // transforms delta values like "-18y" to a proper timestamp
+                _.set(constraint, path, _.mapValues(constraint[path], convertTimestampIfString));
+            }
+            // The Constraints are ANDed here - if one is false, the entire
+            return sift(constraint)([claims]);
+        };
+
+        return siftCompatibleConstraints.reduce(
+            (matchesAllConstraints, nextConstraint) => matchesAllConstraints && claimsMatchConstraint(nextConstraint),
+            true,
+        );
+    };
 
     static getAllProperties = async (identifier: string) => {
         await schemaLoader.loadSchemaFromTitle(identifier);
@@ -339,7 +366,7 @@ export class VerifiableCredential {
      * //   }
      * @returns boolean
      */
-    static isMatchCredentialMeta(credentialMeta: any, constraintsMeta:any) {
+    static isMatchCredentialMeta(credentialMeta: any, constraintsMeta: any) {
         const siftCompatibleConstraints = transformMetaConstraint(constraintsMeta);
 
         if (_.isEmpty(siftCompatibleConstraints)) return false;

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {MerkleProof} from "../../lib/signerVerifier";
-import {VerificationMethod} from "did-resolver";
 import {VerifiableCredential} from "../../vc/VerifiableCredential";
 
 export interface SignerVerifier {

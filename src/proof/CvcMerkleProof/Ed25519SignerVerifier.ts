@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import nacl from "tweetnacl";
-import {MerkleProof, VerifiableMerkleCredential} from "../../lib/signerVerifier";
+import {MerkleProof} from "../../lib/signerVerifier";
 import {SignerVerifier} from "./SignerVerifier";
 import {IDiDResolver} from "../../lib/resolver";
 import {Keypair} from "@solana/web3.js";
@@ -29,7 +30,7 @@ export class Ed25519SignerVerifier implements SignerVerifier {
 
         const vm = await didUtil.findVerificationMethod(did, this._verificationMethod);
 
-        if(!vm) throw new Error(`Verification method ${this._verificationMethod} not found on did ${vc.issuer}`);
+        if(!vm) return false;
 
         return this.verifyEncoding(vc, vm.publicKeyBase58, 'hex') || this.verifyEncoding(vc, vm.publicKeyBase58, 'utf-8');
     }

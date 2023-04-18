@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {VerifiableCredential} from "../vc/VerifiableCredential";
 import cre from "@transmute/credentials-context";
 import sec from "@transmute/security-context";
@@ -33,23 +34,12 @@ const credentialContext = {
                     '@id': 'cvc:version',
                     '@type': 'xsd:decimal',
                 },
-                // TODO: see comment below in the updateCredentialContext method
-                // credentialSubject: {
-                //     "@id": "cvc:credentialSubject",
-                //     "@context": {
-                //         contact: {
-                //             '@id': 'cvc:contact',
-                //             '@type': '@json',
-                //         },
-                //     }
-                // }
             },
         },
     },
 };
 
 const updateCredentialContext = (context: any) => {
-    // TODO: Feels hacky? The context for https://www.w3.org/2018/credentials/v1 provided doesn't allow adding any properties on the credential subject?
     context["@context"].VerifiableCredential["@context"].credentialSubject = {
         '@id': 'cred:credentialSubject',
         '@type': '@json'

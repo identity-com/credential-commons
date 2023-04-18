@@ -13,7 +13,10 @@ export abstract class AbstractProof<K> implements Proof<K> {
 
     abstract verify(verifiableCredentialJSON: VerifiableCredential): Promise<boolean>;
 
-    static async vcFromJSON(verifiableCredentialJSON: VerifiableCredential, partialPresentation = false): Promise<VerifiableCredential> {
+    static async vcFromJSON(
+        verifiableCredentialJSON: VerifiableCredential,
+        partialPresentation = false
+    ): Promise<VerifiableCredential> {
         await schemaLoader.loadSchemaFromTitle(verifiableCredentialJSON.identifier);
 
         if (!verifiableCredentialJSON.identifier) {

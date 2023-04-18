@@ -2,5 +2,22 @@
   "low": true,
   "package-manager": "auto",
   "report": true,
-  "allowlist": [1086436, 1088664, 1088811, 1088828, 1088948, 1089128, 1089129, 1089152, 1089185, 1089513, 1090135, 1090532, 1091168]
+  "allowlist": [
+    "GHSA-2j2x-2gpw-g8fm",
+    "GHSA-f4c9-cqv8-9v98",
+    "GHSA-5rrq-pxf6-6jx5",
+    "GHSA-gf8q-jrpm-jvxq",
+    "GHSA-2r2c-g63r-vccr",
+    "GHSA-8fr3-hfg3-gpgp",
+    "GHSA-cfm4-qjh2-4765",
+    "GHSA-x4jg-mjrx-434g",
+    "GHSA-5fw9-fq32-wv5p",
+    "GHSA-p8p7-x288-28g6",
+    "GHSA-7p7h-4mm5-852v",
+    "GHSA-hc6q-2mpp-qw7j",
+    "GHSA-5fg8-2547-mr8q",
+    "GHSA-h6q6-9hqw-rwfv",
+    "GHSA-crh6-fp67-6883",
+    "GHSA-p9pc-299p-vxgp"
+  ]
 }

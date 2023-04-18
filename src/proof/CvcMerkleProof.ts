@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {AbstractProof} from "./Proof";
 import {VerifiableCredential} from "../vc/VerifiableCredential";
 import {sha256} from "../lib/crypto";
@@ -7,8 +8,8 @@ import {schemaLoader} from "../schemas/jsonSchema";
 import flatten from 'flat';
 import {SignerVerifier} from "./CvcMerkleProof/SignerVerifier";
 
-const {Claim} = require('../claim/Claim');
-const {services} = require('../services');
+import {Claim} from '../claim/Claim';
+import {services} from '../services';
 
 function getClaimsWithFlatKeys(claims: any) {
     const flattenDepth3 = flatten(claims, {maxDepth: 3});
@@ -26,7 +27,15 @@ function getLeavesClaimPaths(signLeaves: any) {
 }
 
 
-function verifyLeave(leave: any, merkleTools: any, claims: any, signature: any, invalidValues: any, invalidHashs: any, invalidProofs: any) {
+function verifyLeave(
+    leave: any,
+    merkleTools: any,
+    claims: any,
+    signature: any,
+    invalidValues: any,
+    invalidHashs: any,
+    invalidProofs: any
+) {
     // 1. verify valid targetHashs
     // 1.1 "leave.value" should be equal claim values
     const ucaValue = new Claim(leave.identifier, {attestableValue: leave.value});
@@ -129,7 +138,9 @@ export default class CvcMerkleProof extends AbstractProof<void> {
     }
 
     async verifySignature(credential: VerifiableCredential): Promise<boolean> {
-        if(!credential.proof.merkleRootSignature) throw new Error("This credential has not been signed");
+        if(!credential.proof.merkleRootSignature) return false;
+
+        if(!credential.proof.merkleRootSignature.verificationMethod.startsWith(credential.issuer)) return false;
 
         return this._signerVerifier.verify(credential);
     }
@@ -347,7 +358,11 @@ export default class CvcMerkleProof extends AbstractProof<void> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     static grantUsageFor = (credential: VerifiableCredential, requestorId: any, requestId: any, {keyName, pvtKey}) => {
-        if (_.isEmpty(_.get(credential.proof, 'anchor.subject.label')) || _.isEmpty(_.get(credential.proof, 'anchor.subject.data'))) {
+        if (
+            _.isEmpty(_.get(credential.proof, 'anchor.subject.label'))
+            ||
+            _.isEmpty(_.get(credential.proof, 'anchor.subject.data'))
+        ) {
             throw new Error('Invalid credential attestation/anchor');
         }
         if (!CvcMerkleProof.verifyAnchorSignature(credential)) {
@@ -493,8 +508,10 @@ export default class CvcMerkleProof extends AbstractProof<void> {
         // Test next level
         if (verifiedlevel === CvcMerkleProof.VERIFY_LEVELS.ANCHOR
             && hVerifyLevel >= CvcMerkleProof.VERIFY_LEVELS.GRANTED
-            && (await CvcMerkleProof.verifyGrant(credential, requestorId, requestId, keyName))) verifiedlevel = CvcMerkleProof.VERIFY_LEVELS.GRANTED;
+            && (await CvcMerkleProof.verifyGrant(credential, requestorId, requestId, keyName))) {
+            verifiedlevel = CvcMerkleProof.VERIFY_LEVELS.GRANTED;
+        }
 
         return verifiedlevel;
-    };
+    }
 }
