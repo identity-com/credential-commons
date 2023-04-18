@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import nacl from "tweetnacl";
 import {MerkleProof} from "../../lib/signerVerifier";
 import {SignerVerifier} from "./SignerVerifier";
@@ -12,7 +11,7 @@ export class Ed25519SignerVerifier implements SignerVerifier {
     constructor(private _didResolver: IDiDResolver, private _verificationMethod: string, private _keypair: Keypair) {
     }
 
-    async sign(proof: MerkleProof): Promise<any> {
+    async sign(proof: MerkleProof): Promise<unknown> {
         if (!this._keypair) throw new Error(`No private key provided for signing`);
 
         const signed = nacl.sign.detached(Buffer.from(proof.merkleRoot, 'hex'), this._keypair.secretKey);
@@ -45,15 +44,4 @@ export class Ed25519SignerVerifier implements SignerVerifier {
             bs58.decode(key),
         );
     }
-
-    //
-    // sign(proof: MerkleProof, key: string, verificationMethod: VerificationMethod) {
-    //     const signed = nacl.sign.detached(Buffer.from(proof.merkleRoot, 'hex'), bs58.decode(key));
-    //     const signature = Buffer.from(signed).toString('hex');
-    //
-    //     return {
-    //         signature,
-    //         verificationMethod,
-    //     };
-    // }
 }

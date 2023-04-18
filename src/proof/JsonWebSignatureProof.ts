@@ -112,7 +112,7 @@ export default class JsonWebSignatureProof extends AbstractProof<JsonWebKey2020>
         return result.verified;
     }
 
-    private async documentLoader(iri: string) {
+    private async documentLoader(iri: string) : Promise<{ documentUrl?: string | undefined; document: any; }>{
         if (contexts[iri]) {
             return {document: contexts[iri]};
         }
@@ -124,7 +124,7 @@ export default class JsonWebSignatureProof extends AbstractProof<JsonWebKey2020>
         throw new Error(`Unsupported iri: ${iri}`);
     }
 
-    private async createController(iri: string) {
+    private async createController(iri: string): Promise<{ documentUrl?: string | undefined; document: any; }> {
         const did = iri.split("#")[0];
 
         const doc = await this.resolver.resolve(did);
@@ -134,6 +134,9 @@ export default class JsonWebSignatureProof extends AbstractProof<JsonWebKey2020>
         }
 
         const foundKey = doc.verificationMethod?.find((pk: any) => pk.id.startsWith(iri));
+
+        // This causes validation to fail
+        if(!foundKey) throw new Error(`No VM found for %{iri}`);
 
         // TODO: Should we provide support for alternative proof mechanisms
         const key = await JsonWebKey.from(foundKey as Ed25519VerificationKey2018);

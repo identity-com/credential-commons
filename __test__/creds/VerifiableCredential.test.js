@@ -3,7 +3,6 @@ const fs = require('fs');
 const uuidv4 = require('uuid/v4');
 const sjcl = require('sjcl');
 const {Claim} = require('claim/Claim');
-const VC = require('creds/VerifiableCredential');
 const MiniCryptoManagerImpl = require('services/MiniCryptoManagerImpl');
 const didTestUtil = require('../lib/util/did');
 const solResolver = require('lib/did');

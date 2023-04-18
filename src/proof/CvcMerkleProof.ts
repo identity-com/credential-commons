@@ -8,8 +8,10 @@ import {schemaLoader} from "../schemas/jsonSchema";
 import flatten from 'flat';
 import {SignerVerifier} from "./CvcMerkleProof/SignerVerifier";
 
-import {Claim} from '../claim/Claim';
-import {services} from '../services';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const {Claim} = require('../claim/Claim');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const {services} = require('../services');
 
 function getClaimsWithFlatKeys(claims: any) {
     const flattenDepth3 = flatten(claims, {maxDepth: 3});
@@ -138,9 +140,9 @@ export default class CvcMerkleProof extends AbstractProof<void> {
     }
 
     async verifySignature(credential: VerifiableCredential): Promise<boolean> {
-        if(!credential.proof.merkleRootSignature) return false;
+        if (!credential.proof.merkleRootSignature) return false;
 
-        if(!credential.proof.merkleRootSignature.verificationMethod.startsWith(credential.issuer)) return false;
+        if (!credential.proof.merkleRootSignature.verificationMethod.startsWith(credential.issuer)) return false;
 
         return this._signerVerifier.verify(credential);
     }

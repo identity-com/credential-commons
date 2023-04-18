@@ -534,7 +534,6 @@ class SchemaLoader {
         if (!valid) {
             _.forEach(validateSchema.errors, (error) => {
                 if (error.params && error.params.missingProperty) {
-                    console.error(error.params);
                     throw new Error(`Missing required fields to ${validateSchema.schema.title}`);
                 }
             });

@@ -1,6 +1,5 @@
 const uuidv4 = require('uuid/v4');
 const { Claim } = require('claim/Claim');
-const VC = require('creds/VerifiableCredential');
 const { schemaLoader, CVCSchemaLoader } = require('index');
 const didTestUtil = require("../../__test__/lib/util/did");
 
@@ -58,7 +57,6 @@ describe('Integration Tests for Verifiable Credentials', () => {
       { givenNames: 'Joao', otherNames: 'Barbosa', familyNames: 'Santos' });
 
     const dob = await Claim.create('claim-cvc:Identity.dateOfBirth-v1', { day: 20, month: 3, year: 1978 });
-    // const cred = await VC.create('credential-cvc:Identity-v3', uuidv4(), null, credentialSubject, [name, dob]);
 
     const unsignedCred = await VerifiableCredential.create({
       issuer: didTestUtil.DID_CONTROLLER,

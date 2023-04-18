@@ -27,7 +27,7 @@ export abstract class AbstractProof<K> implements Proof<K> {
             await schemaLoader.validateSchema(verifiableCredentialJSON.identifier, verifiableCredentialJSON);
         }
 
-        const newObj = await VerifiableCredential.create({
+        const verifiableCredential = await VerifiableCredential.create({
             identifier: verifiableCredentialJSON.identifier,
             issuer: verifiableCredentialJSON.issuer,
             claims: [],
@@ -36,14 +36,14 @@ export abstract class AbstractProof<K> implements Proof<K> {
             subject: '',
         });
 
-        newObj.id = _.clone(verifiableCredentialJSON.id);
-        newObj.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
-        newObj.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
-        newObj.identifier = _.clone(verifiableCredentialJSON.identifier);
-        newObj.type = _.cloneDeep(verifiableCredentialJSON.type);
-        newObj.credentialSubject = _.cloneDeep(verifiableCredentialJSON.credentialSubject);
-        newObj.proof = _.cloneDeep(verifiableCredentialJSON.proof);
+        verifiableCredential.id = _.clone(verifiableCredentialJSON.id);
+        verifiableCredential.issuanceDate = _.clone(verifiableCredentialJSON.issuanceDate);
+        verifiableCredential.expirationDate = _.clone(verifiableCredentialJSON.expirationDate);
+        verifiableCredential.identifier = _.clone(verifiableCredentialJSON.identifier);
+        verifiableCredential.type = _.cloneDeep(verifiableCredentialJSON.type);
+        verifiableCredential.credentialSubject = _.cloneDeep(verifiableCredentialJSON.credentialSubject);
+        verifiableCredential.proof = _.cloneDeep(verifiableCredentialJSON.proof);
 
-        return newObj;
+        return verifiableCredential;
     }
 }

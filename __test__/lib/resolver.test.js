@@ -83,7 +83,6 @@ describe("DiDResolver", () => {
                 },
 
                 async verify(vc) {
-                    console.log(keypair);
                     const verifier = keypair.verifier();
                     return verifier.verify({
                         data: vc.proof.merkleRoot,

@@ -114,7 +114,7 @@ function isDateStructure(obj: any) {
 
 const convertDeltaToTimestamp = (delta: any) => time.applyDeltaToDate(delta).getTime() / 1000;
 
-const convertTimestampIfString = (obj: any) => (_.isString(obj) ? convertDeltaToTimestamp(obj) : obj);
+const convertTimestampIfString = (obj: string | unknown) => (_.isString(obj) ? convertDeltaToTimestamp(obj) : obj);
 
 function getCredentialDefinition(identifier: string, version: number) {
     const definition = _.find(definitions, {identifier});
@@ -284,6 +284,7 @@ export class VerifiableCredential {
                 issuanceDate: this.issuanceDate,
                 identifier: this.identifier,
                 expirationDate: this.expirationDate,
+                // TODO: IDCOM-2456 - this breaks some of the schema validation
                 // version: this.version,
                 type: this.type,
                 credentialSubject: this.credentialSubject,
@@ -297,6 +298,7 @@ export class VerifiableCredential {
                 issuanceDate: this.issuanceDate,
                 identifier: this.identifier,
                 expirationDate: this.expirationDate,
+                // TODO: IDCOM-2456 - this breaks some of the schema validation
                 // version: this.version,
                 type: this.type,
                 credentialSubject: this.credentialSubject,
@@ -304,7 +306,7 @@ export class VerifiableCredential {
         }
     }
 
-    isMatch = (constraints: any) => {
+    public isMatch(constraints: any) {
         const claims = _.cloneDeep(this.credentialSubject);
         const siftCompatibleConstraints = transformConstraint(constraints);
 
