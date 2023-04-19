@@ -1,7 +1,7 @@
 const CredentialCommons = require('index');
 const httpMock = require('services/__mocks__/httpService');
 
-const { Claim, VC } = CredentialCommons;
+const { Claim, VerifiableCredential } = CredentialCommons;
 
 describe('Module Entry Point Tests', () => {
   it('should access the entry point e see if the modules are declared', () => {
@@ -18,9 +18,10 @@ describe('Module Entry Point Tests', () => {
       passphrase: '',
       keychain: { prv: '' },
     };
+
     CredentialCommons.init(confMock, httpMock);
     expect(Claim).toBeDefined();
-    expect(VC).toBeDefined();
+    expect(VerifiableCredential).toBeDefined();
   });
 
   it('Should initialize with custom SecureRandom', () => {
@@ -42,6 +43,6 @@ describe('Module Entry Point Tests', () => {
 
     CredentialCommons.init(confMock, httpMock, myCustomSecureRandom);
     expect(Claim).toBeDefined();
-    expect(VC).toBeDefined();
+    expect(VerifiableCredential).toBeDefined();
   });
 });

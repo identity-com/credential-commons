@@ -4,7 +4,7 @@
 
 import {Claim} from './claim/Claim';
 import {UserCollectableAttribute} from './uca/UCA';
-import VC from './creds/VerifiableCredential';
+import {VerifiableCredential} from './vc/VerifiableCredential';
 import {initServices, services} from './services';
 import isValidGlobalIdentifier from './isValidGlobalIdentifier';
 import errors from './errors/index';
@@ -15,7 +15,6 @@ import credentialDefinitions from './creds/definitions';
 import aggregate from './AggregationHandler';
 import {schemaLoader} from './schemas/jsonSchema';
 import CVCSchemaLoader from './schemas/jsonSchema/loaders/cvc';
-import VCCompat from './creds/VerifiableCredentialProxy';
 
 /**
  * Entry Point for Civic Credential Commons
@@ -37,8 +36,7 @@ function CredentialCommons() {
     this.schemaLoader = schemaLoader;
     this.CVCSchemaLoader = CVCSchemaLoader;
     this.UserCollectableAttribute = UserCollectableAttribute;
-    this.VC = VC;
-    this.VCCompat = VCCompat;
+    this.VerifiableCredential = VerifiableCredential;
     return this;
 }
 

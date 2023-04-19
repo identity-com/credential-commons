@@ -6,6 +6,8 @@ const {
 } = require('index');
 const claimDefinitions = require('claim/definitions');
 const credentialDefinitions = require('creds/definitions');
+const {VerifiableCredential} = require('vc/VerifiableCredential')
+const didTestUtil = require("./lib/util/did");
 
 const credentialSubject = 'did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V';
 
@@ -110,7 +112,13 @@ describe('schema loading tests', () => {
       year: 1970,
     });
 
-    await VC.create('credential-cvc:Identity-v3', 'issuer', null, credentialSubject, [name, dob]);
+    await VerifiableCredential.create({
+      issuer: didTestUtil.DID_CONTROLLER,
+      identifier: 'credential-cvc:Identity-v3',
+      subject: credentialSubject,
+      claims: [name, dob],
+      expiry: new Date(new Date().getTime() + 100000),
+    });
 
     expect(credentialDefinitions)
       .toHaveLength(1);
@@ -193,7 +201,13 @@ describe('schema loading tests', () => {
       year: 1970,
     });
 
-    await VC.create('credential-cvc:Identity-v3', 'issuer', null, credentialSubject, [name, dob]);
+    await VerifiableCredential.create({
+      issuer: didTestUtil.DID_CONTROLLER,
+      identifier: 'credential-cvc:Identity-v3',
+      subject: credentialSubject,
+      claims: [name, dob],
+      expiry: new Date(new Date().getTime() + 100000),
+    });
 
     expect(summaryMap)
       .toEqual(expect.objectContaining({

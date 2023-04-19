@@ -514,6 +514,7 @@ class SchemaLoader {
      * Validates the schema based on identifier and supplied data.
      */
     async validateSchema(identifier, data) {
+        if(data.version) delete data.version;
         const loader = this.findSchemaLoader(identifier);
 
         await this.loadSchemaFromTitle(identifier);

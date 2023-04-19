@@ -1,5 +1,4 @@
-// TODO: Remove this disable as part of IDCOM-2356
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {VerifiableCredential} from "../vc/VerifiableCredential";
 import cre from "@transmute/credentials-context";
 import sec from "@transmute/security-context";
@@ -12,8 +11,7 @@ import {
 } from "@transmute/json-web-signature";
 import {verifiable} from "@transmute/vc.js";
 import {IDiDResolver} from "../lib/resolver";
-import Proof from "./Proof";
-import {VerificationMethod} from "did-resolver";
+import {AbstractProof} from "./Proof";
 
 // The credential context that includes additional properties
 const credentialContext = {
@@ -77,8 +75,9 @@ export const contexts: any = {
 
 type ProofFormat = "vc" | "vc-jwt";
 
-export default class JsonWebSignatureProof implements Proof<JsonWebKey2020> {
+export default class JsonWebSignatureProof extends AbstractProof<JsonWebKey2020> {
     constructor(private resolver: IDiDResolver, private format: ProofFormat = "vc") {
+        super();
     }
 
     async sign(credential: VerifiableCredential, key: JsonWebKey2020): Promise<VerifiableCredential> {
@@ -113,7 +112,7 @@ export default class JsonWebSignatureProof implements Proof<JsonWebKey2020> {
         return result.verified;
     }
 
-    private async documentLoader(iri: string) {
+    private async documentLoader(iri: string) : Promise<{ documentUrl?: string | undefined; document: any; }>{
         if (contexts[iri]) {
             return {document: contexts[iri]};
         }
@@ -125,7 +124,7 @@ export default class JsonWebSignatureProof implements Proof<JsonWebKey2020> {
         throw new Error(`Unsupported iri: ${iri}`);
     }
 
-    private async createController(iri: string) {
+    private async createController(iri: string): Promise<{ documentUrl?: string | undefined; document: any; }> {
         const did = iri.split("#")[0];
 
         const doc = await this.resolver.resolve(did);
@@ -134,12 +133,12 @@ export default class JsonWebSignatureProof implements Proof<JsonWebKey2020> {
             throw new Error(`No document found for  ${did}`)
         }
 
-        const foundKey = doc.verificationMethod?.find((pk: VerificationMethod) => pk.id.startsWith(iri));
+        const foundKey = doc.verificationMethod?.find((pk: any) => pk.id.startsWith(iri));
 
-        if(!foundKey) {
-            throw new Error(`No Verification Method found for ${iri}`);
-        }
+        // This causes validation to fail
+        if(!foundKey) throw new Error(`No VM found for %{iri}`);
 
+        // TODO: Should we provide support for alternative proof mechanisms
         const key = await JsonWebKey.from(foundKey as Ed25519VerificationKey2018);
 
         const vm = await key.export({type: 'JsonWebKey2020'});
