@@ -1,7 +1,6 @@
 const isGlobalIdentifier = require('../src/isValidGlobalIdentifier');
 const { schemaLoader, CVCSchemaLoader } = require('../src');
 
-
 describe('isGlobalIdentifier Tests', () => {
   beforeAll(() => {
     schemaLoader.addLoader(new CVCSchemaLoader());
@@ -14,17 +13,23 @@ describe('isGlobalIdentifier Tests', () => {
   test('name-v1 is malformed', () => expect(isGlobalIdentifier('name-v1'))
     .rejects.toThrow(/Malformed Global Identifier/));
 
-  test('credentialItem-civ:Identity:firstName-1 has invalid prefix',
+  test(
+    'credentialItem-civ:Identity:firstName-1 has invalid prefix',
     () => expect(isGlobalIdentifier('credentialItem-civ:Identity:firstName-1'))
-      .rejects.toThrow(/Invalid Global Identifier Prefix/));
+      .rejects.toThrow(/Invalid Global Identifier Prefix/),
+  );
 
-  test('claim-civ:Identity:firstNome-1 is invalid',
+  test(
+    'claim-civ:Identity:firstNome-1 is invalid',
     () => expect(isGlobalIdentifier('claim-civ:Identity:firstNome-1'))
-      .rejects.toThrow(/claim-civ:Identity:firstNome-1 is not valid/));
+      .rejects.toThrow(/claim-civ:Identity:firstNome-1 is not valid/),
+  );
 
-  test('credential-civ:Credential:CivicBasico-1 is invalid',
+  test(
+    'credential-civ:Credential:CivicBasico-1 is invalid',
     () => expect(isGlobalIdentifier('credential-civ:Credential:CivicBasico-1'))
-      .rejects.toThrow(/credential-civ:Credential:CivicBasico-1 is not valid/));
+      .rejects.toThrow(/credential-civ:Credential:CivicBasico-1 is not valid/),
+  );
 
   test('claim-cvc:Name.givenNames-v1 is valid', async () => {
     expect(await isGlobalIdentifier('claim-cvc:Name.givenNames-v1')).toBeTruthy();

@@ -10,6 +10,6 @@
     "no-only-tests"
   ],
   "rules": {
-    "max-len": ["warn", 120]
+    "max-len": ["warn", 300]  // this is too big - add prettier
   }
 }

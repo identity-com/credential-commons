@@ -84,7 +84,6 @@ describe('schema loading tests', () => {
       ]));
   });
 
-
   it('test vc', async () => {
     await Claim.create('cvc:Contact:phoneNumber', {
       country: 'BR',

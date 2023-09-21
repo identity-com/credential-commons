@@ -6,11 +6,14 @@ const {
   privateKeyBase58,
   keyPair,
 } = require('./util/did');
+const didUtil = require('../../src/lib/did');
 
 const DUMMY_MERKLE_ROOT = 'aa4149dda8fd2fac435898372f1de399140f6c50dbc3d40585c913701ce902c4';
 
 describe('signerVerifier', () => {
-  beforeAll(mockDids);
+  beforeAll(() => {
+    mockDids(didUtil);
+  });
 
   it('creates a signer from a private key', async () => {
     const privateKey = privateKeyBase58(DID_SPARSE);

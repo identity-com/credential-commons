@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 const fs = require('fs');
 const { parseIdentifier } = require('../../../lib/stringUtils');
 const { services } = require('../../../services');

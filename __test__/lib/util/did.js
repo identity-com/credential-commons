@@ -1,6 +1,5 @@
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
-const didUtil = require('../../../src/lib/did');
 
 // A default sparse DID document
 const DID_SPARSE = 'did:sol:localnet:6ffRJDKb3Ve83A9SsJmjyYk5Ef3LXcRkZAT6hXhBBrHf';
@@ -30,18 +29,18 @@ DOCUMENTS[DID_CONTROLLED] = [
   '4shZPR61QMm4mCyS9EDMmKtPN7K4pZfysKXZ5YX7QDoHFRrHXmU7pECq7VxeQgGm8ih6jrVjynHy6EJx7b5MfZZK',
 ];
 
-// mocks didUtil.resolve to return local fixtures instead of looking it up
-const mockDids = () => {
-  didUtil.resolve = jest.fn()
-    .mockImplementation((did) => {
-      if (!DOCUMENTS[did]) {
-        return null;
-      }
+const stubResolver = (did) => {
+  if (!DOCUMENTS[did]) {
+    return null;
+  }
 
-      // eslint-disable-next-line global-require,import/no-dynamic-require
-      return require(`../fixtures/${DOCUMENTS[did][0]}`);
-    })
-    .bind(didUtil);
+  // eslint-disable-next-line global-require,import/no-dynamic-require
+  return require(`../fixtures/${DOCUMENTS[did][0]}`);
+};
+
+// mocks didUtil.resolve to return local fixtures instead of looking it up
+const mockDids = (didUtil) => {
+  didUtil.setResolver(stubResolver);
 
   return didUtil;
 };
@@ -60,7 +59,7 @@ const keyPair = (did) => {
 /**
  * Returns the base58 encoded private key for one of the above DIDs
  */
-const privateKeyBase58 = did => DOCUMENTS[did][1];
+const privateKeyBase58 = (did) => DOCUMENTS[did][1];
 
 module.exports = {
   DID_WITH_NO_DEFAULT,
@@ -70,4 +69,5 @@ module.exports = {
   mockDids,
   keyPair,
   privateKeyBase58,
+  stubResolver,
 };

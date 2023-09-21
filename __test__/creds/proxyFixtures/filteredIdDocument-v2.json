@@ -12,6 +12,7 @@
   "transient": false,
   "claim": {
     "document": {
+      "type": "passport",
       "dateOfBirth": {
         "day": 20,
         "month": 3,

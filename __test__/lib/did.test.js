@@ -8,7 +8,7 @@ const {
 const didUtil = require('../../src/lib/did');
 
 describe('DIDs', () => {
-  beforeAll(mockDids);
+  beforeAll(() => mockDids(didUtil));
 
   it('resolves a did:sol document', async () => {
     const document = await didUtil.resolve(DID_SPARSE);

@@ -7,12 +7,11 @@ const XPUB = 'xpub6Expk8Z75vLhdyfopBrrcmcd3NhenAuuE4GXcX8KkwKbaQqzAe4Ywbtxu9F95h
 describe('Unit tests for MiniCryptoManager', () => {
   let cryptoManagerImpl;
 
-  beforeAll(async (done) => {
+  beforeAll(() => {
     cryptoManagerImpl = new MiniCryptoManagerImpl();
-    done();
   });
 
-  test('Should sign with XPVT key and verify with XPUB pair', async (done) => {
+  test('Should sign with XPVT key and verify with XPUB pair', async () => {
     const nonce = new Date().getTime();
     const stringWithNonce = `SomeStringWithNonce${nonce}`;
     const hexHashNonce = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(stringWithNonce));
@@ -31,6 +30,5 @@ describe('Unit tests for MiniCryptoManager', () => {
 
     const verify = cryptoManagerImpl.verify(keyNameVerify, hexHashNonceToVerify, hexSignature);
     expect(verify).toEqual(true);
-    done();
   });
 });

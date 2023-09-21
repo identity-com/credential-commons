@@ -25,14 +25,14 @@ class CvcMerkleProof {
 
   buildMerkleTree(credentialSigner = null) {
     const merkleTools = new MerkleTools();
-    const hashes = _.map(this.leaves, n => sha256(n.value));
+    const hashes = _.map(this.leaves, (n) => sha256(n.value));
     merkleTools.addLeaves(hashes);
     merkleTools.makeTree();
     _.forEach(hashes, (hash, idx) => {
       this.leaves[idx].targetHash = hash;
       this.leaves[idx].node = merkleTools.getProof(idx);
     });
-    this.leaves = _.filter(this.leaves, el => !(el.identifier === 'cvc:Random:node'));
+    this.leaves = _.filter(this.leaves, (el) => !(el.identifier === 'cvc:Random:node'));
     this.merkleRoot = merkleTools.getMerkleRoot().toString('hex');
 
     if (credentialSigner) {

@@ -2,7 +2,7 @@
  * Current Anchor/Attester service
  *
  */
-const uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 const logger = require('../logger');
 
 /**
@@ -93,7 +93,7 @@ function DummyAnchorServiceImpl(config, http) {
     return Promise.resolve(signature);
   };
 
-  this.isRevoked = signature => (signature.revoked ? signature.revoked : false);
+  this.isRevoked = (signature) => (signature.revoked ? signature.revoked : false);
 
   return this;
 }

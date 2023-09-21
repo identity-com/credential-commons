@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
 const didUtil = require('./did');

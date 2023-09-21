@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 const _ = require('lodash');
 const Ajv = require('ajv').default;
 const traverse = require('json-schema-traverse');
@@ -76,9 +77,9 @@ class SummaryMapper {
       return [identifier];
     }
 
-    const credentials = _.filter(credentialDefinitions, item => _.includes(item.depends, identifier));
+    const credentials = _.filter(credentialDefinitions, (item) => _.includes(item.depends, identifier));
 
-    return _.map(credentials, item => item.identifier);
+    return _.map(credentials, (item) => item.identifier);
   }
 
   static getClaimPath(identifier) {
@@ -133,7 +134,7 @@ function isDefinitionEqual(definition, ucaDefinition) {
     || definition.identifier === ucaDefinition;
 }
 
-const isUCA = uca => /^[^:]+:[^:]+:[^:]+$/.test(uca);
+const isUCA = (uca) => /^[^:]+:[^:]+:[^:]+$/.test(uca);
 
 /**
  * This class loads the schema definitions as needed by using loaders provided by the
@@ -256,7 +257,6 @@ class SchemaLoader {
 
     return properties;
   }
-
 
   /**
    * Adds a claim definition to be backwards compatible with the old schema structure.
@@ -498,12 +498,11 @@ class SchemaLoader {
     return existingSchema.schema;
   }
 
-
   /**
    * Finds the correct schema loader based on the identifier
    */
   findSchemaLoader(identifier) {
-    return _.find(this.loaders, loader => loader.valid(identifier));
+    return _.find(this.loaders, (loader) => loader.valid(identifier));
   }
 
   /**

@@ -12,9 +12,11 @@ describe('Claim Constructions tests', () => {
     schemaLoader.reset();
   });
 
-  test('Claim construction should fails',
+  test(
+    'Claim construction should fails',
     async () => expect(Claim.create('name.first', 'joao'))
-      .rejects.toThrow(/name.first is not defined/));
+      .rejects.toThrow(/name.first is not defined/),
+  );
 
   test('Claim construction should succeed', async () => {
     const v = await Claim.create('claim-cvc:Name.givenNames-v1', 'joao');
@@ -47,7 +49,7 @@ describe('Claim Constructions tests', () => {
       year: 1978,
     };
 
-    return Claim.create(identifier, value).catch(e => expect(e).toBeDefined());
+    return Claim.create(identifier, value).catch((e) => expect(e).toBeDefined());
   });
 
   test('Claim dont construct invalid month', async () => {
@@ -58,7 +60,7 @@ describe('Claim Constructions tests', () => {
       year: 1978,
     };
 
-    return Claim.create(identifier, value).catch(e => expect(e).toBeDefined());
+    return Claim.create(identifier, value).catch((e) => expect(e).toBeDefined());
   });
 
   test('Claim dont construct invalid year', async () => {
@@ -69,7 +71,7 @@ describe('Claim Constructions tests', () => {
       year: -1,
     };
 
-    return Claim.create(identifier, value).catch(e => expect(e).toBeDefined());
+    return Claim.create(identifier, value).catch((e) => expect(e).toBeDefined());
   });
 
   test('cvc:Verify:phoneNumberToken must have type equals String', async () => {
