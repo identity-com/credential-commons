@@ -9,10 +9,9 @@ Whenever you whitelist a specific advisory it is required to refer it to here an
 
 ### Advisories
 
-| #    | Level | Module | Title | Explanation |
-|------|-------|---------|------|-------------|
-| 565 | Moderate | npm>ssri | Regular Expression Denial of Service | dev dependency only |
-| 786 | Low | babel-cli > chokidar > anymatch > micromatch > braces | Regular Expression Denial of Service | dev dependency only |
-| 1500 | Low | babel-minify>yargs-parser | Prototype Pollution | dev dependency only |
-| 1654 | Moderate | npm>libnpx>y18n | Regular Expression Denial of Service | dev dependency only |
-| 1677 | Moderate | npm>hosted-git-info | Regular Expression Denial of Service | dev dependency only |
+| #                   | Level    | Module       | Title                       | Explanation                                                                                                                     |
+|---------------------|----------|--------------|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| GHSA-2j2x-2gpw-g8fm | critical | flat         | Prototype Pollution         | Flat is on an old version. The new version is an ESM and can be used once the bundler is updated to support ESM rather than CJS |
+| GHSA-p8p7-x288-28g6 | moderate | request      | Server-Side Request Forgery | Request is deprecated and should be replaced with Axios or Fetch                                                                |
+| GHSA-72xf-g2v4-qvf3 | moderate | tough-cookie | Prototype Pollution         | Used in 'request', which is deprecated and should be replaced with Axios or Fetch                                               |
+| GHSA-p9pc-299p-vxgp | moderate | yargs-parser | Prototype Pollution         | Used in dev dependencies only                                                                                                   | 
