@@ -1,21 +1,22 @@
-const nacl = require('tweetnacl');
-const signerVerifier = require('../../src/lib/signerVerifier');
+const nacl = require("tweetnacl");
+const signerVerifier = require("../../src/lib/signerVerifier");
 const {
   mockDids,
   DID_SPARSE,
   privateKeyBase58,
   keyPair,
-} = require('./util/did');
-const didUtil = require('../../src/lib/did');
+} = require("./util/did");
+const didUtil = require("../../src/lib/did");
 
-const DUMMY_MERKLE_ROOT = 'aa4149dda8fd2fac435898372f1de399140f6c50dbc3d40585c913701ce902c4';
+const DUMMY_MERKLE_ROOT =
+  "aa4149dda8fd2fac435898372f1de399140f6c50dbc3d40585c913701ce902c4";
 
-describe('signerVerifier', () => {
+describe("signerVerifier", () => {
   beforeAll(() => {
     mockDids(didUtil);
   });
 
-  it('creates a signer from a private key', async () => {
+  it("creates a signer from a private key", async () => {
     const privateKey = privateKeyBase58(DID_SPARSE);
     const verificationMethod = `${DID_SPARSE}#default`;
 
@@ -28,7 +29,10 @@ describe('signerVerifier', () => {
 
     expect(signed).toBeTruthy();
 
-    const verifier = await signerVerifier.verifier(DID_SPARSE, verificationMethod);
+    const verifier = await signerVerifier.verifier(
+      DID_SPARSE,
+      verificationMethod,
+    );
     const verified = verifier.verify({
       issuer: DID_SPARSE,
       proof: {
@@ -40,7 +44,7 @@ describe('signerVerifier', () => {
     expect(verified).toBe(true);
   });
 
-  it('creates a signer from a keypair', async () => {
+  it("creates a signer from a keypair", async () => {
     const keypair = keyPair(DID_SPARSE);
     const verificationMethod = `${DID_SPARSE}#default`;
 
@@ -53,7 +57,10 @@ describe('signerVerifier', () => {
 
     expect(signed).toBeTruthy();
 
-    const verifier = await signerVerifier.verifier(DID_SPARSE, verificationMethod);
+    const verifier = await signerVerifier.verifier(
+      DID_SPARSE,
+      verificationMethod,
+    );
     const verified = verifier.verify({
       issuer: DID_SPARSE,
       proof: {
@@ -65,13 +72,13 @@ describe('signerVerifier', () => {
     expect(verified).toBe(true);
   });
 
-  it('uses a provided signer', async () => {
+  it("uses a provided signer", async () => {
     const verificationMethod = `${DID_SPARSE}#default`;
     const keypair = keyPair(DID_SPARSE);
 
     const customSigner = {
       sign(proof) {
-        const encodedData = Buffer.from(proof.merkleRoot, 'hex');
+        const encodedData = Buffer.from(proof.merkleRoot, "hex");
 
         const signature = nacl.sign.detached(encodedData, keypair.secretKey);
 
@@ -91,7 +98,10 @@ describe('signerVerifier', () => {
 
     expect(signed).toBeTruthy();
 
-    const verifier = await signerVerifier.verifier(DID_SPARSE, verificationMethod);
+    const verifier = await signerVerifier.verifier(
+      DID_SPARSE,
+      verificationMethod,
+    );
     const verified = verifier.verify({
       issuer: DID_SPARSE,
       proof: {

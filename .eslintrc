@@ -1,5 +1,8 @@
 {
-  "extends": "airbnb-base",
+  "extends": [
+    "airbnb-base",
+    "plugin:prettier/recommended"
+  ],
   "env": {
     "browser": true,
     "commonjs": true,
@@ -10,6 +13,6 @@
     "no-only-tests"
   ],
   "rules": {
-    "max-len": ["warn", 300]  // this is too big - add prettier
+    "max-len": ["warn", 120]
   }
 }

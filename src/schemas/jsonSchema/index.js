@@ -1,11 +1,11 @@
 // eslint-disable-next-line max-classes-per-file
-const _ = require('lodash');
-const Ajv = require('ajv').default;
-const traverse = require('json-schema-traverse');
-const { definitions: ucaDefinitions } = require('@identity.com/uca');
-const addFormats = require('ajv-formats').default;
-const definitions = require('../../claim/definitions');
-const credentialDefinitions = require('../../creds/definitions');
+const _ = require("lodash");
+const Ajv = require("ajv").default;
+const traverse = require("json-schema-traverse");
+const { definitions: ucaDefinitions } = require("@identity.com/uca");
+const addFormats = require("ajv-formats").default;
+const definitions = require("../../claim/definitions");
+const credentialDefinitions = require("../../creds/definitions");
 
 let summaryMap = {};
 
@@ -50,12 +50,12 @@ class SummaryMapper {
 
   static getTextLabel(identifier) {
     // eslint-disable-next-line no-unused-vars
-    const [type, name, version] = _.split(identifier, '-');
+    const [type, name, version] = _.split(identifier, "-");
     // eslint-disable-next-line no-unused-vars
-    const [namespace, unique, path] = _.split(name, ':');
+    const [namespace, unique, path] = _.split(name, ":");
 
     if (type && unique) {
-      return `${unique}.${type}${path ? `.${path}` : ''}`.toLowerCase();
+      return `${unique}.${type}${path ? `.${path}` : ""}`.toLowerCase();
     }
 
     return null;
@@ -63,30 +63,32 @@ class SummaryMapper {
 
   static isUpdatable(textLabel) {
     const notUpdatable = [
-      'document.placeofbirth.claim',
-      'document.dateofbirth.claim',
+      "document.placeofbirth.claim",
+      "document.dateofbirth.claim",
     ];
     return !_.includes(notUpdatable, textLabel);
   }
 
   static getCredentials(identifier) {
     // eslint-disable-next-line no-unused-vars
-    const [type, name, version] = _.split(identifier, '-');
+    const [type, name, version] = _.split(identifier, "-");
 
-    if (type === 'credential') {
+    if (type === "credential") {
       return [identifier];
     }
 
-    const credentials = _.filter(credentialDefinitions, (item) => _.includes(item.depends, identifier));
+    const credentials = _.filter(credentialDefinitions, (item) =>
+      _.includes(item.depends, identifier),
+    );
 
     return _.map(credentials, (item) => item.identifier);
   }
 
   static getClaimPath(identifier) {
     // eslint-disable-next-line no-unused-vars
-    const [type, name, version] = _.split(identifier, '-');
+    const [type, name, version] = _.split(identifier, "-");
 
-    if (type === 'credential') {
+    if (type === "credential") {
       return null;
     }
 
@@ -99,7 +101,7 @@ class SummaryMapper {
 
     let identifierComponents = claimRegex.exec(identifier);
     if (identifierComponents === null) {
-      identifierComponents = _.split(identifier, ':');
+      identifierComponents = _.split(identifier, ":");
       isNewIdentifier = false;
     }
     return {
@@ -109,9 +111,12 @@ class SummaryMapper {
   }
 
   static getPath(identifier) {
-    const { identifierComponents } = SummaryMapper.getBaseIdentifiers(identifier);
+    const { identifierComponents } =
+      SummaryMapper.getBaseIdentifiers(identifier);
     const baseName = _.camelCase(identifierComponents[1]);
-    return baseName !== 'type' ? `${baseName}.${identifierComponents[2]}` : identifierComponents[2];
+    return baseName !== "type"
+      ? `${baseName}.${identifierComponents[2]}`
+      : identifierComponents[2];
   }
 }
 
@@ -121,17 +126,19 @@ const getSchemaVersion = (identifier) => {
     return matches[1];
   }
 
-  return '1';
+  return "1";
 };
 
 function transformUcaIdToClaimId(identifier) {
-  const identifierComponents = identifier.split(':');
+  const identifierComponents = identifier.split(":");
   return `claim-cvc:${identifierComponents[1]}.${identifierComponents[2]}-v1`;
 }
 
 function isDefinitionEqual(definition, ucaDefinition) {
-  return definition.identifier === transformUcaIdToClaimId(ucaDefinition)
-    || definition.identifier === ucaDefinition;
+  return (
+    definition.identifier === transformUcaIdToClaimId(ucaDefinition) ||
+    definition.identifier === ucaDefinition
+  );
 }
 
 const isUCA = (uca) => /^[^:]+:[^:]+:[^:]+$/.test(uca);
@@ -162,13 +169,13 @@ class SchemaLoader {
 
     // add data formats such as date-time
     addFormats(this.ajv);
-    this.ajv.addKeyword('attestable');
+    this.ajv.addKeyword("attestable");
     // Needed to add these to support "reversing" definitions back to the previous definitions for backwards
     // compatibilty. These should be removed?
-    this.ajv.addKeyword('transient');
-    this.ajv.addKeyword('credentialItem');
-    this.ajv.addKeyword('alias');
-    this.ajv.addKeyword('deambiguify');
+    this.ajv.addKeyword("transient");
+    this.ajv.addKeyword("credentialItem");
+    this.ajv.addKeyword("alias");
+    this.ajv.addKeyword("deambiguify");
   }
 
   reset() {
@@ -191,7 +198,7 @@ class SchemaLoader {
   }
 
   async loadSchemaFromUri(uri) {
-    const title = uri.split('#')[0].match('[^/]+$', uri);
+    const title = uri.split("#")[0].match("[^/]+$", uri);
 
     const schema = await this.loadSchemaFromTitle(title[0]);
 
@@ -219,9 +226,12 @@ class SchemaLoader {
    * @returns {*|(() => Promise<void>)}
    */
   async getCredentialSubjectProperties(schema) {
-    const schemaProperties = await this.flattenCredentialSchemaProperties(schema);
+    const schemaProperties =
+      await this.flattenCredentialSchemaProperties(schema);
 
-    return schemaProperties.credentialSubject ? schemaProperties.credentialSubject : schemaProperties.claim;
+    return schemaProperties.credentialSubject
+      ? schemaProperties.credentialSubject
+      : schemaProperties.claim;
   }
 
   /**
@@ -236,7 +246,8 @@ class SchemaLoader {
       const promises = schema.allOf.map(async (allOf) => {
         if (allOf.$ref) {
           const refSchema = await this.loadSchemaFromUri(allOf.$ref);
-          const refProperties = await this.flattenCredentialSchemaProperties(refSchema);
+          const refProperties =
+            await this.flattenCredentialSchemaProperties(refSchema);
 
           properties = {
             ...properties,
@@ -283,7 +294,8 @@ class SchemaLoader {
       definition.transient = true;
     }
 
-    const credentialSubjectDefinition = await this.getCredentialSubjectProperties(schema);
+    const credentialSubjectDefinition =
+      await this.getCredentialSubjectProperties(schema);
 
     if (credentialSubjectDefinition.required) {
       definition.required = [];
@@ -296,11 +308,20 @@ class SchemaLoader {
       });
     });
 
-    await _.reduce(references, async (promise, value) => {
-      await promise;
+    await _.reduce(
+      references,
+      async (promise, value) => {
+        await promise;
 
-      return this.loadPropertySchema(schema, definition, value.ref, value.property);
-    }, Promise.resolve());
+        return this.loadPropertySchema(
+          schema,
+          definition,
+          value.ref,
+          value.property,
+        );
+      },
+      Promise.resolve(),
+    );
 
     this.credentialDefinitions.push(definition);
     this.validCredentialIdentifiers.push(definition.identifier);
@@ -340,7 +361,7 @@ class SchemaLoader {
       type: await this.findDefinitionType(schema),
     };
 
-    if (definition.type === 'Array') {
+    if (definition.type === "Array") {
       const subSchema = await this.loadSchemaFromUri(schema.items.$ref);
 
       definition.items = {
@@ -348,12 +369,18 @@ class SchemaLoader {
       };
     }
 
-    ['attestable', 'credentialItem', 'minimum', 'maximum', 'alias', 'description']
-      .forEach((property) => {
-        if (property in schema) {
-          definition[property] = schema[property];
-        }
-      });
+    [
+      "attestable",
+      "credentialItem",
+      "minimum",
+      "maximum",
+      "alias",
+      "description",
+    ].forEach((property) => {
+      if (property in schema) {
+        definition[property] = schema[property];
+      }
+    });
 
     if (schema.pattern) {
       // definition.pattern = new RegExp(schema.pattern.substring(1, schema.pattern.length - 1));
@@ -371,7 +398,7 @@ class SchemaLoader {
       });
     }
 
-    if ((await this.shouldAddClaimDefinition(schema))) {
+    if (await this.shouldAddClaimDefinition(schema)) {
       this.definitions.push(definition);
 
       this.validIdentifiers.push(schema.title);
@@ -390,7 +417,7 @@ class SchemaLoader {
     const { deambiguify, items } = property;
     let { type } = property;
 
-    if (type === 'array' || (items && items.$ref)) {
+    if (type === "array" || (items && items.$ref)) {
       if (items.$ref) {
         const arraySchema = await this.loadSchemaFromUri(items.$ref);
 
@@ -416,11 +443,15 @@ class SchemaLoader {
   async getPropertyValues(properties) {
     const defProperties = [];
 
-    await _.reduce(properties, async (promise, value, name) => {
-      await promise;
+    await _.reduce(
+      properties,
+      async (promise, value, name) => {
+        await promise;
 
-      return this.getPropertyValue(defProperties, value, name);
-    }, Promise.resolve());
+        return this.getPropertyValue(defProperties, value, name);
+      },
+      Promise.resolve(),
+    );
 
     return { properties: defProperties };
   }
@@ -438,14 +469,14 @@ class SchemaLoader {
       return subSchema.title;
     }
 
-    if (schema.type === 'object') {
+    if (schema.type === "object") {
       if (!_.isEmpty(schema.properties)) {
         return this.getPropertyValues(schema.properties);
       }
     }
 
-    if (schema.type === 'array') {
-      return 'Array';
+    if (schema.type === "array") {
+      return "Array";
     }
 
     return _.capitalize(schema.type);
@@ -475,7 +506,10 @@ class SchemaLoader {
       const references = [];
       traverse(schema, {
         cb: (currentNode) => {
-          if (currentNode.$ref !== undefined && !currentNode.$ref.startsWith('#')) {
+          if (
+            currentNode.$ref !== undefined &&
+            !currentNode.$ref.startsWith("#")
+          ) {
             // Prevent the same schema loaded multiple times
             references.push(this.loadSchemaFromUri(currentNode.$ref));
           }
@@ -519,7 +553,7 @@ class SchemaLoader {
   validate(schemaRef, value) {
     const validateSchema = this.ajv.getSchema(schemaRef);
 
-    if (typeof validateSchema === 'undefined') {
+    if (typeof validateSchema === "undefined") {
       throw new Error(`Invalid schema id: ${schemaRef}`);
     }
 
@@ -528,11 +562,19 @@ class SchemaLoader {
     if (!valid) {
       _.forEach(validateSchema.errors, (error) => {
         if (error.params && error.params.missingProperty) {
-          throw new Error(`Missing required fields to ${validateSchema.schema.title}`);
+          throw new Error(
+            `Missing required fields to ${validateSchema.schema.title}`,
+          );
         }
       });
 
-      throw new Error(`Invalid value. Errors: ${JSON.stringify(validateSchema.errors, null, 2)}`);
+      throw new Error(
+        `Invalid value. Errors: ${JSON.stringify(
+          validateSchema.errors,
+          null,
+          2,
+        )}`,
+      );
     }
   }
 }

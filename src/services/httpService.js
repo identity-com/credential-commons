@@ -1,7 +1,7 @@
 /**
  * A simple node HTTP services
  */
-const request = require('request-promise-native');
+const request = require("request-promise-native");
 // uncomment to debug requests
 // require('request-debug')(request);
 

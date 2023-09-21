@@ -1,41 +1,41 @@
-const CredentialCommons = require('../src/index');
-const httpMock = require('../src/services/__mocks__/httpService');
+const CredentialCommons = require("../src/index");
+const httpMock = require("../src/services/__mocks__/httpService");
 
 const { Claim, VC } = CredentialCommons;
 
-describe('Module Entry Point Tests', () => {
-  it('should access the entry point e see if the modules are declared', () => {
+describe("Module Entry Point Tests", () => {
+  it("should access the entry point e see if the modules are declared", () => {
     const confMock = {
-      sipSecurityService: '',
-      attestationService: '',
+      sipSecurityService: "",
+      attestationService: "",
       clientConfig: {
-        id: '',
+        id: "",
         signingKeys: {
-          hexpub: '',
-          hexsec: '',
+          hexpub: "",
+          hexsec: "",
         },
       },
-      passphrase: '',
-      keychain: { prv: '' },
+      passphrase: "",
+      keychain: { prv: "" },
     };
     CredentialCommons.init(confMock, httpMock);
     expect(Claim).toBeDefined();
     expect(VC).toBeDefined();
   });
 
-  it('Should initialize with custom SecureRandom', () => {
+  it("Should initialize with custom SecureRandom", () => {
     const confMock = {
-      sipSecurityService: '',
-      attestationService: '',
+      sipSecurityService: "",
+      attestationService: "",
       clientConfig: {
-        id: '',
+        id: "",
         signingKeys: {
-          hexpub: '',
-          hexsec: '',
+          hexpub: "",
+          hexsec: "",
         },
       },
-      passphrase: '',
-      keychain: { prv: '' },
+      passphrase: "",
+      keychain: { prv: "" },
     };
 
     const myCustomSecureRandom = function MyCustomSecureRandom() {};

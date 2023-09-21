@@ -1,4 +1,4 @@
-const headers = require('./headers');
+const headers = require("./headers");
 
 module.exports = {
   headers,

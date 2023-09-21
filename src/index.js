@@ -1,16 +1,16 @@
-const { Claim } = require('./claim/Claim');
-const { UserCollectableAttribute } = require('./uca/UCA');
-const VC = require('./creds/VerifiableCredential');
-const { initServices, services } = require('./services/index');
-const isValidGlobalIdentifier = require('./isValidGlobalIdentifier');
-const isClaimRelated = require('./isClaimRelated');
-const errors = require('./errors');
-const constants = require('./constants');
-const claimDefinitions = require('./claim/definitions');
-const credentialDefinitions = require('./creds/definitions');
-const aggregate = require('./AggregationHandler');
-const { schemaLoader } = require('./schemas/jsonSchema');
-const CVCSchemaLoader = require('./schemas/jsonSchema/loaders/cvc');
+const { Claim } = require("./claim/Claim");
+const { UserCollectableAttribute } = require("./uca/UCA");
+const VC = require("./creds/VerifiableCredential");
+const { initServices, services } = require("./services/index");
+const isValidGlobalIdentifier = require("./isValidGlobalIdentifier");
+const isClaimRelated = require("./isClaimRelated");
+const errors = require("./errors");
+const constants = require("./constants");
+const claimDefinitions = require("./claim/definitions");
+const credentialDefinitions = require("./creds/definitions");
+const aggregate = require("./AggregationHandler");
+const { schemaLoader } = require("./schemas/jsonSchema");
+const CVCSchemaLoader = require("./schemas/jsonSchema/loaders/cvc");
 /**
  * Entry Point for Civic Credential Commons
  * @returns {CredentialCommons}

@@ -1,4 +1,4 @@
-const { HDNode, ECSignature } = require('bitcoinjs-lib');
+const { HDNode, ECSignature } = require("bitcoinjs-lib");
 
 /**
  * MiniCryptoManagerImpl - A minimal CryptoManagerImpl for the portable CryptoManagerInterface
@@ -46,9 +46,9 @@ class MiniCryptoManagerImpl {
     const privateKey = this.KEY_STORAGE[keyName];
     const keyPair = HDNode.fromBase58(privateKey);
 
-    const hash = Buffer.from(hexHash, 'hex');
+    const hash = Buffer.from(hexHash, "hex");
     const signature = keyPair.sign(hash);
-    const hexSignature = signature.toDER().toString('hex');
+    const hexSignature = signature.toDER().toString("hex");
 
     // keys are volatile in this impl, removes
     delete this.KEY_STORAGE[keyName];
@@ -67,8 +67,8 @@ class MiniCryptoManagerImpl {
     const key = this.KEY_STORAGE[keyName];
     const keyPair = HDNode.fromBase58(key);
 
-    const hash = Buffer.from(hexHash, 'hex');
-    const signature = Buffer.from(hexSignature, 'hex');
+    const hash = Buffer.from(hexHash, "hex");
+    const signature = Buffer.from(hexSignature, "hex");
     const ecSignature = ECSignature.fromDER(signature);
 
     // keys are volatile in this impl, removes

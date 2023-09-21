@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Transforms a list of UCAs into the claim property of the verifiable cliams
@@ -12,7 +12,8 @@ class ClaimModel {
           this[rootPropertyName] = {};
         }
 
-        this[rootPropertyName][uca.getClaimPropertyName()] = uca.getPlainValue();
+        this[rootPropertyName][uca.getClaimPropertyName()] =
+          uca.getPlainValue();
       } else {
         this[uca.getClaimPropertyName()] = uca.getPlainValue();
       }

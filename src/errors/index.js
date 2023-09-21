@@ -1,5 +1,5 @@
-const idvErrors = require('./idvErrors');
-const { ErrorCodes, ErrorContextTypes } = require('./definitions');
+const idvErrors = require("./idvErrors");
+const { ErrorCodes, ErrorContextTypes } = require("./definitions");
 
 module.exports = {
   ErrorCodes,
