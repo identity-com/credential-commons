@@ -51,52 +51,62 @@ function verifyLeave(
 ) {
   // 1. verify valid targetHashs
   // 1.1 "leave.value" should be equal claim values
-  const ucaValue = new Claim(leave.identifier, {
-    attestableValue: leave.value,
-  });
-  let providedClaimValue = _.get(claims, leave.claimPath);
-  if (!providedClaimValue) providedClaimValue = null;
-
-  if (ucaValue.type === "String" || ucaValue.type === "Number") {
-    if (ucaValue.value !== providedClaimValue) {
-      invalidValues.push(leave.value);
-    }
-  } else if (ucaValue.type === "Object") {
-    const ucaValueValue = ucaValue.value;
-    const innerClaimValue = providedClaimValue;
-    const claimPathSufix = _.last(_.split(leave.claimPath, "."));
-
-    const claimValue = {};
-    claimValue[claimPathSufix] = innerClaimValue;
-    const ucaValueKeys = _.keys(ucaValue.value);
-    _.each(ucaValueKeys, (k) => {
-      const expectedClaimValue = _.get(claimValue, k);
-      if (
-        expectedClaimValue &&
-        `${_.get(ucaValueValue[k], "value")}` !== `${expectedClaimValue}`
-      ) {
-        invalidValues.push(claimValue[k]);
-      }
+  if (/^claim-cvc:(.*)\.(.*)-v\d*$/.test(leave.identifier)) {
+    // handle claims with a schema definition
+    const ucaValue = new Claim(leave.identifier, {
+      attestableValue: leave.value,
     });
-  } else if (ucaValue.type === "Array") {
-    const innerClaimValue = providedClaimValue;
+    let providedClaimValue = _.get(claims, leave.claimPath);
+    if (!providedClaimValue) providedClaimValue = null;
 
-    _.forEach(ucaValue.value, (arrayItem, idx) => {
-      const itemInnerClaimValue = innerClaimValue[idx];
-      const ucaValueKeys = _.keys(arrayItem.value);
+    if (ucaValue.type === "String" || ucaValue.type === "Number") {
+      if (ucaValue.value !== providedClaimValue) {
+        invalidValues.push(leave.value);
+      }
+    } else if (ucaValue.type === "Object") {
+      const ucaValueValue = ucaValue.value;
+      const innerClaimValue = providedClaimValue;
+      const claimPathSufix = _.last(_.split(leave.claimPath, "."));
+
+      const claimValue = {};
+      claimValue[claimPathSufix] = innerClaimValue;
+      const ucaValueKeys = _.keys(ucaValue.value);
       _.each(ucaValueKeys, (k) => {
-        const expectedClaimValue = _.get(itemInnerClaimValue, k);
+        const expectedClaimValue = _.get(claimValue, k);
         if (
           expectedClaimValue &&
-          `${_.get(arrayItem.value, [k, "value"])}` !== `${expectedClaimValue}`
+          `${_.get(ucaValueValue[k], "value")}` !== `${expectedClaimValue}`
         ) {
-          invalidValues.push(itemInnerClaimValue[k]);
+          invalidValues.push(claimValue[k]);
         }
       });
-    });
+    } else if (ucaValue.type === "Array") {
+      const innerClaimValue = providedClaimValue;
+
+      _.forEach(ucaValue.value, (arrayItem, idx) => {
+        const itemInnerClaimValue = innerClaimValue[idx];
+        const ucaValueKeys = _.keys(arrayItem.value);
+        _.each(ucaValueKeys, (k) => {
+          const expectedClaimValue = _.get(itemInnerClaimValue, k);
+          if (
+            expectedClaimValue &&
+            `${_.get(arrayItem.value, [k, "value"])}` !== `${expectedClaimValue}`
+          ) {
+            invalidValues.push(itemInnerClaimValue[k]);
+          }
+        });
+      });
+    } else {
+      // Invalid ucaValue.type
+      invalidValues.push(leave.value);
+    }
   } else {
-    // Invalid ucaValue.type
-    invalidValues.push(leave.value);
+    // handle simple claim (without a schema definition)
+    // TODO handle array?
+    let providedClaimValue = _.get(claims, leave.claimPath);
+    if (leave.value !== providedClaimValue) {
+      invalidValues.push(leave.value);
+    }
   }
 
   // 1.2 hash(leave.value) should be equal leave.targetHash
@@ -1007,6 +1017,12 @@ VerifiableCredentialBaseConstructor.fromJSON = async (
   const newObj = await VerifiableCredentialBaseConstructor.create(
     verifiableCredentialJSON.identifier,
     verifiableCredentialJSON.issuer,
+    null,
+    null,
+    null,
+    null,
+    null,
+    false, // dont validate as not all fields are set yet
   );
 
   newObj.id = _.clone(verifiableCredentialJSON.id);
@@ -1018,6 +1034,9 @@ VerifiableCredentialBaseConstructor.fromJSON = async (
     verifiableCredentialJSON.credentialSubject,
   );
   newObj.proof = _.cloneDeep(verifiableCredentialJSON.proof);
+
+  // after the VC is built and populated, validate it against the schema
+  await schemaLoader.validateSchema(verifiableCredentialJSON.identifier, newObj.toJSON());
 
   return newObj;
 };
