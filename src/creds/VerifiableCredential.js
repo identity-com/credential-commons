@@ -417,6 +417,10 @@ function getCredentialDefinition(identifier, version) {
   return definition;
 }
 
+// A credential is a cvc credential if its identifier starts with cvc: or contains -cvc:
+const isCvcType = (identifier) =>
+  /^cvc:.*$/.test(identifier) || /-cvc:/.test(identifier);
+
 /**
  * Creates a new Verifiable Credential based on an well-known identifier and it's claims dependencies
  * @param {*} identifier
@@ -439,21 +443,31 @@ function VerifiableCredentialBaseConstructor(
 
   this.id = uuidv4();
   this.issuer = issuer;
-  const issuerUCA = new Claim("cvc:Meta:issuer", this.issuer);
+
   this.issuanceDate = new Date().toISOString();
-  const issuanceDateUCA = new Claim("cvc:Meta:issuanceDate", this.issuanceDate);
+
   this.identifier = identifier;
   this.expirationDate = expiryIn
     ? timestamp.toDate(timestamp.now(expiryIn)).toISOString()
     : null;
-  const expiryUCA = new Claim(
-    "cvc:Meta:expirationDate",
-    this.expirationDate ? this.expirationDate : "null",
-  );
 
-  const proofUCAs = expiryUCA
-    ? _.concat(ucas, issuerUCA, issuanceDateUCA, expiryUCA)
-    : _.concat(ucas, issuerUCA, issuanceDateUCA);
+  const additionalUcas = [];
+  if (isCvcType(identifier)) {
+    // these UCAs should only be added if the credential is a cvc credential
+    // TODO rather than adding them here, they should be in the credential itself already I think
+    const issuerUCA = new Claim("cvc:Meta:issuer", this.issuer);
+    const issuanceDateUCA = new Claim(
+      "cvc:Meta:issuanceDate",
+      this.issuanceDate,
+    );
+    const expiryUCA = new Claim(
+      "cvc:Meta:expirationDate",
+      this.expirationDate ? this.expirationDate : "null",
+    );
+    additionalUcas.push(issuerUCA, issuanceDateUCA, expiryUCA);
+  }
+
+  const proofUCAs = _.concat(ucas, additionalUcas);
 
   if (!_.includes(validIdentifiers(), identifier)) {
     throw new Error(`${identifier} is not defined`);
@@ -927,13 +941,17 @@ VerifiableCredentialBaseConstructor.create = async (
   signerOptions = null,
   validate = true,
 ) => {
-  // Load the schema and it's references from a source to be used for validation and defining the schema definitions
+  // Load the schema and its references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(identifier);
 
-  // Load the meta schema's from a source
-  await schemaLoader.loadSchemaFromTitle("cvc:Meta:issuer");
-  await schemaLoader.loadSchemaFromTitle("cvc:Meta:issuanceDate");
-  await schemaLoader.loadSchemaFromTitle("cvc:Meta:expirationDate");
+  if (isCvcType(identifier)) {
+    // Load the meta schemas from a source
+    await schemaLoader.loadSchemaFromTitle("cvc:Meta:issuer");
+    await schemaLoader.loadSchemaFromTitle("cvc:Meta:issuanceDate");
+    await schemaLoader.loadSchemaFromTitle("cvc:Meta:expirationDate");
+  }
+
+  // load builtins:
   await schemaLoader.loadSchemaFromTitle("cvc:Random:node");
 
   if (signerOptions) {

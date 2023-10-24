@@ -73,7 +73,7 @@ class Claim extends UserCollectableAttribute {
       await schemaLoader.validateSchema(currentIdentifier, value);
     }
 
-    // Load the schema and it's references from a source to be used for validation and defining the schema definitions
+    // Load the schema and its references from a source to be used for validation and defining the schema definitions
     await schemaLoader.loadSchemaFromTitle(currentIdentifier);
 
     return new Claim(currentIdentifier, value, version);

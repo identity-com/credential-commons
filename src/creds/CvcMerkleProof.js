@@ -61,7 +61,15 @@ class CvcMerkleProof {
   static getAllAttestableValue(ucas) {
     let values = [];
     _.forEach(ucas, (uca) => {
-      const innerValues = uca.getAttestableValues();
+      const innerValues = uca.id
+        ? uca.getAttestableValues()
+        : [
+            {
+              identifier: uca.key,
+              value: uca.value,
+              claimPath: uca.key,
+            },
+          ];
       values = _.concat(values, innerValues);
     });
     return values;

@@ -1,17 +1,35 @@
+/* eslint-disable class-methods-use-this */
 const { Claim, VC, schemaLoader, CVCSchemaLoader } = require("../src/index");
 const claimDefinitions = require("../src/claim/definitions");
 const credentialDefinitions = require("../src/creds/definitions");
+const simpleSchema = require("./schema/fixtures/credential-test:Social-v1.json");
+const {
+  SimpleSchemaLoader,
+} = require("../src/schemas/jsonSchema/loaders/simple");
 
 const credentialSubject =
   "did:sol:J2vss1hB3kgEfQMSSdvvjwRm3JdyFWp7S7dbX5mudS4V";
 
-const { summaryMap } = schemaLoader;
-
 jest.setTimeout(30000);
 
 describe("schema loading tests", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     schemaLoader.addLoader(new CVCSchemaLoader());
+  });
+  afterEach(() => {
+    schemaLoader.reset();
+  });
+
+  it("can load a simple schema", async () => {
+    const { title } = simpleSchema;
+    const loader = new SimpleSchemaLoader({
+      [title]: simpleSchema,
+    });
+
+    schemaLoader.addLoader(loader);
+    const result = await schemaLoader.loadSchemaFromTitle(title);
+
+    expect(result).toBeDefined();
   });
 
   it("test claim definition creation", async () => {
@@ -132,7 +150,7 @@ describe("schema loading tests", () => {
       familyNames: "Family",
     });
 
-    expect(summaryMap).toEqual(
+    expect(schemaLoader.summaryMap).toEqual(
       expect.objectContaining({
         "name.givennames.claim": expect.objectContaining({
           identifier: "claim-cvc:Name.givenNames-v1",
@@ -189,7 +207,7 @@ describe("schema loading tests", () => {
       [name, dob],
     );
 
-    expect(summaryMap).toEqual(
+    expect(schemaLoader.summaryMap).toEqual(
       expect.objectContaining({
         "identity.credential": {
           identifier: "credential-cvc:Identity-v3",

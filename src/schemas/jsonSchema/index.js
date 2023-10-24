@@ -6,6 +6,7 @@ const { definitions: ucaDefinitions } = require("@identity.com/uca");
 const addFormats = require("ajv-formats").default;
 const definitions = require("../../claim/definitions");
 const credentialDefinitions = require("../../creds/definitions");
+const { BuiltinSchemaLoader } = require("./loaders/builtin");
 
 let summaryMap = {};
 
@@ -176,6 +177,12 @@ class SchemaLoader {
     this.ajv.addKeyword("credentialItem");
     this.ajv.addKeyword("alias");
     this.ajv.addKeyword("deambiguify");
+
+    this.loadBuiltins();
+  }
+
+  loadBuiltins() {
+    this.loaders.push(new BuiltinSchemaLoader());
   }
 
   reset() {
@@ -200,9 +207,7 @@ class SchemaLoader {
   async loadSchemaFromUri(uri) {
     const title = uri.split("#")[0].match("[^/]+$", uri);
 
-    const schema = await this.loadSchemaFromTitle(title[0]);
-
-    return schema;
+    return this.loadSchemaFromTitle(title[0]);
   }
 
   async loadPropertySchema(schema, definition, ref, property) {
@@ -304,7 +309,9 @@ class SchemaLoader {
     const references = [];
     _.forEach(credentialSubjectDefinition.properties, (vo) => {
       _.forEach(vo.properties, (vi, ki) => {
-        references.push({ ref: vo.properties[ki].$ref, property: ki });
+        if (vo.properties[ki].$ref) {
+          references.push({ ref: vo.properties[ki].$ref, property: ki });
+        }
       });
     });
 
