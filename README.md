@@ -111,7 +111,19 @@ const ccc = new CCC({
  
 ```
 
-If you are not sure how to get those informations, see the tutorial down below.
+If you are not sure how to get this information, see the tutorial down below.
+
+## NOTE
+
+This library requires a DID resolver to be passed in as follows:
+
+```js
+const resolver = async (did) => {
+  const document = // retrieve from the blockchain or other source
+  return document;
+}
+VC.setResolver(resolver);
+```
 
 ## Features
 

@@ -1,6 +1,7 @@
-const nacl = require('tweetnacl');
-const bs58 = require('bs58');
-const didUtil = require('./did');
+// eslint-disable-next-line max-classes-per-file
+const nacl = require("tweetnacl");
+const bs58 = require("bs58");
+const didUtil = require("./did");
 
 class Ed25519Signer {
   constructor(key, verificationMethod) {
@@ -9,8 +10,11 @@ class Ed25519Signer {
   }
 
   sign(proof) {
-    const signed = nacl.sign.detached(Buffer.from(proof.merkleRoot, 'hex'), bs58.decode(this.key));
-    const signature = Buffer.from(signed).toString('hex');
+    const signed = nacl.sign.detached(
+      Buffer.from(proof.merkleRoot, "hex"),
+      bs58.decode(this.key),
+    );
+    const signature = Buffer.from(signed).toString("hex");
 
     return {
       signature,
@@ -25,7 +29,7 @@ class Ed25519Verifier {
   }
 
   verify(vc) {
-    return this.verifyEncoding(vc, 'hex') || this.verifyEncoding(vc, 'utf-8');
+    return this.verifyEncoding(vc, "hex") || this.verifyEncoding(vc, "utf-8");
   }
 
   /**
@@ -34,7 +38,9 @@ class Ed25519Verifier {
   verifyEncoding(vc, encoding) {
     return nacl.sign.detached.verify(
       Buffer.from(vc.proof.merkleRoot, encoding),
-      Uint8Array.from(Buffer.from(vc.proof.merkleRootSignature.signature, 'hex')),
+      Uint8Array.from(
+        Buffer.from(vc.proof.merkleRootSignature.signature, "hex"),
+      ),
       bs58.decode(this.key),
     );
   }
@@ -53,7 +59,7 @@ class Ed25519Verifier {
  */
 const signer = async (options) => {
   if (!options.signer && !options.keypair && !options.privateKey) {
-    throw new Error('Either a signer, keypair or privateKey is required');
+    throw new Error("Either a signer, keypair or privateKey is required");
   }
 
   const { verificationMethod } = options;
@@ -62,7 +68,7 @@ const signer = async (options) => {
   // Create a signer from keypair/key
   if (signerImpl) return signerImpl;
 
-  const [did] = verificationMethod.split('#');
+  const [did] = verificationMethod.split("#");
 
   const document = await didUtil.resolve(did);
 
@@ -71,15 +77,20 @@ const signer = async (options) => {
     privateKey = bs58.encode(options.keypair.secretKey);
   }
 
-  const foundMethod = didUtil.findVerificationMethod(document, verificationMethod);
+  const foundMethod = didUtil.findVerificationMethod(
+    document,
+    verificationMethod,
+  );
   if (!foundMethod) {
-    throw new Error('The provided verificationMethod is not valid on the DID document');
+    throw new Error(
+      "The provided verificationMethod is not valid on the DID document",
+    );
   }
 
   // Check the type is supported and assign the appropriate signer
   switch (foundMethod.type) {
-    case 'Ed25519VerificationKey2018':
-    case 'Ed25519VerificationKey2020':
+    case "Ed25519VerificationKey2018":
+    case "Ed25519VerificationKey2020":
       signerImpl = new Ed25519Signer(privateKey, verificationMethod);
       break;
     default:
@@ -103,14 +114,17 @@ const verifier = async (did, verificationMethod) => {
     };
   }
 
-  const [vmDid] = verificationMethod.split('#');
+  const [vmDid] = verificationMethod.split("#");
   const document = await didUtil.resolve(vmDid);
-  const foundMethod = didUtil.findVerificationMethod(document, verificationMethod);
+  const foundMethod = didUtil.findVerificationMethod(
+    document,
+    verificationMethod,
+  );
 
   // Check the type is supported and assign the appropriate verifier
   switch (foundMethod.type) {
-    case 'Ed25519VerificationKey2018':
-    case 'Ed25519VerificationKey2020':
+    case "Ed25519VerificationKey2018":
+    case "Ed25519VerificationKey2020":
       return new Ed25519Verifier(foundMethod.publicKeyBase58);
     default:
       throw new Error(`Unsupported type ${foundMethod.type}`);

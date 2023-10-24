@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:12.19.0
+    - image: cimg/node:lts
 
 workflows:
   version: 2
@@ -56,7 +56,6 @@ jobs:
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-      - run: sudo npm install -g npm@6.14.13
       - run: npm ci
       - save_cache:
           paths:
@@ -82,7 +81,6 @@ jobs:
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}-{{checksum "package-lock.json"}}
-      - run: sudo npm install -g npm@6.14.13
       - run: |
           sh ./.circleci/install_hub.sh
           mkdir -p ~/.config/ && echo -e "github.com:\n- user: civictechuser\n  oauth_token: $GITHUB_API_KEY\n  protocol: https\n" > ~/.config/hub

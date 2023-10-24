@@ -2,30 +2,33 @@ module.exports = {
   env: {
     cjs: {
       presets: [
-        ['@babel/preset-env', {
-          targets: {
-            node: '6.10',
+        [
+          "@babel/preset-env",
+          {
+            targets: {
+              node: "6.10",
+            },
+            modules: "commonjs",
           },
-          modules: 'commonjs',
-        }],
+        ],
       ],
     },
     browser: {
       presets: [
         [
-          '@babel/preset-env',
+          "@babel/preset-env",
           {
             targets: {
-              browsers: ['last 2 versions'],
+              browsers: ["last 2 versions"],
             },
             shippedProposals: true,
           },
         ],
       ],
-      plugins: ['@babel/plugin-transform-runtime'],
+      plugins: ["@babel/plugin-transform-runtime"],
     },
     test: {
-      plugins: ['@babel/plugin-transform-modules-commonjs'],
+      plugins: ["@babel/plugin-transform-modules-commonjs"],
     },
   },
 };

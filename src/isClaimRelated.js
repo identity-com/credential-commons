@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const { definitions, Claim } = require('./claim/Claim');
-const vcDefinitions = require('./creds/definitions');
-const { schemaLoader } = require('./schemas/jsonSchema');
+const _ = require("lodash");
+const { definitions, Claim } = require("./claim/Claim");
+const vcDefinitions = require("./creds/definitions");
+const { schemaLoader } = require("./schemas/jsonSchema");
 /**
  * Validate an claim path against it's parent UserCollectableAttribute, and the parent Claim against the
  * dependencies of an Credential
@@ -17,12 +17,17 @@ async function isClaimRelated(claim, uca, credential) {
   await schemaLoader.loadSchemaFromTitle(credential);
 
   // first get the UCA identifier
-  const ucaIdentifier = uca.substring(uca.indexOf('-') + 1, uca.lastIndexOf('-'));
+  const ucaIdentifier = uca.substring(
+    uca.indexOf("-") + 1,
+    uca.lastIndexOf("-"),
+  );
   // Load the schema and it's references from a source to be used for validation and defining the schema definitions
   await schemaLoader.loadSchemaFromTitle(ucaIdentifier);
 
   // check on the credential commons if this identifier exists
-  const ucaDefinition = definitions.find(definition => definition.identifier === ucaIdentifier);
+  const ucaDefinition = definitions.find(
+    (definition) => definition.identifier === ucaIdentifier,
+  );
   // does the UCA exist?
   if (ucaDefinition) {
     const ucaProperties = await Claim.getAllProperties(ucaIdentifier);
@@ -31,19 +36,19 @@ async function isClaimRelated(claim, uca, credential) {
     if (_.includes(ucaProperties, claim)) {
       // we now have the composite uca, the uca for the claim property, they both are correct
       // we need to check now the UCA is inside the dependencies of the credential refered as parent
-      const credentialDefinition = vcDefinitions.find(definition => (
-        definition.identifier === credential
-      ));
+      const credentialDefinition = vcDefinitions.find(
+        (definition) => definition.identifier === credential,
+      );
       if (credentialDefinition) {
         return _.includes(credentialDefinition.depends, ucaIdentifier);
       }
-      throw new Error('Credential identifier does not exist');
+      throw new Error("Credential identifier does not exist");
     } else {
-      throw new Error('Claim property path does not exist on UCA definitions');
+      throw new Error("Claim property path does not exist on UCA definitions");
     }
   } else {
     // return error about wrong uca identifier
-    throw new Error('UCA identifier does not exist');
+    throw new Error("UCA identifier does not exist");
   }
 }
 

@@ -1,12 +1,14 @@
-const fs = require('fs');
-const { parseIdentifier } = require('../../../lib/stringUtils');
-const { services } = require('../../../services');
+// eslint-disable-next-line max-classes-per-file
+const fs = require("fs");
+const { parseIdentifier } = require("../../../lib/stringUtils");
+const { services } = require("../../../services");
 
-const rootUri = 'http://identity.com/schemas/';
-const DEFAULT_SCHEMA_PATH = 'http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com/dev';
+const rootUri = "http://identity.com/schemas/";
+const DEFAULT_SCHEMA_PATH =
+  "http://dev-schemas.civic.com.s3-website-us-east-1.amazonaws.com/dev";
 
 class FSSchemaCache {
-  constructor(cachePath = './.tmp/schemas') {
+  constructor(cachePath = "./.tmp/schemas") {
     this.cachePath = cachePath;
     fs.mkdirSync(cachePath, { recursive: true });
   }
@@ -17,13 +19,13 @@ class FSSchemaCache {
       return null;
     }
 
-    return fs.readFileSync(cachePath, { encoding: 'utf8' });
+    return fs.readFileSync(cachePath, { encoding: "utf8" });
   }
 
   set(identifier, schema) {
     const cachePath = `${this.cachePath}/${identifier}.schema.json`;
 
-    fs.writeFileSync(cachePath, schema, { encoding: 'utf8' });
+    fs.writeFileSync(cachePath, schema, { encoding: "utf8" });
   }
 }
 
@@ -47,7 +49,11 @@ const getIdentifierPath = (identifier) => {
  * This is a sample schema loader, to be used for testing or civic.com claims & credential implementations
  */
 class CVCLoader {
-  constructor(http = services.container.Http, cache = new FSSchemaCache(), schemaPath = DEFAULT_SCHEMA_PATH) {
+  constructor(
+    http = services.container.Http,
+    cache = new FSSchemaCache(),
+    schemaPath = DEFAULT_SCHEMA_PATH,
+  ) {
     this.http = http;
     this.cache = cache;
     this.schemaPath = schemaPath;
@@ -66,7 +72,10 @@ class CVCLoader {
    */
   // eslint-disable-next-line class-methods-use-this
   valid(identifier) {
-    return /^(claim|credential|type)-(cvc|alt):.*$/.test(identifier) || /^cvc:.*$/.test(identifier);
+    return (
+      /^(claim|credential|type)-(cvc|alt):.*$/.test(identifier) ||
+      /^cvc:.*$/.test(identifier)
+    );
   }
 
   /**

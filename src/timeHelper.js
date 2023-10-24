@@ -1,10 +1,10 @@
-const moment = require('moment-mini');
+const moment = require("moment-mini");
 
 const unitMapper = {
-  y: 'y',
-  m: 'M',
-  w: 'w',
-  d: 'd',
+  y: "y",
+  m: "M",
+  w: "w",
+  d: "d",
 };
 
 /**
@@ -28,9 +28,8 @@ const timeDeltaToMomentDuration = (delta) => {
  * @param date Date
  * @return {Date}
  */
-const applyDeltaToDate = (delta, date = new Date()) => moment(date)
-  .add(timeDeltaToMomentDuration(delta))
-  .toDate();
+const applyDeltaToDate = (delta, date = new Date()) =>
+  moment(date).add(timeDeltaToMomentDuration(delta)).toDate();
 
 module.exports = {
   applyDeltaToDate,

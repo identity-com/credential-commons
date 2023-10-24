@@ -1,27 +1,31 @@
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
+const path = require("path");
+const os = require("os");
+const fs = require("fs");
 
-const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+const isBrowser =
+  typeof window !== "undefined" && typeof window.document !== "undefined";
 
-if (process.platform === 'win32') throw new Error(`Unsupported platform: ${process.platform}`);
+if (process.platform === "win32")
+  throw new Error(`Unsupported platform: ${process.platform}`);
 
-if (process.env.APP_ENV !== 'browser' && !isBrowser) {
-  const CONFIG_FILE = 'config';
+if (process.env.APP_ENV !== "browser" && !isBrowser) {
+  const CONFIG_FILE = "config";
 
   const CONFIG_PATH = {
-    BOX: '/etc/civic',
-    USER: path.join(`${os.homedir()}`, '.civic'),
+    BOX: "/etc/civic",
+    USER: path.join(`${os.homedir()}`, ".civic"),
   };
 
   const userConfigFile = path.join(CONFIG_PATH.USER, CONFIG_FILE);
   const boxConfigFile = path.join(CONFIG_PATH.BOX, CONFIG_FILE);
 
-  const configFile = fs.existsSync(userConfigFile) ? userConfigFile : boxConfigFile;
+  const configFile = fs.existsSync(userConfigFile)
+    ? userConfigFile
+    : boxConfigFile;
 
   /* eslint-disable global-require */
   if (fs.existsSync(userConfigFile)) {
-    require('dotenv').config({
+    require("dotenv").config({
       path: configFile,
     });
   }
